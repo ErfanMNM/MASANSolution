@@ -1,0 +1,169 @@
+﻿using Sunny.UI;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Net.NetworkInformation;
+using System.Security.Policy;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
+
+
+
+namespace MSA1
+{
+    public partial class FMainQR01 : UIForm2
+    {
+       F1Printer _F1Printer = new F1Printer();
+        F1Dashboard _F1Dashboard = new F1Dashboard();
+        ///F1Cloudv2 _f1Cloudv2 = new F1Cloudv2();
+        //F1MFI _FMFI = new F1MFI();
+        // F1Cloud _f1Cloud = new F1Cloud();
+       // F1Data _F1Data = new F1Data();
+        ScanQR scanQR = new ScanQR();
+        F1PLC _f1PLC = new F1PLC();
+
+        public FMainQR01()
+        {
+            InitializeComponent();
+
+            WKCheck.RunWorkerAsync();
+
+            RenderControlForm();
+            ClockWK.RunWorkerAsync(); 
+        }
+
+        private void btnAppClose_Click(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
+        }
+        private void RenderControlForm()
+        {
+            UIStyles.CultureInfo = CultureInfos.en_US;
+            this.MainTabControl = uiTabControl1;
+
+            uiNavMenu1.TabControl = uiTabControl1;
+            uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
+
+            uiNavMenu1.CreateNode(AddPage(_f1PLC, 1002));
+
+           // uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
+
+            uiNavMenu1.CreateNode(AddPage(_F1Printer, 1004));
+
+            //uiNavMenu1.CreateNode(AddPage(_F1Data, 1005));
+
+            uiNavMenu1.CreateNode(AddPage(scanQR, 1006));
+
+           // uiNavMenu1.CreateNode(AddPage(_f1Cloudv2, 1007));
+
+            uiNavMenu1.SelectPage(1001);
+
+            _F1Printer.SET(SETCODE.Init);
+          // _FMFI.FMFI_INIT();
+           // _f1Cloud.F1Cloud_INIT();
+            scanQR.INIT();
+        }
+
+
+        private void ToggleFullScreen()
+        {
+            if (this.WindowState != FormWindowState.Maximized)
+            {
+                // Lưu trữ trạng thái và kích thước hiện tại để có thể khôi phục lại sau
+                this.Tag = this.WindowState;
+                this.WindowState = FormWindowState.Normal;
+                this.FormBorderStyle = FormBorderStyle.None;
+                this.WindowState = FormWindowState.Maximized;
+            }
+
+            else
+            {
+                // Khôi phục trạng thái và kích thước form trước khi vào chế độ toàn màn hình
+                this.WindowState = (FormWindowState)this.Tag;
+                this.FormBorderStyle = FormBorderStyle.Sizable;
+            }
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            ToggleFullScreen();
+           
+        }
+        //kiểm tra mấy thứ linh tinh
+        bool InternetConnection = false;
+        double InternetSpeed = 0;
+        private void WKCheck_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int demso = 0;
+
+            while (!WKCheck.CancellationPending)
+            {
+                demso++;
+                Thread.Sleep(500);
+
+                //internet
+                if (demso == 10)
+                {
+                    InternetConnection = Internet.IsOK();
+                    InternetSpeed = Internet.GetInternetSpeed();
+
+                    if (InternetConnection)
+                    {
+                        lblInternet.Text = $"Internet:{InternetSpeed:F1} KBps";
+                        lblInternet.FillColor = Color.FromArgb(243, 249, 255);
+                    }
+                    else
+                    {
+                        lblInternet.Text = "Internet: Lỗi";
+                        lblInternet.FillColor = Color.Red;
+                    }
+
+                    demso = 0;
+                }
+            }
+        }
+
+        private void ClockWK_DoWork(object sender, DoWorkEventArgs e)
+        {
+            //đồng hồ
+            while(!ClockWK.CancellationPending)
+            {
+                lblClock.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+                Thread.Sleep(100);
+            }
+            
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ClockWK.CancelAsync();
+        }
+
+        private void btnMini_Click_1(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
+        }
+
+        private void uiSymbolLabel1_Click(object sender, EventArgs e)
+        {
+            string value = "";
+            if (this.ShowInputPasswordDialog(ref value, false, "Enter Password", false, 30))
+            {
+                if (value != "tantien512" || string.IsNullOrEmpty(value))
+                {
+                    this.ShowWarningDialog("Incorrect password.", "Incorrect password or you do not have the authorization to perform this action. Please check again.", UIStyle.Red);
+                    return;
+                }
+                else {
+                    this.ShowWarningDialog("SU Enable.", "SU Enable.", UIStyle.Red);
+                    uiNavMenu1.CreateNode(AddPage(new F1Superuser(), 1999));
+                }
+
+            }
+        }
+    }
+}

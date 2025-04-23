@@ -1,0 +1,759 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="mainPanelLayout.ColumnCount" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="header.ColumnCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="Logo.ColumnCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="LogoImg.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="LogoImg.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 5</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="LogoImg.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="LogoImg.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1, 1</value>
+  </data>
+  <data name="LogoImg.Size" type="System.Drawing.Size, System.Drawing">
+    <value>82, 60</value>
+  </data>
+  <data name="LogoImg.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="LogoImg.Text" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="&gt;&gt;LogoImg.Name" xml:space="preserve">
+    <value>LogoImg</value>
+  </data>
+  <data name="&gt;&gt;LogoImg.Type" xml:space="preserve">
+    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;LogoImg.Parent" xml:space="preserve">
+    <value>Logo</value>
+  </data>
+  <data name="&gt;&gt;LogoImg.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="Logotext.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="Logotext.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 15.75pt, style=Bold</value>
+  </data>
+  <data name="Logotext.Location" type="System.Drawing.Point, System.Drawing">
+    <value>90, 0</value>
+  </data>
+  <data name="Logotext.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="Logotext.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1, 1</value>
+  </data>
+  <data name="Logotext.Size" type="System.Drawing.Size, System.Drawing">
+    <value>198, 70</value>
+  </data>
+  <data name="Logotext.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="Logotext.Text" xml:space="preserve">
+    <value>TAN TIEN HITECH</value>
+  </data>
+  <data name="&gt;&gt;Logotext.Name" xml:space="preserve">
+    <value>Logotext</value>
+  </data>
+  <data name="&gt;&gt;Logotext.Type" xml:space="preserve">
+    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;Logotext.Parent" xml:space="preserve">
+    <value>Logo</value>
+  </data>
+  <data name="&gt;&gt;Logotext.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="Logo.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="Logo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="Logo.RowCount" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="Logo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>288, 70</value>
+  </data>
+  <data name="Logo.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;Logo.Name" xml:space="preserve">
+    <value>Logo</value>
+  </data>
+  <data name="&gt;&gt;Logo.Type" xml:space="preserve">
+    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;Logo.Parent" xml:space="preserve">
+    <value>header</value>
+  </data>
+  <data name="&gt;&gt;Logo.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="Logo.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LogoImg" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="Logotext" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,90,Percent,50" /&gt;&lt;Rows Styles="Percent,48.3871" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="header.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="header.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="header.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="header.RowCount" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="header.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1024, 76</value>
+  </data>
+  <data name="header.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;header.Name" xml:space="preserve">
+    <value>header</value>
+  </data>
+  <data name="&gt;&gt;header.Type" xml:space="preserve">
+    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;header.Parent" xml:space="preserve">
+    <value>uiTopbar</value>
+  </data>
+  <data name="&gt;&gt;header.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="header.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="Logo" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,28.71094,Percent,71.28906" /&gt;&lt;Rows Styles="Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="uiTopbar.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="uiTopbar.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="uiTopbar.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="uiTopbar.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="uiTopbar.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1, 1</value>
+  </data>
+  <data name="uiTopbar.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1024, 76</value>
+  </data>
+  <data name="uiTopbar.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="uiTopbar.Text" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="&gt;&gt;uiTopbar.Name" xml:space="preserve">
+    <value>uiTopbar</value>
+  </data>
+  <data name="&gt;&gt;uiTopbar.Type" xml:space="preserve">
+    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;uiTopbar.Parent" xml:space="preserve">
+    <value>mainPanelLayout</value>
+  </data>
+  <data name="&gt;&gt;uiTopbar.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="BodyPanel.ColumnCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="navPanel.ColumnCount" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="uiNavMenu1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="uiNavMenu1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt, style=Bold</value>
+  </data>
+  <data name="uiNavMenu1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="uiNavMenu1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="uiNavMenu1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>184, 529</value>
+  </data>
+  <data name="uiNavMenu1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;uiNavMenu1.Name" xml:space="preserve">
+    <value>uiNavMenu1</value>
+  </data>
+  <data name="&gt;&gt;uiNavMenu1.Type" xml:space="preserve">
+    <value>Sunny.UI.UINavMenu, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;uiNavMenu1.Parent" xml:space="preserve">
+    <value>navPanel</value>
+  </data>
+  <data name="&gt;&gt;uiNavMenu1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="uiSymbolLabel1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="uiSymbolLabel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 532</value>
+  </data>
+  <data name="uiSymbolLabel1.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1, 1</value>
+  </data>
+  <data name="uiSymbolLabel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>177, 36</value>
+  </data>
+  <data name="uiSymbolLabel1.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="uiSymbolLabel1.Text" xml:space="preserve">
+    <value>Operator</value>
+  </data>
+  <data name="&gt;&gt;uiSymbolLabel1.Name" xml:space="preserve">
+    <value>uiSymbolLabel1</value>
+  </data>
+  <data name="&gt;&gt;uiSymbolLabel1.Type" xml:space="preserve">
+    <value>Sunny.UI.UISymbolLabel, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;uiSymbolLabel1.Parent" xml:space="preserve">
+    <value>navPanel</value>
+  </data>
+  <data name="&gt;&gt;uiSymbolLabel1.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="btnMini.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="btnMini.Location" type="System.Drawing.Point, System.Drawing">
+    <value>2, 573</value>
+  </data>
+  <data name="btnMini.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="btnMini.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1, 1</value>
+  </data>
+  <data name="btnMini.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 38</value>
+  </data>
+  <data name="btnMini.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="btnMini.Text" xml:space="preserve">
+    <value>Thu nhỏ</value>
+  </data>
+  <data name="&gt;&gt;btnMini.Name" xml:space="preserve">
+    <value>btnMini</value>
+  </data>
+  <data name="&gt;&gt;btnMini.Type" xml:space="preserve">
+    <value>Sunny.UI.UISymbolButton, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;btnMini.Parent" xml:space="preserve">
+    <value>navPanel</value>
+  </data>
+  <data name="&gt;&gt;btnMini.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="btnAppClose.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="btnAppClose.Location" type="System.Drawing.Point, System.Drawing">
+    <value>2, 615</value>
+  </data>
+  <data name="btnAppClose.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="btnAppClose.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1, 1</value>
+  </data>
+  <data name="btnAppClose.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 35</value>
+  </data>
+  <data name="btnAppClose.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="btnAppClose.Text" xml:space="preserve">
+    <value>Thoát</value>
+  </data>
+  <data name="&gt;&gt;btnAppClose.Name" xml:space="preserve">
+    <value>btnAppClose</value>
+  </data>
+  <data name="&gt;&gt;btnAppClose.Type" xml:space="preserve">
+    <value>Sunny.UI.UISymbolButton, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;btnAppClose.Parent" xml:space="preserve">
+    <value>navPanel</value>
+  </data>
+  <data name="&gt;&gt;btnAppClose.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="navPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="navPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="navPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="navPanel.RowCount" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="navPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>184, 652</value>
+  </data>
+  <data name="navPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;navPanel.Name" xml:space="preserve">
+    <value>navPanel</value>
+  </data>
+  <data name="&gt;&gt;navPanel.Type" xml:space="preserve">
+    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;navPanel.Parent" xml:space="preserve">
+    <value>BodyPanel</value>
+  </data>
+  <data name="&gt;&gt;navPanel.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="navPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="uiNavMenu1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="uiSymbolLabel1" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="btnMini" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="btnAppClose" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,100,Absolute,42,Absolute,42,Absolute,39" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="uiTabControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="uiTabControl1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="uiTabControl1.ItemSize" type="System.Drawing.Size, System.Drawing">
+    <value>0, 1</value>
+  </data>
+  <data name="uiTabControl1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>184, 0</value>
+  </data>
+  <data name="uiTabControl1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="uiTabControl1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>840, 652</value>
+  </data>
+  <data name="uiTabControl1.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;uiTabControl1.Name" xml:space="preserve">
+    <value>uiTabControl1</value>
+  </data>
+  <data name="&gt;&gt;uiTabControl1.Type" xml:space="preserve">
+    <value>Sunny.UI.UITabControl, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;uiTabControl1.Parent" xml:space="preserve">
+    <value>BodyPanel</value>
+  </data>
+  <data name="&gt;&gt;uiTabControl1.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="BodyPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="BodyPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 76</value>
+  </data>
+  <data name="BodyPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="BodyPanel.RowCount" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="BodyPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1024, 652</value>
+  </data>
+  <data name="BodyPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;BodyPanel.Name" xml:space="preserve">
+    <value>BodyPanel</value>
+  </data>
+  <data name="&gt;&gt;BodyPanel.Type" xml:space="preserve">
+    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;BodyPanel.Parent" xml:space="preserve">
+    <value>mainPanelLayout</value>
+  </data>
+  <data name="&gt;&gt;BodyPanel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="BodyPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="navPanel" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="uiTabControl1" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,18,Percent,82" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="footer.ColumnCount" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="uiPanel1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="uiPanel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="uiPanel1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="uiPanel1.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1, 1</value>
+  </data>
+  <data name="uiPanel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>185, 40</value>
+  </data>
+  <data name="uiPanel1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="uiPanel1.Text" xml:space="preserve">
+    <value>Masan QR Code v3.0.0</value>
+  </data>
+  <data name="&gt;&gt;uiPanel1.Name" xml:space="preserve">
+    <value>uiPanel1</value>
+  </data>
+  <data name="&gt;&gt;uiPanel1.Type" xml:space="preserve">
+    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;uiPanel1.Parent" xml:space="preserve">
+    <value>footer</value>
+  </data>
+  <data name="&gt;&gt;uiPanel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lblClock.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="lblClock.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="lblClock.Location" type="System.Drawing.Point, System.Drawing">
+    <value>858, 0</value>
+  </data>
+  <data name="lblClock.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="lblClock.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1, 1</value>
+  </data>
+  <data name="lblClock.Size" type="System.Drawing.Size, System.Drawing">
+    <value>166, 40</value>
+  </data>
+  <data name="lblClock.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="lblClock.Text" xml:space="preserve">
+    <value>20/11/2024 17:27:00</value>
+  </data>
+  <data name="&gt;&gt;lblClock.Name" xml:space="preserve">
+    <value>lblClock</value>
+  </data>
+  <data name="&gt;&gt;lblClock.Type" xml:space="preserve">
+    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;lblClock.Parent" xml:space="preserve">
+    <value>footer</value>
+  </data>
+  <data name="&gt;&gt;lblClock.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="lblInternet.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="lblInternet.Location" type="System.Drawing.Point, System.Drawing">
+    <value>692, 0</value>
+  </data>
+  <data name="lblInternet.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="lblInternet.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1, 1</value>
+  </data>
+  <data name="lblInternet.Size" type="System.Drawing.Size, System.Drawing">
+    <value>166, 40</value>
+  </data>
+  <data name="lblInternet.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="lblInternet.Text" xml:space="preserve">
+    <value>...</value>
+  </data>
+  <data name="&gt;&gt;lblInternet.Name" xml:space="preserve">
+    <value>lblInternet</value>
+  </data>
+  <data name="&gt;&gt;lblInternet.Type" xml:space="preserve">
+    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;lblInternet.Parent" xml:space="preserve">
+    <value>footer</value>
+  </data>
+  <data name="&gt;&gt;lblInternet.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="footer.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="footer.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 728</value>
+  </data>
+  <data name="footer.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="footer.RowCount" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="footer.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1024, 40</value>
+  </data>
+  <data name="footer.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;footer.Name" xml:space="preserve">
+    <value>footer</value>
+  </data>
+  <data name="&gt;&gt;footer.Type" xml:space="preserve">
+    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;footer.Parent" xml:space="preserve">
+    <value>mainPanelLayout</value>
+  </data>
+  <data name="&gt;&gt;footer.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="footer.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="uiPanel1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="lblClock" Row="0" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="lblInternet" Row="0" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100,Absolute,260,Absolute,119,Absolute,128,Absolute,166,Absolute,166" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="mainPanelLayout.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="mainPanelLayout.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="mainPanelLayout.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="mainPanelLayout.RowCount" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="mainPanelLayout.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1024, 768</value>
+  </data>
+  <data name="mainPanelLayout.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;mainPanelLayout.Name" xml:space="preserve">
+    <value>mainPanelLayout</value>
+  </data>
+  <data name="&gt;&gt;mainPanelLayout.Type" xml:space="preserve">
+    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;mainPanelLayout.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;mainPanelLayout.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="mainPanelLayout.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="uiTopbar" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="BodyPanel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="footer" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,10,Percent,85,Percent,5" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <metadata name="WKCheck.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="ClockWK.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>217, 17</value>
+  </metadata>
+  <metadata name="Internet.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>121, 17</value>
+  </metadata>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>1024, 768</value>
+  </data>
+  <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt</value>
+  </data>
+  <data name="$this.MaximumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1024, 768</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1022, 718</value>
+  </data>
+  <data name="$this.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+    <value>WindowsDefaultLocation</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Main Form</value>
+  </data>
+  <data name="&gt;&gt;WKCheck.Name" xml:space="preserve">
+    <value>WKCheck</value>
+  </data>
+  <data name="&gt;&gt;WKCheck.Type" xml:space="preserve">
+    <value>System.ComponentModel.BackgroundWorker, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ClockWK.Name" xml:space="preserve">
+    <value>ClockWK</value>
+  </data>
+  <data name="&gt;&gt;ClockWK.Type" xml:space="preserve">
+    <value>System.ComponentModel.BackgroundWorker, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;Internet.Name" xml:space="preserve">
+    <value>Internet</value>
+  </data>
+  <data name="&gt;&gt;Internet.Type" xml:space="preserve">
+    <value>SPMS1.InternetClass, SPMS1, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>FMainQR01</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>Sunny.UI.UIForm2, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+</root>
