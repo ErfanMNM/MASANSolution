@@ -13,18 +13,18 @@ using System.Windows.Forms;
 
 
 
-namespace MSA1
+namespace QR_MASAN_01
 {
     public partial class FMainQR01 : UIForm2
     {
-       F1Printer _F1Printer = new F1Printer();
+       //F1Printer _F1Printer = new F1Printer();
         F1Dashboard _F1Dashboard = new F1Dashboard();
         ///F1Cloudv2 _f1Cloudv2 = new F1Cloudv2();
         //F1MFI _FMFI = new F1MFI();
         // F1Cloud _f1Cloud = new F1Cloud();
        // F1Data _F1Data = new F1Data();
-        ScanQR scanQR = new ScanQR();
-        F1PLC _f1PLC = new F1PLC();
+        //ScanQR scanQR = new ScanQR();
+       // F1PLC _f1PLC = new F1PLC();
 
         public FMainQR01()
         {
@@ -48,24 +48,24 @@ namespace MSA1
             uiNavMenu1.TabControl = uiTabControl1;
             uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
 
-            uiNavMenu1.CreateNode(AddPage(_f1PLC, 1002));
+           // uiNavMenu1.CreateNode(AddPage(_f1PLC, 1002));
 
            // uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
 
-            uiNavMenu1.CreateNode(AddPage(_F1Printer, 1004));
+            //uiNavMenu1.CreateNode(AddPage(_F1Printer, 1004));
 
             //uiNavMenu1.CreateNode(AddPage(_F1Data, 1005));
 
-            uiNavMenu1.CreateNode(AddPage(scanQR, 1006));
+           // uiNavMenu1.CreateNode(AddPage(scanQR, 1006));
 
            // uiNavMenu1.CreateNode(AddPage(_f1Cloudv2, 1007));
 
             uiNavMenu1.SelectPage(1001);
 
-            _F1Printer.SET(SETCODE.Init);
+          //  _F1Printer.SET(SETCODE.Init);
           // _FMFI.FMFI_INIT();
            // _f1Cloud.F1Cloud_INIT();
-            scanQR.INIT();
+           // scanQR.INIT();
         }
 
 
@@ -138,16 +138,6 @@ namespace MSA1
             
         }
 
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            ClockWK.CancelAsync();
-        }
-
-        private void btnMini_Click_1(object sender, EventArgs e)
-        {
-            this.WindowState = FormWindowState.Minimized;
-        }
-
         private void uiSymbolLabel1_Click(object sender, EventArgs e)
         {
             string value = "";
@@ -160,10 +150,20 @@ namespace MSA1
                 }
                 else {
                     this.ShowWarningDialog("SU Enable.", "SU Enable.", UIStyle.Red);
-                    uiNavMenu1.CreateNode(AddPage(new F1Superuser(), 1999));
+                    //uiNavMenu1.CreateNode(AddPage(new F1Superuser(), 1999));
                 }
 
             }
+        }
+
+        private void Logo_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void btnMini_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
         }
     }
 }

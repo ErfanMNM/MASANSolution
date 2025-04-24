@@ -1,5 +1,4 @@
 ﻿using HslCommunication;
-using MSA2.MID;
 using Sunny.UI;
 using System;
 using System.Collections.Generic;
@@ -19,7 +18,7 @@ using System.Windows.Forms;
 using static SPMS1.GoogleService;
 using static System.Runtime.CompilerServices.RuntimeHelpers;
 
-namespace MSA2
+namespace QR_MASAN_01
 {
     public partial class F1Dashboard : UIPage
     {
@@ -1102,22 +1101,7 @@ namespace MSA2
                         break;
                 }
 
-                if(Globalvariable.CSW_APPMODE == "OLDMode")
-                {
-                    this.Invoke(new Action(() =>
-                    {
-                        swMode.Text = "Mode Cũ";
-                        ipMode.Text = "Mode Cũ";
-                    }));
-                }
-                else
-                {
-                    this.Invoke(new Action(() =>
-                    {
-                        swMode.Text = "Mode Mới";
-                        ipMode.Text = "Mode Mới";
-                    }));
-                }
+               
                 Thread.Sleep(1000);
             }
         }
@@ -1192,11 +1176,11 @@ namespace MSA2
 
         private void btnResetCounter_Click(object sender, EventArgs e)
         {
-            btnResetCounter.Enabled = false;
+            //btnResetCounter.Enabled = false;
             OperateResult write = PLC.plc.Write("D22", short.Parse("1"));
             if (write.IsSuccess)
             {
-                btnResetCounter.Enabled = true;
+                //btnResetCounter.Enabled = true;
                 lblFail.Value = 0;
                 lblPass.Value = 0;
                 lblTotal.Value = 0;
@@ -1216,7 +1200,7 @@ namespace MSA2
             }
             else
             {
-                btnResetCounter.Enabled = true;
+               // btnResetCounter.Enabled = true;
             }
         }
 
@@ -1382,36 +1366,6 @@ namespace MSA2
             }
         }
 
-        private void swMode_Click(object sender, EventArgs e)
-        {
-            swMode.Enabled = false;
-
-            if (Globalvariable.CSW_APPMODE == "OLDMode")
-            {
-                Globalvariable.CSW_APPMODE = "NEWMode";
-            }
-            else
-            {
-                Globalvariable.CSW_APPMODE = "OLDMode";
-            }
-
-            swMode.Enabled = true;
-        }
-
-        private void swModeData_ValueChanged(object sender, bool value)
-        {
-            swModeData.Enabled = false;
-            if (Globalvariable.ISRerun)
-            {
-                Globalvariable.ISRerun = false;
-                ipModeRun.Text = "Đang bật";
-            }
-            else
-            {
-                Globalvariable.ISRerun = true;
-                ipModeRun.Text = "Đang tắt";
-            }
-        }
 
         private void uiPanel27_Click(object sender, EventArgs e)
         {
