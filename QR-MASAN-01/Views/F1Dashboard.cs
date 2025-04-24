@@ -10,13 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Policy;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static SPMS1.GoogleService;
-using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 namespace QR_MASAN_01
 {
@@ -910,13 +904,6 @@ namespace QR_MASAN_01
                 }
 
                 //chế độ thả lại
-                if (swModeData.Enabled == false)
-                {
-                    this.Invoke(new Action(() =>
-                    {
-                        swModeData.Enabled = true;
-                    }));
-
                     if (Globalvariable.ISRerun)
                     {
                         swModeData.Active = true;
@@ -925,7 +912,7 @@ namespace QR_MASAN_01
                     {
                         swModeData.Active = false;
                     }
-                }
+
 
 
                 //Cập nhật HMI
@@ -1375,6 +1362,18 @@ namespace QR_MASAN_01
         private void uiPanel25_Click(object sender, EventArgs e)
         {
             this.ShowInfoDialog("Tổng số mã QR mà máy tính nhận được");
+        }
+
+        private void swModeData_ValueChanged(object sender, bool value)
+        {
+            if(swModeData.Active)
+            {
+                Globalvariable.ISRerun = true;
+            }
+            else
+            {
+                Globalvariable.ISRerun = false;
+            }
         }
     }
 }

@@ -52,8 +52,10 @@
             this.uiTableLayoutPanel4 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel9 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel12 = new Sunny.UI.UITableLayoutPanel();
+            this.swMode = new Sunny.UI.UISwitch();
             this.uiPanel18 = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel11 = new Sunny.UI.UITableLayoutPanel();
+            this.swModeData = new Sunny.UI.UISwitch();
             this.uiPanel16 = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel10 = new Sunny.UI.UITableLayoutPanel();
             this.uiPanel14 = new Sunny.UI.UIPanel();
@@ -129,16 +131,6 @@
             this.uiTableLayoutPanel18 = new Sunny.UI.UITableLayoutPanel();
             this.opQRContent = new Sunny.UI.UIPanel();
             this.opPass = new Sunny.UI.UIPanel();
-            this.WK_Update = new System.ComponentModel.BackgroundWorker();
-            this.WK_Push_Data_To_Dic = new System.ComponentModel.BackgroundWorker();
-            this.Camera = new SPMS1.TCPClient(this.components);
-            this.PLC = new SPMS1.OmronPLC_Hsl(this.components);
-            this.WK_120Update = new System.ComponentModel.BackgroundWorker();
-            this.WK_AddSQLite = new System.ComponentModel.BackgroundWorker();
-            this.WK_CMR1 = new System.ComponentModel.BackgroundWorker();
-            this.WK_Update120 = new System.ComponentModel.BackgroundWorker();
-            this.WK_CMR2 = new System.ComponentModel.BackgroundWorker();
-            this.WK_Server_check = new System.ComponentModel.BackgroundWorker();
             this.uiTitlePanel5 = new Sunny.UI.UITitlePanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.lblTotal = new Sunny.UI.UIDigitalLabel();
@@ -153,8 +145,16 @@
             this.uiLabel9 = new Sunny.UI.UILabel();
             this.uiLabel10 = new Sunny.UI.UILabel();
             this.lblPass = new Sunny.UI.UIDigitalLabel();
-            this.swModeData = new Sunny.UI.UISwitch();
-            this.uiSwitch1 = new Sunny.UI.UISwitch();
+            this.WK_Update = new System.ComponentModel.BackgroundWorker();
+            this.WK_Push_Data_To_Dic = new System.ComponentModel.BackgroundWorker();
+            this.WK_120Update = new System.ComponentModel.BackgroundWorker();
+            this.WK_AddSQLite = new System.ComponentModel.BackgroundWorker();
+            this.WK_CMR1 = new System.ComponentModel.BackgroundWorker();
+            this.WK_Update120 = new System.ComponentModel.BackgroundWorker();
+            this.WK_CMR2 = new System.ComponentModel.BackgroundWorker();
+            this.WK_Server_check = new System.ComponentModel.BackgroundWorker();
+            this.Camera = new SPMS1.TCPClient(this.components);
+            this.PLC = new SPMS1.OmronPLC_Hsl(this.components);
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTableLayoutPanel5.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -546,7 +546,7 @@
             this.uiTableLayoutPanel12.BackColor = System.Drawing.Color.PaleTurquoise;
             this.uiTableLayoutPanel12.ColumnCount = 1;
             this.uiTableLayoutPanel12.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTableLayoutPanel12.Controls.Add(this.uiSwitch1, 0, 1);
+            this.uiTableLayoutPanel12.Controls.Add(this.swMode, 0, 1);
             this.uiTableLayoutPanel12.Controls.Add(this.uiPanel18, 0, 0);
             this.uiTableLayoutPanel12.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTableLayoutPanel12.Location = new System.Drawing.Point(241, 79);
@@ -558,6 +558,22 @@
             this.uiTableLayoutPanel12.Size = new System.Drawing.Size(110, 73);
             this.uiTableLayoutPanel12.TabIndex = 16;
             this.uiTableLayoutPanel12.TagString = null;
+            // 
+            // swMode
+            // 
+            this.swMode.Active = true;
+            this.swMode.ActiveColor = System.Drawing.Color.DodgerBlue;
+            this.swMode.ActiveText = "In";
+            this.swMode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.swMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.swMode.InActiveColor = System.Drawing.Color.Green;
+            this.swMode.InActiveText = "Nhãn";
+            this.swMode.Location = new System.Drawing.Point(3, 32);
+            this.swMode.MinimumSize = new System.Drawing.Size(1, 1);
+            this.swMode.Name = "swMode";
+            this.swMode.Size = new System.Drawing.Size(104, 38);
+            this.swMode.SwitchShape = Sunny.UI.UISwitch.UISwitchShape.Square;
+            this.swMode.TabIndex = 5;
             // 
             // uiPanel18
             // 
@@ -592,6 +608,22 @@
             this.uiTableLayoutPanel11.Size = new System.Drawing.Size(121, 73);
             this.uiTableLayoutPanel11.TabIndex = 15;
             this.uiTableLayoutPanel11.TagString = null;
+            // 
+            // swModeData
+            // 
+            this.swModeData.ActiveColor = System.Drawing.Color.Goldenrod;
+            this.swModeData.ActiveText = "Đang tắt";
+            this.swModeData.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.swModeData.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.swModeData.InActiveColor = System.Drawing.Color.Green;
+            this.swModeData.InActiveText = "Đang bật";
+            this.swModeData.Location = new System.Drawing.Point(3, 32);
+            this.swModeData.MinimumSize = new System.Drawing.Size(1, 1);
+            this.swModeData.Name = "swModeData";
+            this.swModeData.Size = new System.Drawing.Size(115, 38);
+            this.swModeData.SwitchShape = Sunny.UI.UISwitch.UISwitchShape.Square;
+            this.swModeData.TabIndex = 5;
+            this.swModeData.ValueChanged += new Sunny.UI.UISwitch.OnValueChanged(this.swModeData_ValueChanged);
             // 
             // uiPanel16
             // 
@@ -1790,62 +1822,6 @@
             this.opPass.Text = "TỐT";
             this.opPass.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // WK_Update
-            // 
-            this.WK_Update.WorkerReportsProgress = true;
-            this.WK_Update.WorkerSupportsCancellation = true;
-            this.WK_Update.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Update_DoWork);
-            // 
-            // WK_Push_Data_To_Dic
-            // 
-            this.WK_Push_Data_To_Dic.WorkerReportsProgress = true;
-            this.WK_Push_Data_To_Dic.WorkerSupportsCancellation = true;
-            // 
-            // Camera
-            // 
-            this.Camera.IP = "192.168.250.12";
-            this.Camera.Port = 51236;
-            // 
-            // PLC
-            // 
-            this.PLC.PLC_IP = "192.168.250.1";
-            this.PLC.PLC_PORT = 9600;
-            this.PLC.PLC_Ready_DM = "D16";
-            this.PLC.PLC_STATUS = SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect;
-            this.PLC.Ready = 0;
-            this.PLC.Time_Update = 300;
-            // 
-            // WK_120Update
-            // 
-            this.WK_120Update.WorkerReportsProgress = true;
-            this.WK_120Update.WorkerSupportsCancellation = true;
-            // 
-            // WK_AddSQLite
-            // 
-            this.WK_AddSQLite.WorkerReportsProgress = true;
-            this.WK_AddSQLite.WorkerSupportsCancellation = true;
-            // 
-            // WK_CMR1
-            // 
-            this.WK_CMR1.WorkerReportsProgress = true;
-            this.WK_CMR1.WorkerSupportsCancellation = true;
-            // 
-            // WK_Update120
-            // 
-            this.WK_Update120.WorkerReportsProgress = true;
-            this.WK_Update120.WorkerSupportsCancellation = true;
-            // 
-            // WK_CMR2
-            // 
-            this.WK_CMR2.WorkerReportsProgress = true;
-            this.WK_CMR2.WorkerSupportsCancellation = true;
-            // 
-            // WK_Server_check
-            // 
-            this.WK_Server_check.WorkerReportsProgress = true;
-            this.WK_Server_check.WorkerSupportsCancellation = true;
-            this.WK_Server_check.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Server_check_DoWork);
-            // 
             // uiTitlePanel5
             // 
             this.uiTitlePanel5.Controls.Add(this.tableLayoutPanel1);
@@ -2078,37 +2054,61 @@
             this.lblPass.Text = "uiDigitalLabel1";
             this.lblPass.Value = 9999999D;
             // 
-            // swModeData
+            // WK_Update
             // 
-            this.swModeData.Active = true;
-            this.swModeData.ActiveColor = System.Drawing.Color.Goldenrod;
-            this.swModeData.ActiveText = "Bỏ lại";
-            this.swModeData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.swModeData.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.swModeData.InActiveColor = System.Drawing.Color.Green;
-            this.swModeData.InActiveText = "Loại trùng";
-            this.swModeData.Location = new System.Drawing.Point(3, 32);
-            this.swModeData.MinimumSize = new System.Drawing.Size(1, 1);
-            this.swModeData.Name = "swModeData";
-            this.swModeData.Size = new System.Drawing.Size(115, 38);
-            this.swModeData.SwitchShape = Sunny.UI.UISwitch.UISwitchShape.Square;
-            this.swModeData.TabIndex = 5;
+            this.WK_Update.WorkerReportsProgress = true;
+            this.WK_Update.WorkerSupportsCancellation = true;
+            this.WK_Update.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Update_DoWork);
             // 
-            // uiSwitch1
+            // WK_Push_Data_To_Dic
             // 
-            this.uiSwitch1.Active = true;
-            this.uiSwitch1.ActiveColor = System.Drawing.Color.DodgerBlue;
-            this.uiSwitch1.ActiveText = "In";
-            this.uiSwitch1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiSwitch1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiSwitch1.InActiveColor = System.Drawing.Color.Green;
-            this.uiSwitch1.InActiveText = "Nhãn";
-            this.uiSwitch1.Location = new System.Drawing.Point(3, 32);
-            this.uiSwitch1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiSwitch1.Name = "uiSwitch1";
-            this.uiSwitch1.Size = new System.Drawing.Size(104, 38);
-            this.uiSwitch1.SwitchShape = Sunny.UI.UISwitch.UISwitchShape.Square;
-            this.uiSwitch1.TabIndex = 5;
+            this.WK_Push_Data_To_Dic.WorkerReportsProgress = true;
+            this.WK_Push_Data_To_Dic.WorkerSupportsCancellation = true;
+            // 
+            // WK_120Update
+            // 
+            this.WK_120Update.WorkerReportsProgress = true;
+            this.WK_120Update.WorkerSupportsCancellation = true;
+            // 
+            // WK_AddSQLite
+            // 
+            this.WK_AddSQLite.WorkerReportsProgress = true;
+            this.WK_AddSQLite.WorkerSupportsCancellation = true;
+            // 
+            // WK_CMR1
+            // 
+            this.WK_CMR1.WorkerReportsProgress = true;
+            this.WK_CMR1.WorkerSupportsCancellation = true;
+            // 
+            // WK_Update120
+            // 
+            this.WK_Update120.WorkerReportsProgress = true;
+            this.WK_Update120.WorkerSupportsCancellation = true;
+            // 
+            // WK_CMR2
+            // 
+            this.WK_CMR2.WorkerReportsProgress = true;
+            this.WK_CMR2.WorkerSupportsCancellation = true;
+            // 
+            // WK_Server_check
+            // 
+            this.WK_Server_check.WorkerReportsProgress = true;
+            this.WK_Server_check.WorkerSupportsCancellation = true;
+            this.WK_Server_check.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Server_check_DoWork);
+            // 
+            // Camera
+            // 
+            this.Camera.IP = "192.168.250.12";
+            this.Camera.Port = 51236;
+            // 
+            // PLC
+            // 
+            this.PLC.PLC_IP = "192.168.250.1";
+            this.PLC.PLC_PORT = 9600;
+            this.PLC.PLC_Ready_DM = "D16";
+            this.PLC.PLC_STATUS = SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect;
+            this.PLC.Ready = 0;
+            this.PLC.Time_Update = 300;
             // 
             // F1Dashboard
             // 
@@ -2118,6 +2118,7 @@
             this.Name = "F1Dashboard";
             this.Symbol = 62162;
             this.Text = "Trang chủ";
+            this.Load += new System.EventHandler(this.FDashboard_Initialize);
             this.uiTableLayoutPanel3.ResumeLayout(false);
             this.uiTableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
@@ -2291,7 +2292,7 @@
         private Sunny.UI.UILabel uiLabel9;
         private Sunny.UI.UILabel uiLabel10;
         private Sunny.UI.UIDigitalLabel lblPass;
-        private Sunny.UI.UISwitch uiSwitch1;
+        private Sunny.UI.UISwitch swMode;
         private Sunny.UI.UISwitch swModeData;
     }
 }
