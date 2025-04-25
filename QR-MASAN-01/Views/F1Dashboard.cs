@@ -345,8 +345,35 @@ namespace QR_MASAN_01
         private string Get_MFI_ID()
         {
             string connectionString = $@"Data Source=Server_Database/MF_Data.db;Version=3;";
-            string query = "SELECT `MFI_ID` FROM `MFI_Table` ORDER BY `ID` DESC LIMIT 1;";
+            string query = @"
+                CREATE TABLE IF NOT EXISTS `MFI_Table` (
+                    `ID` INTEGER NOT NULL UNIQUE,
+                    `MFI_ID` TEXT NOT NULL DEFAULT 'Server',
+                    `ProductBarcode` TEXT NOT NULL,
+                    `CaseBarcode` TEXT NOT NULL,
+                    `LOT` TEXT NOT NULL,
+                    `BatchCode` TEXT NOT NULL,
+                    `BlockSize` TEXT NOT NULL,
+                    `CaseSize` TEXT NOT NULL,
+                    `PalletSize` TEXT,
+                    `SanLuong` TEXT NOT NULL,
+                    `PalletQRType` TEXT NOT NULL,
+                    `OperatorName` TEXT NOT NULL,
+                    `TimeStamp` TEXT NOT NULL,
+                    PRIMARY KEY(`ID` AUTOINCREMENT)
+                );
+                SELECT `MFI_ID` FROM `MFI_Table` ORDER BY `ID` DESC LIMIT 1;
+                ";
 
+            if (!Directory.Exists("Server_Database"))
+            {
+                Directory.CreateDirectory("Server_Database");
+            }
+
+            if (!File.Exists("Server_Database/MF_Data.db"))
+            {
+                SQLiteConnection.CreateFile("Server_Database/MF_Data.db");
+            }
             using (SQLiteConnection conn = new SQLiteConnection(connectionString))
             {
                 conn.Open();

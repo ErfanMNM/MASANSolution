@@ -611,6 +611,7 @@
             // 
             // swModeData
             // 
+            this.swModeData.Active = true;
             this.swModeData.ActiveColor = System.Drawing.Color.Goldenrod;
             this.swModeData.ActiveText = "Đang tắt";
             this.swModeData.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -930,7 +931,7 @@
             this.tabPage2.Controls.Add(this.uiTableLayoutPanel19);
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(457, 373);
+            this.tabPage2.Size = new System.Drawing.Size(200, 60);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Thống kê";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -1696,7 +1697,7 @@
             this.tabPage3.Controls.Add(this.opHisConsole);
             this.tabPage3.Location = new System.Drawing.Point(0, 40);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(457, 373);
+            this.tabPage3.Size = new System.Drawing.Size(200, 60);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Lịch sử";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1713,7 +1714,7 @@
             this.opHisConsole.Name = "opHisConsole";
             this.opHisConsole.Padding = new System.Windows.Forms.Padding(2);
             this.opHisConsole.ShowText = false;
-            this.opHisConsole.Size = new System.Drawing.Size(457, 373);
+            this.opHisConsole.Size = new System.Drawing.Size(200, 60);
             this.opHisConsole.TabIndex = 0;
             this.opHisConsole.Text = "uiListBox1";
             // 
@@ -2100,6 +2101,7 @@
             // 
             this.Camera.IP = "192.168.250.12";
             this.Camera.Port = 51236;
+            this.Camera.ClientCallBack += new SPMS1.TCPClient.EventForClient(this.Camera_ClientCallBack);
             // 
             // PLC
             // 
