@@ -37,8 +37,7 @@ namespace QR_MASAN_01
         public static string MFI_ID { get; set; } ="0";
         public static bool ISRerun { get; set; } = false;
         public static string Server_Url { get; set; } = "https://sv2.th.io.vn/";
-        public static string APPMODE { get; set; } = "OLDMode";
-        public static string CSW_APPMODE { get; set; } = "OLDMode";
+        public static e_Mode APPMODE { get; set; } = e_Mode.OLDMode;
 
         // Tạo một Queue để lưu trữ các chuỗi
         public static Queue<int> UpdateQueue120 = new Queue<int>();
@@ -48,6 +47,11 @@ namespace QR_MASAN_01
 
         public static int MaxID_QR { get; set; } = 0;
         //public static string 
+    }
+        public enum e_Mode
+    {
+        OLDMode,
+        NEWMode
     }
 
     public class Alarm

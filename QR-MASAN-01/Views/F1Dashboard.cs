@@ -713,7 +713,7 @@ namespace QR_MASAN_01
                             else
                             {
                                 //đá chai không có trong data
-                                if (Globalvariable.APPMODE != "OLDMode")
+                                if (Globalvariable.APPMODE != e_Mode.OLDMode)
                                 {
                                     //đá ra những mã không có trong máy
                                     OperateResult write = PLC.plc.Write("D10", short.Parse("0"));
@@ -729,7 +729,7 @@ namespace QR_MASAN_01
                                     TimeSendPLC = Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4);
                                     ISPass = false;
                                     Counter.Empty++;
-                                    QR_Content = "Không tồn tại";
+                                    QR_Content = "Không có trong CSDL";
 
                                 }
                                 else
@@ -940,7 +940,16 @@ namespace QR_MASAN_01
                         swModeData.Active = false;
                     }
 
+                //chế độ dữ liệu mới cũ
 
+                if (Globalvariable.APPMODE == e_Mode.OLDMode)
+                {
+                    swMode.Active = true;
+                }
+                else
+                {
+                    swMode.Active = false;
+                }
 
                 //Cập nhật HMI
                 if (Client_MFI.Product_Barcode != opBarcode.Text || Client_MFI.Case_Barcode != opCaseBarcode.Text || Client_MFI.Case_LOT != opDateM.Text || Client_MFI.Batch_Code != opBatch.Text)
@@ -1400,6 +1409,18 @@ namespace QR_MASAN_01
             else
             {
                 Globalvariable.ISRerun = false;
+            }
+        }
+
+        private void swMode_ValueChanged(object sender, bool value)
+        {
+            if (swMode.Active)
+            {
+                Globalvariable.APPMODE = e_Mode.OLDMode;
+            }
+            else
+            {
+                Globalvariable.APPMODE = e_Mode.NEWMode;
             }
         }
     }

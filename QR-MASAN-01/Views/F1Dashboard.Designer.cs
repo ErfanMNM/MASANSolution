@@ -561,19 +561,19 @@
             // 
             // swMode
             // 
-            this.swMode.Active = true;
             this.swMode.ActiveColor = System.Drawing.Color.DodgerBlue;
-            this.swMode.ActiveText = "In";
+            this.swMode.ActiveText = "Không in";
             this.swMode.Dock = System.Windows.Forms.DockStyle.Fill;
             this.swMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.swMode.InActiveColor = System.Drawing.Color.Green;
-            this.swMode.InActiveText = "Nhãn";
+            this.swMode.InActiveText = "In Kiểm";
             this.swMode.Location = new System.Drawing.Point(3, 32);
             this.swMode.MinimumSize = new System.Drawing.Size(1, 1);
             this.swMode.Name = "swMode";
             this.swMode.Size = new System.Drawing.Size(104, 38);
             this.swMode.SwitchShape = Sunny.UI.UISwitch.UISwitchShape.Square;
             this.swMode.TabIndex = 5;
+            this.swMode.ValueChanged += new Sunny.UI.UISwitch.OnValueChanged(this.swMode_ValueChanged);
             // 
             // uiPanel18
             // 
