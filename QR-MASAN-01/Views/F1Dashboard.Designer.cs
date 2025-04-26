@@ -155,6 +155,7 @@
             this.WK_Server_check = new System.ComponentModel.BackgroundWorker();
             this.Camera = new SPMS1.TCPClient(this.components);
             this.PLC = new SPMS1.OmronPLC_Hsl(this.components);
+            this.WK_CMR3 = new System.ComponentModel.BackgroundWorker();
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTableLayoutPanel5.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -205,6 +206,8 @@
             // 
             this.WK_CsV_To_Sqlite.WorkerReportsProgress = true;
             this.WK_CsV_To_Sqlite.WorkerSupportsCancellation = true;
+            this.WK_CsV_To_Sqlite.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_CsV_To_Sqlite_DoWork);
+            this.WK_CsV_To_Sqlite.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.WK_CsV_To_Sqlite_RunWorkerCompleted);
             // 
             // uiTableLayoutPanel3
             // 
@@ -2065,31 +2068,38 @@
             // 
             this.WK_Push_Data_To_Dic.WorkerReportsProgress = true;
             this.WK_Push_Data_To_Dic.WorkerSupportsCancellation = true;
+            this.WK_Push_Data_To_Dic.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Push_Data_To_Dic_DoWork);
+            this.WK_Push_Data_To_Dic.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.WK_Push_Data_To_Dic_RunWorkerCompleted);
             // 
             // WK_120Update
             // 
             this.WK_120Update.WorkerReportsProgress = true;
             this.WK_120Update.WorkerSupportsCancellation = true;
+            this.WK_120Update.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_120Update_DoWork);
             // 
             // WK_AddSQLite
             // 
             this.WK_AddSQLite.WorkerReportsProgress = true;
             this.WK_AddSQLite.WorkerSupportsCancellation = true;
+            this.WK_AddSQLite.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_AddSQLite_DoWork);
             // 
             // WK_CMR1
             // 
             this.WK_CMR1.WorkerReportsProgress = true;
             this.WK_CMR1.WorkerSupportsCancellation = true;
+            this.WK_CMR1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_CMR1_DoWork);
             // 
             // WK_Update120
             // 
             this.WK_Update120.WorkerReportsProgress = true;
             this.WK_Update120.WorkerSupportsCancellation = true;
+            this.WK_Update120.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Update120_DoWork);
             // 
             // WK_CMR2
             // 
             this.WK_CMR2.WorkerReportsProgress = true;
             this.WK_CMR2.WorkerSupportsCancellation = true;
+            this.WK_CMR2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_CMR2_DoWork);
             // 
             // WK_Server_check
             // 
@@ -2111,6 +2121,13 @@
             this.PLC.PLC_STATUS = SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect;
             this.PLC.Ready = 0;
             this.PLC.Time_Update = 300;
+            this.PLC.PLCStatus_OnChange += new System.EventHandler<SPMS1.OmronPLC_Hsl.PLCStatusEventArgs>(this.PLC_PLCStatus_OnChange);
+            // 
+            // WK_CMR3
+            // 
+            this.WK_CMR3.WorkerReportsProgress = true;
+            this.WK_CMR3.WorkerSupportsCancellation = true;
+            this.WK_CMR3.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_CMR3_DoWork);
             // 
             // F1Dashboard
             // 
@@ -2296,5 +2313,6 @@
         private Sunny.UI.UIDigitalLabel lblPass;
         private Sunny.UI.UISwitch swMode;
         private Sunny.UI.UISwitch swModeData;
+        private System.ComponentModel.BackgroundWorker WK_CMR3;
     }
 }
