@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Printer Control</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        #status {
+            font-size: 20px;
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 8px;
+            display: inline-block;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .on { background-color: #2ecc71; color: white; }
+        .off { background-color: #e74c3c; color: white; }
+        .waiting { background-color: #95a5a6; color: white; cursor: not-allowed; }
+        .warning { background-color: #f1c40f; color: black; }
+        .error { background-color: #e67e22; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Printer Control</h1>
+        <p id="status">Loading...</p>
+        <button id="toggleBtn" onclick="togglePrinter()" disabled>Loading...</button>
+    </div>
+
+    <script>
+        let isWaiting = false;
+
+        async function updateStatus() {
+            const res = await fetch('/printer/status');
+            const data = await res.json();
+            const statusText = document.getElementById('status');
+            const button = document.getElementById('toggleBtn');
+
+            let statusColor = "waiting";
+            let buttonText = "Unknown";
+            let icon = "❓";
+            let buttonActionText = "N/A";
+            let buttonDisabled = true;
+
+            switch (data.status) {
+                case "-1":
+                    statusColor = "error"; 
+                    buttonText = "SERVER DISCONNECTED";
+                    icon = "❌";
+                    break;
+                case "-2":
+                    statusColor = "waiting"; 
+                    buttonText = "WAITING PRINTER RESPONSE";
+                    icon = "⏳";
+                    buttonDisabled = true;
+                    break;
+                case "DISCONNECTED":
+                    statusColor = "error"; 
+                    buttonText = "PRINTER DISCONNECTED";
+                    icon = "🚫";
+                    break;
+                case "CONNECTED":
+                    statusColor = "on"; 
+                    buttonText = "PRINTER CONNECTED";
+                    icon = "🔗";
+                    buttonActionText = "Start Printing";
+                    buttonDisabled = false;
+                    break;
+                case "STOPPED":
+                    statusColor = "off"; 
+                    buttonText = "PRINTER STOPPED";
+                    icon = "⏹️";
+                    buttonActionText = "Start Printing";
+                    buttonDisabled = false;
+                    break;
+                case "PRINTTING":
+                    statusColor = "on"; 
+                    buttonText = "PRINTING";
+                    icon = "🖨️";
+                    buttonActionText = "Stop Printing";
+                    buttonDisabled = false;
+                    break;
+                case "JOB_CHANGE":
+                    statusColor = "warning"; 
+                    buttonText = "JOB CHANGING";
+                    icon = "🔄";
+                    break;
+                case "INK_LOW":
+                    statusColor = "warning"; 
+                    buttonText = "INK LOW";
+                    icon = "⚠️";
+                    break;
+                case "DATA_PRINTING":
+                    statusColor = "on"; 
+                    buttonText = "DATA PRINTING";
+                    icon = "📄";
+                    break;
+                case "DATA_EMPTY":
+                    statusColor = "warning"; 
+                    buttonText = "DATA EMPTY";
+                    icon = "📭";
+                    break;
+            }
+
+            statusText.innerText = `${icon} ${buttonText}`;
+            statusText.className = statusColor;
+            button.className = statusColor;
+
+            if (data.status === "-1" || data.status === "-2" || isWaiting) {
+                button.innerText = "Waiting...";
+                button.disabled = true;
+            } else {
+                button.innerText = buttonActionText;
+                button.disabled = buttonDisabled;
+            }
+        }
+
+        async function togglePrinter() {
+            if (isWaiting) return;
+            isWaiting = true;
+            document.getElementById('toggleBtn').disabled = true;
+            await fetch('/printer/toggle');
+            updateStatus();
+            setTimeout(() => {
+                isWaiting = false;
+            }, 2000);
+        }
+
+        setInterval(updateStatus, 2000);
+        updateStatus();
+    </script>
+
+</body>
+</html>

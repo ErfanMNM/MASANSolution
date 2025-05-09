@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dịch vụ lưu trữ dữ liệu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 10px;
+            background-color: #f4f4f4;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        label {
+            margin-top: 10px;
+            display: block;
+            font-weight: bold;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px 0;
+            width: 200px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+            button:hover {
+                background-color: #45a049;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .action-buttons button {
+            padding: 5px 10px;
+            margin-right: 5px;
+        }
+
+            .action-buttons button:nth-child(1) {
+                background-color: #ff9800;
+            }
+
+            .action-buttons button:nth-child(2) {
+                background-color: #2196F3;
+            }
+
+            .action-buttons button:nth-child(3) {
+                background-color: #f44336;
+            }
+    </style>
+</head>
+<body>
+
+    <h1>Dịch vụ trung chuyển dữ liệu</h1>
+
+    <div>
+        <label for="key">Khóa:</label>
+        <input id="key" placeholder="Nhập khóa" />
+    </div>
+
+    <div>
+        <label for="value">Giá trị:</label>
+        <input id="value" placeholder="Nhập giá trị" />
+    </div>
+
+    <button onclick="saveData()">Lưu dữ liệu</button>
+    <button onclick="loadData()">Tải dữ liệu</button>
+    <button onclick="deleteData()">Xóa dữ liệu</button>
+
+    <p id="result"></p>
+
+    <h2>Danh sách khóa và giá trị</h2>
+    <button onclick="loadKeys()">Tải lại danh sách khóa</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Khóa</th>
+                <th>Giá trị</th>
+                <th>Tác động</th>
+            </tr>
+        </thead>
+        <tbody id="keyTable"></tbody>
+    </table>
+
+    <h2>Tạo Timer (Reset tự động)</h2>
+
+    <div>
+        <label for="timerKey">Khóa Timer:</label>
+        <input id="timerKey" placeholder="Tên Timer" />
+    </div>
+
+    <div>
+        <label for="timerValue">Giá trị ban đầu:</label>
+        <input id="timerValue" placeholder="Giá trị ban đầu" />
+    </div>
+
+    <div>
+        <label for="timerResetTime">Reset sau (ms):</label>
+        <input id="timerResetTime" type="number" placeholder="Thời gian reset" />
+    </div>
+
+    <div>
+        <label for="timerDefault">Giá trị mặc định:</label>
+        <input id="timerDefault" placeholder="Giá trị mặc định" />
+    </div>
+
+    <button onclick="createTimer()">Tạo Timer</button>
+
+    <h2>Danh sách Timer</h2>
+    <button onclick="loadTimers()">Tải lại danh sách Timer</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Khóa</th>
+                <th>Giá trị</th>
+                <th>Thời gian còn lại (ms)</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="timerTable"></tbody>
+    </table>
+
+
+    <script>
+        async function saveData() {
+            const key = document.getElementById('key').value;
+            const value = document.getElementById('value').value;
+
+            if (!key) return alert("Khóa không được để trống!");
+
+            await fetch(`http://localhost:3000/set/${key}/${value}`);
+            loadKeys();
+        }
+
+        async function loadData() {
+            const key = document.getElementById('key').value;
+            if (!key) return alert("Vui lòng nhập khóa để tải dữ liệu.");
+
+            const res = await fetch(`http://localhost:3000/get/${key}`);
+            const data = await res.json();
+            document.getElementById('result').innerText = data.value || 'Không có dữ liệu';
+        }
+
+        async function deleteData() {
+            const key = document.getElementById('key').value;
+            if (!key) return alert("Vui lòng nhập khóa để xóa.");
+
+            await fetch(`http://localhost:3000/delete/${key}`, { method: 'DELETE' });
+            document.getElementById('result').innerText = 'Đã xóa';
+            loadKeys();
+        }
+
+        async function loadKeys() {
+            const res = await fetch('http://localhost:3000/keys');
+            const data = await res.json();
+            const tableBody = document.getElementById('keyTable');
+            tableBody.innerHTML = '';
+
+            for (const key of data.keys) {
+                const valueRes = await fetch(`http://localhost:3000/get/${key}`);
+                const valueData = await valueRes.json();
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                            <td>${key}</td>
+                            <td>${valueData.value || ''}</td>
+                            <td class="action-buttons">
+                                <button onclick="deleteKey('${key}')">Xóa</button>
+                            </td>
+                        `;
+                tableBody.appendChild(row);
+            }
+        }
+
+        async function deleteKey(key) {
+            await fetch(`http://localhost:3000/delete/${key}`, { method: 'DELETE' });
+            loadKeys();
+        }
+
+        async function createTimer() {
+            const key = document.getElementById('timerKey').value;
+            const value = document.getElementById('timerValue').value;
+            const resetTime = parseInt(document.getElementById('timerResetTime').value);
+            const defaultValue = document.getElementById('timerDefault').value;
+
+            if (!key || isNaN(resetTime)) return alert("Khóa và thời gian reset không được để trống!");
+
+            await fetch(`http://localhost:3000/timer/create`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key, defaultValue, timeMs: resetTime })
+            });
+
+            loadTimers();
+            loadKeys();
+        }
+
+        async function loadTimers() {
+            const res = await fetch('http://localhost:3000/timer/list');
+            const data = await res.json();
+            const table = document.getElementById('timerTable');
+            table.innerHTML = '';
+
+            data.forEach(timer => {
+                const row = document.createElement('tr');
+                const remainingId = `remaining-${timer.key}`;
+                const rerunInputId = `rerunInput-${timer.key}`;
+
+                row.innerHTML = `
+            <td>${timer.key}</td>
+            <td>${timer.value}</td>
+            <td id="${remainingId}">${Math.floor(timer.remainingTimeMs / 1000)}</td>
+            <td class="action-buttons">
+                <input id="${rerunInputId}" placeholder="Nhập giá trị mới" />
+                <button onclick="rerunTimer('${timer.key}')">Rerun</button>
+                <button onclick="resetTimer('${timer.key}')">Reset</button>
+                <button onclick="deleteTimer('${timer.key}')">Xóa</button>
+            </td>
+        `;
+                table.appendChild(row);
+
+                let timeLeft = timer.remainingTimeMs;
+                const intervalId = setInterval(() => {
+                    const el = document.getElementById(remainingId);
+                    if (!el || timeLeft <= 0) return clearInterval(intervalId);
+                    timeLeft -= 1000;
+                    el.innerText = Math.floor(timeLeft / 1000);
+                }, 1000);
+            });
+        }
+
+        async function resetTimer(key) {
+            await fetch(`http://localhost:3000/timer/reset/${key}`, { method: 'POST' });
+            loadTimers();
+            loadKeys();
+        }
+
+        async function rerunTimer(key) {
+            const rerunValue = document.getElementById(`rerunInput-${key}`).value;
+
+            if (!rerunValue) return alert("Vui lòng nhập giá trị mới khi rerun!");
+
+            await fetch(`http://localhost:3000/timer/set/${key}/${rerunValue}`, { method: 'POST' });
+            loadTimers();
+            loadKeys();
+        }
+
+        async function deleteTimer(key) {
+            await fetch(`http://localhost:3000/timer/delete/${key}`, { method: 'DELETE' });
+            loadTimers();
+            loadKeys();
+        }
+
+        window.onload = function () {
+            loadKeys();
+            loadTimers();
+        };
+    </script>
+
+</body>
+</html>

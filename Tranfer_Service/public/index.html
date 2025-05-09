@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electron Temp Storage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        button {
+            padding: 5px 10px;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Electron Temp Storage</h1>
+
+    <label for="key">Key:</label>
+    <input id="key" placeholder="Enter key" />
+
+    <label for="value">Value:</label>
+    <input id="value" placeholder="Enter value" />
+
+    <button onclick="saveData()">Save</button>
+    <button onclick="loadData()">Load</button>
+    <button onclick="deleteData()">Delete</button>
+
+    <p id="result"></p>
+
+    <h2>Stored Keys & Values</h2>
+    <button onclick="loadKeys()">Refresh Keys</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="keyTable"></tbody>
+    </table>
+
+    <script>
+        async function saveData() {
+            const key = document.getElementById('key').value;
+            const value = document.getElementById('value').value;
+
+            if (!key) {
+                alert("Key cannot be empty!");
+                return;
+            }
+
+            await fetch(`http://localhost:3000/set/${key}/${value}`);
+
+            loadKeys(); // Cập nhật bảng sau khi lưu dữ liệu
+        }
+
+
+        async function loadData() {
+            const key = document.getElementById('key').value;
+            if (!key) {
+                alert("Please enter a key to load data.");
+                return;
+            }
+
+            const res = await fetch(`http://localhost:3000/get/${key}`);
+            const data = await res.json();
+            document.getElementById('result').innerText = data.value || 'No data found';
+        }
+
+        async function deleteData() {
+            const key = document.getElementById('key').value;
+            if (!key) {
+                alert("Please enter a key to delete.");
+                return;
+            }
+
+            await fetch(`http://localhost:3000/delete/${key}`, { method: 'DELETE' });
+            document.getElementById('result').innerText = 'Deleted';
+            loadKeys(); // Cập nhật bảng sau khi xóa
+        }
+
+        async function loadKeys() {
+            const res = await fetch('http://localhost:3000/keys');
+            const data = await res.json();
+
+            const tableBody = document.getElementById('keyTable');
+
+            // Lấy danh sách key hiện tại trên giao diện
+            const existingRows = {};
+            tableBody.querySelectorAll("tr").forEach(row => {
+                const key = row.dataset.key;
+                if (key) existingRows[key] = row;
+            });
+
+            // Duyệt qua danh sách key mới từ server
+            for (const key of data.keys) {
+                const valueRes = await fetch(`http://localhost:3000/get/${key}`);
+                const valueData = await valueRes.json();
+
+                if (existingRows[key]) {
+                    // Cập nhật giá trị nếu đã tồn tại key
+                    existingRows[key].querySelector(".value").innerText = valueData.value || '';
+                } else {
+                    // Tạo dòng mới nếu key chưa có trong bảng
+                    const row = document.createElement('tr');
+                    row.dataset.key = key;
+                    row.innerHTML = `
+                <td>${key}</td>
+                <td class="value">${valueData.value || ''}</td>
+                <td><button onclick="deleteKey('${key}')">Delete</button></td>
+            `;
+                    tableBody.appendChild(row);
+                }
+            }
+
+            // Xóa các key không còn tồn tại trên server
+            Object.keys(existingRows).forEach(key => {
+                if (!data.keys.includes(key)) {
+                    tableBody.removeChild(existingRows[key]);
+                }
+            });
+        }
+
+
+        async function deleteKey(key) {
+            await fetch(`http://localhost:3000/delete/${key}`, { method: 'DELETE' });
+            loadKeys(); // Cập nhật lại danh sách
+        }
+
+        // Tự động tải danh sách key khi mở trang
+        window.onload = loadKeys;
+
+        // Tự động tải danh sách key mỗi 2 giây
+        setInterval(loadKeys, 2000);
+    </script>
+
+</body>
+
+</html>

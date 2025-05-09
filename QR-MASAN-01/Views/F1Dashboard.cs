@@ -40,7 +40,7 @@ namespace QR_MASAN_01
                     case e_Data_Status.NODATA:
                         this.Invoke(new Action(() =>
                         {
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Bắt đầu đồng bộ dữ liệu giữa các máy ");
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Bước 1: Bắt đầu đồng bộ dữ liệu giữa các máy ");
                             ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                         }));
                         Get_Server_MFI_ID();
@@ -134,7 +134,7 @@ namespace QR_MASAN_01
                             Globalvariable.Data_Status = e_Data_Status.GET;
                             this.Invoke(new Action(() =>
                             {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Phát hiện phiên giao dịch mới, tiến hành lấy mã...");
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Có dữ liệu mới, đang đồng bộ");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                             }));
                         }
@@ -145,7 +145,7 @@ namespace QR_MASAN_01
                             {
                                 this.Invoke(new Action(() =>
                                 {
-                                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Không thấy phiên mới, tiến hành kiểm tra dữ liệu cũ...");
+                                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Dữ liệu đã khớp, bắt đầu khôi phục dữ liệu");
                                     ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                                 }));
 
@@ -166,7 +166,7 @@ namespace QR_MASAN_01
                         }
                         this.Invoke(new Action(() =>
                         {
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi máy chủ: {response.StatusCode}");
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Không thể kết nối máy chủ đồng bộ : {response.StatusCode}");
                             ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                         }));
 
@@ -356,7 +356,7 @@ namespace QR_MASAN_01
             //đẩy dữ liệu vào máy in
             this.Invoke(new Action(() =>
             {
-                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Đẩy dữ liệu máy in... ");
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Bước 3:  Đẩy dữ liệu máy in... ");
                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
             }));
             Globalvariable.Data_Status = e_Data_Status.PRINTER_PUSH;
@@ -460,14 +460,14 @@ namespace QR_MASAN_01
                 SELECT `MFI_ID` FROM `MFI_Table` ORDER BY `ID` DESC LIMIT 1;
                 ";
 
-            if (!Directory.Exists("Server_Database"))
+            if (!Directory.Exists("Client_Database"))
             {
-                Directory.CreateDirectory("Server_Database");
+                Directory.CreateDirectory("Client_Database");
             }
 
-            if (!File.Exists("Server_Database/MF_Data.db"))
+            if (!File.Exists("Client_Database/MF_Data.db"))
             {
-                SQLiteConnection.CreateFile("Server_Database/MF_Data.db");
+                SQLiteConnection.CreateFile("Client_Database/MF_Data.db");
             }
             using (SQLiteConnection conn = new SQLiteConnection(connectionString))
             {
