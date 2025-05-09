@@ -897,7 +897,7 @@
             this.uiTabControl1.MainPage = "";
             this.uiTabControl1.Name = "uiTabControl1";
             this.uiTabControl1.SelectedIndex = 0;
-            this.uiTabControl1.Size = new System.Drawing.Size(457, 413);
+            this.uiTabControl1.Size = new System.Drawing.Size(454, 413);
             this.uiTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.uiTabControl1.TabIndex = 0;
             this.uiTabControl1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -934,7 +934,7 @@
             this.tabPage2.Controls.Add(this.uiTableLayoutPanel19);
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(200, 60);
+            this.tabPage2.Size = new System.Drawing.Size(454, 373);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Thống kê";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -1700,7 +1700,7 @@
             this.tabPage3.Controls.Add(this.opHisConsole);
             this.tabPage3.Location = new System.Drawing.Point(0, 40);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(200, 60);
+            this.tabPage3.Size = new System.Drawing.Size(457, 373);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Lịch sử";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1717,7 +1717,7 @@
             this.opHisConsole.Name = "opHisConsole";
             this.opHisConsole.Padding = new System.Windows.Forms.Padding(2);
             this.opHisConsole.ShowText = false;
-            this.opHisConsole.Size = new System.Drawing.Size(200, 60);
+            this.opHisConsole.Size = new System.Drawing.Size(457, 373);
             this.opHisConsole.TabIndex = 0;
             this.opHisConsole.Text = "uiListBox1";
             // 
@@ -1889,7 +1889,6 @@
             this.lblTotal.Size = new System.Drawing.Size(113, 40);
             this.lblTotal.TabIndex = 15;
             this.lblTotal.Text = "uiDigitalLabel1";
-            this.lblTotal.Value = 9999999D;
             // 
             // uiLabel11
             // 
@@ -1936,7 +1935,6 @@
             this.lblLineSpeed.Size = new System.Drawing.Size(115, 36);
             this.lblLineSpeed.TabIndex = 12;
             this.lblLineSpeed.Text = "uiDigitalLabel8";
-            this.lblLineSpeed.Value = 9999999D;
             // 
             // lblInActiveCode
             // 
@@ -2011,7 +2009,6 @@
             this.lblFail.Size = new System.Drawing.Size(115, 40);
             this.lblFail.TabIndex = 7;
             this.lblFail.Text = "uiDigitalLabel2";
-            this.lblFail.Value = 9999999D;
             // 
             // uiLabel9
             // 
@@ -2056,7 +2053,6 @@
             this.lblPass.Size = new System.Drawing.Size(113, 40);
             this.lblPass.TabIndex = 5;
             this.lblPass.Text = "uiDigitalLabel1";
-            this.lblPass.Value = 9999999D;
             // 
             // WK_Update
             // 
@@ -2109,13 +2105,13 @@
             // 
             // Camera
             // 
-            this.Camera.IP = "192.168.250.12";
+            this.Camera.IP = "127.0.0.1";
             this.Camera.Port = 51236;
             this.Camera.ClientCallBack += new SPMS1.TCPClient.EventForClient(this.Camera_ClientCallBack);
             // 
             // PLC
             // 
-            this.PLC.PLC_IP = "192.168.250.1";
+            this.PLC.PLC_IP = "127.0.0.1";
             this.PLC.PLC_PORT = 9600;
             this.PLC.PLC_Ready_DM = "D16";
             this.PLC.PLC_STATUS = SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect;

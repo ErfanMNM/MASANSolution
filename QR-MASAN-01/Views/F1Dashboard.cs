@@ -52,7 +52,7 @@ namespace QR_MASAN_01
                         {
                             this.Invoke(new Action(() =>
                             {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}:  ");
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Đưa mã Dic ");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                             }));
                             WK_Push_Data_To_Dic.RunWorkerAsync();
@@ -75,14 +75,19 @@ namespace QR_MASAN_01
                         break;
                     case e_Data_Status.PRINTER_PUSH:
                         //gửi thông tin qua máy in
-                        //if(Globalvariable.CSW_APPMODE == "NEWMode")
-                        //{
+                        if (Globalvariable.APPMODE == e_Mode.NEWMode)
+                        {
 
-                        //}
-                        //else
-                        //{
-                        //    //Globalvariable.Data_Status = e_Data_Status.PUSHOK;
-                        //}
+                        }
+                        else
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Ở chế độ không in, bỏ qua máy in ");
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                            }));
+                            Globalvariable.Data_Status = e_Data_Status.PUSHOK;
+                        }
 
                         break;
                     case e_Data_Status.PUSHOK:
@@ -327,7 +332,7 @@ namespace QR_MASAN_01
                     int ProductID = Convert.ToInt32(row["ProductID"]); // CaseID
                     string ProductQR = row["ProductQR"].ToString(); // CaseQR
                     int active = Convert.ToInt32(row["Active"]); // Active
-                    string timeStamp = "0"; // TimeStamp
+                    string timeStamp = row["TimestampActive"].ToString(); ; // TimeStamp
 
                     // Thêm dữ liệu vào Dictionary với CaseQR làm key
                   Globalvariable.ProductQR_Dictionary[ProductQR] = new ProductData

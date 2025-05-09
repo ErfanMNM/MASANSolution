@@ -56,6 +56,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DATALOGIC_SCAN">
+      <HintPath>.\DATALOGIC_SCAN.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -99,6 +102,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dialogs\Entertext.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\Entertext.Designer.cs">
+      <DependentUpon>Entertext.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\Scaner.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\Scaner.Designer.cs">
+      <DependentUpon>Scaner.cs</DependentUpon>
+    </Compile>
     <Compile Include="FMainQR01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -114,10 +129,18 @@
     <Compile Include="Views\F1Dashboard.Designer.cs">
       <DependentUpon>F1Dashboard.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\MFI_Service\MFI.cs" />
-    <Compile Include="Views\MFI_Service\MFI.Designer.cs">
-      <DependentUpon>MFI.cs</DependentUpon>
+    <Compile Include="Views\ScanQR.cs">
+      <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Views\ScanQR.Designer.cs">
+      <DependentUpon>ScanQR.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Dialogs\Entertext.resx">
+      <DependentUpon>Entertext.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\Scaner.resx">
+      <DependentUpon>Scaner.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FMainQR01.resx">
       <DependentUpon>FMainQR01.cs</DependentUpon>
     </EmbeddedResource>
@@ -134,8 +157,8 @@
     <EmbeddedResource Include="Views\F1Dashboard.resx">
       <DependentUpon>F1Dashboard.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\MFI_Service\MFI.resx">
-      <DependentUpon>MFI.cs</DependentUpon>
+    <EmbeddedResource Include="Views\ScanQR.resx">
+      <DependentUpon>ScanQR.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -159,6 +182,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\LogoTanTien.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\MFI_Service\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

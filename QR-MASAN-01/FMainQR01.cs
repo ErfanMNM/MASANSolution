@@ -23,7 +23,7 @@ namespace QR_MASAN_01
         //F1MFI _FMFI = new F1MFI();
         // F1Cloud _f1Cloud = new F1Cloud();
        // F1Data _F1Data = new F1Data();
-        //ScanQR scanQR = new ScanQR();
+        ScanQR scanQR = new ScanQR();
        // F1PLC _f1PLC = new F1PLC();
 
         public FMainQR01()
@@ -56,7 +56,7 @@ namespace QR_MASAN_01
 
             //uiNavMenu1.CreateNode(AddPage(_F1Data, 1005));
 
-           // uiNavMenu1.CreateNode(AddPage(scanQR, 1006));
+           uiNavMenu1.CreateNode(AddPage(scanQR, 1006));
 
            // uiNavMenu1.CreateNode(AddPage(_f1Cloudv2, 1007));
 
@@ -65,7 +65,7 @@ namespace QR_MASAN_01
           //  _F1Printer.SET(SETCODE.Init);
           // _FMFI.FMFI_INIT();
            // _f1Cloud.F1Cloud_INIT();
-           // scanQR.INIT();
+           scanQR.INIT();
         }
 
 
