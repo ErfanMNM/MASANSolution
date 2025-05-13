@@ -3,290 +3,455 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dịch vụ lưu trữ dữ liệu</title>
+    <title>API Tester</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 10px;
-            background-color: #f4f4f4;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
         }
 
         h1, h2 {
+            text-align: center;
             color: #333;
+            margin-bottom: 20px;
         }
 
-        label {
-            margin-top: 10px;
-            display: block;
-            font-weight: bold;
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        input {
-            padding: 8px;
-            margin: 5px 0;
-            width: 200px;
-            border-radius: 4px;
+        input[type="text"], input[type="number"] {
+            flex: 1;
+            padding: 10px;
             border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+            input[type="text"]:focus, input[type="number"]:focus {
+                outline: none;
+                border-color: #007bff;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+            }
+
+        input:disabled {
+            background-color: #f0f0f0;
         }
 
         button {
-            padding: 8px 12px;
-            background-color: #4CAF50;
-            color: white;
+            padding: 10px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
-            margin-top: 10px;
+            transition: background-color 0.3s;
         }
 
-            button:hover {
-                background-color: #45a049;
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
             }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+            .btn-success:hover {
+                background-color: #1e7e34;
+            }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+            .btn-danger:hover {
+                background-color: #b02a37;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background-color: #545b62;
+            }
+
+        .response, .error {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .response {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .keys-list {
+            margin-bottom: 20px;
+        }
+
+            .keys-list ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            .keys-list li {
+                padding: 10px;
+                background-color: #f8f9fa;
+                margin-bottom: 5px;
+                border-radius: 5px;
+            }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .active-keys {
+            margin-bottom: 20px;
+        }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
         th, td {
-            padding: 12px;
+            padding: 10px;
             text-align: left;
             border: 1px solid #ddd;
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #007bff;
+            color: white;
         }
 
-        .action-buttons button {
-            padding: 5px 10px;
-            margin-right: 5px;
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
         }
 
-            .action-buttons button:nth-child(1) {
-                background-color: #ff9800;
+        @media (max-width: 600px) {
+            .form-group {
+                flex-direction: column;
             }
 
-            .action-buttons button:nth-child(2) {
-                background-color: #2196F3;
+            input[type="text"], input[type="number"] {
+                width: 100%;
             }
 
-            .action-buttons button:nth-child(3) {
-                background-color: #f44336;
+            table {
+                font-size: 14px;
             }
+        }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>API Tester</h1>
 
-    <h1>Dịch vụ trung chuyển dữ liệu</h1>
+        <!-- Form để set key-value -->
+        <form id="setForm" class="form-group">
+            <input type="text" id="setKey" placeholder="Key (e.g., CAMERA_A)" required>
+            <input type="text" id="setValue" placeholder="Value (e.g., 1)" required>
+            <div class="checkbox-group">
+                <input type="number" id="setTtl" placeholder="TTL (ms)" value="3000">
+                <label>
+                    <input type="checkbox" id="permanent" onclick="toggleTtl()"> Permanent
+                </label>
+            </div>
+            <button type="submit" class="btn-primary">Set Value</button>
+        </form>
 
-    <div>
-        <label for="key">Khóa:</label>
-        <input id="key" placeholder="Nhập khóa" />
+        <!-- Form để get value -->
+        <div class="form-group">
+            <input type="text" id="getKey" placeholder="Key to get">
+            <button onclick="handleGet()" class="btn-success">Get Value</button>
+        </div>
+
+        <!-- Form để delete key -->
+        <div class="form-group">
+            <input type="text" id="deleteKey" placeholder="Key to delete">
+            <button onclick="handleDelete()" class="btn-danger">Delete Key</button>
+        </div>
+
+        <!-- Danh sách keys -->
+        <div class="keys-list">
+            <h2>Current Keys</h2>
+            <button onclick="fetchKeys()" class="btn-secondary">Refresh Keys</button>
+            <ul id="keysList"></ul>
+        </div>
+
+        <!-- Bảng key hiện hoạt -->
+        <div class="active-keys">
+            <h2>Active Keys</h2>
+            <table id="activeKeysTable">
+                <thead>
+                    <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                        <th>Status</th>
+                        <th>Expires At</th>
+                    </tr>
+                </thead>
+                <tbody id="activeKeysBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Thông báo -->
+        <div id="response" class="response"></div>
+        <div id="error" class="error"></div>
     </div>
-
-    <div>
-        <label for="value">Giá trị:</label>
-        <input id="value" placeholder="Nhập giá trị" />
-    </div>
-
-    <button onclick="saveData()">Lưu dữ liệu</button>
-    <button onclick="loadData()">Tải dữ liệu</button>
-    <button onclick="deleteData()">Xóa dữ liệu</button>
-
-    <p id="result"></p>
-
-    <h2>Danh sách khóa và giá trị</h2>
-    <button onclick="loadKeys()">Tải lại danh sách khóa</button>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Khóa</th>
-                <th>Giá trị</th>
-                <th>Tác động</th>
-            </tr>
-        </thead>
-        <tbody id="keyTable"></tbody>
-    </table>
-
-    <h2>Tạo Timer (Reset tự động)</h2>
-
-    <div>
-        <label for="timerKey">Khóa Timer:</label>
-        <input id="timerKey" placeholder="Tên Timer" />
-    </div>
-
-    <div>
-        <label for="timerValue">Giá trị ban đầu:</label>
-        <input id="timerValue" placeholder="Giá trị ban đầu" />
-    </div>
-
-    <div>
-        <label for="timerResetTime">Reset sau (ms):</label>
-        <input id="timerResetTime" type="number" placeholder="Thời gian reset" />
-    </div>
-
-    <div>
-        <label for="timerDefault">Giá trị mặc định:</label>
-        <input id="timerDefault" placeholder="Giá trị mặc định" />
-    </div>
-
-    <button onclick="createTimer()">Tạo Timer</button>
-
-    <h2>Danh sách Timer</h2>
-    <button onclick="loadTimers()">Tải lại danh sách Timer</button>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Khóa</th>
-                <th>Giá trị</th>
-                <th>Thời gian còn lại (ms)</th>
-                <th>Hành động</th>
-            </tr>
-        </thead>
-        <tbody id="timerTable"></tbody>
-    </table>
-
 
     <script>
-        async function saveData() {
-            const key = document.getElementById('key').value;
-            const value = document.getElementById('value').value;
+        const API_URL = 'http://localhost:3000';
+        let keyCache = {}; // Lưu trữ dữ liệu key để tránh gọi API liên tục
 
-            if (!key) return alert("Khóa không được để trống!");
-
-            await fetch(`http://localhost:3000/set/${key}/${value}`);
-            loadKeys();
-        }
-
-        async function loadData() {
-            const key = document.getElementById('key').value;
-            if (!key) return alert("Vui lòng nhập khóa để tải dữ liệu.");
-
-            const res = await fetch(`http://localhost:3000/get/${key}`);
-            const data = await res.json();
-            document.getElementById('result').innerText = data.value || 'Không có dữ liệu';
-        }
-
-        async function deleteData() {
-            const key = document.getElementById('key').value;
-            if (!key) return alert("Vui lòng nhập khóa để xóa.");
-
-            await fetch(`http://localhost:3000/delete/${key}`, { method: 'DELETE' });
-            document.getElementById('result').innerText = 'Đã xóa';
-            loadKeys();
-        }
-
-        async function loadKeys() {
-            const res = await fetch('http://localhost:3000/keys');
-            const data = await res.json();
-            const tableBody = document.getElementById('keyTable');
-            tableBody.innerHTML = '';
-
-            for (const key of data.keys) {
-                const valueRes = await fetch(`http://localhost:3000/get/${key}`);
-                const valueData = await valueRes.json();
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                            <td>${key}</td>
-                            <td>${valueData.value || ''}</td>
-                            <td class="action-buttons">
-                                <button onclick="deleteKey('${key}')">Xóa</button>
-                            </td>
-                        `;
-                tableBody.appendChild(row);
+        // Bật/tắt input TTL khi checkbox Permanent được chọn
+        function toggleTtl() {
+            const ttlInput = document.getElementById('setTtl');
+            const permanentCheckbox = document.getElementById('permanent');
+            ttlInput.disabled = permanentCheckbox.checked;
+            if (permanentCheckbox.checked) {
+                ttlInput.value = '';
+            } else {
+                ttlInput.value = '3000';
             }
         }
 
-        async function deleteKey(key) {
-            await fetch(`http://localhost:3000/delete/${key}`, { method: 'DELETE' });
-            loadKeys();
+        // Hiển thị thông báo
+        function showMessage(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 3000);
         }
 
-        async function createTimer() {
-            const key = document.getElementById('timerKey').value;
-            const value = document.getElementById('timerValue').value;
-            const resetTime = parseInt(document.getElementById('timerResetTime').value);
-            const defaultValue = document.getElementById('timerDefault').value;
+        // Xử lý form set key-value
+        document.getElementById('setForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const key = document.getElementById('setKey').value;
+            const value = document.getElementById('setValue').value;
+            const ttl = document.getElementById('setTtl').value;
+            const permanent = document.getElementById('permanent').checked;
 
-            if (!key || isNaN(resetTime)) return alert("Khóa và thời gian reset không được để trống!");
+            const body = permanent ? { key, value } : { key, value, ttl: parseInt(ttl) };
 
-            await fetch(`http://localhost:3000/timer/create`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ key, defaultValue, timeMs: resetTime })
-            });
+            try {
+                const res = await fetch(`${API_URL}/set`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    const msg = permanent ? `Set ${key} = ${value} (permanent)` : `Set ${key} = ${value} with TTL ${ttl}ms`;
+                    showMessage('response', msg);
+                    document.getElementById('setForm').reset();
+                    document.getElementById('setTtl').disabled = false;
+                    document.getElementById('permanent').checked = false;
+                    await fetchKeys(); // Cập nhật danh sách keys
+                    await fetchActiveKeys(true); // Cập nhật bảng với dữ liệu mới từ server
+                } else {
+                    showMessage('error', data.error || 'Failed to set value', true);
+                }
+            } catch (err) {
+                showMessage('error', 'Error connecting to server', true);
+            }
+        });
 
-            loadTimers();
-            loadKeys();
+        // Xử lý get value
+        async function handleGet() {
+            const key = document.getElementById('getKey').value;
+            if (!key) {
+                showMessage('error', 'Please enter a key', true);
+                return;
+            }
+            try {
+                const res = await fetch(`${API_URL}/get/${key}`);
+                const data = await res.json();
+                showMessage('response', `Value of ${key}: ${data.value}`);
+            } catch (err) {
+                showMessage('error', 'Error connecting to server', true);
+            }
         }
 
-        async function loadTimers() {
-            const res = await fetch('http://localhost:3000/timer/list');
-            const data = await res.json();
-            const table = document.getElementById('timerTable');
-            table.innerHTML = '';
-
-            data.forEach(timer => {
-                const row = document.createElement('tr');
-                const remainingId = `remaining-${timer.key}`;
-                const rerunInputId = `rerunInput-${timer.key}`;
-
-                row.innerHTML = `
-            <td>${timer.key}</td>
-            <td>${timer.value}</td>
-            <td id="${remainingId}">${Math.floor(timer.remainingTimeMs / 1000)}</td>
-            <td class="action-buttons">
-                <input id="${rerunInputId}" placeholder="Nhập giá trị mới" />
-                <button onclick="rerunTimer('${timer.key}')">Rerun</button>
-                <button onclick="resetTimer('${timer.key}')">Reset</button>
-                <button onclick="deleteTimer('${timer.key}')">Xóa</button>
-            </td>
-        `;
-                table.appendChild(row);
-
-                let timeLeft = timer.remainingTimeMs;
-                const intervalId = setInterval(() => {
-                    const el = document.getElementById(remainingId);
-                    if (!el || timeLeft <= 0) return clearInterval(intervalId);
-                    timeLeft -= 1000;
-                    el.innerText = Math.floor(timeLeft / 1000);
-                }, 1000);
-            });
+        // Xử lý delete key
+        async function handleDelete() {
+            const key = document.getElementById('deleteKey').value;
+            if (!key) {
+                showMessage('error', 'Please enter a key', true);
+                return;
+            }
+            try {
+                const res = await fetch(`${API_URL}/delete/${key}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    showMessage('response', `Deleted ${key}`);
+                    document.getElementById('deleteKey').value = '';
+                    await fetchKeys(); // Cập nhật danh sách keys
+                    await fetchActiveKeys(true); // Cập nhật bảng với dữ liệu mới từ server
+                } else {
+                    showMessage('error', data.error || 'Failed to delete key', true);
+                }
+            } catch (err) {
+                showMessage('error', 'Error connecting to server', true);
+            }
         }
 
-        async function resetTimer(key) {
-            await fetch(`http://localhost:3000/timer/reset/${key}`, { method: 'POST' });
-            loadTimers();
-            loadKeys();
+        // Lấy và hiển thị danh sách keys
+        async function fetchKeys() {
+            try {
+                const res = await fetch(`${API_URL}/keys`);
+                const data = await res.json();
+                const keysList = document.getElementById('keysList');
+                keysList.innerHTML = '';
+                if (data.keys && data.keys.length > 0) {
+                    data.keys.forEach(key => {
+                        const li = document.createElement('li');
+                        li.textContent = key;
+                        keysList.appendChild(li);
+                    });
+                } else {
+                    keysList.innerHTML = '<li>No keys found</li>';
+                }
+            } catch (err) {
+                showMessage('error', 'Error fetching keys', true);
+            }
         }
 
-        async function rerunTimer(key) {
-            const rerunValue = document.getElementById(`rerunInput-${key}`).value;
+        // Lấy và hiển thị bảng key hiện hoạt
+        async function fetchActiveKeys(forceRefresh = false) {
+            try {
+                let keys = Object.keys(keyCache);
+                if (forceRefresh) {
+                    const res = await fetch(`${API_URL}/keys`);
+                    keys = (await res.json()).keys || [];
+                }
 
-            if (!rerunValue) return alert("Vui lòng nhập giá trị mới khi rerun!");
+                const tableBody = document.getElementById('activeKeysBody');
+                const newCache = {};
 
-            await fetch(`http://localhost:3000/timer/set/${key}/${rerunValue}`, { method: 'POST' });
-            loadTimers();
-            loadKeys();
+                for (const key of keys) {
+                    let value, expiresAt, status;
+                    if (forceRefresh || !keyCache[key]) {
+                        const res = await fetch(`${API_URL}/get/${key}`);
+                        const data = await res.json();
+                        value = data.value;
+
+                        // Giả lập lấy thông tin TTL và expiresAt từ backend
+                        const tempRes = await fetch(`${API_URL}/set`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ key, value, ttl: null })
+                        });
+                        const tempData = await tempRes.json();
+                        expiresAt = tempData.ttl ? tempData.expiresAt : null;
+                        status = tempData.ttl ? 'Temporary' : 'Permanent';
+                    } else {
+                        value = keyCache[key].value;
+                        expiresAt = keyCache[key].expiresAt;
+                        status = keyCache[key].status;
+                    }
+
+                    // Kiểm tra TTL cục bộ
+                    if (expiresAt && expiresAt <= Date.now()) {
+                        value = 0;
+                    }
+
+                    newCache[key] = { value, expiresAt, status };
+
+                    // Cập nhật hoặc tạo dòng trong bảng
+                    let row = document.getElementById(`key-row-${key}`);
+                    if (!row) {
+                        row = document.createElement('tr');
+                        row.id = `key-row-${key}`;
+                        row.innerHTML = `
+                                <td>${key}</td>
+                                <td id="value-${key}">${value}</td>
+                                <td id="status-${key}">${status}</td>
+                                <td id="expires-${key}">${expiresAt ? new Date(expiresAt).toLocaleString() : 'Never'}</td>
+                            `;
+                        tableBody.appendChild(row);
+                    } else {
+                        // Chỉ cập nhật nếu dữ liệu thay đổi
+                        const valueCell = document.getElementById(`value-${key}`);
+                        const statusCell = document.getElementById(`status-${key}`);
+                        const expiresCell = document.getElementById(`expires-${key}`);
+                        if (valueCell.textContent !== value.toString()) {
+                            valueCell.textContent = value;
+                        }
+                        if (statusCell.textContent !== status) {
+                            statusCell.textContent = status;
+                        }
+                        if (expiresCell.textContent !== (expiresAt ? new Date(expiresAt).toLocaleString() : 'Never')) {
+                            expiresCell.textContent = expiresAt ? new Date(expiresAt).toLocaleString() : 'Never';
+                        }
+                    }
+                }
+
+                // Xóa các dòng không còn trong keys
+                const existingRows = tableBody.getElementsByTagName('tr');
+                for (const row of existingRows) {
+                    const key = row.id.replace('key-row-', '');
+                    if (!keys.includes(key)) {
+                        row.remove();
+                    }
+                }
+
+                keyCache = newCache;
+
+                if (keys.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="4">No active keys</td></tr>';
+                }
+            } catch (err) {
+                showMessage('error', 'Error fetching active keys', true);
+            }
         }
 
-        async function deleteTimer(key) {
-            await fetch(`http://localhost:3000/timer/delete/${key}`, { method: 'DELETE' });
-            loadTimers();
-            loadKeys();
-        }
+        // Tải keys và bảng khi trang mở
+        fetchKeys();
+        fetchActiveKeys(true);
 
-        window.onload = function () {
-            loadKeys();
-            loadTimers();
-        };
+        // Tự động cập nhật bảng mỗi 1 giây (chỉ kiểm tra TTL cục bộ)
+        setInterval(() => fetchActiveKeys(false), 1000);
     </script>
-
 </body>
 </html>
