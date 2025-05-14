@@ -85,14 +85,6 @@ namespace QR_MASAN_01
         public string TimeStamp { get; set; }
     }
 
-    public enum e_MFI_Status
-    {
-        STARTUP,
-        SQLite_LOAD,
-        SQLite_SAVE,
-        PUSHSERVER,
-        FREE
-    }
 
     public enum e_Server_Status
     {
@@ -157,23 +149,7 @@ namespace QR_MASAN_01
         RECONNECT
     }
 
-    public class Server_MFI
-    {
-        public static string Case_Barcode { get; set; } = "Barcode";
-        public static string Product_Barcode { get; set; } = "0";
-        public static string Case_LOT { get; set; } = "16122024";
-        public static string Batch_Code { get; set; }
-        public static string Block_Size { get; set; }
-        public static string Case_Size { get; set; }
-        public static string Pallet_Size { get; set; }
-        public static string SanLuong { get; set; }
-        public static string Operator { get; set; }
-        public static string Pallet_QR_Type { get; set; }
-        public static string MFI_ID { get; set; }
-        public static string QRCode_Folder { get; set; }
-        public static string QRCode_FileName { get; set; }
-        public static e_MFI_Status MFI_Status { get; set; } = e_MFI_Status.STARTUP;
-    }
+
 
     public class Client_MFI
     {
@@ -190,7 +166,7 @@ namespace QR_MASAN_01
         public static string MFI_ID { get; set; }
         public static string QRCode_Folder { get; set; }
         public static string QRCode_FileName { get; set; }
-        public static e_MFI_Status MFI_Status { get; set; } = e_MFI_Status.STARTUP;
+       // public static e_MFI_Status MFI_Status { get; set; } = e_MFI_Status.STARTUP;
     }
 
     public class APP

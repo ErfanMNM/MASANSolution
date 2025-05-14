@@ -10,6 +10,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using MFI_Service;
 
 
 
@@ -20,11 +21,11 @@ namespace QR_MASAN_01
        //F1Printer _F1Printer = new F1Printer();
         F1Dashboard _F1Dashboard = new F1Dashboard();
         ///F1Cloudv2 _f1Cloudv2 = new F1Cloudv2();
-        //F1MFI _FMFI = new F1MFI();
-        // F1Cloud _f1Cloud = new F1Cloud();
-       // F1Data _F1Data = new F1Data();
+        MFI_Service_Form _FMFI = new MFI_Service_Form();
+        //F1Cloud _f1Cloud = new F1Cloud();
+       //F1Data _F1Data = new F1Data();
         ScanQR scanQR = new ScanQR();
-       // F1PLC _f1PLC = new F1PLC();
+       //F1PLC _f1PLC = new F1PLC();
 
         public FMainQR01()
         {
@@ -50,7 +51,7 @@ namespace QR_MASAN_01
 
            // uiNavMenu1.CreateNode(AddPage(_f1PLC, 1002));
 
-           // uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
+           uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
 
             //uiNavMenu1.CreateNode(AddPage(_F1Printer, 1004));
 
@@ -63,7 +64,7 @@ namespace QR_MASAN_01
             uiNavMenu1.SelectPage(1001);
 
           //  _F1Printer.SET(SETCODE.Init);
-          // _FMFI.FMFI_INIT();
+          _FMFI.FMFI_INIT();
            // _f1Cloud.F1Cloud_INIT();
            scanQR.INIT();
         }

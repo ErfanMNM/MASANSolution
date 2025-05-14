@@ -1,6 +1,6 @@
 ﻿namespace MFI_Service
 {
-    partial class MFI_Service
+    partial class MFI_Service_Form
     {
         /// <summary>
         /// Required designer variable.
