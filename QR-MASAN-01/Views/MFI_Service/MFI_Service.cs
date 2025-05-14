@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
+
 using System.ComponentModel;
 using System.Data;
 using System.Data.SQLite;
 using System.Drawing;
-using System.IO;
+
 using System.Linq;
 using System.Net.Http;
-using System.Text;
+
 using System.Threading;
-using System.Threading.Tasks;
-using System.Web;
+
 using System.Windows.Forms;
 using Diaglogs;
 using Newtonsoft.Json;
@@ -51,7 +50,7 @@ namespace MFI_Service
                                 }));
                             }));
 
-                            Server_MFI.MFI_Status = e_MFI_Status.PUSHSERVER;
+                            _Server_MFI.MFI_Status = e_MFI_Status.PUSHSERVER;
                         }
                         else
                         {
@@ -75,7 +74,7 @@ namespace MFI_Service
                                 }));
                             }));
 
-                            Server_MFI.MFI_Status = e_MFI_Status.PUSHSERVER;
+                            _Server_MFI.MFI_Status = e_MFI_Status.PUSHSERVER;
                         }
                         else
                         {
@@ -88,16 +87,16 @@ namespace MFI_Service
                         break;
                     case e_MFI_Status.PUSHSERVER:
                         //Đẩy dữ liệu lên máy chủ
-                        if (Set_Server_MFI_ID().IsSuccess)
+                        if (Set__Server_MFI_ID().IsSuccess)
                         {
                             this.Invoke(new Action(() =>
                             {
                                 ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}:Đẩy lên máy chủ thành công");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                             }));
-                            if (Set_Server_MFI_DATA().IsSuccess)
+                            if (Set__Server_MFI_DATA().IsSuccess)
                             {
-                                Server_MFI.MFI_Status = e_MFI_Status.FREE;
+                                _Server_MFI.MFI_Status = e_MFI_Status.FREE;
                             }
                             
                         }
@@ -121,7 +120,7 @@ namespace MFI_Service
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                             }));
 
-                            Server_MFI.MFI_Status = e_MFI_Status.SQLite_LOAD;
+                            _Server_MFI.MFI_Status = e_MFI_Status.SQLite_LOAD;
                         }
                         break;
                 }
@@ -148,17 +147,17 @@ namespace MFI_Service
                             da.Fill(dt);
                             if (dt.Rows.Count > 0)
                             {
-                                Server_MFI.Product_Barcode = dt.Rows[0]["ProductBarcode"].ToString();
-                                Server_MFI.Case_Barcode = dt.Rows[0]["CaseBarcode"].ToString();
-                                Server_MFI.Case_LOT = dt.Rows[0]["LOT"].ToString();
-                                Server_MFI.Batch_Code = dt.Rows[0]["BatchCode"].ToString();
-                                Server_MFI.Block_Size = dt.Rows[0]["BlockSize"].ToString();
-                                Server_MFI.Case_Size = dt.Rows[0]["CaseSize"].ToString();
-                                Server_MFI.Pallet_Size = dt.Rows[0]["PalletSize"].ToString();
-                                Server_MFI.SanLuong = dt.Rows[0]["SanLuong"].ToString();
-                                Server_MFI.Pallet_QR_Type = dt.Rows[0]["PalletQRType"].ToString();
-                                Server_MFI.MFI_ID = dt.Rows[0]["ID"].ToString();
-                                Server_MFI.Operator = dt.Rows[0]["OperatorName"].ToString();
+                                _Server_MFI.Product_Barcode = dt.Rows[0]["ProductBarcode"].ToString();
+                                _Server_MFI.Case_Barcode = dt.Rows[0]["CaseBarcode"].ToString();
+                                _Server_MFI.Case_LOT = dt.Rows[0]["LOT"].ToString();
+                                _Server_MFI.Batch_Code = dt.Rows[0]["BatchCode"].ToString();
+                                _Server_MFI.Block_Size = dt.Rows[0]["BlockSize"].ToString();
+                                _Server_MFI.Case_Size = dt.Rows[0]["CaseSize"].ToString();
+                                _Server_MFI.Pallet_Size = dt.Rows[0]["PalletSize"].ToString();
+                                _Server_MFI.SanLuong = dt.Rows[0]["SanLuong"].ToString();
+                                _Server_MFI.Pallet_QR_Type = dt.Rows[0]["PalletQRType"].ToString();
+                                _Server_MFI.MFI_ID = dt.Rows[0]["ID"].ToString();
+                                _Server_MFI.Operator = dt.Rows[0]["OperatorName"].ToString();
                                 return (true, "Tải thông tin MFI thành công");
                             }
                             else
@@ -181,17 +180,17 @@ namespace MFI_Service
         }
         public void MFI_Update_HMI () {
             ipBatchCode.Items.Clear();
-            ipBatchCode.Items.Add(Server_MFI.Batch_Code);
+            ipBatchCode.Items.Add(_Server_MFI.Batch_Code);
 
-            ipCaseBarcode.Text = Server_MFI.Case_Barcode;
-            ipBatchCode.SelectedItem = Server_MFI.Batch_Code;
+            ipCaseBarcode.Text = _Server_MFI.Case_Barcode;
+            ipBatchCode.SelectedItem = _Server_MFI.Batch_Code;
 
-            ipLOT.Text = Server_MFI.Case_LOT;
-            ipProductBarcode.Text = Server_MFI.Product_Barcode;
-            ipBlock_Size.Text = Server_MFI.Block_Size;
-            ipCase_Size.Text = Server_MFI.Case_Size;
-            ipPallet_Size.Text = Server_MFI.Pallet_Size;
-            ipSanLuong.Text = Server_MFI.SanLuong;
+            ipLOT.Text = _Server_MFI.Case_LOT;
+            ipProductBarcode.Text = _Server_MFI.Product_Barcode;
+            ipBlock_Size.Text = _Server_MFI.Block_Size;
+            ipCase_Size.Text = _Server_MFI.Case_Size;
+            ipPallet_Size.Text = _Server_MFI.Pallet_Size;
+            ipSanLuong.Text = _Server_MFI.SanLuong;
         }
         public (bool Issucces, string message) MFI_To_SQLite()
         {
@@ -226,13 +225,13 @@ namespace MFI_Service
 
             return (true, "OK");
         }
-        public (bool IsSuccess, string message) Set_Server_MFI_ID()
+        public (bool IsSuccess, string message) Set__Server_MFI_ID()
         {
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    HttpResponseMessage response = client.GetAsync($"{GlobalVariable.Server_Url}sv1/SET/MFI_ID/"+Server_MFI.MFI_ID).Result; // Chạy đồng bộ
+                    HttpResponseMessage response = client.GetAsync($"{GlobalVariable.Server_Url}sv1/SET/MFI_ID/"+_Server_MFI.MFI_ID).Result; // Chạy đồng bộ
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -260,15 +259,15 @@ namespace MFI_Service
                 return (false, $"{DateTime.Now:HH:mm:ss}: Lỗi phía máy chủ: {ex.Message}");
             }
         }
-        public (bool IsSuccess, string message) Set_Server_MFI_DATA()
+        public (bool IsSuccess, string message) Set__Server_MFI_DATA()
         {
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    string MFI_DataString =$"{Server_MFI.Product_Barcode},{Server_MFI.Case_Barcode},{Server_MFI.Case_LOT},{Server_MFI.Batch_Code},{Server_MFI.Block_Size},{Server_MFI.Case_Size},{Server_MFI.Pallet_Size},{Server_MFI.SanLuong},{Server_MFI.Pallet_QR_Type},{Server_MFI.Operator}";
+                    string MFI_DataString =$"{_Server_MFI.Product_Barcode},{_Server_MFI.Case_Barcode},{_Server_MFI.Case_LOT},{_Server_MFI.Batch_Code},{_Server_MFI.Block_Size},{_Server_MFI.Case_Size},{_Server_MFI.Pallet_Size},{_Server_MFI.SanLuong},{_Server_MFI.Pallet_QR_Type},{_Server_MFI.Operator}";
 
-                    HttpResponseMessage response = client.GetAsync($"{GlobalVariable.Server_Url}sv1/SET/MFI_{Server_MFI.MFI_ID}/"+ MFI_DataString).Result; // Chạy đồng bộ
+                    HttpResponseMessage response = client.GetAsync($"{GlobalVariable.Server_Url}sv1/SET/MFI_{_Server_MFI.MFI_ID}/"+ MFI_DataString).Result; // Chạy đồng bộ
                     
                     if (response.IsSuccessStatusCode)
                     {
@@ -313,14 +312,14 @@ namespace MFI_Service
                 try
                 {
                     //kiểm tra và load thông tin sản xuất
-                    if (ipCaseBarcode.Text != Server_MFI.Case_Barcode ||
-                        ipProductBarcode.Text != Server_MFI.Product_Barcode ||
-                        ipBatchCode.Text != Server_MFI.Batch_Code ||
-                        ipSanLuong.Text != Server_MFI.SanLuong ||
-                        ipBlock_Size.Text != Server_MFI.Block_Size ||
-                        ipCase_Size.Text != Server_MFI.Case_Size ||
-                        ipPallet_Size.Text != Server_MFI.Pallet_Size ||
-                        ipLOT.Text != Server_MFI.Case_LOT)
+                    if (ipCaseBarcode.Text != _Server_MFI.Case_Barcode ||
+                        ipProductBarcode.Text != _Server_MFI.Product_Barcode ||
+                        ipBatchCode.Text != _Server_MFI.Batch_Code ||
+                        ipSanLuong.Text != _Server_MFI.SanLuong ||
+                        ipBlock_Size.Text != _Server_MFI.Block_Size ||
+                        ipCase_Size.Text != _Server_MFI.Case_Size ||
+                        ipPallet_Size.Text != _Server_MFI.Pallet_Size ||
+                        ipLOT.Text != _Server_MFI.Case_LOT)
                     {
                         Invoke(new Action(() =>
                         {
@@ -329,35 +328,35 @@ namespace MFI_Service
                         }));
 
                         // Kiểm tra từng trường và thay đổi màu FillColor nếu khác
-                        if (ipCaseBarcode.Text != Server_MFI.Case_Barcode)
+                        if (ipCaseBarcode.Text != _Server_MFI.Case_Barcode)
                         {
                             ipCaseBarcode.FillColor = color;
                         }
-                        if (ipProductBarcode.Text != Server_MFI.Product_Barcode)
+                        if (ipProductBarcode.Text != _Server_MFI.Product_Barcode)
                         {
                             ipProductBarcode.FillColor = color;
                         }
-                        if (ipBatchCode.Text != Server_MFI.Batch_Code)
+                        if (ipBatchCode.Text != _Server_MFI.Batch_Code)
                         {
                             ipBatchCode.FillColor = color;
                         }
-                        if (ipSanLuong.Text != Server_MFI.SanLuong)
+                        if (ipSanLuong.Text != _Server_MFI.SanLuong)
                         {
                             ipSanLuong.FillColor = color;
                         }
-                        if (ipBlock_Size.Text != Server_MFI.Block_Size)
+                        if (ipBlock_Size.Text != _Server_MFI.Block_Size)
                         {
                             ipBlock_Size.FillColor = color;
                         }
-                        if (ipCase_Size.Text != Server_MFI.Case_Size)
+                        if (ipCase_Size.Text != _Server_MFI.Case_Size)
                         {
                             ipCase_Size.FillColor = color;
                         }
-                        if (ipPallet_Size.Text != Server_MFI.Pallet_Size)
+                        if (ipPallet_Size.Text != _Server_MFI.Pallet_Size)
                         {
                             ipPallet_Size.FillColor = color;
                         }
-                        if (ipLOT.Text != Server_MFI.Case_LOT)
+                        if (ipLOT.Text != _Server_MFI.Case_LOT)
                         {
                             ipLOT.FillColor = color;
                         }
@@ -375,7 +374,7 @@ namespace MFI_Service
                         ipLOT.FillColor = Color.White;
                         Invoke(new Action(() =>
                         {
-                            if (Server_MFI.MFI_Status != e_MFI_Status.FREE)
+                            if (_Server_MFI.MFI_Status != e_MFI_Status.FREE)
                             {
                                 btnLoad_Code.Enabled = false;
                             }
@@ -465,7 +464,7 @@ namespace MFI_Service
                     if (this.ShowAskDialog("Đồng ý lưu?", "Bạn có chắc chắn sẽ lưu thông tin mới? Thao tác này sẽ tạo và sử dụng bộ mã QR mới cho tất cả các máy khác. Thời gian để khởi động lại khoảng 5 phút", UIStyle.Red))
                     {
                         btnLoad_Code.Enabled = false;
-                        Server_MFI.MFI_Status = e_MFI_Status.SQLite_SAVE;
+                        _Server_MFI.MFI_Status = e_MFI_Status.SQLite_SAVE;
                     }
                     else
                     {
