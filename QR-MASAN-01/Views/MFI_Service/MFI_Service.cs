@@ -31,20 +31,20 @@ namespace MFI_Service
         }
         private void WK_MFI_DoWork(object sender, DoWorkEventArgs e)
         {
-            while(!WK_MFI.CancellationPending)
+            while (!WK_MFI.CancellationPending)
             {
                 switch (_Server_MFI.MFI_Status)
                 {
                     case e_MFI_Status.STARTUP:
-
-                           
-                            this.Invoke(new Action(() =>
-                            {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Phiên bản giao diện chỉnh thông số sản xuất : 5.14.5c");
-                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            }));
+                        //Máy tính khởi động lần đầu
+                        this.Invoke(new Action(() =>
+                        {
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Phiên bản giao diện chỉnh thông số sản xuất : 5.16.5c");
+                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                        }));
                         break;
                     case e_MFI_Status.SQLite_LOAD:
+                        //Lấy thông tin sản xuất từ máy tính
                         var _gmfifl = Get_Last_MFI_From_Local();
                         if (_gmfifl.Issucces)
                         {
@@ -79,7 +79,7 @@ namespace MFI_Service
                             {
                                 _Server_MFI.MFI_Status = e_MFI_Status.FREE;
                             }
-                            
+
                         }
                         else
                         {
@@ -93,7 +93,7 @@ namespace MFI_Service
                     case e_MFI_Status.FREE:
                         break;
                     case e_MFI_Status.SQLite_SAVE:
-                        if(MFI_To_SQLite().Issucces)
+                        if (MFI_To_SQLite().Issucces)
                         {
                             this.Invoke(new Action(() =>
                             {
