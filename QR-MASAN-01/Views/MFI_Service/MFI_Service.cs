@@ -43,6 +43,7 @@ namespace MFI_Service
                             ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                         }));
                         break;
+
                     case e_MFI_Status.SQLite_LOAD:
                         //Lấy thông tin sản xuất từ máy tính
                         var _gmfifl = Get_Last_MFI_From_Local();
@@ -50,7 +51,7 @@ namespace MFI_Service
                         {
                             this.Invoke(new Action(() =>
                             {
-                                MFI_Update_HMI();
+                                MFI_Update_HMI();//Cập nhật lên màn hình
                                 ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: {_gmfifl.message}");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                             }));
