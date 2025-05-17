@@ -68,6 +68,9 @@
     <Reference Include="HslCommunication, Version=12.3.1.0, Culture=neutral, PublicKeyToken=3d72ad3b6b5ec0e3, processorArchitecture=MSIL">
       <HintPath>..\packages\HslCommunication.12.3.1\lib\net451\HslCommunication.dll</HintPath>
     </Reference>
+    <Reference Include="HslControls, Version=3.5.0.0, Culture=neutral, PublicKeyToken=a3ad7c5c937ec0c0, processorArchitecture=MSIL">
+      <HintPath>..\packages\HslControls.3.5.0\lib\net45\HslControls.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -130,6 +133,12 @@
     <Compile Include="Views\F1Dashboard.Designer.cs">
       <DependentUpon>F1Dashboard.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\FormTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\FormTest.Designer.cs">
+      <DependentUpon>FormTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\MFI_Service\MFI_Service.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -163,6 +172,9 @@
     </Compile>
     <EmbeddedResource Include="Views\F1Dashboard.resx">
       <DependentUpon>F1Dashboard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\FormTest.resx">
+      <DependentUpon>FormTest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\MFI_Service\MFI_Service.resx">
       <DependentUpon>MFI_Service.cs</DependentUpon>
