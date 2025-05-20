@@ -262,7 +262,7 @@ namespace MFI_Service
 
             return (true, "OK");
         }
-        public (bool IsSuccess, string message) Set__Server_MFI_ID()
+        public (bool IsSuccess, string message) Push_MFI_To_Server()
         {
             try
             {

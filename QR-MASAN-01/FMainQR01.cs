@@ -49,7 +49,7 @@ namespace QR_MASAN_01
             this.MainTabControl = uiTabControl1;
 
             uiNavMenu1.TabControl = uiTabControl1;
-            //uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
+            uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
 
            // uiNavMenu1.CreateNode(AddPage(_f1PLC, 1002));
 
