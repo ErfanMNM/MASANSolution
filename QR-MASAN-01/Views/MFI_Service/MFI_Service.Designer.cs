@@ -58,6 +58,7 @@
             this.uiPanel11 = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel3 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel5 = new Sunny.UI.UITableLayoutPanel();
+            this.opMFIID = new Sunny.UI.UIPanel();
             this.ipPallet_Size = new Sunny.UI.UINumPadTextBox();
             this.uiPanel2 = new Sunny.UI.UIPanel();
             this.uiPanel3 = new Sunny.UI.UIPanel();
@@ -89,7 +90,6 @@
             this.WK_Server_Status = new System.ComponentModel.BackgroundWorker();
             this.WK_LoadCloud = new System.ComponentModel.BackgroundWorker();
             this.googleService1 = new SPMS1.GoogleService(this.components);
-            this.opMFIID = new Sunny.UI.UIPanel();
             this.tableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -165,10 +165,10 @@
             // tableLayoutPanel3
             // 
             this.tableLayoutPanel3.ColumnCount = 4;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 36.16505F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.42719F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 19.17476F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17.11165F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 44.66019F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.66505F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.13592F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 19.53884F));
             this.tableLayoutPanel3.Controls.Add(this.btnCloudMS, 3, 0);
             this.tableLayoutPanel3.Controls.Add(this.btnUndo, 2, 0);
             this.tableLayoutPanel3.Controls.Add(this.btnLoad_Code, 1, 0);
@@ -185,13 +185,13 @@
             this.btnCloudMS.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnCloudMS.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnCloudMS.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnCloudMS.Location = new System.Drawing.Point(685, 3);
+            this.btnCloudMS.Location = new System.Drawing.Point(666, 3);
             this.btnCloudMS.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnCloudMS.Name = "btnCloudMS";
-            this.btnCloudMS.Size = new System.Drawing.Size(136, 40);
+            this.btnCloudMS.Size = new System.Drawing.Size(155, 40);
             this.btnCloudMS.Symbol = 558048;
             this.btnCloudMS.TabIndex = 34;
-            this.btnCloudMS.Text = "Tải ERP";
+            this.btnCloudMS.Text = "Tải xuống ERP";
             this.btnCloudMS.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnCloudMS.Click += new System.EventHandler(this.btnCloudMS_Click);
             // 
@@ -201,13 +201,13 @@
             this.btnUndo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnUndo.Enabled = false;
             this.btnUndo.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnUndo.Location = new System.Drawing.Point(527, 3);
+            this.btnUndo.Location = new System.Drawing.Point(566, 3);
             this.btnUndo.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnUndo.Name = "btnUndo";
-            this.btnUndo.Size = new System.Drawing.Size(152, 40);
+            this.btnUndo.Size = new System.Drawing.Size(94, 40);
             this.btnUndo.Symbol = 557410;
             this.btnUndo.TabIndex = 33;
-            this.btnUndo.Text = "Khôi phục";
+            this.btnUndo.Text = "Nhập lại";
             this.btnUndo.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
             // 
@@ -217,13 +217,13 @@
             this.btnLoad_Code.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnLoad_Code.Enabled = false;
             this.btnLoad_Code.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnLoad_Code.Location = new System.Drawing.Point(301, 3);
+            this.btnLoad_Code.Location = new System.Drawing.Point(371, 3);
             this.btnLoad_Code.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnLoad_Code.Name = "btnLoad_Code";
-            this.btnLoad_Code.Size = new System.Drawing.Size(220, 40);
-            this.btnLoad_Code.Symbol = 563628;
+            this.btnLoad_Code.Size = new System.Drawing.Size(189, 40);
+            this.btnLoad_Code.Symbol = 560250;
             this.btnLoad_Code.TabIndex = 28;
-            this.btnLoad_Code.Text = "Lưu thông tin";
+            this.btnLoad_Code.Text = "Đồng bộ hóa";
             this.btnLoad_Code.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnLoad_Code.Click += new System.EventHandler(this.btnLoad_Code_Click_2);
             // 
@@ -235,7 +235,7 @@
             this.lblServerStatus.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.lblServerStatus.MinimumSize = new System.Drawing.Size(1, 1);
             this.lblServerStatus.Name = "lblServerStatus";
-            this.lblServerStatus.Size = new System.Drawing.Size(290, 36);
+            this.lblServerStatus.Size = new System.Drawing.Size(360, 36);
             this.lblServerStatus.TabIndex = 35;
             this.lblServerStatus.Text = "Đang kết nối máy chủ";
             this.lblServerStatus.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -559,6 +559,19 @@
             this.uiTableLayoutPanel5.Size = new System.Drawing.Size(335, 35);
             this.uiTableLayoutPanel5.TabIndex = 60;
             this.uiTableLayoutPanel5.TagString = null;
+            // 
+            // opMFIID
+            // 
+            this.opMFIID.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opMFIID.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opMFIID.Location = new System.Drawing.Point(206, 2);
+            this.opMFIID.Margin = new System.Windows.Forms.Padding(2);
+            this.opMFIID.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opMFIID.Name = "opMFIID";
+            this.opMFIID.Size = new System.Drawing.Size(127, 31);
+            this.opMFIID.TabIndex = 62;
+            this.opMFIID.Text = "kt01";
+            this.opMFIID.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ipPallet_Size
             // 
@@ -1027,19 +1040,6 @@
             this.googleService1.projectName = "sales-268504";
             this.googleService1.TableID = "BatchProduction";
             this.googleService1.Upload_filePatch = null;
-            // 
-            // opMFIID
-            // 
-            this.opMFIID.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opMFIID.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opMFIID.Location = new System.Drawing.Point(206, 2);
-            this.opMFIID.Margin = new System.Windows.Forms.Padding(2);
-            this.opMFIID.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opMFIID.Name = "opMFIID";
-            this.opMFIID.Size = new System.Drawing.Size(127, 31);
-            this.opMFIID.TabIndex = 62;
-            this.opMFIID.Text = "kt01";
-            this.opMFIID.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // MFI_Service_Form
             // 

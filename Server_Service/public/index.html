@@ -14,7 +14,6 @@
             justify-content: center;
             min-height: 100vh;
         }
-
         .container {
             background-color: white;
             padding: 20px;
@@ -23,38 +22,36 @@
             max-width: 800px;
             width: 100%;
         }
-
         h1, h2 {
             text-align: center;
             color: #333;
             margin-bottom: 20px;
         }
-
         .form-group {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 20px;
         }
-
-        input[type="text"], input[type="number"] {
+        input[type="text"], input[type="number"], textarea {
             flex: 1;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 16px;
         }
-
-            input[type="text"]:focus, input[type="number"]:focus {
-                outline: none;
-                border-color: #007bff;
-                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-            }
-
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
         input:disabled {
             background-color: #f0f0f0;
         }
-
         button {
             padding: 10px 20px;
             border: none;
@@ -63,116 +60,93 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-
         .btn-primary {
             background-color: #007bff;
             color: white;
         }
-
-            .btn-primary:hover {
-                background-color: #0056b3;
-            }
-
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
         .btn-success {
             background-color: #28a745;
             color: white;
         }
-
-            .btn-success:hover {
-                background-color: #1e7e34;
-            }
-
+        .btn-success:hover {
+            background-color: #1e7e34;
+        }
         .btn-danger {
             background-color: #dc3545;
             color: white;
         }
-
-            .btn-danger:hover {
-                background-color: #b02a37;
-            }
-
+        .btn-danger:hover {
+            background-color: #b02a37;
+        }
         .btn-secondary {
             background-color: #6c757d;
             color: white;
         }
-
-            .btn-secondary:hover {
-                background-color: #545b62;
-            }
-
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
         .response, .error {
             padding: 10px;
             border-radius: 5px;
             margin-bottom: 20px;
             display: none;
         }
-
         .response {
             background-color: #d4edda;
             color: #155724;
         }
-
         .error {
             background-color: #f8d7da;
             color: #721c24;
         }
-
         .keys-list {
             margin-bottom: 20px;
         }
-
-            .keys-list ul {
-                list-style: none;
-                padding: 0;
-            }
-
-            .keys-list li {
-                padding: 10px;
-                background-color: #f8f9fa;
-                margin-bottom: 5px;
-                border-radius: 5px;
-            }
-
+        .keys-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .keys-list li {
+            padding: 10px;
+            background-color: #f8f9fa;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
         .checkbox-group {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-
         .active-keys {
             margin-bottom: 20px;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
         }
-
         th, td {
             padding: 10px;
             text-align: left;
             border: 1px solid #ddd;
         }
-
         th {
             background-color: #007bff;
             color: white;
         }
-
         tr:nth-child(even) {
             background-color: #f8f9fa;
         }
-
         @media (max-width: 600px) {
             .form-group {
                 flex-direction: column;
             }
-
-            input[type="text"], input[type="number"] {
+            input[type="text"], input[type="number"], textarea {
                 width: 100%;
             }
-
             table {
                 font-size: 14px;
             }
@@ -183,7 +157,8 @@
     <div class="container">
         <h1>API Tester</h1>
 
-        <!-- Form để set key-value -->
+        <!-- Form để set một key-value -->
+        <h2>Set Single Key</h2>
         <form id="setForm" class="form-group">
             <input type="text" id="setKey" placeholder="Key (e.g., CAMERA_A)" required>
             <input type="text" id="setValue" placeholder="Value (e.g., 1)" required>
@@ -196,13 +171,22 @@
             <button type="submit" class="btn-primary">Set Value</button>
         </form>
 
+        <!-- Form để set nhiều key-value -->
+        <h2>Set Multiple Keys</h2>
+        <form id="setMultipleForm" class="form-group">
+            <textarea id="setMultipleJson" placeholder='Enter JSON array, e.g. [{"key":"A","value":1,"ttl":3000},{"key":"B","value":0}]' required></textarea>
+            <button type="submit" class="btn-primary">Set Multiple Values</button>
+        </form>
+
         <!-- Form để get value -->
+        <h2>Get Value</h2>
         <div class="form-group">
             <input type="text" id="getKey" placeholder="Key to get">
             <button onclick="handleGet()" class="btn-success">Get Value</button>
         </div>
 
         <!-- Form để delete key -->
+        <h2>Delete Key</h2>
         <div class="form-group">
             <input type="text" id="deleteKey" placeholder="Key to delete">
             <button onclick="handleDelete()" class="btn-danger">Delete Key</button>
@@ -238,7 +222,7 @@
 
     <script>
         const API_URL = 'http://localhost:3000';
-        let keyCache = {}; // Lưu trữ dữ liệu key để tránh gọi API liên tục
+        let keyCache = {};
 
         // Bật/tắt input TTL khi checkbox Permanent được chọn
         function toggleTtl() {
@@ -262,7 +246,7 @@
             }, 3000);
         }
 
-        // Xử lý form set key-value
+        // Xử lý form set một key-value
         document.getElementById('setForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const key = document.getElementById('setKey').value;
@@ -285,13 +269,45 @@
                     document.getElementById('setForm').reset();
                     document.getElementById('setTtl').disabled = false;
                     document.getElementById('permanent').checked = false;
-                    await fetchKeys(); // Cập nhật danh sách keys
-                    await fetchActiveKeys(true); // Cập nhật bảng với dữ liệu mới từ server
+                    await fetchKeys();
+                    await fetchActiveKeys(true);
                 } else {
-                    showMessage('error', data.error || 'Failed to set value', true);
+                    showMessage('error', data.errors ? data.errors[0].error : 'Failed to set value', true);
                 }
             } catch (err) {
                 showMessage('error', 'Error connecting to server', true);
+            }
+        });
+
+        // Xử lý form set nhiều key-value
+        document.getElementById('setMultipleForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const jsonInput = document.getElementById('setMultipleJson').value;
+
+            try {
+                const items = JSON.parse(jsonInput);
+                if (!Array.isArray(items)) {
+                    throw new Error('Input must be a JSON array');
+                }
+
+                const res = await fetch(`${API_URL}/set`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(items)
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    const msg = `Set ${data.results.length} key(s) successfully`;
+                    showMessage('response', msg);
+                    document.getElementById('setMultipleForm').reset();
+                    await fetchKeys();
+                    await fetchActiveKeys(true);
+                } else {
+                    const errorMsg = data.errors ? data.errors.map(e => `${e.key}: ${e.error}`).join('; ') : 'Failed to set values';
+                    showMessage('error', errorMsg, true);
+                }
+            } catch (err) {
+                showMessage('error', `Invalid JSON or error: ${err.message}`, true);
             }
         });
 
@@ -326,8 +342,8 @@
                 if (res.ok) {
                     showMessage('response', `Deleted ${key}`);
                     document.getElementById('deleteKey').value = '';
-                    await fetchKeys(); // Cập nhật danh sách keys
-                    await fetchActiveKeys(true); // Cập nhật bảng với dữ liệu mới từ server
+                    await fetchKeys();
+                    await fetchActiveKeys(true);
                 } else {
                     showMessage('error', data.error || 'Failed to delete key', true);
                 }
@@ -376,14 +392,14 @@
                         const data = await res.json();
                         value = data.value;
 
-                        // Giả lập lấy thông tin TTL và expiresAt từ backend
+                        // Giả lập lấy thông tin TTL và expiresAt
                         const tempRes = await fetch(`${API_URL}/set`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ key, value, ttl: null })
                         });
                         const tempData = await tempRes.json();
-                        expiresAt = tempData.ttl ? tempData.expiresAt : null;
+                        expiresAt = tempData.ttl ? Date.now() + tempData.ttl : null;
                         status = tempData.ttl ? 'Temporary' : 'Permanent';
                     } else {
                         value = keyCache[key].value;
@@ -404,14 +420,13 @@
                         row = document.createElement('tr');
                         row.id = `key-row-${key}`;
                         row.innerHTML = `
-                                <td>${key}</td>
-                                <td id="value-${key}">${value}</td>
-                                <td id="status-${key}">${status}</td>
-                                <td id="expires-${key}">${expiresAt ? new Date(expiresAt).toLocaleString() : 'Never'}</td>
-                            `;
+                            <td>${key}</td>
+                            <td id="value-${key}">${value}</td>
+                            <td id="status-${key}">${status}</td>
+                            <td id="expires-${key}">${expiresAt ? new Date(expiresAt).toLocaleString() : 'Never'}</td>
+                        `;
                         tableBody.appendChild(row);
                     } else {
-                        // Chỉ cập nhật nếu dữ liệu thay đổi
                         const valueCell = document.getElementById(`value-${key}`);
                         const statusCell = document.getElementById(`status-${key}`);
                         const expiresCell = document.getElementById(`expires-${key}`);
@@ -450,8 +465,8 @@
         fetchKeys();
         fetchActiveKeys(true);
 
-        // Tự động cập nhật bảng mỗi 1 giây (chỉ kiểm tra TTL cục bộ)
-        setInterval(() => fetchActiveKeys(false), 1000);
+        // Tự động cập nhật bảng mỗi 1 giây
+        setInterval(() => fetchActiveKeys(true), 1000);
     </script>
 </body>
 </html>

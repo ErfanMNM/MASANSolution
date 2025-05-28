@@ -74,8 +74,7 @@ namespace MFI_Service
                         break;
                     case e_MFI_Status.PUSHSERVER:
 
-                        var _ptsvrt =  Push_MFI_To_Server();
-
+                        var _ptsvrt = PushMFI_Bulk();
                         //Đẩy dữ liệu lên máy chủ
                         if (_ptsvrt.IsSuccess)
                         {
@@ -90,7 +89,7 @@ namespace MFI_Service
                         {
                             this.Invoke(new Action(() =>
                             {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}:Đã xảy ra lỗi trong quá trình đẩy dữ liệu : {_ptsvrt.Message}");
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Đã xảy ra lỗi trong quá trình đẩy dữ liệu : {_ptsvrt.Message}");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                             }));
                         }
@@ -99,16 +98,26 @@ namespace MFI_Service
                         //tạm thời không làm gì cả
                         break;
                     case e_MFI_Status.SQLite_SAVE:
-                        //if (MFI_To_SQLite().Issucces)
-                        //{
-                        //    this.Invoke(new Action(() =>
-                        //    {
-                        //        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}:Lưu dữ liệu sản xuất mới thành công");
-                        //        ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                        //    }));
 
-                        //    _Server_MFI.MFI_Status = e_MFI_Status.SQLite_LOAD;
-                        //}
+                        var _stsqlrs = MFI_To_SQLite();
+                        if (_stsqlrs.Issucces)
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}:Lưu dữ liệu sản xuất mới thành công");
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                            }));
+
+                            _Server_MFI.MFI_Status = e_MFI_Status.SQLite_LOAD;
+                        }
+                        else
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: {_stsqlrs.message}");
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                            }));
+                        }
                         break;
                 }
                 Thread.Sleep(1000);
@@ -237,36 +246,47 @@ namespace MFI_Service
         }
         public (bool Issucces, string message) MFI_To_SQLite()
         {
-            string connectionString = $@"Data Source=Server_Database/MF_Data.db;Version=3;";
-            string query = @"INSERT INTO MFI_Table 
+            try
+            {
+                string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Databases");
+                string dbPath = Path.Combine(folderPath, "MFI_Server_Logs.tlog");
+
+                string connectionString = $@"Data Source={dbPath};Version=3;";
+                string query = @"INSERT INTO MFI_Table 
                             (ProductBarcode, CaseBarcode, LOT, BatchCode, BlockSize, CaseSize, PalletSize, SanLuong, PalletQRType, OperatorName, TimeStamp)
                             VALUES 
                             (@ProductBarcode, @CaseBarcode, @LOT, @BatchCode, @BlockSize, @CaseSize, @PalletSize, @SanLuong, @PalletQRType, @OperatorName, @TimeStamp)"; ;
 
-            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
-            {
-                conn.Open();
-                using (SQLiteCommand command = new SQLiteCommand(query, conn))
+                using (SQLiteConnection conn = new SQLiteConnection(connectionString))
                 {
-                    
-                    // Gán giá trị tham số
-                    command.Parameters.AddWithValue("@ProductBarcode", ipProductBarcode.Text);
-                    command.Parameters.AddWithValue("@CaseBarcode", ipCaseBarcode.Text);
-                    command.Parameters.AddWithValue("@LOT", ipLOT.Text);
-                    command.Parameters.AddWithValue("@BatchCode", _BatchCode);
-                    command.Parameters.AddWithValue("@BlockSize", ipBlock_Size.Text);
-                    command.Parameters.AddWithValue("@CaseSize", ipCase_Size.Text);
-                    command.Parameters.AddWithValue("@PalletSize", ipPallet_Size.Text);
-                    command.Parameters.AddWithValue("@SanLuong", ipSanLuong.Text);
-                    command.Parameters.AddWithValue("@PalletQRType", "test");
-                    command.Parameters.AddWithValue("@OperatorName", "Operator");
-                    command.Parameters.AddWithValue("@TimeStamp", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
-                    command.ExecuteNonQuery();
+                    conn.Open();
+                    using (SQLiteCommand command = new SQLiteCommand(query, conn))
+                    {
+
+                        // Gán giá trị tham số
+                        command.Parameters.AddWithValue("@ProductBarcode", ipProductBarcode.Text);
+                        command.Parameters.AddWithValue("@CaseBarcode", ipCaseBarcode.Text);
+                        command.Parameters.AddWithValue("@LOT", ipLOT.Text);
+                        command.Parameters.AddWithValue("@BatchCode", _BatchCode);
+                        command.Parameters.AddWithValue("@BlockSize", ipBlock_Size.Text);
+                        command.Parameters.AddWithValue("@CaseSize", ipCase_Size.Text);
+                        command.Parameters.AddWithValue("@PalletSize", ipPallet_Size.Text);
+                        command.Parameters.AddWithValue("@SanLuong", ipSanLuong.Text);
+                        command.Parameters.AddWithValue("@PalletQRType", "test");
+                        command.Parameters.AddWithValue("@OperatorName", "Operator");
+                        command.Parameters.AddWithValue("@TimeStamp", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
+                        command.ExecuteNonQuery();
+                    }
+                    conn.Close();
                 }
-                conn.Close();
+
+                return (true, "OK");
+            }
+            catch (Exception ex) {
+                return (false, $"Lỗi khi lưu MFI vào SQLite: {ex.Message}");
             }
 
-            return (true, "OK");
+           
         }
         public (bool IsSuccess, string Message) Push_MFI_To_Server()
         {
@@ -279,6 +299,7 @@ namespace MFI_Service
                     var url = "http://localhost:3000/set";
                     // Gộp toàn bộ object thành JSON string
                     string jsonValue = JsonConvert.SerializeObject(_Server_MFI);
+
 
                     // Tạo payload cho key "MFI_Data"
                     var payload = new
@@ -310,6 +331,37 @@ namespace MFI_Service
                 return (false, $"Lỗi phía máy chủ: {ex.Message}");
             }
         }
+        public (bool IsSuccess, string Message) PushMFI_Bulk()
+        {
+            try
+            {
+                var props = typeof(MFI_Info).GetProperties();
+
+                var bulkData = props.Select(p => new
+                {
+                    key = p.Name,
+                    value = p.GetValue(_Server_MFI) ?? ""
+                }).ToList();
+
+                string json = JsonConvert.SerializeObject(bulkData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Add("Accept", "application/json");
+                    var response = client.PostAsync("http://localhost:3000/set", content).GetAwaiter().GetResult();
+                    var result = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    return (true, $"Gửi lên máy chủ thành công: {result}");
+                    //Console.WriteLine($"Bulk Response:\n{result}");
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Lỗi phía máy chủ: {ex.Message}");
+            }
+            
+        }
+
         Color color = Color.White;
         private void WK_Update_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -438,8 +490,6 @@ namespace MFI_Service
         private void btnLoad_Code_Click_2(object sender, EventArgs e)
         {
             btnLoad_Code.Enabled = false;
-
-
             try
             {
                 ipProductBarcode.Text = ipProductBarcode.Text.Replace("\r\n", "");
@@ -495,7 +545,7 @@ namespace MFI_Service
                 {
                     using (HttpClient client = new HttpClient())
                     {
-                        HttpResponseMessage response = client.GetAsync($"{Globalvariable.Server_Url}sv1/L3/QRA/Status").Result; // Chạy đồng bộ
+                        HttpResponseMessage response = client.GetAsync($"http://localhost:3000/gét").Result; // Chạy đồng bộ
 
                         if (response.IsSuccessStatusCode)
                         {
@@ -693,7 +743,7 @@ namespace MFI_Service
             catch (Exception ex)
             {
                 this.Invoke(new Action(() => { 
-                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}:Lỗi khi tải dữ liệu ERP: {ex.Message}");
+                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi tải dữ liệu ERP: {ex.Message}");
                 }));
             }
             
