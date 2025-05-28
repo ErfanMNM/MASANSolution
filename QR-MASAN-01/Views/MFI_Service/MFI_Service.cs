@@ -12,8 +12,10 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 using static SPMS1.GoogleService;
 
 namespace MFI_Service
@@ -42,7 +44,10 @@ namespace MFI_Service
                             ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Phiên bản giao diện chỉnh thông số sản xuất : 5.16.5c");
                             ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                         }));
+
+                        _Server_MFI.MFI_Status = e_MFI_Status.SQLite_LOAD; //tải từ máy tính 
                         break;
+
 
                     case e_MFI_Status.SQLite_LOAD:
                         //Lấy thông tin sản xuất từ máy tính
@@ -68,30 +73,31 @@ namespace MFI_Service
                         }
                         break;
                     case e_MFI_Status.PUSHSERVER:
+
+                        var _ptsvrt =  Push_MFI_To_Server();
+
+
                         //Đẩy dữ liệu lên máy chủ
-                        if (Set__Server_MFI_ID().IsSuccess)
+                        if (_ptsvrt.IsSuccess)
                         {
                             this.Invoke(new Action(() =>
                             {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}:Đẩy lên máy chủ thành công");
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Đẩy lên máy chủ thành công");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                             }));
-                            if (Set__Server_MFI_DATA().IsSuccess)
-                            {
-                                _Server_MFI.MFI_Status = e_MFI_Status.FREE;
-                            }
-
+                            _Server_MFI.MFI_Status = e_MFI_Status.FREE;
                         }
                         else
                         {
                             this.Invoke(new Action(() =>
                             {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}:Đã xảy ra lỗi trong quá trình đẩy dữ liệu : Lỗi không xác định");
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}:Đã xảy ra lỗi trong quá trình đẩy dữ liệu : {_ptsvrt.Message}");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                             }));
                         }
                         break;
                     case e_MFI_Status.FREE:
+
                         break;
                     case e_MFI_Status.SQLite_SAVE:
                         if (MFI_To_SQLite().Issucces)
@@ -219,6 +225,7 @@ namespace MFI_Service
             ipBatchCode.Items.Clear();
             ipBatchCode.Items.Add(_Server_MFI.Batch_Code);
 
+            opMFIID.Text = _Server_MFI.MFI_ID;
             ipCaseBarcode.Text = _Server_MFI.Case_Barcode;
             ipBatchCode.SelectedItem = _Server_MFI.Batch_Code;
 
@@ -262,40 +269,50 @@ namespace MFI_Service
 
             return (true, "OK");
         }
-        public (bool IsSuccess, string message) Push_MFI_To_Server()
+        public (bool IsSuccess, string Message) Push_MFI_To_Server()
         {
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    HttpResponseMessage response = client.GetAsync($"{Globalvariable.Server_Url}sv1/SET/MFI_ID/"+_Server_MFI.MFI_ID).Result; // Chạy đồng bộ
+                    client.DefaultRequestHeaders.Add("Accept", "application/json");
+
+                    var url = "http://localhost:3000/set";
+                    // Gộp toàn bộ object thành JSON string
+                    string jsonValue = JsonConvert.SerializeObject(_Server_MFI);
+
+                    // Tạo payload cho key "MFI_Data"
+                    var payload = new
+                    {
+                        key = "MFI_Data",
+                        value = JsonConvert.DeserializeObject(jsonValue) // giữ dạng object, không double encode
+                    };
+
+                    string finalJson = JsonConvert.SerializeObject(payload);
+                    var content = new StringContent(finalJson, Encoding.UTF8, "application/json");
+
+
+                    // Gọi bất đồng bộ theo cách đồng bộ
+                    HttpResponseMessage response = client.PostAsync(url, content).GetAwaiter().GetResult();
+                    string result = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
                     if (response.IsSuccessStatusCode)
                     {
-                        string result = response.Content.ReadAsStringAsync().Result; // Chạy đồng bộ
-                        //khi có phiên làm việc khác
-                        if (result == "ok")
-                        {
-                            return (true, null);
-                        }
-                        else
-                        {
-                           return (false, "Gửi dữ liệu thất bại, máy chủ không trả về OK");
-                        }
-
-
+                        return (true, $"Đã gửi thành công: {result}");
                     }
                     else
                     {
-                       return(false,$"Lỗi máy chủ: {response.StatusCode}");
+                        return (false, $"Lỗi HTTP {(int)response.StatusCode}: {result}");
                     }
                 }
             }
             catch (Exception ex)
             {
-                return (false, $"{DateTime.Now:HH:mm:ss}: Lỗi phía máy chủ: {ex.Message}");
+                return (false, $"Lỗi phía máy chủ: {ex.Message}");
             }
         }
+
+
         public (bool IsSuccess, string message) Set__Server_MFI_DATA()
         {
             try

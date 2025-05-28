@@ -336,34 +336,34 @@
   <data name="&gt;&gt;uiNavMenu1.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="uiSymbolLabel1.Font" type="System.Drawing.Font, System.Drawing">
+  <data name="opUser.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 12pt</value>
   </data>
-  <data name="uiSymbolLabel1.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="opUser.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 532</value>
   </data>
-  <data name="uiSymbolLabel1.MinimumSize" type="System.Drawing.Size, System.Drawing">
+  <data name="opUser.MinimumSize" type="System.Drawing.Size, System.Drawing">
     <value>1, 1</value>
   </data>
-  <data name="uiSymbolLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 36</value>
+  <data name="opUser.Size" type="System.Drawing.Size, System.Drawing">
+    <value>178, 36</value>
   </data>
-  <data name="uiSymbolLabel1.TabIndex" type="System.Int32, mscorlib">
+  <data name="opUser.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
-  <data name="uiSymbolLabel1.Text" xml:space="preserve">
+  <data name="opUser.Text" xml:space="preserve">
     <value>Operator</value>
   </data>
-  <data name="&gt;&gt;uiSymbolLabel1.Name" xml:space="preserve">
-    <value>uiSymbolLabel1</value>
+  <data name="&gt;&gt;opUser.Name" xml:space="preserve">
+    <value>opUser</value>
   </data>
-  <data name="&gt;&gt;uiSymbolLabel1.Type" xml:space="preserve">
+  <data name="&gt;&gt;opUser.Type" xml:space="preserve">
     <value>Sunny.UI.UISymbolLabel, SunnyUI, Version=3.8.3.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
-  <data name="&gt;&gt;uiSymbolLabel1.Parent" xml:space="preserve">
+  <data name="&gt;&gt;opUser.Parent" xml:space="preserve">
     <value>navPanel</value>
   </data>
-  <data name="&gt;&gt;uiSymbolLabel1.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;opUser.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="btnMini.Font" type="System.Drawing.Font, System.Drawing">
@@ -463,7 +463,7 @@
     <value>0</value>
   </data>
   <data name="navPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="uiNavMenu1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="uiSymbolLabel1" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="btnMini" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="btnAppClose" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,100,Absolute,42,Absolute,42,Absolute,39" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="uiNavMenu1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="opUser" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="btnMini" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="btnAppClose" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,100,Absolute,42,Absolute,42,Absolute,39" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="uiTabControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>

@@ -39,7 +39,7 @@
             this.BodyPanel = new Sunny.UI.UITableLayoutPanel();
             this.navPanel = new Sunny.UI.UITableLayoutPanel();
             this.uiNavMenu1 = new Sunny.UI.UINavMenu();
-            this.uiSymbolLabel1 = new Sunny.UI.UISymbolLabel();
+            this.opUser = new Sunny.UI.UISymbolLabel();
             this.btnMini = new Sunny.UI.UISymbolButton();
             this.btnAppClose = new Sunny.UI.UISymbolButton();
             this.uiTabControl1 = new Sunny.UI.UITabControl();
@@ -131,7 +131,7 @@
             // 
             resources.ApplyResources(this.navPanel, "navPanel");
             this.navPanel.Controls.Add(this.uiNavMenu1, 0, 0);
-            this.navPanel.Controls.Add(this.uiSymbolLabel1, 0, 1);
+            this.navPanel.Controls.Add(this.opUser, 0, 1);
             this.navPanel.Controls.Add(this.btnMini, 0, 2);
             this.navPanel.Controls.Add(this.btnAppClose, 0, 3);
             this.navPanel.Name = "navPanel";
@@ -162,11 +162,11 @@
             this.uiNavMenu1.ShowTips = true;
             this.uiNavMenu1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             // 
-            // uiSymbolLabel1
+            // opUser
             // 
-            resources.ApplyResources(this.uiSymbolLabel1, "uiSymbolLabel1");
-            this.uiSymbolLabel1.Name = "uiSymbolLabel1";
-            this.uiSymbolLabel1.Symbol = 62142;
+            resources.ApplyResources(this.opUser, "opUser");
+            this.opUser.Name = "opUser";
+            this.opUser.Symbol = 62142;
             // 
             // btnMini
             // 
@@ -292,7 +292,7 @@
         private Sunny.UI.UITableLayoutPanel BodyPanel;
         private Sunny.UI.UITableLayoutPanel navPanel;
         private Sunny.UI.UINavMenu uiNavMenu1;
-        private Sunny.UI.UISymbolLabel uiSymbolLabel1;
+        private Sunny.UI.UISymbolLabel opUser;
         private Sunny.UI.UISymbolButton btnMini;
         private Sunny.UI.UISymbolButton btnAppClose;
         private Sunny.UI.UITabControl uiTabControl1;

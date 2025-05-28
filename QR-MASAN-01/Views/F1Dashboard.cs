@@ -585,7 +585,7 @@ namespace QR_MASAN_01
         //Load lần đầu
         private void FDashboard_Initialize(object sender, EventArgs e)
         {
-            WK_Server_check.RunWorkerAsync();
+           // WK_Server_check.RunWorkerAsync();
             WK_Update.RunWorkerAsync();
             WK_120Update.RunWorkerAsync();
             Globalvariable.MFI_ID = Get_MFI_ID();

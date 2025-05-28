@@ -58,7 +58,6 @@
             this.uiPanel11 = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel3 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel5 = new Sunny.UI.UITableLayoutPanel();
-            this.ipPallerQRType = new Sunny.UI.UIComboBox();
             this.ipPallet_Size = new Sunny.UI.UINumPadTextBox();
             this.uiPanel2 = new Sunny.UI.UIPanel();
             this.uiPanel3 = new Sunny.UI.UIPanel();
@@ -70,6 +69,9 @@
             this.ipBlock_Size = new Sunny.UI.UINumPadTextBox();
             this.uiPanel27 = new Sunny.UI.UIPanel();
             this.uiPanel9 = new Sunny.UI.UIPanel();
+            this.uiTableLayoutPanel17 = new Sunny.UI.UITableLayoutPanel();
+            this.ipCaseBarcode = new Sunny.UI.UINumPadTextBox();
+            this.btnCaseBarcode = new Sunny.UI.UISymbolButton();
             this.ipSanLuong = new Sunny.UI.UINumPadTextBox();
             this.uiPanel6 = new Sunny.UI.UIPanel();
             this.uiPanel7 = new Sunny.UI.UIPanel();
@@ -87,9 +89,7 @@
             this.WK_Server_Status = new System.ComponentModel.BackgroundWorker();
             this.WK_LoadCloud = new System.ComponentModel.BackgroundWorker();
             this.googleService1 = new SPMS1.GoogleService(this.components);
-            this.btnCaseBarcode = new Sunny.UI.UISymbolButton();
-            this.uiTableLayoutPanel17 = new Sunny.UI.UITableLayoutPanel();
-            this.ipCaseBarcode = new Sunny.UI.UINumPadTextBox();
+            this.opMFIID = new Sunny.UI.UIPanel();
             this.tableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -100,10 +100,10 @@
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTableLayoutPanel5.SuspendLayout();
             this.uiTableLayoutPanel4.SuspendLayout();
+            this.uiTableLayoutPanel17.SuspendLayout();
             this.uiTableLayoutPanel8.SuspendLayout();
             this.uiTableLayoutPanel6.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
-            this.uiTableLayoutPanel17.SuspendLayout();
             this.SuspendLayout();
             // 
             // WK_Update
@@ -548,7 +548,7 @@
             this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 93F));
             this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 111F));
             this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 57F));
-            this.uiTableLayoutPanel5.Controls.Add(this.ipPallerQRType, 2, 0);
+            this.uiTableLayoutPanel5.Controls.Add(this.opMFIID, 2, 0);
             this.uiTableLayoutPanel5.Controls.Add(this.ipPallet_Size, 0, 0);
             this.uiTableLayoutPanel5.Controls.Add(this.uiPanel2, 1, 0);
             this.uiTableLayoutPanel5.Location = new System.Drawing.Point(148, 224);
@@ -559,28 +559,6 @@
             this.uiTableLayoutPanel5.Size = new System.Drawing.Size(335, 35);
             this.uiTableLayoutPanel5.TabIndex = 60;
             this.uiTableLayoutPanel5.TagString = null;
-            // 
-            // ipPallerQRType
-            // 
-            this.ipPallerQRType.DataSource = null;
-            this.ipPallerQRType.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ipPallerQRType.FillColor = System.Drawing.Color.White;
-            this.ipPallerQRType.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.ipPallerQRType.ItemHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
-            this.ipPallerQRType.Items.AddRange(new object[] {
-            "Tăng dần"});
-            this.ipPallerQRType.ItemSelectForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
-            this.ipPallerQRType.Location = new System.Drawing.Point(206, 2);
-            this.ipPallerQRType.Margin = new System.Windows.Forms.Padding(2);
-            this.ipPallerQRType.MinimumSize = new System.Drawing.Size(63, 0);
-            this.ipPallerQRType.Name = "ipPallerQRType";
-            this.ipPallerQRType.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
-            this.ipPallerQRType.Size = new System.Drawing.Size(127, 31);
-            this.ipPallerQRType.SymbolSize = 24;
-            this.ipPallerQRType.TabIndex = 62;
-            this.ipPallerQRType.Text = "Ngẫu nhiên";
-            this.ipPallerQRType.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            this.ipPallerQRType.Watermark = "";
             // 
             // ipPallet_Size
             // 
@@ -612,7 +590,7 @@
             this.uiPanel2.Name = "uiPanel2";
             this.uiPanel2.Size = new System.Drawing.Size(107, 31);
             this.uiPanel2.TabIndex = 47;
-            this.uiPanel2.Text = "Loại mã Pallet";
+            this.uiPanel2.Text = "Mã phiên";
             this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiPanel3
@@ -761,6 +739,57 @@
             this.uiPanel9.TabIndex = 58;
             this.uiPanel9.Text = "Ngày sản xuất";
             this.uiPanel9.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiTableLayoutPanel17
+            // 
+            this.uiTableLayoutPanel17.ColumnCount = 2;
+            this.uiTableLayoutPanel17.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 78.66666F));
+            this.uiTableLayoutPanel17.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 21.33333F));
+            this.uiTableLayoutPanel17.Controls.Add(this.ipCaseBarcode, 0, 0);
+            this.uiTableLayoutPanel17.Controls.Add(this.btnCaseBarcode, 1, 0);
+            this.uiTableLayoutPanel17.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel17.Location = new System.Drawing.Point(148, 37);
+            this.uiTableLayoutPanel17.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.uiTableLayoutPanel17.Name = "uiTableLayoutPanel17";
+            this.uiTableLayoutPanel17.RowCount = 1;
+            this.uiTableLayoutPanel17.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel17.Size = new System.Drawing.Size(335, 37);
+            this.uiTableLayoutPanel17.TabIndex = 41;
+            this.uiTableLayoutPanel17.TagString = null;
+            // 
+            // ipCaseBarcode
+            // 
+            this.ipCaseBarcode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ipCaseBarcode.FillColor = System.Drawing.Color.White;
+            this.ipCaseBarcode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ipCaseBarcode.Location = new System.Drawing.Point(2, 2);
+            this.ipCaseBarcode.Margin = new System.Windows.Forms.Padding(2);
+            this.ipCaseBarcode.Minimum = 0D;
+            this.ipCaseBarcode.MinimumSize = new System.Drawing.Size(63, 0);
+            this.ipCaseBarcode.Name = "ipCaseBarcode";
+            this.ipCaseBarcode.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
+            this.ipCaseBarcode.Size = new System.Drawing.Size(259, 33);
+            this.ipCaseBarcode.SymbolDropDown = 557532;
+            this.ipCaseBarcode.SymbolNormal = 557532;
+            this.ipCaseBarcode.SymbolSize = 24;
+            this.ipCaseBarcode.TabIndex = 18;
+            this.ipCaseBarcode.Text = "-";
+            this.ipCaseBarcode.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ipCaseBarcode.Watermark = "";
+            // 
+            // btnCaseBarcode
+            // 
+            this.btnCaseBarcode.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnCaseBarcode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnCaseBarcode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnCaseBarcode.Location = new System.Drawing.Point(266, 3);
+            this.btnCaseBarcode.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnCaseBarcode.Name = "btnCaseBarcode";
+            this.btnCaseBarcode.Size = new System.Drawing.Size(66, 31);
+            this.btnCaseBarcode.Symbol = 61482;
+            this.btnCaseBarcode.TabIndex = 19;
+            this.btnCaseBarcode.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnCaseBarcode.Click += new System.EventHandler(this.btnCaseBarcode_Click);
             // 
             // ipSanLuong
             // 
@@ -966,7 +995,7 @@
             this.ipConsole.Name = "ipConsole";
             this.ipConsole.Padding = new System.Windows.Forms.Padding(2);
             this.ipConsole.ShowText = false;
-            this.ipConsole.Size = new System.Drawing.Size(826, 229);
+            this.ipConsole.Size = new System.Drawing.Size(826, 230);
             this.ipConsole.TabIndex = 6;
             this.ipConsole.Text = null;
             // 
@@ -999,65 +1028,27 @@
             this.googleService1.TableID = "BatchProduction";
             this.googleService1.Upload_filePatch = null;
             // 
-            // btnCaseBarcode
+            // opMFIID
             // 
-            this.btnCaseBarcode.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnCaseBarcode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnCaseBarcode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnCaseBarcode.Location = new System.Drawing.Point(266, 3);
-            this.btnCaseBarcode.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btnCaseBarcode.Name = "btnCaseBarcode";
-            this.btnCaseBarcode.Size = new System.Drawing.Size(66, 31);
-            this.btnCaseBarcode.Symbol = 61482;
-            this.btnCaseBarcode.TabIndex = 19;
-            this.btnCaseBarcode.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnCaseBarcode.Click += new System.EventHandler(this.btnCaseBarcode_Click);
+            this.opMFIID.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opMFIID.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opMFIID.Location = new System.Drawing.Point(206, 2);
+            this.opMFIID.Margin = new System.Windows.Forms.Padding(2);
+            this.opMFIID.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opMFIID.Name = "opMFIID";
+            this.opMFIID.Size = new System.Drawing.Size(127, 31);
+            this.opMFIID.TabIndex = 62;
+            this.opMFIID.Text = "kt01";
+            this.opMFIID.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // uiTableLayoutPanel17
-            // 
-            this.uiTableLayoutPanel17.ColumnCount = 2;
-            this.uiTableLayoutPanel17.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 78.66666F));
-            this.uiTableLayoutPanel17.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 21.33333F));
-            this.uiTableLayoutPanel17.Controls.Add(this.ipCaseBarcode, 0, 0);
-            this.uiTableLayoutPanel17.Controls.Add(this.btnCaseBarcode, 1, 0);
-            this.uiTableLayoutPanel17.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel17.Location = new System.Drawing.Point(148, 37);
-            this.uiTableLayoutPanel17.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.uiTableLayoutPanel17.Name = "uiTableLayoutPanel17";
-            this.uiTableLayoutPanel17.RowCount = 1;
-            this.uiTableLayoutPanel17.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel17.Size = new System.Drawing.Size(335, 37);
-            this.uiTableLayoutPanel17.TabIndex = 41;
-            this.uiTableLayoutPanel17.TagString = null;
-            // 
-            // ipCaseBarcode
-            // 
-            this.ipCaseBarcode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ipCaseBarcode.FillColor = System.Drawing.Color.White;
-            this.ipCaseBarcode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.ipCaseBarcode.Location = new System.Drawing.Point(2, 2);
-            this.ipCaseBarcode.Margin = new System.Windows.Forms.Padding(2);
-            this.ipCaseBarcode.Minimum = 0D;
-            this.ipCaseBarcode.MinimumSize = new System.Drawing.Size(63, 0);
-            this.ipCaseBarcode.Name = "ipCaseBarcode";
-            this.ipCaseBarcode.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
-            this.ipCaseBarcode.Size = new System.Drawing.Size(259, 33);
-            this.ipCaseBarcode.SymbolDropDown = 557532;
-            this.ipCaseBarcode.SymbolNormal = 557532;
-            this.ipCaseBarcode.SymbolSize = 24;
-            this.ipCaseBarcode.TabIndex = 18;
-            this.ipCaseBarcode.Text = "-";
-            this.ipCaseBarcode.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ipCaseBarcode.Watermark = "";
-            // 
-            // F2MFI
+            // MFI_Service_Form
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(836, 652);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MaximumSize = new System.Drawing.Size(836, 652);
             this.MinimumSize = new System.Drawing.Size(836, 652);
-            this.Name = "F2MFI";
+            this.Name = "MFI_Service_Form";
             this.Symbol = 61672;
             this.Text = "Sản Xuất";
             this.Load += new System.EventHandler(this.FCasePrinter_Load);
@@ -1071,10 +1062,10 @@
             this.uiTableLayoutPanel3.ResumeLayout(false);
             this.uiTableLayoutPanel5.ResumeLayout(false);
             this.uiTableLayoutPanel4.ResumeLayout(false);
+            this.uiTableLayoutPanel17.ResumeLayout(false);
             this.uiTableLayoutPanel8.ResumeLayout(false);
             this.uiTableLayoutPanel6.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
-            this.uiTableLayoutPanel17.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1114,7 +1105,6 @@
         private Sunny.UI.UINumPadTextBox ipProductBarcode;
         private Sunny.UI.UISymbolButton btnScanBarcode;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel5;
-        private Sunny.UI.UIComboBox ipPallerQRType;
         private Sunny.UI.UINumPadTextBox ipPallet_Size;
         private Sunny.UI.UIPanel uiPanel2;
         private Sunny.UI.UIPanel uiPanel3;
@@ -1141,5 +1131,6 @@
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel17;
         private Sunny.UI.UINumPadTextBox ipCaseBarcode;
         private Sunny.UI.UISymbolButton btnCaseBarcode;
+        private Sunny.UI.UIPanel opMFIID;
     }
 }
