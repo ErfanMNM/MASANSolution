@@ -76,7 +76,6 @@ namespace MFI_Service
 
                         var _ptsvrt =  Push_MFI_To_Server();
 
-
                         //Đẩy dữ liệu lên máy chủ
                         if (_ptsvrt.IsSuccess)
                         {
@@ -97,19 +96,19 @@ namespace MFI_Service
                         }
                         break;
                     case e_MFI_Status.FREE:
-
+                        //tạm thời không làm gì cả
                         break;
                     case e_MFI_Status.SQLite_SAVE:
-                        if (MFI_To_SQLite().Issucces)
-                        {
-                            this.Invoke(new Action(() =>
-                            {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}:Lưu dữ liệu sản xuất mới thành công");
-                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            }));
+                        //if (MFI_To_SQLite().Issucces)
+                        //{
+                        //    this.Invoke(new Action(() =>
+                        //    {
+                        //        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}:Lưu dữ liệu sản xuất mới thành công");
+                        //        ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                        //    }));
 
-                            _Server_MFI.MFI_Status = e_MFI_Status.SQLite_LOAD;
-                        }
+                        //    _Server_MFI.MFI_Status = e_MFI_Status.SQLite_LOAD;
+                        //}
                         break;
                 }
                 Thread.Sleep(1000);
@@ -309,44 +308,6 @@ namespace MFI_Service
             catch (Exception ex)
             {
                 return (false, $"Lỗi phía máy chủ: {ex.Message}");
-            }
-        }
-
-
-        public (bool IsSuccess, string message) Set__Server_MFI_DATA()
-        {
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    string MFI_DataString =$"{_Server_MFI.Product_Barcode},{_Server_MFI.Case_Barcode},{_Server_MFI.Case_LOT},{_Server_MFI.Batch_Code},{_Server_MFI.Block_Size},{_Server_MFI.Case_Size},{_Server_MFI.Pallet_Size},{_Server_MFI.SanLuong},{_Server_MFI.Pallet_QR_Type},{_Server_MFI.Operator}";
-
-                    HttpResponseMessage response = client.GetAsync($"{Globalvariable.Server_Url}sv1/SET/MFI_{_Server_MFI.MFI_ID}/"+ MFI_DataString).Result; // Chạy đồng bộ
-                    
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string result = response.Content.ReadAsStringAsync().Result; // Chạy đồng bộ
-                        //khi có phiên làm việc khác
-                        if (result == "ok")
-                        {
-                            return (true, null);
-                        }
-                        else
-                        {
-                            return (false, "Gửi dữ liệu thất bại, máy chủ không trả về OK");
-                        }
-
-
-                    }
-                    else
-                    {
-                        return (false, $"Lỗi máy chủ: {response.StatusCode}");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                return (false, $"{DateTime.Now:HH:mm:ss}: Lỗi phía máy chủ: {ex.Message}");
             }
         }
         Color color = Color.White;
