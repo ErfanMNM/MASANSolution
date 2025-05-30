@@ -376,8 +376,8 @@ namespace MFI_Service
                     color = Color.White;
                 }
 
-                try
-                {
+                //try
+                //{
                     //kiểm tra và load thông tin sản xuất
                     if (ipCaseBarcode.Text != _Server_MFI.Case_Barcode ||
                         ipProductBarcode.Text != _Server_MFI.Product_Barcode ||
@@ -392,7 +392,7 @@ namespace MFI_Service
                         {
                             btnLoad_Code.Enabled = true;
                             btnUndo.Enabled = true;
-                        }));
+                       
 
                         // Kiểm tra từng trường và thay đổi màu FillColor nếu khác
                         if (ipCaseBarcode.Text != _Server_MFI.Case_Barcode)
@@ -427,7 +427,9 @@ namespace MFI_Service
                         {
                             ipLOT.FillColor = color;
                         }
-                    }
+
+                        }));
+                }
                     else
                     {
                         // Nếu tất cả đều khớp, đặt màu FillColor về mặc định
@@ -453,15 +455,15 @@ namespace MFI_Service
 
                         }));
                     }
-                }
-                catch (Exception ex)
-                {
-                    Invoke(new Action(() =>
-                    {
-                        this.ShowErrorDialog($"Lỗi : {ex.Message}");
+               // }
+                //catch (Exception ex)
+                //{
+                //    Invoke(new Action(() =>
+                //    {
+                //        this.ShowErrorDialog($"Lỗi : {ex.Message}");
 
-                    }));
-                }
+                //    }));
+                //}
                 
 
                 if (GServer.Server_Status == e_Server_Status.DISCONNECTED)
@@ -545,7 +547,7 @@ namespace MFI_Service
                 {
                     using (HttpClient client = new HttpClient())
                     {
-                        HttpResponseMessage response = client.GetAsync($"http://localhost:3000/gét").Result; // Chạy đồng bộ
+                        HttpResponseMessage response = client.GetAsync($"http://localhost:3000/get").Result; // Chạy đồng bộ
 
                         if (response.IsSuccessStatusCode)
                         {
@@ -753,7 +755,7 @@ namespace MFI_Service
         {
             if(ERP.DataTable.Rows.Count < 1)
             {
-                this.ShowErrorDialog("Không có dữ liệu ERP");
+                this.ShowInfoDialog("Dữ liệu ERP tải xuống rỗng. Vui lòng kiểm tra lại.");
             }
             foreach (DataRow row in ERP.DataTable.Rows)
             {
@@ -766,7 +768,7 @@ namespace MFI_Service
                 ipBatchCode.SelectedIndex = ipBatchCode.Items.Count - 1;
             }));
             btnCloudMS.Enabled = true;
-            btnCloudMS.Text = "Tải ERP";
+            btnCloudMS.Text = "Tải xuống ERP";
         }
 
         private void ipBatchCode_SelectedIndexChanged(object sender, EventArgs e)
