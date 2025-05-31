@@ -772,7 +772,7 @@
             this.uiPanel8.RectColor = System.Drawing.Color.Teal;
             this.uiPanel8.Size = new System.Drawing.Size(117, 25);
             this.uiPanel8.TabIndex = 1;
-            this.uiPanel8.Text = "Camera nhãn";
+            this.uiPanel8.Text = "Camera";
             this.uiPanel8.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opCamera
@@ -821,7 +821,7 @@
             this.uiPanel9.RectColor = System.Drawing.Color.Teal;
             this.uiPanel9.Size = new System.Drawing.Size(106, 25);
             this.uiPanel9.TabIndex = 1;
-            this.uiPanel9.Text = "Máy in nhãn";
+            this.uiPanel9.Text = "Máy in";
             this.uiPanel9.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opPrinter
@@ -907,7 +907,7 @@
             this.tabPage1.Controls.Add(this.ipConsole);
             this.tabPage1.Location = new System.Drawing.Point(0, 40);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(457, 373);
+            this.tabPage1.Size = new System.Drawing.Size(454, 373);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Thông báo";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -924,7 +924,7 @@
             this.ipConsole.Name = "ipConsole";
             this.ipConsole.Padding = new System.Windows.Forms.Padding(2);
             this.ipConsole.ShowText = false;
-            this.ipConsole.Size = new System.Drawing.Size(457, 373);
+            this.ipConsole.Size = new System.Drawing.Size(454, 373);
             this.ipConsole.TabIndex = 5;
             this.ipConsole.Text = "Thông báo";
             // 
@@ -934,7 +934,7 @@
             this.tabPage2.Controls.Add(this.uiTableLayoutPanel19);
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(454, 373);
+            this.tabPage2.Size = new System.Drawing.Size(200, 60);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Thống kê";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -1700,7 +1700,7 @@
             this.tabPage3.Controls.Add(this.opHisConsole);
             this.tabPage3.Location = new System.Drawing.Point(0, 40);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(457, 373);
+            this.tabPage3.Size = new System.Drawing.Size(200, 60);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Lịch sử";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1717,7 +1717,7 @@
             this.opHisConsole.Name = "opHisConsole";
             this.opHisConsole.Padding = new System.Windows.Forms.Padding(2);
             this.opHisConsole.ShowText = false;
-            this.opHisConsole.Size = new System.Drawing.Size(457, 373);
+            this.opHisConsole.Size = new System.Drawing.Size(200, 60);
             this.opHisConsole.TabIndex = 0;
             this.opHisConsole.Text = "uiListBox1";
             // 

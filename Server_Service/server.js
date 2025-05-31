@@ -51,7 +51,25 @@ app.post('/set', (req, res) => {
     res.json({ results });
 });
 
-// GET để lấy giá trị theo key
+// POST để lấy giá trị của nhiều key
+app.post('/get', (req, res) => {
+    const { keys } = req.body;
+
+    // Kiểm tra dữ liệu đầu vào
+    if (!Array.isArray(keys)) {
+        return res.status(400).json({ error: 'Keys must be an array' });
+    }
+
+    const results = {};
+    for (const key of keys) {
+        const data = tempStorage[key];
+        results[key] = data && (data.expiresAt === null || data.expiresAt > Date.now()) ? data.value : 0;
+    }
+
+    res.json({ values: results });
+});
+
+// GET để lấy giá trị của một key
 app.get('/get/:key', (req, res) => {
     const { key } = req.params;
     const data = tempStorage[key];

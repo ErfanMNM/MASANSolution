@@ -185,10 +185,10 @@
             this.btnCloudMS.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnCloudMS.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnCloudMS.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnCloudMS.Location = new System.Drawing.Point(666, 3);
+            this.btnCloudMS.Location = new System.Drawing.Point(664, 3);
             this.btnCloudMS.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnCloudMS.Name = "btnCloudMS";
-            this.btnCloudMS.Size = new System.Drawing.Size(155, 40);
+            this.btnCloudMS.Size = new System.Drawing.Size(157, 40);
             this.btnCloudMS.Symbol = 558048;
             this.btnCloudMS.TabIndex = 34;
             this.btnCloudMS.Text = "Tải xuống ERP";
@@ -201,10 +201,10 @@
             this.btnUndo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnUndo.Enabled = false;
             this.btnUndo.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnUndo.Location = new System.Drawing.Point(566, 3);
+            this.btnUndo.Location = new System.Drawing.Point(565, 3);
             this.btnUndo.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnUndo.Name = "btnUndo";
-            this.btnUndo.Size = new System.Drawing.Size(94, 40);
+            this.btnUndo.Size = new System.Drawing.Size(93, 40);
             this.btnUndo.Symbol = 557410;
             this.btnUndo.TabIndex = 33;
             this.btnUndo.Text = "Nhập lại";
@@ -217,7 +217,7 @@
             this.btnLoad_Code.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnLoad_Code.Enabled = false;
             this.btnLoad_Code.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnLoad_Code.Location = new System.Drawing.Point(371, 3);
+            this.btnLoad_Code.Location = new System.Drawing.Point(370, 3);
             this.btnLoad_Code.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnLoad_Code.Name = "btnLoad_Code";
             this.btnLoad_Code.Size = new System.Drawing.Size(189, 40);
@@ -235,7 +235,7 @@
             this.lblServerStatus.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.lblServerStatus.MinimumSize = new System.Drawing.Size(1, 1);
             this.lblServerStatus.Name = "lblServerStatus";
-            this.lblServerStatus.Size = new System.Drawing.Size(360, 36);
+            this.lblServerStatus.Size = new System.Drawing.Size(359, 36);
             this.lblServerStatus.TabIndex = 35;
             this.lblServerStatus.Text = "Đang kết nối máy chủ";
             this.lblServerStatus.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -261,8 +261,8 @@
             // 
             this.uiTableLayoutPanel14.BackColor = System.Drawing.Color.LightBlue;
             this.uiTableLayoutPanel14.ColumnCount = 2;
-            this.uiTableLayoutPanel14.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 43.04207F));
-            this.uiTableLayoutPanel14.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 56.95793F));
+            this.uiTableLayoutPanel14.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 41.76829F));
+            this.uiTableLayoutPanel14.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 58.23171F));
             this.uiTableLayoutPanel14.Controls.Add(this.uiPanel26, 0, 5);
             this.uiTableLayoutPanel14.Controls.Add(this.uiPanel25, 1, 4);
             this.uiTableLayoutPanel14.Controls.Add(this.uiPanel23, 0, 4);
@@ -299,7 +299,7 @@
             this.uiPanel26.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel26.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel26.Name = "uiPanel26";
-            this.uiPanel26.Size = new System.Drawing.Size(137, 33);
+            this.uiPanel26.Size = new System.Drawing.Size(133, 33);
             this.uiPanel26.TabIndex = 68;
             this.uiPanel26.Text = "Số mã pallet còn";
             this.uiPanel26.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -309,11 +309,11 @@
             this.uiPanel25.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiPanel25.FillColor = System.Drawing.Color.White;
             this.uiPanel25.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel25.Location = new System.Drawing.Point(143, 150);
+            this.uiPanel25.Location = new System.Drawing.Point(139, 150);
             this.uiPanel25.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel25.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel25.Name = "uiPanel25";
-            this.uiPanel25.Size = new System.Drawing.Size(183, 33);
+            this.uiPanel25.Size = new System.Drawing.Size(187, 33);
             this.uiPanel25.TabIndex = 67;
             this.uiPanel25.Text = "-";
             this.uiPanel25.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -327,7 +327,7 @@
             this.uiPanel23.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel23.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel23.Name = "uiPanel23";
-            this.uiPanel23.Size = new System.Drawing.Size(137, 33);
+            this.uiPanel23.Size = new System.Drawing.Size(133, 33);
             this.uiPanel23.TabIndex = 66;
             this.uiPanel23.Text = "Loại QR Chai";
             this.uiPanel23.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -340,7 +340,7 @@
             this.uiPanel24.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel24.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel24.Name = "uiPanel24";
-            this.uiPanel24.Size = new System.Drawing.Size(137, 33);
+            this.uiPanel24.Size = new System.Drawing.Size(133, 33);
             this.uiPanel24.TabIndex = 56;
             this.uiPanel24.Text = "Số mã thùng còn";
             this.uiPanel24.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -350,11 +350,11 @@
             this.uiPanel22.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiPanel22.FillColor = System.Drawing.Color.White;
             this.uiPanel22.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel22.Location = new System.Drawing.Point(143, 113);
+            this.uiPanel22.Location = new System.Drawing.Point(139, 113);
             this.uiPanel22.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel22.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel22.Name = "uiPanel22";
-            this.uiPanel22.Size = new System.Drawing.Size(183, 33);
+            this.uiPanel22.Size = new System.Drawing.Size(187, 33);
             this.uiPanel22.TabIndex = 65;
             this.uiPanel22.Text = "-";
             this.uiPanel22.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -364,11 +364,11 @@
             this.uiPanel13.Controls.Add(this.opPallet_QR_Status);
             this.uiPanel13.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiPanel13.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel13.Location = new System.Drawing.Point(143, 76);
+            this.uiPanel13.Location = new System.Drawing.Point(139, 76);
             this.uiPanel13.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel13.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel13.Name = "uiPanel13";
-            this.uiPanel13.Size = new System.Drawing.Size(183, 33);
+            this.uiPanel13.Size = new System.Drawing.Size(187, 33);
             this.uiPanel13.TabIndex = 64;
             this.uiPanel13.Text = "Loại QR Chai";
             this.uiPanel13.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -382,7 +382,7 @@
             this.opPallet_QR_Status.Margin = new System.Windows.Forms.Padding(2);
             this.opPallet_QR_Status.MinimumSize = new System.Drawing.Size(1, 1);
             this.opPallet_QR_Status.Name = "opPallet_QR_Status";
-            this.opPallet_QR_Status.Size = new System.Drawing.Size(183, 33);
+            this.opPallet_QR_Status.Size = new System.Drawing.Size(187, 33);
             this.opPallet_QR_Status.TabIndex = 56;
             this.opPallet_QR_Status.Text = "Mất kết nối";
             this.opPallet_QR_Status.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -395,9 +395,9 @@
             this.uiPanel17.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel17.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel17.Name = "uiPanel17";
-            this.uiPanel17.Size = new System.Drawing.Size(137, 33);
+            this.uiPanel17.Size = new System.Drawing.Size(133, 33);
             this.uiPanel17.TabIndex = 63;
-            this.uiPanel17.Text = "Máy in thùng";
+            this.uiPanel17.Text = "Máy Qr02";
             this.uiPanel17.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opCase_QR_Status
@@ -405,11 +405,11 @@
             this.opCase_QR_Status.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opCase_QR_Status.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
             this.opCase_QR_Status.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opCase_QR_Status.Location = new System.Drawing.Point(143, 39);
+            this.opCase_QR_Status.Location = new System.Drawing.Point(139, 39);
             this.opCase_QR_Status.Margin = new System.Windows.Forms.Padding(2);
             this.opCase_QR_Status.MinimumSize = new System.Drawing.Size(1, 1);
             this.opCase_QR_Status.Name = "opCase_QR_Status";
-            this.opCase_QR_Status.Size = new System.Drawing.Size(183, 33);
+            this.opCase_QR_Status.Size = new System.Drawing.Size(187, 33);
             this.opCase_QR_Status.TabIndex = 62;
             this.opCase_QR_Status.Text = "Mất kết nối";
             this.opCase_QR_Status.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -419,11 +419,11 @@
             this.opProduct_QR_Status.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opProduct_QR_Status.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
             this.opProduct_QR_Status.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opProduct_QR_Status.Location = new System.Drawing.Point(143, 2);
+            this.opProduct_QR_Status.Location = new System.Drawing.Point(139, 2);
             this.opProduct_QR_Status.Margin = new System.Windows.Forms.Padding(2);
             this.opProduct_QR_Status.MinimumSize = new System.Drawing.Size(1, 1);
             this.opProduct_QR_Status.Name = "opProduct_QR_Status";
-            this.opProduct_QR_Status.Size = new System.Drawing.Size(183, 33);
+            this.opProduct_QR_Status.Size = new System.Drawing.Size(187, 33);
             this.opProduct_QR_Status.TabIndex = 61;
             this.opProduct_QR_Status.Text = "Mất kết nối";
             this.opProduct_QR_Status.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -436,9 +436,9 @@
             this.uiPanel12.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel12.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel12.Name = "uiPanel12";
-            this.uiPanel12.Size = new System.Drawing.Size(137, 33);
+            this.uiPanel12.Size = new System.Drawing.Size(133, 33);
             this.uiPanel12.TabIndex = 60;
-            this.uiPanel12.Text = "Máy QR chai";
+            this.uiPanel12.Text = "Máy Qr01";
             this.uiPanel12.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblAllStatus
@@ -446,11 +446,11 @@
             this.lblAllStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblAllStatus.FillColor = System.Drawing.Color.White;
             this.lblAllStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.lblAllStatus.Location = new System.Drawing.Point(143, 224);
+            this.lblAllStatus.Location = new System.Drawing.Point(139, 224);
             this.lblAllStatus.Margin = new System.Windows.Forms.Padding(2);
             this.lblAllStatus.MinimumSize = new System.Drawing.Size(1, 1);
             this.lblAllStatus.Name = "lblAllStatus";
-            this.lblAllStatus.Size = new System.Drawing.Size(183, 35);
+            this.lblAllStatus.Size = new System.Drawing.Size(187, 35);
             this.lblAllStatus.TabIndex = 59;
             this.lblAllStatus.Text = "-";
             this.lblAllStatus.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -458,14 +458,14 @@
             // uiPanel18
             // 
             this.uiPanel18.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel18.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.uiPanel18.Location = new System.Drawing.Point(2, 224);
             this.uiPanel18.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel18.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel18.Name = "uiPanel18";
-            this.uiPanel18.Size = new System.Drawing.Size(137, 35);
+            this.uiPanel18.Size = new System.Drawing.Size(133, 35);
             this.uiPanel18.TabIndex = 58;
-            this.uiPanel18.Text = "Tất cả";
+            this.uiPanel18.Text = "Trạng thái hệ thống";
             this.uiPanel18.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiPanel16
@@ -473,11 +473,11 @@
             this.uiPanel16.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiPanel16.FillColor = System.Drawing.SystemColors.ButtonHighlight;
             this.uiPanel16.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel16.Location = new System.Drawing.Point(143, 187);
+            this.uiPanel16.Location = new System.Drawing.Point(139, 187);
             this.uiPanel16.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel16.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel16.Name = "uiPanel16";
-            this.uiPanel16.Size = new System.Drawing.Size(183, 33);
+            this.uiPanel16.Size = new System.Drawing.Size(187, 33);
             this.uiPanel16.TabIndex = 57;
             this.uiPanel16.Text = "-";
             this.uiPanel16.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -490,9 +490,9 @@
             this.uiPanel4.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel4.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel4.Name = "uiPanel4";
-            this.uiPanel4.Size = new System.Drawing.Size(137, 33);
+            this.uiPanel4.Size = new System.Drawing.Size(133, 33);
             this.uiPanel4.TabIndex = 49;
-            this.uiPanel4.Text = "Dữ liệu Pallet";
+            this.uiPanel4.Text = "Máy Qr03";
             this.uiPanel4.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiPanel11
@@ -503,7 +503,7 @@
             this.uiPanel11.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel11.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel11.Name = "uiPanel11";
-            this.uiPanel11.Size = new System.Drawing.Size(137, 33);
+            this.uiPanel11.Size = new System.Drawing.Size(133, 33);
             this.uiPanel11.TabIndex = 48;
             this.uiPanel11.Text = "Số mã chai còn";
             this.uiPanel11.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;

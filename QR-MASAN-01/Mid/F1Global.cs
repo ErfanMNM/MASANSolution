@@ -33,7 +33,7 @@ namespace QR_MASAN_01
         public static e_Server_Status Server_Status { get; set;} = e_Server_Status.DISCONNECTED;
         public static bool AllReady {  get; set; } = false;
         public static bool PLCConnect { get; set; } = false;
-        public static e_Data_Status Data_Status { get; set; } = e_Data_Status.NODATA;
+        public static e_Data_Status Data_Status { get; set; } = e_Data_Status.STARTUP;
         public static string MFI_ID { get; set; } ="0";
         public static bool ISRerun { get; set; } = false;
         public static string Server_Url { get; set; } = "https://sv2.th.io.vn/";
@@ -130,7 +130,7 @@ namespace QR_MASAN_01
     {
         READY,
         PUSHOK,
-        NODATA,
+        STARTUP,
         GET,
         PUSH,
         PRINTER_PUSH,
