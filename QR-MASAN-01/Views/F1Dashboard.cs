@@ -1,5 +1,6 @@
 ﻿using HslCommunication;
 using MainClass;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sunny.UI;
 using System;
@@ -12,7 +13,9 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
+using static MFI_Service.MFI_Service_Form;
 
 namespace QR_MASAN_01
 {
@@ -24,104 +27,235 @@ namespace QR_MASAN_01
             WK_Update120.RunWorkerAsync();
         }
         
+        MFI_Info _clientMFI = new MFI_Info();
         bool ClearPLC = false;
+
+        public string dataBase_FileName = "";
         //lấy xem có thông tin phiên tạo mới hay không
 
         #region Các chương trình tạo dữ liệu MFI, đồng bộ với máy chủ
+        List<string> keys = new List<string> { "Case_Barcode", "Product_Barcode", "Case_LOT", "Batch_Code", "Block_Size", "Case_Size", "Pallet_Size", "SanLuong", "Operator", "Pallet_QR_Type", "MFI_ID", "QRCode_Folder", "QRCode_FileName", "MFI_Status" };
 
         //Luồng chính xử lý sự kiện đồng bộ
         private void WK_Server_check_DoWork(object sender, DoWorkEventArgs e)
         {
+
             while (!WK_Server_check.CancellationPending)
             {
+
                 switch (Globalvariable.Data_Status)
                 {
+                    //Trạng thái sẵn sàng bình thường
                     case e_Data_Status.READY:
-                        //;Get_Server_MFI_ID();
-                        break;
-                    case e_Data_Status.STARTUP:
-                        this.Invoke(new Action(() =>
+                        var _gfsv = GetMultipleKeys(keys);
+                        if(_gfsv.IsSuccess)
                         {
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Giao diện màn hình máy QR Chai phiên bản 10.23.531 ");
-                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Khởi động chương trình đồng bộ dữ liệu ");
-                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                        }));
+                            //các thông tin vào Client_MFI
+                            _clientMFI.Case_Barcode = _gfsv.Values["Case_Barcode"].ToString();
+                            _clientMFI.Product_Barcode = _gfsv.Values["Product_Barcode"].ToString();
+                            _clientMFI.Case_LOT = _gfsv.Values["Case_LOT"].ToString();
+                            _clientMFI.Batch_Code = _gfsv.Values["Batch_Code"].ToString();
+                            _clientMFI.Block_Size = _gfsv.Values["Block_Size"].ToString();
+                            _clientMFI.Case_Size = _gfsv.Values["Case_Size"].ToString();
+                            _clientMFI.Pallet_Size = _gfsv.Values["Pallet_Size"].ToString();
+                            _clientMFI.SanLuong = _gfsv.Values["SanLuong"].ToString();
+                            _clientMFI.Operator = _gfsv.Values["Operator"].ToString();
+                            _clientMFI.Pallet_QR_Type = _gfsv.Values["Pallet_QR_Type"].ToString();
+                            _clientMFI.MFI_ID = _gfsv.Values["MFI_ID"].ToString();
 
-                        //Lấy dữ liệu MFI lưu trong máy local
-                        var _gmfiflc = Get_Last_MFI_From_Local();
-                        if(_gmfiflc.Issucces)
-                        {
-                            this.Invoke(new Action(() =>
-                            {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: {_gmfiflc.message} ");
-                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            }));
-                        }
-                        else
-                        {
-                            this.Invoke(new Action(() =>
-                            {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi lấy MFI từ máy tính: {_gmfiflc.message} ");
-                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            }));
-                        }
-                        Update_MFI_HMI();
+                            _clientMFI.QRCode_Folder = $@"Client_Database/{_clientMFI.Case_LOT.Split("-")[2].ToString()}/{_clientMFI.Case_LOT.Split("-")[1].ToString()}/";
 
-                        //Lấy MFI ID từ máy chủ, lấy all không cần quan tâm thứ tự làm gì. Sau đó kiểm tra xem file dữ liệu đã tồn tại hay chưa, nếu chưa thì tạo mới. File dữ liệu tuân thủ quy định sau: BatchCode_Barcode.printerData
-                       var _gmfiiffsv = Get_From_Server("MFI_ID");
-                        if(_gmfiiffsv.IsSuccess)
-                        {
-                            if (_Client_MFI.MFI_ID != _gmfiiffsv.Message)
+
+
+                            if (Directory.Exists(_clientMFI.QRCode_Folder))
                             {
-                                _Client_MFI.MFI_ID = _gmfiiffsv.Message;
+
                             }
                             else
                             {
-                                //Nếu trùng, Kiểm tra xem có file đó hay chưa cấu trúc tuân thủ như sau:
-
-                                //1. Batch - barcode - ngày phải khác nhau. nếu có rồi thôi chưa thì phải tạo mới, ngày lấy từ bacth không cho chỉnh sửa luôn - batch sai ngày sai
+                                Directory.CreateDirectory(_clientMFI.QRCode_Folder);
                             }
 
-                            //Kiểm tra
+                            //kiểm tra và tạo file DB
+                            //tạo file dữ liệu CaseQR_Date_Random file lưu theo ngày, table là số lô sản xuất
+
+                            _clientMFI.QRCode_FileName = $"ProductCode_{_clientMFI.Case_LOT}_{_clientMFI.Batch_Code}_{_clientMFI.Product_Barcode}.db";
+
+                            //nếu chưa có
+                            if (!File.Exists(_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName))
+                            {
+                                SQLiteConnection.CreateFile(_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName);
+                                using (SQLiteConnection conn = new SQLiteConnection($"Data Source={_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName};Version=3;"))
+                                {
+                                    conn.Open();
+
+                                    // Tạo bảng mẫu
+                                    string a = $@"INSERT INTO `ProductDetails` (BatchCode ,CaseCode ,ProductCode ,BlockSize ,CaseSize ,PalletSize ,OperatorName ,TimeStamp ) 
+                                  VALUES ('{_clientMFI.Batch_Code}','{_clientMFI.Case_Barcode}','{_clientMFI.Product_Barcode}','{_clientMFI.Block_Size}','{_clientMFI.Case_Size}','{_clientMFI.Pallet_Size}','Operator','{DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")}');";
+                                    string createTableQuery = $@"
+                                        CREATE TABLE IF NOT EXISTS `QRContent` (
+                                            ProductID INTEGER NOT NULL UNIQUE,
+                                            ProductQR TEXT NOT NULL UNIQUE,
+                                            Active INTEGER NOT NULL DEFAULT 0,
+                                            TimestampActive TEXT NOT NULL DEFAULT 0,
+                                            PRIMARY KEY(ProductID AUTOINCREMENT)
+                                        );
+                                        CREATE TABLE IF NOT EXISTS `ProductDetails` (
+	                                        ID	INTEGER NOT NULL UNIQUE,
+                                            BatchCode	TEXT NOT NULL,
+                                            CaseCode	TEXT NOT NULL,
+                                            ProductCode	TEXT NOT NULL,
+                                            BlockSize	TEXT NOT NULL,
+                                            CaseSize	TEXT NOT NULL,
+                                            PalletSize	TEXT NOT NULL,
+                                            OperatorName TEXT NOT NULL,
+                                            TimeStamp TEXT NOT NULL,
+	                                        PRIMARY KEY(ID AUTOINCREMENT)
+                                        );
+                                                {a}
+
+                                                ";
+                                    using (SQLiteCommand cmd = new SQLiteCommand(createTableQuery, conn))
+                                    {
+                                        cmd.ExecuteNonQuery();
+                                    }
+
+                                    conn.Close();
+                                }
+
+                                //tạo mã QR
+                                Globalvariable.Data_Status = e_Data_Status.CREATING;
+
+                            }
+                            else
+                            {
+                                //nếu file đã có thì không làm gì cả//
+                            }
+                        }
+                        else
+                        {
+                            LogUpdate($"Lỗi kết nối máy chủ: {_gfsv.Message}");
+                        }
+                        Update_MFI_HMI();
+                        Push_MFI_To_Server("QR01Status", "1");
+                        break;
+                    //Trạng thái khi mở phần mềm lần đầu tiên
+                    case e_Data_Status.STARTUP:
+
+                        LogUpdate("Giao diện màn hình máy QR Chai phiên bản 10.23.531");
+                        LogUpdate("Khởi động chương trình đồng bộ dữ liệu");
+
+                        //Lấy MFI ID từ máy chủ, lấy all không cần quan tâm thứ tự làm gì. Sau đó kiểm tra xem file dữ liệu đã tồn tại hay chưa, nếu chưa thì tạo mới. File dữ liệu tuân thủ quy định sau: BatchCode_Barcode.printerData
+                       
+                        var (isSuccess, message, values) = GetMultipleKeys(keys);
+
+                        if (isSuccess)
+                        {
+                            LogUpdate($"Lấy dữ liệu MFI thành công từ máy chủ: {message}");
+
+                            //các thông tin vào Client_MFI
+                            _clientMFI.Case_Barcode = values["Case_Barcode"].ToString();
+                            _clientMFI.Product_Barcode = values["Product_Barcode"].ToString();
+                            _clientMFI.Case_LOT = values["Case_LOT"].ToString();
+                            _clientMFI.Batch_Code = values["Batch_Code"].ToString();
+                            _clientMFI.Block_Size = values["Block_Size"].ToString();
+                            _clientMFI.Case_Size = values["Case_Size"].ToString();
+                            _clientMFI.Pallet_Size = values["Pallet_Size"].ToString();
+                            _clientMFI.SanLuong = values["SanLuong"].ToString();
+                            _clientMFI.Operator = values["Operator"].ToString();
+                            _clientMFI.Pallet_QR_Type = values["Pallet_QR_Type"].ToString();
+                            _clientMFI.MFI_ID = values["MFI_ID"].ToString();
+
+                            _clientMFI.QRCode_Folder = $@"Client_Database/{_clientMFI.Case_LOT.Split("-")[2].ToString()}/{_clientMFI.Case_LOT.Split("-")[1].ToString()}/";
+
+
+                            
+                            if (Directory.Exists(_clientMFI.QRCode_Folder))
+                            {
+
+                            }
+                            else
+                            {
+                                Directory.CreateDirectory(_clientMFI.QRCode_Folder);
+                            }
+
+                            //kiểm tra và tạo file DB
+                            //tạo file dữ liệu CaseQR_Date_Random file lưu theo ngày, table là số lô sản xuất
+
+                           _clientMFI.QRCode_FileName = $"ProductCode_{_clientMFI.Case_LOT}_{_clientMFI.Batch_Code}_{_clientMFI.Product_Barcode}.db";
+
+                            //nếu chưa có
+                            if (!File.Exists(_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName))
+                            {
+                                SQLiteConnection.CreateFile(_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName);
+                                using (SQLiteConnection conn = new SQLiteConnection($"Data Source={_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName};Version=3;"))
+                                {
+                                    conn.Open();
+
+                                    // Tạo bảng mẫu
+                                    string a = $@"INSERT INTO `ProductDetails` (BatchCode ,CaseCode ,ProductCode ,BlockSize ,CaseSize ,PalletSize ,OperatorName ,TimeStamp ) 
+                                  VALUES ('{_clientMFI.Batch_Code}','{_clientMFI.Case_Barcode}','{_clientMFI.Product_Barcode}','{_clientMFI.Block_Size}','{_clientMFI.Case_Size}','{_clientMFI.Pallet_Size}','Operator','{DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")}');";
+                                    string createTableQuery = $@"
+                                        CREATE TABLE IF NOT EXISTS `QRContent` (
+                                            ProductID INTEGER NOT NULL UNIQUE,
+                                            ProductQR TEXT NOT NULL UNIQUE,
+                                            Active INTEGER NOT NULL DEFAULT 0,
+                                            TimestampActive TEXT NOT NULL DEFAULT 0,
+                                            PRIMARY KEY(ProductID AUTOINCREMENT)
+                                        );
+                                        CREATE TABLE IF NOT EXISTS `ProductDetails` (
+	                                        ID	INTEGER NOT NULL UNIQUE,
+                                            BatchCode	TEXT NOT NULL,
+                                            CaseCode	TEXT NOT NULL,
+                                            ProductCode	TEXT NOT NULL,
+                                            BlockSize	TEXT NOT NULL,
+                                            CaseSize	TEXT NOT NULL,
+                                            PalletSize	TEXT NOT NULL,
+                                            OperatorName TEXT NOT NULL,
+                                            TimeStamp TEXT NOT NULL,
+	                                        PRIMARY KEY(ID AUTOINCREMENT)
+                                        );
+                                                {a}
+
+                                                ";
+                                    using (SQLiteCommand cmd = new SQLiteCommand(createTableQuery, conn))
+                                    {
+                                        cmd.ExecuteNonQuery();
+                                    }
+
+                                    conn.Close();
+                                }
+
+                                //tạo mã QR
+                                Globalvariable.Data_Status = e_Data_Status.CREATING;
+                               
+                            }
+                            else
+                            {
+                                //nếu file đã có thì không làm gì cả, đẩy trạng thái lên push
+                                Globalvariable.Data_Status = e_Data_Status.PUSH;
+                            }
                         }
                         else
                         {
                             this.Invoke(new Action(() =>
                             {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi lấy MFI ID từ máy chủ: {_gmfiiffsv.Message}");
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi lấy MFI từ máy chủ: {message}");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                             }));
                         }
                         break;
+                    //Đây dữ liệu vào camera    
                     case e_Data_Status.PUSH:
                         //gửi mã vào dictionary
-                        Globalvariable.MaxID_QR = Get_MaxID_QR();
                         if (!WK_Push_Data_To_Dic.IsBusy)
                         {
-                            this.Invoke(new Action(() =>
-                            {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Đưa mã Dic ");
-                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            }));
+                            LogUpdate("Đẩy dữ liệu ô nhớ camera");
                             WK_Push_Data_To_Dic.RunWorkerAsync();
                         }
 
                         break;
-                    case e_Data_Status.CREATE:
-                        Gen_QR();
-                        break;
-                    case e_Data_Status.UNKNOWN:
-                        this.Invoke(new Action(() =>
-                        {
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Có vấn đề xảy ra trong quá trình đẩy dữ liệu, vui lòng kiểm tra lại. ");
-                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                        }));
-
-                        break;
-                    case e_Data_Status.GET:
-                        Get_Server_MFI_DATA();
-                        break;
+                    //Đẩy dữ liệu cho máy in
                     case e_Data_Status.PRINTER_PUSH:
                         //gửi thông tin qua máy in
                         if (Globalvariable.APPMODE == e_Mode.NEWMode)
@@ -139,6 +273,7 @@ namespace QR_MASAN_01
                         }
 
                         break;
+                     //Đẩy dữ liệu camera thành công
                     case e_Data_Status.PUSHOK:
                         this.Invoke(new Action(() =>
                         {
@@ -148,113 +283,148 @@ namespace QR_MASAN_01
                         Globalvariable.Data_Status = e_Data_Status.READY;
 
                         break;
+                    //Tạo mới mã QR
                     case e_Data_Status.CREATING:
+                        // tạo mã không trùng
+                    int count = 1_000_000;
+                        HashSet<string> uniqueCodes = GenerateUniqueRandomCodes(8, count);
+                        Random random = new Random();
+
+                        List<string> filedata = uniqueCodes.ToList();
+
+                        using (SQLiteConnection conn = new SQLiteConnection($"Data Source={_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName};Version=3;"))
+                        {
+                            string sql = $@" INSERT INTO `QRContent`
+                                      (ProductQR)
+                              VALUES (@ProductQR);";
+                            using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
+                            {
+                                conn.Open();
+
+                                int totalItems = filedata.Count;
+                                int percentStep = totalItems / 20; // 20 x 5% = 100%
+                                using (SQLiteTransaction transaction = conn.BeginTransaction())
+                                {
+                                    this.ShowStatusForm(100, "Đang tạo dữ liệu mã QR", 0);
+
+                                    for (var i = 0; i < totalItems; i++)
+                                    {
+                                        string[] DATELOT = _clientMFI.Case_LOT.Split("-");
+                                        string CODE = "";
+                                        
+                                            CODE = $"i.tcx.com.vn/{_clientMFI.Product_Barcode}0A509{DATELOT[0]}{DATELOT[1]}5{filedata[i]}";
+                                        cmd.Parameters.AddWithValue("@ProductQR", CODE);
+                                        cmd.ExecuteNonQuery();
+
+
+                                        if (i % percentStep == 0)
+                                        {
+                                            int progressValue = (int)((i / (float)totalItems) * 100);
+                                            this.SetStatusFormDescription("Đang tạo mã QR chai" + "(" + i + ")");
+                                            this.SetStatusFormStepIt(5);
+                                        }
+                                    }
+
+                                    transaction.Commit();
+                                }
+                                conn.Close();
+                                this.HideStatusForm();
+                            }
+                        }
+                        //Tạo xong dữ liệu
+                        LogUpdate($"Tạo dữ liệu mã QR thành công, tổng số mã: {filedata.Count}");
+                        Globalvariable.Data_Status = e_Data_Status.PUSH;
+                        break;
+
+                    case e_Data_Status.UNKNOWN:
+                        this.Invoke(new Action(() =>
+                        {
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Có vấn đề xảy ra trong quá trình đẩy dữ liệu, vui lòng kiểm tra lại. ");
+                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                        }));
+
                         break;
                 }
 
-                Thread.Sleep(2000); // Chờ 2 giây trước khi gửi request tiếp theo
+                Thread.Sleep(5000); // Chờ 2 giây trước khi gửi request tiếp theo
             }
         }
 
-        MFI_Info _Client_MFI = new MFI_Info();
-        public (bool Issucces, string message) Get_Last_MFI_From_Local()
+        //Chương trình tạo mã không trùng
+        static HashSet<string> GenerateUniqueRandomCodes(int length, int count)
+        {
+            HashSet<string> codes = new HashSet<string>();
+
+            // Kiểm tra xem số lượng yêu cầu có khả thi không
+            long maxPossible = (long)Math.Pow(characters.Length, length);
+            if (count > maxPossible)
+            {
+                throw new ArgumentException($"Không thể sinh {count} mã không trùng với độ dài {length} " +
+                                          $"vì chỉ có tối đa {maxPossible} tổ hợp.");
+            }
+
+            while (codes.Count < count)
+            {
+                string code = GenerateRandomCode(length);
+                codes.Add(code);
+            }
+
+            return codes;
+        }
+
+        private static readonly Random random = new Random();
+        private static readonly char[] characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+            .ToCharArray();
+
+        static string GenerateRandomCode(int length)
+        {
+            char[] code = new char[length];
+            for (int i = 0; i < length; i++)
+            {
+                code[i] = characters[random.Next(characters.Length)];
+            }
+            return new string(code);
+        }
+
+        public (bool IsSuccess, string Message) Push_MFI_To_Server(string k, string v)
         {
             try
             {
-
-                string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Databases");
-                string dbPath = Path.Combine(folderPath, "MFI_Client_Logs.tlog");
-
-                // Tạo thư mục nếu chưa tồn tại
-                if (!Directory.Exists(folderPath))
+                using (HttpClient client = new HttpClient())
                 {
-                    Directory.CreateDirectory(folderPath);
-                }
+                    client.DefaultRequestHeaders.Add("Accept", "application/json");
 
-                // Kiểm tra nếu file chưa tồn tại thì tạo và thêm bảng
-                if (!File.Exists(dbPath))
-                {
-                    SQLiteConnection.CreateFile(dbPath);
-                    using (var connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
+                    var url = "http://localhost:3000/set";
+                    // Gộp toàn bộ object thành JSON string
+                    // Tạo payload cho key "MFI_Data"
+                    var payload = new
                     {
-                        connection.Open();
+                        key = k,
+                        value = JsonConvert.DeserializeObject(v), // giữ dạng object, không double encode
+                        ttl = 15000 // Không đặt thời gian sống, nếu cần có thể thay đổi
+                    };
 
-                        string createTableQuery = @"
-                                                    CREATE TABLE ""MFI_Table"" (
-                                                        ""ID"" INTEGER NOT NULL UNIQUE,
-                                                        ""MFI_ID"" TEXT NOT NULL DEFAULT '0',
-                                                        ""ProductBarcode"" TEXT NOT NULL,
-                                                        ""CaseBarcode"" TEXT NOT NULL,
-                                                        ""LOT"" TEXT NOT NULL,
-                                                        ""BatchCode"" TEXT NOT NULL,
-                                                        ""BlockSize"" TEXT NOT NULL,
-                                                        ""CaseSize"" TEXT NOT NULL,
-                                                        ""PalletSize"" TEXT,
-                                                        ""SanLuong"" TEXT NOT NULL,
-                                                        ""PalletQRType"" TEXT NOT NULL,
-                                                        ""OperatorName"" TEXT NOT NULL,
-                                                        ""TimeStamp"" TEXT NOT NULL,
-                                                        PRIMARY KEY(""ID"" AUTOINCREMENT)
-                                                    );";
+                    string finalJson = JsonConvert.SerializeObject(payload);
+                    var content = new StringContent(finalJson, Encoding.UTF8, "application/json");
 
-                        using (var command = new SQLiteCommand(createTableQuery, connection))
-                        {
-                            command.ExecuteNonQuery();
-                        }
+
+                    // Gọi bất đồng bộ theo cách đồng bộ
+                    HttpResponseMessage response = client.PostAsync(url, content).GetAwaiter().GetResult();
+                    string result = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return (true, $"Đã gửi thành công: {result}");
                     }
-                }
-
-                string connectionString = $"Data Source={dbPath};Version=3;";
-                string query = "SELECT * FROM `MFI_Table` ORDER BY ROWID DESC LIMIT 1;";
-
-                using (SQLiteConnection conn = new SQLiteConnection(connectionString))
-                {
-                    conn.Open();
-                    using (SQLiteCommand cmd = new SQLiteCommand(query, conn))
+                    else
                     {
-
-                        using (SQLiteDataAdapter da = new SQLiteDataAdapter(cmd))
-                        {
-                            DataTable dt = new DataTable();
-                            da.Fill(dt);
-                            if (dt.Rows.Count > 0)
-                            {
-                                _Client_MFI.Product_Barcode = dt.Rows[0]["ProductBarcode"].ToString();
-                                _Client_MFI.Case_Barcode = dt.Rows[0]["CaseBarcode"].ToString();
-                                _Client_MFI.Case_LOT = dt.Rows[0]["LOT"].ToString();
-                                _Client_MFI.Batch_Code = dt.Rows[0]["BatchCode"].ToString();
-                                _Client_MFI.Block_Size = dt.Rows[0]["BlockSize"].ToString();
-                                _Client_MFI.Case_Size = dt.Rows[0]["CaseSize"].ToString();
-                                _Client_MFI.Pallet_Size = dt.Rows[0]["PalletSize"].ToString();
-                                _Client_MFI.SanLuong = dt.Rows[0]["SanLuong"].ToString();
-                                _Client_MFI.Pallet_QR_Type = dt.Rows[0]["PalletQRType"].ToString();
-                                _Client_MFI.MFI_ID = dt.Rows[0]["MFI_ID"].ToString();
-                                _Client_MFI.Operator = dt.Rows[0]["OperatorName"].ToString();
-                                return (true, "Tải thông tin MFI từ máy tính thành công");
-                            }
-                            else
-                            {
-                                _Client_MFI.Product_Barcode = "0";
-                                _Client_MFI.Case_Barcode = "0";
-                                _Client_MFI.Case_LOT = "0";
-                                _Client_MFI.Batch_Code = "0";
-                                _Client_MFI.Block_Size = "0";
-                                _Client_MFI.Case_Size = "0";
-                                _Client_MFI.Pallet_Size = "0";
-                                _Client_MFI.SanLuong = "0";
-                                _Client_MFI.Pallet_QR_Type = "0";
-                                _Client_MFI.MFI_ID = "0";
-                                _Client_MFI.Operator = "0";
-                                return (true, "Không có thông tin MFI, lấy giá trị mặc định");
-
-                            }
-                        }
+                        return (false, $"Lỗi HTTP {(int)response.StatusCode}: {result}");
                     }
                 }
             }
             catch (Exception ex)
             {
-                return (false, "Lỗi khi lấy MFI từ máy tính" + ex.Message);
+                return (false, $"Lỗi phía máy chủ: {ex.Message}");
             }
         }
 
@@ -263,239 +433,55 @@ namespace QR_MASAN_01
             // Cập nhật các trường thông tin MFI trên giao diện
             this.Invoke(new Action(() =>
             {
-                opBarcode.Text = _Client_MFI.Product_Barcode;
-                opCaseBarcode.Text = _Client_MFI.Case_Barcode;
-                opDateM.Text = _Client_MFI.Case_LOT;
-                opBatch.Text = _Client_MFI.Batch_Code;
+                opBarcode.Text = _clientMFI.Product_Barcode;
+                opCaseBarcode.Text = _clientMFI.Case_Barcode;
+                opDateM.Text = _clientMFI.Case_LOT;
+                opBatch.Text = _clientMFI.Batch_Code;
             }));
         }
-        public void Get_Server_MFI_ID() {
 
-            try
-            {
-                // Gửi HTTP GET request đồng bộ (không sử dụng await)
-                using (HttpClient client = new HttpClient())
-                {
-                    HttpResponseMessage response = client.GetAsync($"{Globalvariable.Server_Url}sv1/L3/QR01/MFI_ID").Result; // Chạy đồng bộ
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string result = response.Content.ReadAsStringAsync().Result; // Chạy đồng bộ
-                        if (Globalvariable.Server_Status == e_Server_Status.DISCONNECTED)
-                        {
-                            Globalvariable.Server_Status = e_Server_Status.CONNECTED;
-                            this.Invoke(new Action(() =>
-                            {
-                                opServerStatus.Text = "Đang kết nối";
-                                opServerStatus.FillColor = Color.White;
-
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Kết nối máy chủ thành công");
-                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-
-                            }));
-                        }
-
-                        //khi có phiên làm việc khác
-                        if (result != Globalvariable.MFI_ID)
-                        {
-                            Globalvariable.MFI_ID = result;
-                            Globalvariable.Data_Status = e_Data_Status.GET;
-                            this.Invoke(new Action(() =>
-                            {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Có dữ liệu mới, đang đồng bộ");
-                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            }));
-                        }
-                        else
-                        {
-
-                            if(Globalvariable.Data_Status != e_Data_Status.READY)
-                            {
-                                this.Invoke(new Action(() =>
-                                {
-                                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Dữ liệu đã khớp, bắt đầu khôi phục dữ liệu");
-                                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                                }));
-
-                                Globalvariable.Data_Status = e_Data_Status.GET;
-                            }
-                            
-                        }
-                    }
-                    else
-                    {
-                        if (Globalvariable.Server_Status == e_Server_Status.CONNECTED)
-                        {
-                            Globalvariable.Server_Status = e_Server_Status.DISCONNECTED;
-                            this.Invoke(new Action(() =>
-                            {
-                                opServerStatus.Text = "Mất kết nối";
-                            }));
-                        }
-                        this.Invoke(new Action(() =>
-                        {
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Không thể kết nối máy chủ đồng bộ : {response.StatusCode}");
-                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                        }));
-
-                        
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                if (Globalvariable.Server_Status == e_Server_Status.CONNECTED)
-                {
-                    Globalvariable.Server_Status = e_Server_Status.DISCONNECTED;
-                    this.Invoke(new Action(() =>
-                    {
-                        opServerStatus.Text = "Mất kết nối";
-                    }));
-                }
-                this.Invoke(new Action(() =>
-                {
-                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi máy chủ: {ex.Message}");
-                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                }));
-            }
-        }
-
-        public (bool IsSuccess, string Message) Get_From_Server(string key)
+        public (bool IsSuccess, string Message, Dictionary<string, object> Values) GetMultipleKeys(List<string> keys)
         {
+            var resultValues = new Dictionary<string, object>();
+
+            if (keys == null || keys.Count == 0)
+            {
+                return (false, "Danh sách keys không hợp lệ hoặc rỗng.", resultValues);
+            }
+
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("Accept", "application/json");
 
-                    var url = $"http://localhost:3000/get/{key}";
-                    var response = client.GetAsync(url).GetAwaiter().GetResult();
+                    var url = "http://localhost:3000/get";
+                    var requestBody = new { keys = keys };
+                    var json = JsonConvert.SerializeObject(requestBody);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                    if (response.IsSuccessStatusCode)
+                    var response = client.PostAsync(url, content).GetAwaiter().GetResult();
+
+                    if (!response.IsSuccessStatusCode)
                     {
-                        var result = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-                        JObject json = JObject.Parse(result);
-                        return (true, json["value"]?.ToString());
+                        return (false, $"Lỗi server: {(int)response.StatusCode} {response.ReasonPhrase}", resultValues);
                     }
-                    else
+
+                    var responseBody = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    var resultObj = JsonConvert.DeserializeObject<GetMultipleKeysResponse>(responseBody);
+
+                    if (resultObj?.values == null)
                     {
-                        return (false,$"Lỗi khi lấy key [{key}]: {(int)response.StatusCode} {response.ReasonPhrase}") ;
+                        return (false, "Phản hồi không hợp lệ từ server (không có trường 'values').", resultValues);
                     }
+
+                    resultValues = resultObj.values;
+                    return (true, "Thành công", resultValues);
                 }
             }
             catch (Exception ex)
             {
-                return (false,$"Exception khi GET key [{key}]: {ex.Message}");
-            }
-        }
-
-        public void Get_Server_MFI_DATA()
-        {
-            try
-            {
-                // Gửi HTTP GET request đồng bộ (không sử dụng await)
-                using (HttpClient client = new HttpClient())
-                {
-                    HttpResponseMessage response = client.GetAsync($"{Globalvariable.Server_Url}sv1/GET/MFI_"+Globalvariable.MFI_ID).Result; // Chạy đồng bộ
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string result = response.Content.ReadAsStringAsync().Result; // Chạy đồng bộ
-                        if (result != "0")
-                        {
-                            this.Invoke(new Action(() =>
-                            {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Nhận thông tin sản xuất: {result} ");
-                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            }));
-
-                            string[] MFIData = result.Split(',');
-                            Client_MFI.Product_Barcode = MFIData[0].ToString();
-                            Client_MFI.Case_Barcode = MFIData[1].ToString();
-                            Client_MFI.Case_LOT = MFIData[2].ToString();
-                            Client_MFI.Batch_Code = MFIData[3].ToString();
-                            Client_MFI.Block_Size = MFIData[4].ToString();
-                            Client_MFI.Case_Size = MFIData[5].ToString();
-                            Client_MFI.Pallet_Size = MFIData[6].ToString();
-                            Client_MFI.SanLuong = MFIData[7].ToString();
-                            Client_MFI.Pallet_QR_Type = MFIData[8].ToString();
-                            Client_MFI.Operator = MFIData[9].ToString();
-
-                            //lấy thông tin cũ
-
-
-                            //Kiểm tra xem có lưu thông tin trong CSDL chưa
-                            string Last_Save_MFI_ID = Get_Last_MFI_ID();
-                            if(Last_Save_MFI_ID == Globalvariable.MFI_ID || Last_Save_MFI_ID == string.Empty)
-                            {
-                                //Không lưu
-                            }
-                            else
-                            {
-                                //lưu vào SQLite
-                                string connectionString = $@"Data Source=Client_Database/MF_Data.db;Version=3;";
-                                string query = @"INSERT INTO MFI_Table 
-                            (MFI_ID, ProductBarcode, CaseBarcode, LOT, BatchCode, BlockSize, CaseSize, PalletSize, SanLuong, PalletQRType, OperatorName, TimeStamp)
-                            VALUES 
-                            (@MFI_ID, @ProductBarcode, @CaseBarcode, @LOT, @BatchCode, @BlockSize, @CaseSize, @PalletSize, @SanLuong, @PalletQRType, @OperatorName, @TimeStamp)"; ;
-
-                                using (SQLiteConnection conn = new SQLiteConnection(connectionString))
-                                {
-                                    conn.Open();
-                                    using (SQLiteCommand command = new SQLiteCommand(query, conn))
-                                    {
-                                        // Gán giá trị tham số
-                                        command.Parameters.AddWithValue("@MFI_ID", Globalvariable.MFI_ID);
-                                        command.Parameters.AddWithValue("@ProductBarcode", Client_MFI.Product_Barcode);
-                                        command.Parameters.AddWithValue("@CaseBarcode", Client_MFI.Case_Barcode);
-                                        command.Parameters.AddWithValue("@LOT", Client_MFI.Case_LOT);
-                                        command.Parameters.AddWithValue("@BatchCode", Client_MFI.Batch_Code);
-                                        command.Parameters.AddWithValue("@BlockSize", Client_MFI.Block_Size);
-                                        command.Parameters.AddWithValue("@CaseSize", Client_MFI.Case_Size);
-                                        command.Parameters.AddWithValue("@PalletSize", Client_MFI.Pallet_Size);
-                                        command.Parameters.AddWithValue("@SanLuong", Client_MFI.SanLuong);
-                                        command.Parameters.AddWithValue("@PalletQRType", Client_MFI.Pallet_QR_Type);
-                                        command.Parameters.AddWithValue("@OperatorName", Client_MFI.Operator);
-                                        command.Parameters.AddWithValue("@TimeStamp", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
-                                        command.ExecuteNonQuery();
-                                    }
-                                    conn.Close();
-                                }
-                            }
-
-                            Globalvariable.Data_Status = e_Data_Status.CREATE;
-
-                        }
-                        else
-                        {
-                            this.Invoke(new Action(() =>
-                            {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Thông tin sản xuất có lỗi không xác định, vui lòng thử lại phía máy chủ ");
-                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            }));
-
-                            Globalvariable.Data_Status = e_Data_Status.STARTUP;
-                        }
-                    }
-                    else
-                    {
-                        this.Invoke(new Action(() =>
-                        {
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi: {response.StatusCode}");
-                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                        }));
-                        Globalvariable.Data_Status = e_Data_Status.STARTUP;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                this.Invoke(new Action(() =>
-                {
-                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi máy chủ: {ex.Message}");
-                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                }));
-                Globalvariable.Data_Status = e_Data_Status.STARTUP;
+                return (false, $"Lỗi khi gọi API /get: {ex.Message}", resultValues);
             }
         }
 
@@ -505,7 +491,7 @@ namespace QR_MASAN_01
             DataTable dataTable = new DataTable();
             // Dictionary để lưu dữ liệu với CaseQR làm key
            // Dictionary<string, ProductData> ProductQR_Dictionary = new Dictionary<string, ProductData>();
-            string connectionString = $@"Data Source={Client_MFI.QRCode_Folder + Client_MFI.QRCode_FileName};Version=3;";
+            string connectionString = $@"Data Source={_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName};Version=3;";
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
@@ -552,287 +538,40 @@ namespace QR_MASAN_01
         {
 
             //đẩy dữ liệu vào máy in
-            this.Invoke(new Action(() =>
-            {
-                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Bước 3:  Đẩy dữ liệu máy in... ");
-                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-            }));
             Globalvariable.Data_Status = e_Data_Status.PRINTER_PUSH;
         }
 
-        //Tạo mã QR
-        public void Gen_QR()
+        #endregion
+
+        #region Các cập nhật lên màn hình
+        //Gửi lên màn hình và lưu log
+        public void LogUpdate(string message)
         {
-            //kiểm tra thư mục cần lưu
-            Client_MFI.QRCode_Folder = $@"Client_Database/{Client_MFI.Case_LOT.Split("-")[2].ToString()}/{Client_MFI.Case_LOT.Split("-")[1].ToString()}/";
-            if (Directory.Exists(Client_MFI.QRCode_Folder))
+            this.Invoke(new Action(() =>
             {
-
-            }
-            else
-            {
-                Directory.CreateDirectory(Client_MFI.QRCode_Folder);
-            }
-            
-            //kiểm tra và tạo file DB
-            //tạo file dữ liệu CaseQR_Date_Random file lưu theo ngày, table là số lô sản xuất
-
-            Client_MFI.QRCode_FileName = $"ProductCode_{Client_MFI.Case_LOT}_{Client_MFI.Batch_Code}_{Globalvariable.MFI_ID}.db";
-
-            if (!File.Exists(Client_MFI.QRCode_Folder + Client_MFI.QRCode_FileName))
-            {
-                SQLiteConnection.CreateFile(Client_MFI.QRCode_Folder + Client_MFI.QRCode_FileName);
-                using (SQLiteConnection conn = new SQLiteConnection($"Data Source={Client_MFI.QRCode_Folder + Client_MFI.QRCode_FileName};Version=3;"))
-                {
-                    conn.Open();
-
-                    // Tạo bảng mẫu
-                    string a = $@"INSERT INTO `ProductDetails` (BatchCode ,CaseCode ,ProductCode ,BlockSize ,CaseSize ,PalletSize ,OperatorName ,TimeStamp ) 
-                                  VALUES ('{Client_MFI.Batch_Code}','{Client_MFI.Case_Barcode}','{Client_MFI.Product_Barcode}','{Client_MFI.Block_Size}','{Client_MFI.Case_Size}','{Client_MFI.Pallet_Size}','Operator','{DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")}');";
-                    string createTableQuery = $@"
-                        CREATE TABLE IF NOT EXISTS `QRContent` (
-                            ProductID INTEGER NOT NULL UNIQUE,
-                            ProductQR TEXT NOT NULL UNIQUE,
-                            Active INTEGER NOT NULL DEFAULT 0,
-                            TimestampActive TEXT NOT NULL DEFAULT 0,
-                            PRIMARY KEY(ProductID AUTOINCREMENT)
-                        );
-                        CREATE TABLE IF NOT EXISTS `ProductDetails` (
-	                        ID	INTEGER NOT NULL UNIQUE,
-                            BatchCode	TEXT NOT NULL,
-                            CaseCode	TEXT NOT NULL,
-                            ProductCode	TEXT NOT NULL,
-                            BlockSize	TEXT NOT NULL,
-                            CaseSize	TEXT NOT NULL,
-                            PalletSize	TEXT NOT NULL,
-                            OperatorName TEXT NOT NULL,
-                            TimeStamp TEXT NOT NULL,
-	                        PRIMARY KEY(ID AUTOINCREMENT)
-                        );
-                {a}
-
-                ";
-                    using (SQLiteCommand cmd = new SQLiteCommand(createTableQuery, conn))
-                    {
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    conn.Close();
-                }
-                Globalvariable.Data_Status = e_Data_Status.CREATING;
-
-                //tạo mã từ file CSV
-                WK_CsV_To_Sqlite.RunWorkerAsync();
-            }
-            else
-            {
-                //nếu file đã có thì không làm gì cả, đẩy trạng thái lên push
-                string [] DATELOT = Client_MFI.Case_LOT.Split('-');
-                Globalvariable.QRgoc = $"i.tcx.com.vn/{Client_MFI.Product_Barcode}0A509{DATELOT[0]}{DATELOT[1]}{Client_MFI.Case_LOT.Last()}";
-                Globalvariable.Data_Status = e_Data_Status.PUSH;
-            }
-
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: {message}");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            }));
         }
-
-        //Lấy MFI ID từ máy chủ
-        private string Get_MFI_ID()
-        {
-            string connectionString = $@"Data Source=Client_Database/MF_Data.db;Version=3;";
-            string query = @"
-                CREATE TABLE IF NOT EXISTS `MFI_Table` (
-                    `ID` INTEGER NOT NULL UNIQUE,
-                    `MFI_ID` TEXT NOT NULL DEFAULT 'Client',
-                    `ProductBarcode` TEXT NOT NULL,
-                    `CaseBarcode` TEXT NOT NULL,
-                    `LOT` TEXT NOT NULL,
-                    `BatchCode` TEXT NOT NULL,
-                    `BlockSize` TEXT NOT NULL,
-                    `CaseSize` TEXT NOT NULL,
-                    `PalletSize` TEXT,
-                    `SanLuong` TEXT NOT NULL,
-                    `PalletQRType` TEXT NOT NULL,
-                    `OperatorName` TEXT NOT NULL,
-                    `TimeStamp` TEXT NOT NULL,
-                    PRIMARY KEY(`ID` AUTOINCREMENT)
-                );
-                SELECT `MFI_ID` FROM `MFI_Table` ORDER BY `ID` DESC LIMIT 1;
-                ";
-
-            if (!Directory.Exists("Client_Database"))
-            {
-                Directory.CreateDirectory("Client_Database");
-            }
-
-            if (!File.Exists("Client_Database/MF_Data.db"))
-            {
-                SQLiteConnection.CreateFile("Client_Database/MF_Data.db");
-            }
-            using (SQLiteConnection conn = new SQLiteConnection(connectionString))
-            {
-                conn.Open();
-                using (SQLiteCommand cmd = new SQLiteCommand(query, conn))
-                {
-
-                    using (SQLiteDataAdapter da = new SQLiteDataAdapter(cmd))
-                    {
-                        DataTable dt = new DataTable();
-                        da.Fill(dt);
-                        if (dt.Rows.Count > 0)
-                        {
-                            return dt.Rows[0]["MFI_ID"].ToString();
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    }
-                }
-            }
-        }
-        public string Get_Last_MFI_ID()
-        {
-            using (SQLiteConnection connection = new SQLiteConnection($"Data Source=Client_Database/MF_Data.db;Version=3;"))
-            {
-                connection.Open();
-
-                string query = @"
-                CREATE TABLE IF NOT EXISTS `MFI_Table` (
-                    `ID` INTEGER NOT NULL UNIQUE,
-                    `MFI_ID` TEXT NOT NULL DEFAULT 'Client',
-                    `ProductBarcode` TEXT NOT NULL,
-                    `CaseBarcode` TEXT NOT NULL,
-                    `LOT` TEXT NOT NULL,
-                    `BatchCode` TEXT NOT NULL,
-                    `BlockSize` TEXT NOT NULL,
-                    `CaseSize` TEXT NOT NULL,
-                    `PalletSize` TEXT,
-                    `SanLuong` TEXT NOT NULL,
-                    `PalletQRType` TEXT NOT NULL,
-                    `OperatorName` TEXT NOT NULL,
-                    `TimeStamp` TEXT NOT NULL,
-                    PRIMARY KEY(`ID` AUTOINCREMENT)
-                );
-                SELECT `MFI_ID` FROM MFI_Table ORDER BY 'ID' DESC LIMIT 1;
-                ";
-
-                if (!Directory.Exists("Server_Database"))
-                {
-                    Directory.CreateDirectory("Server_Database");
-                }
-
-                if (!File.Exists("Server_Database/MF_Data.db"))
-                {
-                    SQLiteConnection.CreateFile("Server_Database/MF_Data.db");
-                }
-
-                using (SQLiteCommand command = new SQLiteCommand(query, connection))
-                {
-                    using (SQLiteDataAdapter da = new SQLiteDataAdapter(command))
-                    {
-                        DataTable dt = new DataTable();
-                        da.Fill(dt);
-                        if (dt.Rows.Count > 0)
-                        {
-                            return dt.Rows[0]["MFI_ID"].ToString();
-
-                        }
-                        else
-                        {
-                            return string.Empty;
-                        }
-                    }
-                }
-            }
-        }
-
-        //Lấy id QR lớn nhất để thêm mới trong mode cũ
-        public int Get_MaxID_QR()
-        {
-            using (SQLiteConnection connection = new SQLiteConnection($"Data Source={Client_MFI.QRCode_Folder + Client_MFI.QRCode_FileName};Version=3;"))
-            {
-                connection.Open();
-                string query = "SELECT `seq` FROM sqlite_sequence WHERE name = 'QRContent';";
-
-                using (SQLiteCommand command = new SQLiteCommand(query, connection))
-                {
-                    using (SQLiteDataAdapter da = new SQLiteDataAdapter(command))
-                    {
-                        DataTable dt = new DataTable();
-                        da.Fill(dt);
-                        if (dt.Rows.Count > 0)
-                        {
-                            int.TryParse(dt.Rows[0]["seq"].ToString(), out int Value);
-                            return Value;
-
-                        }
-                        else
-                        {
-                            return 0;
-                        }
-                    }
-                }
-            }
-        }
-        #endregion  
+        #endregion
 
         //Load lần đầu
         private void FDashboard_Initialize(object sender, EventArgs e)
         {
-           WK_Server_check.RunWorkerAsync();
+            WK_Server_check.RunWorkerAsync();
             WK_Update.RunWorkerAsync();
             WK_120Update.RunWorkerAsync();
-            Globalvariable.MFI_ID = Get_MFI_ID();
             Camera.Connect();
             PLC.InitPLC();
         }
 
         private void WK_CsV_To_Sqlite_DoWork(object sender, DoWorkEventArgs e)
         {
-            List<string> filedata = File.ReadAllLines($@"Client_Database/QR_L3_1.csv").ToList();
-
-            using (SQLiteConnection conn = new SQLiteConnection($"Data Source={Client_MFI.QRCode_Folder + Client_MFI.QRCode_FileName};Version=3;"))
-            {
-                string sql = $@" INSERT INTO `QRContent`
-                                      (ProductQR)
-                              VALUES (@ProductQR);";
-                using (SQLiteCommand cmd = new SQLiteCommand(sql, conn))
-                {
-                    conn.Open();
-
-                    int totalItems = filedata.Count;
-                    int percentStep = totalItems / 20; // 20 x 5% = 100%
-                    using (SQLiteTransaction transaction = conn.BeginTransaction())
-                    {
-                        this.ShowStatusForm(100, "Tạo mã QR chai", 0);
-                        for (var i = 0; i < totalItems; i++)
-                        {
-                            string[] DATELOT = Client_MFI.Case_LOT.Split("-");
-                            string CODE = $"i.tcx.com.vn/{Client_MFI.Product_Barcode}0A509{DATELOT[0]}{DATELOT[1]}{Client_MFI.Case_LOT.Last()}{filedata[i]}";
-                            
-                            cmd.Parameters.AddWithValue("@ProductQR", CODE);
-                            cmd.ExecuteNonQuery();
-
-
-                            if (i % percentStep == 0)
-                            {
-                                int progressValue = (int)((i / (float)totalItems) * 100);
-                                this.SetStatusFormDescription("Tạo mã QR chai" + "(" + i + ")");
-                                this.SetStatusFormStepIt(5);
-                            }
-                        }
-
-                        transaction.Commit();
-                    }
-                    conn.Close();
-                    this.HideStatusForm();
-                }
-
-
-            }
+            
         }
         private void WK_CsV_To_Sqlite_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            Globalvariable.Data_Status = e_Data_Status.PUSH;
+           
         }
 
         public string QR_Content = "Ver 18972";
@@ -1044,7 +783,7 @@ namespace QR_MASAN_01
                                     try
                                     {
                                         string[] bCode = cleanedCode.Split("/");
-                                        if (bCode[bCode.Length - 1].Contains(Client_MFI.Product_Barcode))
+                                        if (bCode[bCode.Length - 1].Contains(_clientMFI.Product_Barcode))
                                         {
                                             OperateResult write = PLC.plc.Write("D10", short.Parse("1"));
                                             if (write.IsSuccess)
@@ -1173,7 +912,7 @@ namespace QR_MASAN_01
 
         public void UpdateActiveStatus(int rowId)
         {
-            using (SQLiteConnection connection = new SQLiteConnection($"Data Source={Client_MFI.QRCode_Folder + Client_MFI.QRCode_FileName};Version=3;"))
+            using (SQLiteConnection connection = new SQLiteConnection($"Data Source={_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName};Version=3;"))
             {
                 connection.Open();
                 string query = "UPDATE `QRContent` SET `Active` = '1', `TimeStampActive` = @TimeStamp  WHERE _rowid_ = @RowId";
@@ -1190,7 +929,7 @@ namespace QR_MASAN_01
 
         public void Add_QR_To_SQLite(string QR)
         {
-            using (SQLiteConnection connection = new SQLiteConnection($"Data Source={Client_MFI.QRCode_Folder + Client_MFI.QRCode_FileName};Version=3;"))
+            using (SQLiteConnection connection = new SQLiteConnection($"Data Source={_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName};Version=3;"))
             {
                 connection.Open();
                 string query = "INSERT INTO `QRContent` (ProductQR,Active, TimestampActive) VALUES (@QR,1,@TimeStamp);";
@@ -1204,8 +943,6 @@ namespace QR_MASAN_01
                 }
             }
         }
-
-        
 
         public double MaxTimeSend = 0;
         private void WK_Update_DoWork(object sender, DoWorkEventArgs e)

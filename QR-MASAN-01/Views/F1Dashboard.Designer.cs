@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.WK_CsV_To_Sqlite = new System.ComponentModel.BackgroundWorker();
             this.uiTableLayoutPanel3 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel5 = new Sunny.UI.UITableLayoutPanel();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
@@ -201,13 +200,6 @@
             this.uiTitlePanel5.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // WK_CsV_To_Sqlite
-            // 
-            this.WK_CsV_To_Sqlite.WorkerReportsProgress = true;
-            this.WK_CsV_To_Sqlite.WorkerSupportsCancellation = true;
-            this.WK_CsV_To_Sqlite.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_CsV_To_Sqlite_DoWork);
-            this.WK_CsV_To_Sqlite.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.WK_CsV_To_Sqlite_RunWorkerCompleted);
             // 
             // uiTableLayoutPanel3
             // 
@@ -2183,7 +2175,6 @@
         }
 
         #endregion
-        private System.ComponentModel.BackgroundWorker WK_CsV_To_Sqlite;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel3;
         private SPMS1.TCPClient Camera;
         private System.ComponentModel.BackgroundWorker WK_Update;

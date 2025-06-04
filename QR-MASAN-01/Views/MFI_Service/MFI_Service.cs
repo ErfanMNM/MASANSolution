@@ -1,5 +1,6 @@
 ﻿using Diaglogs;
 using Dialogs;
+using ExcelDataReader;
 using MainClass;
 using Newtonsoft.Json;
 using QR_MASAN_01;
@@ -133,6 +134,7 @@ namespace MFI_Service
             WK_Update.RunWorkerAsync();
             WK_MFI.RunWorkerAsync();
             WK_Server_Status.RunWorkerAsync();
+            LoadExcelToProductList($@"C:\Phan_Mem\MS_Product.xlsx");
         }
         public void MFI_Update_HMI () {
             ipBatchCode.Items.Clear();
@@ -702,115 +704,7 @@ namespace MFI_Service
                     }
                 }
 
-                //try
-                //{
-                //    using (HttpClient client = new HttpClient())
-                //    {
-                //        HttpResponseMessage response = client.GetAsync($"http://localhost:3000/get").Result; // Chạy đồng bộ
-
-                //        if (response.IsSuccessStatusCode)
-                //        {
-                //            string result = response.Content.ReadAsStringAsync().Result;
-
-                //            ClientData clientData = JsonConvert.DeserializeObject<ClientData>(result);
-
-                //            
-                //            //product
-                //            if (clientData.L3_QR01 == "1")
-                //            {
-                //                if (GServer.Client_QR01 == e_Server_Status.DISCONNECTED)
-                //                {
-                //                    GServer.Client_QR01 = e_Server_Status.CONNECTED;
-                //                    opProduct_QR_Status.Text = "Đang sẵn sàng";
-                //                    opProduct_QR_Status.FillColor = Color.White;
-                //                }
-                //            }
-                //            else
-                //            {
-                //                if (GServer.Client_QR01 == e_Server_Status.CONNECTED)
-                //                {
-                //                    GServer.Client_QR01 = e_Server_Status.DISCONNECTED;
-                //                    opProduct_QR_Status.Text = "Mất kết nối";
-                //                }
-                //            }
-                //            //case
-                //            if (clientData.L3_QR02 == "1")
-                //            {
-                //                if (GServer.Client_QR02 == e_Server_Status.DISCONNECTED)
-                //                {
-                //                    GServer.Client_QR02 = e_Server_Status.CONNECTED;
-                //                    opCase_QR_Status.Text = "Đang sẵn sàng";
-                //                    opCase_QR_Status.FillColor = Color.White;
-                //                }
-                //            }
-                //            else
-                //            {
-                //                if (GServer.Client_QR02 == e_Server_Status.CONNECTED)
-                //                {
-                //                    GServer.Client_QR02 = e_Server_Status.DISCONNECTED;
-                //                    opCase_QR_Status.Text = "Mất kết nối";
-                //                }
-                //            }
-                //            //pallet
-                //            
-
-
-                //        }
-                //        else
-                //        {
-                //            if (GServer.Server_Status == e_Server_Status.CONNECTED)
-                //            {
-                //                GServer.Server_Status = e_Server_Status.DISCONNECTED;
-                //                lblServerStatus.Text = "Máy chủ mất kết nối";
-                //            }
-                //            //product
-                //            if (GServer.Client_QR01 == e_Server_Status.CONNECTED)
-                //            {
-                //                GServer.Client_QR01 = e_Server_Status.DISCONNECTED;
-                //                opProduct_QR_Status.Text = "Mất kết nối";
-                //            }
-                //            //case
-                //            if (GServer.Client_QR02 == e_Server_Status.CONNECTED)
-                //            {
-                //                GServer.Client_QR02 = e_Server_Status.DISCONNECTED;
-                //                opCase_QR_Status.Text = "Mất kết nối";
-                //            }
-                //            //pallet
-                //            if (GServer.Client_QR03 == e_Server_Status.CONNECTED)
-                //            {
-                //                GServer.Client_QR03 = e_Server_Status.DISCONNECTED;
-                //                opPallet_QR_Status.Text = "Mất kết nối";
-                //            }
-                //        }
-                //    }
-                //}
-                //catch (Exception ex)
-                //{
-                //    if (GServer.Server_Status == e_Server_Status.CONNECTED)
-                //    {
-                //        GServer.Server_Status = e_Server_Status.DISCONNECTED;
-                //        lblServerStatus.Text = "Máy chủ lỗi kết nối";
-                //    }
-
-                //    //product
-                //    if (GServer.Client_QR01 == e_Server_Status.CONNECTED)
-                //    {
-                //        GServer.Client_QR01 = e_Server_Status.DISCONNECTED;
-                //        opProduct_QR_Status.Text = "Mất kết nối";
-                //    }
-                //    //case
-                //    if (GServer.Client_QR02 == e_Server_Status.CONNECTED)
-                //    {
-                //        GServer.Client_QR02 = e_Server_Status.DISCONNECTED;
-                //        opCase_QR_Status.Text = "Mất kết nối";
-                //    }
-                //    //pallet
-                //    if (GServer.Client_QR03 == e_Server_Status.CONNECTED)
-                //    {
-                //        GServer.Client_QR03 = e_Server_Status.DISCONNECTED;
-                //        opPallet_QR_Status.Text = "Mất kết nối";
-                //    }
-                //}
+               
                 Thread.Sleep(2000);
             }
         }
@@ -909,9 +803,58 @@ namespace MFI_Service
             btnCloudMS.Text = "Tải xuống ERP";
         }
 
+        //Phần xử lý chọn mã vạch
+        // Danh sách toàn cục
+        List<ProductInfo> productList = new List<ProductInfo>();
+
+        // Hàm load dữ liệu từ Excel
+        private void LoadExcelToProductList(string filePath)
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
+            {
+                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                {
+                    var conf = new ExcelDataSetConfiguration
+                    {
+                        ConfigureDataTable = _ => new ExcelDataTableConfiguration
+                        {
+                            UseHeaderRow = true
+                        }
+                    };
+
+                    var dataSet = reader.AsDataSet(conf);
+                    var dataTable = dataSet.Tables[0]; // lấy sheet đầu tiên
+
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        string itemCode = row["Item code"]?.ToString().Trim();
+                        string barcode = row["Barcode nhãn"]?.ToString().Trim();
+
+
+                        if (!string.IsNullOrEmpty(itemCode))
+                        {
+                            productList.Add(new ProductInfo
+                            {
+                                ItemCode = itemCode,
+                                BarcodeNhan = row["Barcode nhãn"]?.ToString().Trim(),
+                                BarcodeThung = row["Barcode thùng"]?.ToString().Trim()
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        public class ProductInfo
+        {
+            public string ItemCode { get; set; }
+            public string BarcodeNhan { get; set; }
+            public string BarcodeThung { get; set; }
+        }
         private void ipBatchCode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (btnLoad_Code.Disabled)
+            if (ipBatchCode.SelectedItem != null)
             {
                 try
                 {
@@ -919,13 +862,33 @@ namespace MFI_Service
                     string[] b = a.Split('-');
                     DateTime date = DateTime.ParseExact(b[1], ("ddMMyy"), System.Globalization.CultureInfo.InvariantCulture);
                     ipLOT.Value = date;
+
+                    //phần auto bacthcode
+                    string selectedBatch = ipBatchCode.SelectedItem?.ToString();
+                    if (string.IsNullOrEmpty(selectedBatch))
+                    {
+                        ipProductBarcode.Text = "0";
+                        ipCaseBarcode.Text = "0";
+                        return;
+                    }
+
+                    // Tách itemCode từ batch (ví dụ: 03OT00362-xxxxxx)
+                    string[] parts = selectedBatch.Split('-');
+                    string itemCode = parts.Length > 0 ? parts[0] : "";
+
+                    // Tìm sản phẩm
+                    var product = productList.FirstOrDefault(p => p.ItemCode == itemCode);
+
+                    ipProductBarcode.Text = product?.BarcodeNhan ?? "0";
+                    ipCaseBarcode.Text = product?.BarcodeThung ?? "0";
+
                 }
                 catch (Exception ex)
                 {
                     
-                }  
+                }
             }
-             
+
         }
     }
 }
