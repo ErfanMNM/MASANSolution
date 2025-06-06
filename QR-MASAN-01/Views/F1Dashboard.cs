@@ -335,7 +335,7 @@ namespace QR_MASAN_01
                         LogUpdate($"Tạo dữ liệu mã QR thành công, tổng số mã: {filedata.Count}");
                         Globalvariable.Data_Status = e_Data_Status.PUSH;
                         break;
-
+                    //Trạng thái bất định
                     case e_Data_Status.UNKNOWN:
                         this.Invoke(new Action(() =>
                         {

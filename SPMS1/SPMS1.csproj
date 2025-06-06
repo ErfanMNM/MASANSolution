@@ -210,6 +210,12 @@
     <Compile Include="Label_Printer.Designer.cs">
       <DependentUpon>Label_Printer.cs</DependentUpon>
     </Compile>
+    <Compile Include="MasanUC\MFI_Service.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MasanUC\MFI_Service.Designer.cs">
+      <DependentUpon>MFI_Service.cs</DependentUpon>
+    </Compile>
     <Compile Include="OmronPLC_Hsl.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -255,6 +261,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="InternetClass.resx">
       <DependentUpon>InternetClass.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MasanUC\MFI_Service.resx">
+      <DependentUpon>MFI_Service.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="OmronPLC_Hsl.resx">
       <DependentUpon>OmronPLC_Hsl.cs</DependentUpon>

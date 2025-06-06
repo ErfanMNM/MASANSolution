@@ -882,6 +882,7 @@
             this.uiTabControl1.Controls.Add(this.tabPage1);
             this.uiTabControl1.Controls.Add(this.tabPage2);
             this.uiTabControl1.Controls.Add(this.tabPage3);
+            this.uiTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             this.uiTabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.uiTabControl1.ItemSize = new System.Drawing.Size(150, 40);
@@ -889,7 +890,7 @@
             this.uiTabControl1.MainPage = "";
             this.uiTabControl1.Name = "uiTabControl1";
             this.uiTabControl1.SelectedIndex = 0;
-            this.uiTabControl1.Size = new System.Drawing.Size(454, 413);
+            this.uiTabControl1.Size = new System.Drawing.Size(457, 413);
             this.uiTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.uiTabControl1.TabIndex = 0;
             this.uiTabControl1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -899,7 +900,7 @@
             this.tabPage1.Controls.Add(this.ipConsole);
             this.tabPage1.Location = new System.Drawing.Point(0, 40);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(454, 373);
+            this.tabPage1.Size = new System.Drawing.Size(457, 373);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Thông báo";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -916,7 +917,7 @@
             this.ipConsole.Name = "ipConsole";
             this.ipConsole.Padding = new System.Windows.Forms.Padding(2);
             this.ipConsole.ShowText = false;
-            this.ipConsole.Size = new System.Drawing.Size(454, 373);
+            this.ipConsole.Size = new System.Drawing.Size(457, 373);
             this.ipConsole.TabIndex = 5;
             this.ipConsole.Text = "Thông báo";
             // 
@@ -926,7 +927,7 @@
             this.tabPage2.Controls.Add(this.uiTableLayoutPanel19);
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(200, 60);
+            this.tabPage2.Size = new System.Drawing.Size(457, 373);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Thống kê";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -1692,7 +1693,7 @@
             this.tabPage3.Controls.Add(this.opHisConsole);
             this.tabPage3.Location = new System.Drawing.Point(0, 40);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(200, 60);
+            this.tabPage3.Size = new System.Drawing.Size(457, 373);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Lịch sử";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1709,7 +1710,7 @@
             this.opHisConsole.Name = "opHisConsole";
             this.opHisConsole.Padding = new System.Windows.Forms.Padding(2);
             this.opHisConsole.ShowText = false;
-            this.opHisConsole.Size = new System.Drawing.Size(200, 60);
+            this.opHisConsole.Size = new System.Drawing.Size(457, 373);
             this.opHisConsole.TabIndex = 0;
             this.opHisConsole.Text = "uiListBox1";
             // 
@@ -1755,7 +1756,7 @@
             this.panelinfoCode.ShowText = false;
             this.panelinfoCode.Size = new System.Drawing.Size(463, 121);
             this.panelinfoCode.TabIndex = 6;
-            this.panelinfoCode.Text = "THÔNG TIN MÃ";
+            this.panelinfoCode.Text = "THÔNG TIN MÃ VỪA KIỂM";
             this.panelinfoCode.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             this.panelinfoCode.TitleHeight = 36;
             // 

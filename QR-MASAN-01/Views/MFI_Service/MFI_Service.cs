@@ -49,8 +49,6 @@ namespace MFI_Service
 
                         _Server_MFI.MFI_Status = e_MFI_Status.SQLite_LOAD; //tải từ máy tính 
                         break;
-
-
                     case e_MFI_Status.SQLite_LOAD:
                         //Lấy thông tin sản xuất từ máy tính
                         var _gmfifl = Get_Last_MFI_From_Local();
