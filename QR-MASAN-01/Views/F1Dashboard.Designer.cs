@@ -920,6 +920,7 @@
             this.ipConsole.Size = new System.Drawing.Size(457, 373);
             this.ipConsole.TabIndex = 5;
             this.ipConsole.Text = "Thông báo";
+            this.ipConsole.DoubleClick += new System.EventHandler(this.ipConsole_DoubleClick);
             // 
             // tabPage2
             // 
@@ -927,7 +928,7 @@
             this.tabPage2.Controls.Add(this.uiTableLayoutPanel19);
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(457, 373);
+            this.tabPage2.Size = new System.Drawing.Size(200, 60);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Thống kê";
             this.tabPage2.UseVisualStyleBackColor = true;

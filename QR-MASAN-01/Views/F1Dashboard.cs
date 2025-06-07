@@ -151,51 +151,53 @@ namespace QR_MASAN_01
 
                         if (isSuccess)
                         {
-                            LogUpdate($"Lấy dữ liệu MFI thành công từ máy chủ: {message}");
-
-                            //các thông tin vào Client_MFI
-                            _clientMFI.Case_Barcode = values["Case_Barcode"].ToString();
-                            _clientMFI.Product_Barcode = values["Product_Barcode"].ToString();
-                            _clientMFI.Case_LOT = values["Case_LOT"].ToString();
-                            _clientMFI.Batch_Code = values["Batch_Code"].ToString();
-                            _clientMFI.Block_Size = values["Block_Size"].ToString();
-                            _clientMFI.Case_Size = values["Case_Size"].ToString();
-                            _clientMFI.Pallet_Size = values["Pallet_Size"].ToString();
-                            _clientMFI.SanLuong = values["SanLuong"].ToString();
-                            _clientMFI.Operator = values["Operator"].ToString();
-                            _clientMFI.Pallet_QR_Type = values["Pallet_QR_Type"].ToString();
-                            _clientMFI.MFI_ID = values["MFI_ID"].ToString();
-
-                            _clientMFI.QRCode_Folder = $@"Client_Database/{_clientMFI.Case_LOT.Split("-")[2].ToString()}/{_clientMFI.Case_LOT.Split("-")[1].ToString()}/";
-
-
-                            
-                            if (Directory.Exists(_clientMFI.QRCode_Folder))
+                            if( Convert.ToInt32(values["MFI_ID"].ToString()) > 0 )
                             {
+                                LogUpdate($"Lấy dữ liệu MFI thành công từ máy chủ: {message}");
 
-                            }
-                            else
-                            {
-                                Directory.CreateDirectory(_clientMFI.QRCode_Folder);
-                            }
+                                //các thông tin vào Client_MFI
+                                _clientMFI.Case_Barcode = values["Case_Barcode"].ToString();
+                                _clientMFI.Product_Barcode = values["Product_Barcode"].ToString();
+                                _clientMFI.Case_LOT = values["Case_LOT"].ToString();
+                                _clientMFI.Batch_Code = values["Batch_Code"].ToString();
+                                _clientMFI.Block_Size = values["Block_Size"].ToString();
+                                _clientMFI.Case_Size = values["Case_Size"].ToString();
+                                _clientMFI.Pallet_Size = values["Pallet_Size"].ToString();
+                                _clientMFI.SanLuong = values["SanLuong"].ToString();
+                                _clientMFI.Operator = values["Operator"].ToString();
+                                _clientMFI.Pallet_QR_Type = values["Pallet_QR_Type"].ToString();
+                                _clientMFI.MFI_ID = values["MFI_ID"].ToString();
 
-                            //kiểm tra và tạo file DB
-                            //tạo file dữ liệu CaseQR_Date_Random file lưu theo ngày, table là số lô sản xuất
+                                _clientMFI.QRCode_Folder = $@"Client_Database/{_clientMFI.Case_LOT.Split("-")[2].ToString()}/{_clientMFI.Case_LOT.Split("-")[1].ToString()}/";
 
-                           _clientMFI.QRCode_FileName = $"ProductCode_{_clientMFI.Case_LOT}_{_clientMFI.Batch_Code}_{_clientMFI.Product_Barcode}.db";
 
-                            //nếu chưa có
-                            if (!File.Exists(_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName))
-                            {
-                                SQLiteConnection.CreateFile(_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName);
-                                using (SQLiteConnection conn = new SQLiteConnection($"Data Source={_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName};Version=3;"))
+
+                                if (Directory.Exists(_clientMFI.QRCode_Folder))
                                 {
-                                    conn.Open();
 
-                                    // Tạo bảng mẫu
-                                    string a = $@"INSERT INTO `ProductDetails` (BatchCode ,CaseCode ,ProductCode ,BlockSize ,CaseSize ,PalletSize ,OperatorName ,TimeStamp ) 
+                                }
+                                else
+                                {
+                                    Directory.CreateDirectory(_clientMFI.QRCode_Folder);
+                                }
+
+                                //kiểm tra và tạo file DB
+                                //tạo file dữ liệu CaseQR_Date_Random file lưu theo ngày, table là số lô sản xuất
+
+                                _clientMFI.QRCode_FileName = $"ProductCode_{_clientMFI.Case_LOT}_{_clientMFI.Batch_Code}_{_clientMFI.Product_Barcode}.db";
+
+                                //nếu chưa có
+                                if (!File.Exists(_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName))
+                                {
+                                    SQLiteConnection.CreateFile(_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName);
+                                    using (SQLiteConnection conn = new SQLiteConnection($"Data Source={_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName};Version=3;"))
+                                    {
+                                        conn.Open();
+
+                                        // Tạo bảng mẫu
+                                        string a = $@"INSERT INTO `ProductDetails` (BatchCode ,CaseCode ,ProductCode ,BlockSize ,CaseSize ,PalletSize ,OperatorName ,TimeStamp ) 
                                   VALUES ('{_clientMFI.Batch_Code}','{_clientMFI.Case_Barcode}','{_clientMFI.Product_Barcode}','{_clientMFI.Block_Size}','{_clientMFI.Case_Size}','{_clientMFI.Pallet_Size}','Operator','{DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")}');";
-                                    string createTableQuery = $@"
+                                        string createTableQuery = $@"
                                         CREATE TABLE IF NOT EXISTS `QRContent` (
                                             ProductID INTEGER NOT NULL UNIQUE,
                                             ProductQR TEXT NOT NULL UNIQUE,
@@ -218,31 +220,34 @@ namespace QR_MASAN_01
                                                 {a}
 
                                                 ";
-                                    using (SQLiteCommand cmd = new SQLiteCommand(createTableQuery, conn))
-                                    {
-                                        cmd.ExecuteNonQuery();
+                                        using (SQLiteCommand cmd = new SQLiteCommand(createTableQuery, conn))
+                                        {
+                                            cmd.ExecuteNonQuery();
+                                        }
+
+                                        conn.Close();
                                     }
 
-                                    conn.Close();
+                                    //tạo mã QR
+                                    Globalvariable.Data_Status = e_Data_Status.CREATING;
+                                }
+                                else
+                                {
+                                    //nếu file đã có thì không làm gì cả, đẩy trạng thái lên push
+                                    Globalvariable.Data_Status = e_Data_Status.PUSH;
                                 }
 
-                                //tạo mã QR
-                                Globalvariable.Data_Status = e_Data_Status.CREATING;
-                               
+
                             }
                             else
                             {
-                                //nếu file đã có thì không làm gì cả, đẩy trạng thái lên push
-                                Globalvariable.Data_Status = e_Data_Status.PUSH;
+                                
+                                LogUpdate($"Máy chủ chưa phản hồi");
                             }
                         }
                         else
                         {
-                            this.Invoke(new Action(() =>
-                            {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi lấy MFI từ máy chủ: {message}");
-                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            }));
+                            LogUpdate($"Lỗi khi lấy dữ liệu từ máy chủ: {message}");
                         }
                         break;
                     //Đây dữ liệu vào camera    
@@ -576,8 +581,11 @@ namespace QR_MASAN_01
 
         public string QR_Content = "Ver 18972";
         public string QR_Content_His = "";
+        public string timeProcess = "0";
         public  int QRContentCount = 0;
         public bool ISPass = false;
+
+        #region Xử lý tín hiệu từ camera
 
         private void Camera_ClientCallBack(SPMS1.enumClient eAE, string _strData)
         {
@@ -607,39 +615,35 @@ namespace QR_MASAN_01
                 case SPMS1.enumClient.RECEIVED:
 
                     Counter.Camera120Count++;
-                    try
-                    {
+                    //try
+                    //{
                         if (!WK_CMR1.IsBusy)
                         {
-                            Invoke(new Action(() =>
-                            {
-                                opWK1.FillColor = Color.Red;
-                            }));
                             WK_CMR1.RunWorkerAsync(_strData);
                         }
                         else if (!WK_CMR2.IsBusy)
                         {
-                            Invoke(new Action(() =>
-                            {
-                                opWK2.FillColor = Color.Red;
-                            }));
                             WK_CMR2.RunWorkerAsync(_strData);
                         }
-                        else
+                        else if (!WK_CMR3.IsBusy)
+                        {
+                            WK_CMR3.RunWorkerAsync(_strData);
+                        }
+                    else
                         {
                             ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : Không đủ luồng xử lí");
                             ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        this.Invoke(new Action(() =>
-                        {
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : {ex.Message}");
-                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    this.Invoke(new Action(() =>
+                    //    {
+                    //        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : {ex.Message}");
+                    //        ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
 
-                        }));
-                    }
+                    //    }));
+                    //}
 
                     break;
                 case SPMS1.enumClient.RECONNECT:
@@ -908,8 +912,11 @@ namespace QR_MASAN_01
                 QR_Content_His = QR_Content;
             }
 
+            timeProcess  = TimeSendPLC.ToString();
+
         }
 
+        #endregion
         public void UpdateActiveStatus(int rowId)
         {
             using (SQLiteConnection connection = new SQLiteConnection($"Data Source={_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName};Version=3;"))
@@ -1222,7 +1229,7 @@ namespace QR_MASAN_01
                     if(QRconten_His_Last <= QRContentCount)
                     {
                         QRconten_His_Last++;
-                        opHisConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: #{QRconten_His_Last} {QR_Content_His} ");
+                        opHisConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: #{QRconten_His_Last} {QR_Content_His} ({timeProcess}) ");
                         opHisConsole.SelectedIndex = ipConsole.Items.Count - 1;
                         if (opHisConsole.Count > 10)
                         {
@@ -1300,11 +1307,6 @@ namespace QR_MASAN_01
             }
         }
 
-        private void ipConsole_DoubleClick_1(object sender, EventArgs e)
-        {
-            this.ShowInfoDialog(ipConsole.SelectedItem as string);
-        }
-
         private void WK_AddSQLite_DoWork(object sender, DoWorkEventArgs e)
         {
             while (!WK_AddSQLite.CancellationPending)
@@ -1339,29 +1341,69 @@ namespace QR_MASAN_01
                 Thread.Sleep(100);
             }
         }
+
+        private double maxTimeT1 = 0;
+        private double maxTimeT2 = 0;
+        private double maxTimeT3 = 0;
         private void WK_CMR1_DoWork(object sender, DoWorkEventArgs e)
         {
             var worker = sender as BackgroundWorker;
             // Nhận dữ liệu truyền vào
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             string inputString = e.Argument as string;
-            WhenDataRecive(inputString);
             opWK1.FillColor = Color.Green;
+            WhenDataRecive(inputString);
+            opWK1.FillColor = Color.White;
+            stopwatch.Stop();
+            this.Invoke(new Action(() =>
+            {
+                if (stopwatch.Elapsed.TotalMilliseconds > maxTimeT1)
+                {
+                    maxTimeT1 = stopwatch.Elapsed.TotalMilliseconds;
+                }
+                opWK1.Text = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT1}" ;
+            }));
         }
         private void WK_CMR2_DoWork(object sender, DoWorkEventArgs e)
         {
             var worker = sender as BackgroundWorker;
             // Nhận dữ liệu truyền vào
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             string inputString = e.Argument as string;
-            WhenDataRecive(inputString);
             opWK2.FillColor = Color.Green;
+            WhenDataRecive(inputString);
+            opWK2.FillColor = Color.White;
+            stopwatch.Stop();
+            this.Invoke(new Action(() =>
+            {
+                if (stopwatch.Elapsed.TotalMilliseconds > maxTimeT2)
+                {
+                    maxTimeT2 = stopwatch.Elapsed.TotalMilliseconds;
+                }
+                opWK2.Text = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT2}";
+            }));
         }
         private void WK_CMR3_DoWork(object sender, DoWorkEventArgs e)
         {
             var worker = sender as BackgroundWorker;
             // Nhận dữ liệu truyền vào
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             string inputString = e.Argument as string;
-            WhenDataRecive(inputString);
             opWK3.FillColor = Color.Green;
+            WhenDataRecive(inputString);
+            opWK3.FillColor = Color.White;
+            stopwatch.Stop();
+            this.Invoke(new Action(() =>
+            {
+                if (stopwatch.Elapsed.TotalMilliseconds > maxTimeT3)
+                {
+                    maxTimeT3 = stopwatch.Elapsed.TotalMilliseconds;
+                }
+                opWK3.Text = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT3}";
+            }));
         }
 
         
@@ -1388,6 +1430,11 @@ namespace QR_MASAN_01
             {
                 Globalvariable.APPMODE = e_Mode.NEWMode;
             }
+        }
+
+        private void ipConsole_DoubleClick(object sender, EventArgs e)
+        {
+            this.ShowInfoDialog(ipConsole.SelectedItem as string);
         }
     }
 }
