@@ -41,6 +41,7 @@ namespace QR_MASAN_01
 
         // Tạo một Queue để lưu trữ các chuỗi
         public static Queue<int> UpdateQueue120 = new Queue<int>();
+
         public static Queue<string> AddQueue120 = new Queue<string>();
 
         public static string QRgoc { get; set; } = string.Empty;
@@ -123,7 +124,8 @@ namespace QR_MASAN_01
         INK_LOW,
         DATA_PRINTING,
         DATA_EMPTY,
-        UNKNOWN
+        UNKNOWN,
+        NOUSE
     }
 
     public enum e_Data_Status

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SPMS1", "SPMS1\SPMS1.csproj
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Server_Service", "Server_Service\Server_Service.esproj", "{78499F01-349A-5514-B2D2-6E33EBE6D62B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SupportApp", "SupportApp\SupportApp.csproj", "{68E4BB0D-F0F6-4D0B-B960-42DAF82CCC6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,14 @@ Global
 		{78499F01-349A-5514-B2D2-6E33EBE6D62B}.Release|x64.ActiveCfg = Release|Any CPU
 		{78499F01-349A-5514-B2D2-6E33EBE6D62B}.Release|x64.Build.0 = Release|Any CPU
 		{78499F01-349A-5514-B2D2-6E33EBE6D62B}.Release|x64.Deploy.0 = Release|Any CPU
+		{68E4BB0D-F0F6-4D0B-B960-42DAF82CCC6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68E4BB0D-F0F6-4D0B-B960-42DAF82CCC6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68E4BB0D-F0F6-4D0B-B960-42DAF82CCC6F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{68E4BB0D-F0F6-4D0B-B960-42DAF82CCC6F}.Debug|x64.Build.0 = Debug|Any CPU
+		{68E4BB0D-F0F6-4D0B-B960-42DAF82CCC6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68E4BB0D-F0F6-4D0B-B960-42DAF82CCC6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68E4BB0D-F0F6-4D0B-B960-42DAF82CCC6F}.Release|x64.ActiveCfg = Release|Any CPU
+		{68E4BB0D-F0F6-4D0B-B960-42DAF82CCC6F}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

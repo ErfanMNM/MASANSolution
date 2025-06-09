@@ -31,6 +31,10 @@
             this.components = new System.ComponentModel.Container();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
+            this.uiTableLayoutPanel4 = new Sunny.UI.UITableLayoutPanel();
+            this.uiPanel2 = new Sunny.UI.UIPanel();
+            this.uiPanel1 = new Sunny.UI.UIPanel();
+            this.ipDateSearch = new Sunny.UI.UIDatePicker();
             this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
             this.btnSearch = new Sunny.UI.UISymbolButton();
             this.ipQRContent = new Sunny.UI.UITextBox();
@@ -39,10 +43,11 @@
             this.uiTableLayoutPanel3 = new Sunny.UI.UITableLayoutPanel();
             this.opScanerCOM = new Sunny.UI.UIPanel();
             this.opScanerSTT = new Sunny.UI.UIPanel();
-            this.WK_Check = new System.ComponentModel.BackgroundWorker();
             this.ipSWMode = new Sunny.UI.UISwitch();
             this.opModeMess = new Sunny.UI.UIPanel();
+            this.WK_Check = new System.ComponentModel.BackgroundWorker();
             this.uiTableLayoutPanel1.SuspendLayout();
+            this.uiTableLayoutPanel4.SuspendLayout();
             this.uiTableLayoutPanel2.SuspendLayout();
             this.uiTableLayoutPanel3.SuspendLayout();
             this.SuspendLayout();
@@ -51,19 +56,84 @@
             // 
             this.uiTableLayoutPanel1.ColumnCount = 1;
             this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.uiTableLayoutPanel1.Controls.Add(this.uiTableLayoutPanel4, 0, 1);
             this.uiTableLayoutPanel1.Controls.Add(this.uiTableLayoutPanel2, 0, 0);
-            this.uiTableLayoutPanel1.Controls.Add(this.opCMD, 0, 1);
-            this.uiTableLayoutPanel1.Controls.Add(this.uiTableLayoutPanel3, 0, 2);
+            this.uiTableLayoutPanel1.Controls.Add(this.opCMD, 0, 2);
+            this.uiTableLayoutPanel1.Controls.Add(this.uiTableLayoutPanel3, 0, 3);
             this.uiTableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.uiTableLayoutPanel1.Name = "uiTableLayoutPanel1";
-            this.uiTableLayoutPanel1.RowCount = 3;
+            this.uiTableLayoutPanel1.RowCount = 4;
             this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10.2649F));
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 58F));
             this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 89.7351F));
             this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 47F));
             this.uiTableLayoutPanel1.Size = new System.Drawing.Size(836, 652);
             this.uiTableLayoutPanel1.TabIndex = 0;
             this.uiTableLayoutPanel1.TagString = null;
+            // 
+            // uiTableLayoutPanel4
+            // 
+            this.uiTableLayoutPanel4.ColumnCount = 3;
+            this.uiTableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.uiTableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 122F));
+            this.uiTableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 121F));
+            this.uiTableLayoutPanel4.Controls.Add(this.uiPanel2, 1, 0);
+            this.uiTableLayoutPanel4.Controls.Add(this.uiPanel1, 0, 0);
+            this.uiTableLayoutPanel4.Controls.Add(this.ipDateSearch, 2, 0);
+            this.uiTableLayoutPanel4.Location = new System.Drawing.Point(3, 59);
+            this.uiTableLayoutPanel4.Name = "uiTableLayoutPanel4";
+            this.uiTableLayoutPanel4.RowCount = 1;
+            this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.uiTableLayoutPanel4.Size = new System.Drawing.Size(830, 52);
+            this.uiTableLayoutPanel4.TabIndex = 3;
+            this.uiTableLayoutPanel4.TagString = null;
+            // 
+            // uiPanel2
+            // 
+            this.uiPanel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel2.Location = new System.Drawing.Point(589, 2);
+            this.uiPanel2.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel2.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel2.Name = "uiPanel2";
+            this.uiPanel2.Size = new System.Drawing.Size(118, 48);
+            this.uiPanel2.TabIndex = 5;
+            this.uiPanel2.Text = "Chọn tháng";
+            this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiPanel1
+            // 
+            this.uiPanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel1.Location = new System.Drawing.Point(2, 2);
+            this.uiPanel1.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel1.Name = "uiPanel1";
+            this.uiPanel1.Size = new System.Drawing.Size(583, 48);
+            this.uiPanel1.TabIndex = 4;
+            this.uiPanel1.Text = "STT-Mã QR-Trạng thái (1 là đã active, 0 là chưa) - Thời gian Active";
+            this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // ipDateSearch
+            // 
+            this.ipDateSearch.DateYearMonthFormat = "MM-yyyy";
+            this.ipDateSearch.FillColor = System.Drawing.Color.White;
+            this.ipDateSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ipDateSearch.Location = new System.Drawing.Point(711, 2);
+            this.ipDateSearch.Margin = new System.Windows.Forms.Padding(2);
+            this.ipDateSearch.MaxLength = 7;
+            this.ipDateSearch.MinimumSize = new System.Drawing.Size(63, 0);
+            this.ipDateSearch.Name = "ipDateSearch";
+            this.ipDateSearch.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
+            this.ipDateSearch.ShowType = Sunny.UI.UIDateType.YearMonth;
+            this.ipDateSearch.Size = new System.Drawing.Size(117, 48);
+            this.ipDateSearch.SymbolDropDown = 61555;
+            this.ipDateSearch.SymbolNormal = 61555;
+            this.ipDateSearch.SymbolSize = 24;
+            this.ipDateSearch.TabIndex = 6;
+            this.ipDateSearch.Text = "06-2025";
+            this.ipDateSearch.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ipDateSearch.Value = new System.DateTime(2025, 6, 1, 0, 0, 0, 0);
+            this.ipDateSearch.Watermark = "";
             // 
             // uiTableLayoutPanel2
             // 
@@ -79,7 +149,7 @@
             this.uiTableLayoutPanel2.Name = "uiTableLayoutPanel2";
             this.uiTableLayoutPanel2.RowCount = 1;
             this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTableLayoutPanel2.Size = new System.Drawing.Size(830, 56);
+            this.uiTableLayoutPanel2.Size = new System.Drawing.Size(830, 50);
             this.uiTableLayoutPanel2.TabIndex = 0;
             this.uiTableLayoutPanel2.TagString = null;
             // 
@@ -92,7 +162,7 @@
             this.btnSearch.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.RectColor = System.Drawing.Color.Blue;
-            this.btnSearch.Size = new System.Drawing.Size(132, 50);
+            this.btnSearch.Size = new System.Drawing.Size(132, 44);
             this.btnSearch.Symbol = 57591;
             this.btnSearch.TabIndex = 2;
             this.btnSearch.Text = "Xử lý";
@@ -110,7 +180,7 @@
             this.ipQRContent.Name = "ipQRContent";
             this.ipQRContent.Padding = new System.Windows.Forms.Padding(5);
             this.ipQRContent.ShowText = false;
-            this.ipQRContent.Size = new System.Drawing.Size(597, 52);
+            this.ipQRContent.Size = new System.Drawing.Size(597, 46);
             this.ipQRContent.TabIndex = 0;
             this.ipQRContent.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipQRContent.Watermark = "";
@@ -124,7 +194,7 @@
             this.btnKeyBoard.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnKeyBoard.Name = "btnKeyBoard";
             this.btnKeyBoard.RectColor = System.Drawing.Color.Blue;
-            this.btnKeyBoard.Size = new System.Drawing.Size(85, 50);
+            this.btnKeyBoard.Size = new System.Drawing.Size(85, 44);
             this.btnKeyBoard.Symbol = 261724;
             this.btnKeyBoard.TabIndex = 1;
             this.btnKeyBoard.Text = "Nhập";
@@ -136,22 +206,22 @@
             this.opCMD.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.opCMD.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
             this.opCMD.ItemSelectForeColor = System.Drawing.Color.White;
-            this.opCMD.Location = new System.Drawing.Point(2, 64);
+            this.opCMD.Location = new System.Drawing.Point(2, 116);
             this.opCMD.Margin = new System.Windows.Forms.Padding(2);
             this.opCMD.MinimumSize = new System.Drawing.Size(1, 1);
             this.opCMD.Name = "opCMD";
             this.opCMD.Padding = new System.Windows.Forms.Padding(2);
             this.opCMD.ShowText = false;
-            this.opCMD.Size = new System.Drawing.Size(832, 538);
+            this.opCMD.Size = new System.Drawing.Size(832, 486);
             this.opCMD.TabIndex = 1;
             this.opCMD.Text = "uiListBox1";
             // 
             // uiTableLayoutPanel3
             // 
             this.uiTableLayoutPanel3.ColumnCount = 4;
-            this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 172F));
+            this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 148F));
             this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 176F));
+            this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 166F));
             this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 424F));
             this.uiTableLayoutPanel3.Controls.Add(this.opScanerCOM, 1, 0);
             this.uiTableLayoutPanel3.Controls.Add(this.opScanerSTT, 0, 0);
@@ -170,13 +240,13 @@
             // 
             this.opScanerCOM.FillColor = System.Drawing.Color.White;
             this.opScanerCOM.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opScanerCOM.Location = new System.Drawing.Point(174, 2);
+            this.opScanerCOM.Location = new System.Drawing.Point(150, 2);
             this.opScanerCOM.Margin = new System.Windows.Forms.Padding(2);
             this.opScanerCOM.MinimumSize = new System.Drawing.Size(1, 1);
             this.opScanerCOM.Name = "opScanerCOM";
-            this.opScanerCOM.Size = new System.Drawing.Size(56, 38);
+            this.opScanerCOM.Size = new System.Drawing.Size(90, 38);
             this.opScanerCOM.TabIndex = 1;
-            this.opScanerCOM.Text = "COM";
+            this.opScanerCOM.Text = "COM XX";
             this.opScanerCOM.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opScanerSTT
@@ -187,16 +257,10 @@
             this.opScanerSTT.Margin = new System.Windows.Forms.Padding(2);
             this.opScanerSTT.MinimumSize = new System.Drawing.Size(1, 1);
             this.opScanerSTT.Name = "opScanerSTT";
-            this.opScanerSTT.Size = new System.Drawing.Size(168, 38);
+            this.opScanerSTT.Size = new System.Drawing.Size(144, 38);
             this.opScanerSTT.TabIndex = 0;
             this.opScanerSTT.Text = "Mất kết nối";
             this.opScanerSTT.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // WK_Check
-            // 
-            this.WK_Check.WorkerReportsProgress = true;
-            this.WK_Check.WorkerSupportsCancellation = true;
-            this.WK_Check.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Check_DoWork);
             // 
             // ipSWMode
             // 
@@ -205,11 +269,11 @@
             this.ipSWMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.ipSWMode.InActiveColor = System.Drawing.Color.Green;
             this.ipSWMode.InActiveText = "Không kích hoạt";
-            this.ipSWMode.Location = new System.Drawing.Point(235, 3);
+            this.ipSWMode.Location = new System.Drawing.Point(245, 3);
             this.ipSWMode.MinimumSize = new System.Drawing.Size(1, 1);
             this.ipSWMode.Name = "ipSWMode";
             this.ipSWMode.Radius = 0;
-            this.ipSWMode.Size = new System.Drawing.Size(170, 36);
+            this.ipSWMode.Size = new System.Drawing.Size(160, 36);
             this.ipSWMode.SwitchShape = Sunny.UI.UISwitch.UISwitchShape.Square;
             this.ipSWMode.TabIndex = 2;
             this.ipSWMode.Text = "Tự động thêm";
@@ -227,6 +291,12 @@
             this.opModeMess.Text = "Phần mềm chỉ hiện thị trạng thái mã, gạt sw để thay đổi";
             this.opModeMess.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // WK_Check
+            // 
+            this.WK_Check.WorkerReportsProgress = true;
+            this.WK_Check.WorkerSupportsCancellation = true;
+            this.WK_Check.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Check_DoWork);
+            // 
             // ScanQR
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -238,6 +308,7 @@
             this.Initialize += new System.EventHandler(this.ScanQR_Initialize);
             this.Finalize += new System.EventHandler(this.ScanQR_Finalize);
             this.uiTableLayoutPanel1.ResumeLayout(false);
+            this.uiTableLayoutPanel4.ResumeLayout(false);
             this.uiTableLayoutPanel2.ResumeLayout(false);
             this.uiTableLayoutPanel3.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -259,5 +330,9 @@
         private Sunny.UI.UIPanel opScanerCOM;
         private Sunny.UI.UISwitch ipSWMode;
         private Sunny.UI.UIPanel opModeMess;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel4;
+        private Sunny.UI.UIPanel uiPanel2;
+        private Sunny.UI.UIPanel uiPanel1;
+        private Sunny.UI.UIDatePicker ipDateSearch;
     }
 }

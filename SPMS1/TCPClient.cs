@@ -44,7 +44,7 @@ namespace SPMS1
                 while (!Connected)
                 {
                     ClientCallBack.Invoke(enumClient.RECONNECT, "RECONNECT");
-                    Thread.Sleep(30000);
+                    Thread.Sleep(3000);
                     Connect();
 
                 }

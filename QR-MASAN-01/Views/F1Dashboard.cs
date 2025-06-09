@@ -13,6 +13,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using static MFI_Service.MFI_Service_Form;
@@ -50,6 +51,15 @@ namespace QR_MASAN_01
                         var _gfsv = GetMultipleKeys(keys);
                         if(_gfsv.IsSuccess)
                         {
+                            if (Globalvariable.Server_Status != e_Server_Status.CONNECTED)
+                            {
+                                Globalvariable.Server_Status = e_Server_Status.CONNECTED;
+                                this.Invoke(new Action(() =>
+                                {
+                                    opServerStatus.Text = "Kết nối";
+                                    opServerStatus.FillColor = Globalvariable.OK_Color;
+                                }));
+                            }
                             //các thông tin vào Client_MFI
                             _clientMFI.Case_Barcode = _gfsv.Values["Case_Barcode"].ToString();
                             _clientMFI.Product_Barcode = _gfsv.Values["Product_Barcode"].ToString();
@@ -134,6 +144,14 @@ namespace QR_MASAN_01
                         }
                         else
                         {
+                            if(Globalvariable.Server_Status != e_Server_Status.DISCONNECTED)
+                            {
+                                Globalvariable.Server_Status = e_Server_Status.DISCONNECTED;
+                                this.Invoke(new Action(() =>
+                                {
+                                    opServerStatus.Text = "Mất kết nối";
+                                }));
+                            }
                             LogUpdate($"Lỗi kết nối máy chủ: {_gfsv.Message}");
                         }
                         Update_MFI_HMI();
@@ -265,7 +283,7 @@ namespace QR_MASAN_01
                         //gửi thông tin qua máy in
                         if (Globalvariable.APPMODE == e_Mode.NEWMode)
                         {
-
+                            Globalvariable.Data_Status = e_Data_Status.PRINTER_PUSH;
                         }
                         else
                         {
@@ -614,37 +632,55 @@ namespace QR_MASAN_01
                     break;
                 case SPMS1.enumClient.RECEIVED:
 
-                    Counter.Camera120Count++;
-                    //try
-                    //{
-                        if (!WK_CMR1.IsBusy)
+                    if(Globalvariable.Data_Status == e_Data_Status.READY)
+                    {
+                        Counter.Camera120Count++;
+                        try
                         {
-                            WK_CMR1.RunWorkerAsync(_strData);
+                            if (!WK_CMR1.IsBusy)
+                            {
+                                WK_CMR1.RunWorkerAsync(_strData);
+                            }
+                            else if (!WK_CMR2.IsBusy)
+                            {
+                                WK_CMR2.RunWorkerAsync(_strData);
+                            }
+                            else if (!WK_CMR3.IsBusy)
+                            {
+                                WK_CMR3.RunWorkerAsync(_strData);
+                            }
+                            else if (!WK_CMR4.IsBusy)
+                            {
+                                WK_CMR4.RunWorkerAsync(_strData);
+                            }
+                            else if (!WK_CMR5.IsBusy)
+                            {
+                                WK_CMR5.RunWorkerAsync(_strData);
+                            }
+                            else if (!WK_CMR6.IsBusy)
+                            {
+                                WK_CMR6.RunWorkerAsync(_strData);
+                            }
+                            else
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : Không đủ luồng xử lí");
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                            }
                         }
-                        else if (!WK_CMR2.IsBusy)
+                        catch (Exception ex)
                         {
-                            WK_CMR2.RunWorkerAsync(_strData);
+                            this.Invoke(new Action(() =>
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : {ex.Message}");
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                            }));
                         }
-                        else if (!WK_CMR3.IsBusy)
-                        {
-                            WK_CMR3.RunWorkerAsync(_strData);
-                        }
+                    }
                     else
-                        {
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : Không đủ luồng xử lí");
-                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                        }
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    this.Invoke(new Action(() =>
-                    //    {
-                    //        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : {ex.Message}");
-                    //        ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-
-                    //    }));
-                    //}
-
+                    {
+                        LogUpdate("Máy chưa sẵn sàng");
+                    }
+                    
                     break;
                 case SPMS1.enumClient.RECONNECT:
 
@@ -981,7 +1017,7 @@ namespace QR_MASAN_01
                 }
 
                 //chế độ thả lại
-                    if (Globalvariable.ISRerun)
+                if (Globalvariable.ISRerun)
                     {
                         swModeData.Active = true;
                     }
@@ -1000,18 +1036,6 @@ namespace QR_MASAN_01
                 {
                     swMode.Active = false;
                 }
-
-                //Cập nhật HMI
-                //if (Client_MFI.Product_Barcode != opBarcode.Text || Client_MFI.Case_Barcode != opCaseBarcode.Text || Client_MFI.Case_LOT != opDateM.Text || Client_MFI.Batch_Code != opBatch.Text)
-                //{
-                //    this.Invoke(new Action(() =>
-                //    {
-                //        opBarcode.Text = Client_MFI.Product_Barcode;
-                //        opCaseBarcode.Text = Client_MFI.Case_Barcode;
-                //        opDateM.Text = Client_MFI.Case_LOT;
-                //        opBatch.Text = Client_MFI.Batch_Code;
-                //    }));
-                //}
 
                 //Ready
                 if (GCamera.Camera_Status == e_Camera_Status.CONNECTED && Globalvariable.Data_Status == e_Data_Status.READY && Globalvariable.PLCConnect)
@@ -1033,7 +1057,7 @@ namespace QR_MASAN_01
                         }
                         this.Invoke(new Action(() =>
                         {
-                            opStatus.Text = "Đang hoạt động";
+                            opStatus.Text = "Hệ thống sẵn sàng";
                             opStatus.FillColor = Color.Green;
                         }));
                     }
@@ -1105,74 +1129,85 @@ namespace QR_MASAN_01
                     }));
                 }
 
-
-                switch (GPrinter.Printer_Status)
+                if(Globalvariable.APPMODE == e_Mode.NEWMode)
                 {
-                    case e_PRINTER_Status.CONNECTED:
-                        opPrinter.FillColor = Color.Yellow;
-                        this.Invoke(new Action(() =>
-                        {
-                            opPrinter.Text = "Kết nối";
-                        }));
-                        break;
-                    case e_PRINTER_Status.DISCONNECTED:
-                        opPrinter.FillColor = Globalvariable.WB_Color;
-                        this.Invoke(new Action(() =>
-                        {
-                            opPrinter.Text = "Mất kết nối";
-                        }));
-                        break;
-                    case e_PRINTER_Status.PRINTING:
-                        opPrinter.FillColor = Globalvariable.OK_Color;
-                        this.Invoke(new Action(() =>
-                        {
-                            opPrinter.Text = "Đang in";
-                        }));
-                        break;
-                    case e_PRINTER_Status.JOB_CHANGE:
-                        opPrinter.FillColor = Color.Yellow;
-                        this.Invoke(new Action(() =>
-                        {
-                            opPrinter.Text = "Đang chỉnh";
-                        }));
-                        break;
-                    case e_PRINTER_Status.STOPPED:
-                        opPrinter.FillColor = Color.Yellow;
-                        this.Invoke(new Action(() =>
-                        {
-                            opPrinter.Text = "Đang dừng";
-                        }));
-                        break;
-                    case e_PRINTER_Status.INK_LOW:
-                        opPrinter.FillColor = Globalvariable.WB_Color;
-                        this.Invoke(new Action(() =>
-                        {
-                            opPrinter.Text = "Mực thấp";
-                        }));
-                        break;
-                    case e_PRINTER_Status.DATA_PRINTING:
-                        opPrinter.FillColor = Color.Yellow;
-                        this.Invoke(new Action(() =>
-                        {
-                            opPrinter.Text = "Đang chỉnh";
-                        }));
-                        break;
+                    switch (GPrinter.Printer_Status)
+                    {
+                        case e_PRINTER_Status.CONNECTED:
+                            opPrinter.FillColor = Color.Yellow;
+                            this.Invoke(new Action(() =>
+                            {
+                                opPrinter.Text = "Kết nối";
+                            }));
+                            break;
+                        case e_PRINTER_Status.DISCONNECTED:
+                            opPrinter.FillColor = Globalvariable.WB_Color;
+                            this.Invoke(new Action(() =>
+                            {
+                                opPrinter.Text = "Mất kết nối";
+                            }));
+                            break;
+                        case e_PRINTER_Status.PRINTING:
+                            opPrinter.FillColor = Globalvariable.OK_Color;
+                            this.Invoke(new Action(() =>
+                            {
+                                opPrinter.Text = "Đang in";
+                            }));
+                            break;
+                        case e_PRINTER_Status.JOB_CHANGE:
+                            opPrinter.FillColor = Color.Yellow;
+                            this.Invoke(new Action(() =>
+                            {
+                                opPrinter.Text = "Đang chỉnh";
+                            }));
+                            break;
+                        case e_PRINTER_Status.STOPPED:
+                            opPrinter.FillColor = Color.Yellow;
+                            this.Invoke(new Action(() =>
+                            {
+                                opPrinter.Text = "Đang dừng";
+                            }));
+                            break;
+                        case e_PRINTER_Status.INK_LOW:
+                            opPrinter.FillColor = Globalvariable.WB_Color;
+                            this.Invoke(new Action(() =>
+                            {
+                                opPrinter.Text = "Mực thấp";
+                            }));
+                            break;
+                        case e_PRINTER_Status.DATA_PRINTING:
+                            opPrinter.FillColor = Color.Yellow;
+                            this.Invoke(new Action(() =>
+                            {
+                                opPrinter.Text = "Đang chỉnh";
+                            }));
+                            break;
 
-                    case e_PRINTER_Status.DATA_EMPTY:
-                        opPrinter.FillColor = Color.Red;
-                        this.Invoke(new Action(() =>
-                        {
-                            opPrinter.Text = "Lỗi dữ liệu";
-                        }));
-                        break;
-                    case e_PRINTER_Status.UNKNOWN:
-                        opPrinter.FillColor = Color.Red;
-                        this.Invoke(new Action(() =>
-                        {
-                            opPrinter.Text = "Lỗi";
-                        }));
-                        break;
+                        case e_PRINTER_Status.DATA_EMPTY:
+                            opPrinter.FillColor = Color.Red;
+                            this.Invoke(new Action(() =>
+                            {
+                                opPrinter.Text = "Lỗi dữ liệu";
+                            }));
+                            break;
+                        case e_PRINTER_Status.UNKNOWN:
+                            opPrinter.FillColor = Color.Red;
+                            this.Invoke(new Action(() =>
+                            {
+                                opPrinter.Text = "Lỗi";
+                            }));
+                            break;
+                    }
                 }
+                else
+                {
+                    opPrinter.FillColor = Color.Yellow;
+                    this.Invoke(new Action(() =>
+                    {
+                        opPrinter.Text = "Không dùng";
+                    }));
+                }
+                
 
                
                 Thread.Sleep(1000);
@@ -1345,6 +1380,9 @@ namespace QR_MASAN_01
         private double maxTimeT1 = 0;
         private double maxTimeT2 = 0;
         private double maxTimeT3 = 0;
+        private double maxTimeT4 = 0;
+        private double maxTimeT5 = 0;
+        private double maxTimeT6 = 0;
         private void WK_CMR1_DoWork(object sender, DoWorkEventArgs e)
         {
             var worker = sender as BackgroundWorker;
@@ -1435,6 +1473,69 @@ namespace QR_MASAN_01
         private void ipConsole_DoubleClick(object sender, EventArgs e)
         {
             this.ShowInfoDialog(ipConsole.SelectedItem as string);
+        }
+
+        private void WK_CMR4_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var worker = sender as BackgroundWorker;
+            // Nhận dữ liệu truyền vào
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            string inputString = e.Argument as string;
+            opWK4.FillColor = Color.Green;
+            WhenDataRecive(inputString);
+            opWK4.FillColor = Color.White;
+            stopwatch.Stop();
+            this.Invoke(new Action(() =>
+            {
+                if (stopwatch.Elapsed.TotalMilliseconds > maxTimeT4)
+                {
+                    maxTimeT4 = stopwatch.Elapsed.TotalMilliseconds;
+                }
+                opWK4.Text = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT4}";
+            }));
+        }
+
+        private void WK_CMR5_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var worker = sender as BackgroundWorker;
+            // Nhận dữ liệu truyền vào
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            string inputString = e.Argument as string;
+            opWK5.FillColor = Color.Green;
+            WhenDataRecive(inputString);
+            opWK5.FillColor = Color.White;
+            stopwatch.Stop();
+            this.Invoke(new Action(() =>
+            {
+                if (stopwatch.Elapsed.TotalMilliseconds > maxTimeT5)
+                {
+                    maxTimeT5 = stopwatch.Elapsed.TotalMilliseconds;
+                }
+                opWK5.Text = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT5}";
+            }));
+        }
+
+        private void WK_CMR6_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var worker = sender as BackgroundWorker;
+            // Nhận dữ liệu truyền vào
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            string inputString = e.Argument as string;
+            opWK6.FillColor = Color.Green;
+            WhenDataRecive(inputString);
+            opWK6.FillColor = Color.White;
+            stopwatch.Stop();
+            this.Invoke(new Action(() =>
+            {
+                if (stopwatch.Elapsed.TotalMilliseconds > maxTimeT6)
+                {
+                    maxTimeT6 = stopwatch.Elapsed.TotalMilliseconds;
+                }
+                opWK6.Text = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT6}";
+            }));
         }
     }
 }
