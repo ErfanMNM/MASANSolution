@@ -588,15 +588,6 @@ namespace QR_MASAN_01
             PLC.InitPLC();
         }
 
-        private void WK_CsV_To_Sqlite_DoWork(object sender, DoWorkEventArgs e)
-        {
-            
-        }
-        private void WK_CsV_To_Sqlite_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-           
-        }
-
         public string QR_Content = "Ver 18972";
         public string QR_Content_His = "";
         public string timeProcess = "0";

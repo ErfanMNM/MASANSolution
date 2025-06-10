@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace SupportApp
 {
-    public partial class Form1 : Form
+    public partial class FMain : Form
     {
         private TcpListener tcpServer;
         private TcpClient connectedClient;
@@ -24,7 +24,7 @@ namespace SupportApp
 
 
 
-        public Form1()
+        public FMain()
         {
             InitializeComponent();
         }
