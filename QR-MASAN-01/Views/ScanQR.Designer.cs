@@ -215,6 +215,7 @@
             this.opCMD.Size = new System.Drawing.Size(832, 486);
             this.opCMD.TabIndex = 1;
             this.opCMD.Text = "uiListBox1";
+            this.opCMD.DoubleClick += new System.EventHandler(this.opCMD_DoubleClick);
             // 
             // uiTableLayoutPanel3
             // 

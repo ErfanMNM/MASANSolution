@@ -75,7 +75,7 @@ namespace QR_MASAN_01
 
                             _clientMFI.QRCode_Folder = $@"Client_Database/{_clientMFI.Case_LOT.Split("-")[2].ToString()}/{_clientMFI.Case_LOT.Split("-")[1].ToString()}/";
 
-
+                            Globalvariable.ProductBarcode = _clientMFI.Product_Barcode;
 
                             if (Directory.Exists(_clientMFI.QRCode_Folder))
                             {
@@ -1443,9 +1443,6 @@ namespace QR_MASAN_01
                 opWK3.Text = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT3}";
             }));
         }
-
-        
-
         private void swModeData_ValueChanged(object sender, bool value)
         {
             if(swModeData.Active)

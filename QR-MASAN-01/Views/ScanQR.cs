@@ -2,6 +2,7 @@
 using Diaglogs;
 using Dialogs;
 using HslCommunication;
+using MainClass;
 using Sunny.UI;
 using System;
 using System.Collections.Generic;
@@ -107,132 +108,148 @@ namespace QR_MASAN_01
         }
         bool AutoActive = false;
 
-        ProductData _productData { get; set; } = new ProductData();
+        ProductInfo _productData { get; set; } = new ProductInfo();
         public void SearchCode(string searchQR)
         {
             //tìm kiếm mã QR 
             if (Globalvariable.Data_Status == e_Data_Status.READY)
             {
-                if(AutoActive)
+                if (AutoActive)
                 {
-
-                }
-                else
-                {
-                    var _gdtf = GetDatabaseFilesByMonth(ipDateSearch.Value.ToString("MM/yyyy"));
-
-                    if(_gdtf.IsSuccess)
+                    //ở chế độ tự động thêm
+                    //Kiểm tra xem đúng mã hôm nay hay không
+                    if (Globalvariable.APPMODE == e_Mode.OLDMode)
                     {
-                        foreach (string file in _gdtf.FilesList)
+                        //chỉ cần kiểm đúng định dạng là được
+                        string pattern = @"i\.tcx\.com\.vn/.*\d{13}.*[a-zA-Z0-9]";
+                        var _checkFormat = CheckCodeFormatV2(searchQR, pattern);
+                        if (_checkFormat.IsOK)
                         {
-                            var _sqr = Get_QR_From_SQLite(Path.Combine("Client_Database", ipDateSearch.Value.Year.ToString(), ipDateSearch.Value.Month.ToString("D2"), file), searchQR);
-                            if(_sqr.Issucces)
+                            if (searchQR.Contains(Globalvariable.ProductBarcode))
                             {
-                                this.Invoke(new Action(() =>
+                                //tìm trong Dictionary
+                                if (Globalvariable.ProductQR_Dictionary.TryGetValue(searchQR, out ProductData ProductInfo))
                                 {
-                                    opCMD.Items.Add($"{DateTime.Now:HH:mm:ss}: {_sqr.PData.ProductID} - {_sqr.PData.ProductQR} - {_sqr.PData.Active} - {_sqr.PData.TimeStamp}");
-                                    opCMD.SelectedIndex = opCMD.Items.Count - 1;
-                                }));
-                                _productData = _sqr.PData;
-                                return;
+                                    if (ProductInfo.Active == 1)
+                                    {
+                                        LogUpdate($"Mã này đã Kích hoạt hôm nay - {searchQR}");
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        //thêm mã vào hàng chờ
+                                        Globalvariable.UpdateQueue120.Enqueue(ProductInfo.ProductID);
+                                        LogUpdate($"Mã này chưa Kích hoạt hôm nay - {searchQR} - Thêm vào hàng chờ kích hoạt");
+                                        return;
+                                    }
+                                }
+                                else
+                                {
+                                    //thêm mã vào hàng chờ
+                                    Globalvariable.AddQueue120.Enqueue(searchQR);
+                                    LogUpdate($"Mã này chưa Kích HOẠT - {searchQR} - Thêm vào hàng chờ kích hoạt");
+                                    return;
+                                }
                             }
                             else
                             {
+                                LogUpdate($"Mã không đúng định dạng: {searchQR} - {_checkFormat.Message}");
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            LogUpdate($"Mã không đúng định dạng: {searchQR} - {_checkFormat.Message}");
+                        }
+
+                    }
+                    else if (Globalvariable.APPMODE == e_Mode.NEWMode)
+                    {
+                        var _checkFormat = CheckCodeFormat(searchQR);
+                        if (_checkFormat.IsOK)
+                        {
+                            if (searchQR.Contains(Globalvariable.ProductBarcode))
+                            {
+                                //tìm trong Dictionary
+                                if (Globalvariable.ProductQR_Dictionary.TryGetValue(searchQR, out ProductData ProductInfo))
+                                {
+                                    if (ProductInfo.Active == 1)
+                                    {
+                                        LogUpdate($"Mã này đã Kích hoạt hôm nay - {searchQR}");
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        //thêm mã vào hàng chờ
+                                        Globalvariable.AddQueue120.Enqueue(searchQR);
+                                        LogUpdate($"Mã này chưa Kích hoạt hôm nay - {searchQR} - Thêm vào hàng chờ kích hoạt");
+                                        return;
+                                    }
+                                }
+                                else
+                                {
+                                    LogUpdate($"Mã không bao gồm mã sản phẩm đang sản xuất - {searchQR}");
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                LogUpdate($"Mã không đúng định dạng: {searchQR} - {_checkFormat.Message}");
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            LogUpdate($"Mã không đúng định dạng: {searchQR} - {_checkFormat.Message}");
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    var _checkFormat = CheckCodeFormat(searchQR);
+                    if (_checkFormat.IsOK)
+                    {
+                        var _gdtf = GetDatabaseFilesByMonth(ipDateSearch.Value.ToString("MM/yyyy"));
+
+                        if (_gdtf.IsSuccess)
+                        {
+                            foreach (string file in _gdtf.FilesList)
+                            {
+                                var _sqr = Get_QR_From_SQLite(Path.Combine("Client_Database", ipDateSearch.Value.Year.ToString(), ipDateSearch.Value.Month.ToString("D2"), file), searchQR);
+                                if (_sqr.Issucces)
+                                {
+                                    this.Invoke(new Action(() =>
+                                    {
+                                        opCMD.Items.Add($"{DateTime.Now:HH:mm:ss}: TÌM THẤY MÃ {_sqr.PData.ProductID} - {_sqr.PData.ProductQR} - {_sqr.PData.Active} - {_sqr.PData.TimeStamp}");
+                                        opCMD.SelectedIndex = opCMD.Items.Count - 1;
+                                    }));
+                                    _productData = _sqr.PData;
+                                    return;
+                                }
+                                else
+                                {
+                                    //không làm gì cả
+                                }
+
 
                             }
-
-                            
+                            LogUpdate($"{DateTime.Now:HH:mm:ss}: Mã không tồn tại: {searchQR}");
                         }
-                        LogUpdate($"{DateTime.Now:HH:mm:ss}: Mã không tồn tại. {searchQR}");
+                        else
+                        {
+                            LogUpdate($"{DateTime.Now:HH:mm:ss}: Không tìm thấy: {searchQR} - {_gdtf.Message}");
+                            return;
+                        }
                     }
                     else
                     {
-                        LogUpdate($"{DateTime.Now:HH:mm:ss}: {searchQR} - {_gdtf.Message}");
-                        return;
+                        LogUpdate($"Mã không đúng định dạng: {searchQR} - {_checkFormat.Message}");
                     }
+
                 }
-                //if (!string.IsNullOrEmpty(searchQR) && searchQR.Contains(Globalvariable.QRgoc))
-                //{
-                //    if (Globalvariable.ProductQR_Dictionary.TryGetValue(searchQR, out ProductData ProductInfo))
-                //    {
-                //        if (ProductInfo.Active != 1)
-                //        {
-                //            if(Mode)
-                //            {
-                //                ProductInfo.Active = 1;
-                //                ProductInfo.TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
 
-                //                //đưa vào hàng chờ để xử lí data
-                //                Globalvariable.UpdateQueue120.Enqueue(ProductInfo.ProductID);
 
-                //                this.Invoke(new Action(() =>
-                //                {
-                //                    opCMD.Items.Add($"{DateTime.Now:HH:mm:ss}: Sản phẩm: `{searchQR}` Đã đưa vào hàng chờ kích hoạt thành công");
-                //                    opCMD.SelectedIndex = opCMD.Items.Count - 1;
-                //                }));
-                //            }
-                //            else
-                //            {
-                //                this.Invoke(new Action(() =>
-                //                {
-                //                    opCMD.Items.Add($"{DateTime.Now:HH:mm:ss}: Sản phẩm: `{searchQR}` Chưa được kích hoạt");
-                //                    opCMD.SelectedIndex = opCMD.Items.Count - 1;
-                //                }));
-                //            }    
-                            
-                //        }
-                //        else
-                //        {
-                //            this.Invoke(new Action(() =>
-                //            {
-                //                opCMD.Items.Add($"{DateTime.Now:HH:mm:ss}: Sản phẩm: `{searchQR}` ĐÃ KÍCH HOẠT lúc : {ProductInfo.TimeStamp}");
-                //                opCMD.SelectedIndex = opCMD.Items.Count - 1;
-                //            }));
-                //        }
-                //    }
-                //    else
-                //    {
-                //        if (Globalvariable.APPMODE != e_Mode.OLDMode)
-                //        {
-                //            this.Invoke(new Action(() =>
-                //            {
-                //                opCMD.Items.Add($"{DateTime.Now:HH:mm:ss}: KHÔNG TÌM THẤY sản phẩm: `{searchQR}` : {ProductInfo.TimeStamp}");
-                //                opCMD.SelectedIndex = opCMD.Items.Count - 1;
-                //            }));
-                //        }
-                //        else
-                //        {
-                //            if (Mode)
-                //            {
-                //                Globalvariable.AddQueue120.Enqueue(searchQR);
-
-                //                this.Invoke(new Action(() =>
-                //                {
-                //                    opCMD.Items.Add($"{DateTime.Now:HH:mm:ss}: Sản phẩm: `{searchQR}` Đã đưa vào hàng chờ kích hoạt thành công");
-                //                    opCMD.SelectedIndex = opCMD.Items.Count - 1;
-                //                }));
-                //            }
-                //            else
-                //            {
-                //                this.Invoke(new Action(() =>
-                //                {
-                //                    opCMD.Items.Add($"{DateTime.Now:HH:mm:ss}: Sản phẩm: `{searchQR}` Chưa được kích hoạt");
-                //                    opCMD.SelectedIndex = opCMD.Items.Count - 1;
-                //                }));
-                //            }
-                                
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    this.Invoke(new Action(() =>
-                //    {
-                //        opCMD.Items.Add($"{DateTime.Now:HH:mm:ss}: Mã QR đầu vào không đúng định dạng sản xuất hôm nay.");
-                //        opCMD.SelectedIndex = opCMD.Items.Count - 1;
-                //    }));
-                //}
-                
             }
             else
             {
@@ -242,7 +259,6 @@ namespace QR_MASAN_01
                     opCMD.SelectedIndex = opCMD.Items.Count - 1;
                 }));
             }
-
         }
 
 
@@ -274,9 +290,9 @@ namespace QR_MASAN_01
         }
 
         //tìm mã trong SQLite
-        public (bool Issucces, string message, ProductData PData) Get_QR_From_SQLite(string file, string code)
+        public (bool Issucces, string message, ProductInfo PData) Get_QR_From_SQLite(string file, string code)
         {
-            ProductData _prD = new ProductData();
+            ProductInfo _prD = new ProductInfo();
 
             _prD.ProductQR = code;
             _prD.ProductID = "0"; // Mặc định ID là 0 nếu không tìm thấy
@@ -331,13 +347,41 @@ namespace QR_MASAN_01
                 opCMD.SelectedIndex = opCMD.Items.Count - 1;
             }));
         }
-        public class ProductData
+
+        //Check cấu trúc mã
+
+        public (bool IsOK, string Message) CheckCodeFormat(string code)
         {
-            public string ProductID { get; set; }
-            public string ProductQR { get; set; }
-            public int Active { get; set; } // 1: đã kích hoạt, 0: chưa kích hoạt
-            public string TimeStamp { get; set; } // thời gian kích hoạt
+            // Kiểm tra định dạng mã QR
+            if (string.IsNullOrEmpty(code))
+            {
+                return (false, "Mã QR không được để trống.");
+            }
+            // i.tcx.com.vn/[N13]0A509[N5][SN8] : các ký tự trong ngoặc [] là các ký tự quy định ví dụ N13 là 13 số, S8 là 8 ký tự chữ, SN8 là 8 ký tự chữ và số, dự vào đây kiểm tra định dạng mã
+            string pattern = @"i\.tcx\.com\.vn/.*\d{13}.*0A509.*\d{5}.*[a-zA-Z0-9]{8}";
+            if (!System.Text.RegularExpressions.Regex.IsMatch(code, pattern))
+            {
+                return (false, "Sai định dạng chuỗi");
+            }
+
+            return (true, "Mã QR hợp lệ.");
         }
+        public (bool IsOK, string Message) CheckCodeFormatV2(string code, string pattern)
+        {
+            // Kiểm tra định dạng mã QR
+            if (string.IsNullOrEmpty(code))
+            {
+                return (false, "Mã QR không được để trống.");
+            }
+            // i.tcx.com.vn/[N13]0A509[N5][SN8] : các ký tự trong ngoặc [] là các ký tự quy định ví dụ N13 là 13 số, S8 là 8 ký tự chữ, SN8 là 8 ký tự chữ và số, dự vào đây kiểm tra định dạng mã
+            if (!System.Text.RegularExpressions.Regex.IsMatch(code, pattern))
+            {
+                return (false, "Sai định dạng chuỗi");
+            }
+
+            return (true, "Mã QR hợp lệ.");
+        }
+        
         private void WK_Check_DoWork(object sender, DoWorkEventArgs e)
         {
             string searchQR = e.Argument as string; // Nhận giá trị truyền vào
@@ -378,6 +422,11 @@ namespace QR_MASAN_01
                 opModeMess.Text= "Phần mềm chỉ hiện thị trạng thái mã, gạt sw để thay đổi";
                 AutoActive = false;
             }
+        }
+
+        private void opCMD_DoubleClick(object sender, EventArgs e)
+        {
+            this.ShowInfoDialog(opCMD.SelectedItem?.ToString() ?? "Không có thông tin nào được chọn.");
         }
     }
 }

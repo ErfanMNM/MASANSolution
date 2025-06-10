@@ -47,6 +47,8 @@ namespace QR_MASAN_01
         public static string QRgoc { get; set; } = string.Empty;
 
         public static int MaxID_QR { get; set; } = 0;
+
+        public static string ProductBarcode { get; set; } = string.Empty;
         //public static string 
     }
         public enum e_Mode
@@ -84,6 +86,7 @@ namespace QR_MASAN_01
         public int ProductID { get; set; }
         public int Active { get; set; }
         public string TimeStamp { get; set; }
+        public string ProductQR { get; internal set; }
     }
 
 

@@ -33,4 +33,12 @@ namespace MainClass
         PUSHSERVER,
         FREE
     }
+
+    public class ProductInfo
+    {
+        public string ProductID { get; set; }
+        public string ProductQR { get; set; }
+        public int Active { get; set; } // 1: đã kích hoạt, 0: chưa kích hoạt
+        public string TimeStamp { get; set; } // thời gian kích hoạt
+    }
 }
