@@ -585,6 +585,8 @@ namespace QR_MASAN_01
             WK_Update.RunWorkerAsync();
             WK_120Update.RunWorkerAsync();
             Camera.Connect();
+            PLC.PLC_IP = GlobalSettings.Get("PLC_IP");
+            PLC.PLC_PORT = GlobalSettings.GetInt("PLC_PORT");
             PLC.InitPLC();
         }
 

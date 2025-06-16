@@ -34,7 +34,6 @@
             this.uiTopbar = new Sunny.UI.UIPanel();
             this.header = new Sunny.UI.UITableLayoutPanel();
             this.Logo = new Sunny.UI.UITableLayoutPanel();
-            this.LogoImg = new Sunny.UI.UIPanel();
             this.Logotext = new Sunny.UI.UIPanel();
             this.BodyPanel = new Sunny.UI.UITableLayoutPanel();
             this.navPanel = new Sunny.UI.UITableLayoutPanel();
@@ -51,6 +50,7 @@
             this.ClockWK = new System.ComponentModel.BackgroundWorker();
             this.Internet = new SPMS1.InternetClass(this.components);
             this.lblAllStatus = new Sunny.UI.UIPanel();
+            this.LogoImg = new Sunny.UI.UIPanel();
             this.mainPanelLayout.SuspendLayout();
             this.uiTopbar.SuspendLayout();
             this.header.SuspendLayout();
@@ -98,15 +98,6 @@
             this.Logo.Name = "Logo";
             this.Logo.TagString = null;
             this.Logo.Paint += new System.Windows.Forms.PaintEventHandler(this.Logo_Paint);
-            // 
-            // LogoImg
-            // 
-            this.LogoImg.BackColor = System.Drawing.Color.Transparent;
-            this.LogoImg.BackgroundImage = global::QR_MASAN_01.Properties.Resources.LogoTanTien;
-            resources.ApplyResources(this.LogoImg, "LogoImg");
-            this.LogoImg.Name = "LogoImg";
-            this.LogoImg.RectColor = System.Drawing.Color.Transparent;
-            this.LogoImg.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Logotext
             // 
@@ -262,6 +253,15 @@
             this.lblAllStatus.Radius = 0;
             this.lblAllStatus.RectColor = System.Drawing.Color.DodgerBlue;
             this.lblAllStatus.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // LogoImg
+            // 
+            this.LogoImg.BackColor = System.Drawing.Color.Transparent;
+            this.LogoImg.BackgroundImage = global::QR_MASAN_01.Properties.Resources.LogoTanTien;
+            resources.ApplyResources(this.LogoImg, "LogoImg");
+            this.LogoImg.Name = "LogoImg";
+            this.LogoImg.RectColor = System.Drawing.Color.Transparent;
+            this.LogoImg.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // FMainQR01
             // 

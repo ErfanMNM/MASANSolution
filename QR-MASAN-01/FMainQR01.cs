@@ -12,6 +12,7 @@ using System.Threading;
 using System.Windows.Forms;
 using MFI_Service;
 using QR_MASAN_01.Views;
+using QR_MASAN_01.Mid;
 
 
 
@@ -28,7 +29,7 @@ namespace QR_MASAN_01
         ScanQR scanQR = new ScanQR();
        //F1PLC _f1PLC = new F1PLC();
        FormTest FormTest = new FormTest();
-
+        Settings _setings = new Settings();
         public FMainQR01()
         {
             InitializeComponent();
@@ -36,7 +37,9 @@ namespace QR_MASAN_01
             WKCheck.RunWorkerAsync();
 
             RenderControlForm();
-            ClockWK.RunWorkerAsync(); 
+            ClockWK.RunWorkerAsync();
+
+            _setings.LoadSettings("C:/Phan_Mem/Configs.xlsx");
         }
 
         private void btnAppClose_Click(object sender, EventArgs e)

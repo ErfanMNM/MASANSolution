@@ -17,12 +17,6 @@ namespace QR_MASAN_01
         public static e_PRINTER_Status Printer_Status { get; set; } = e_PRINTER_Status.DISCONNECTED;
 
     }
-    public enum SETCODE
-    {
-        Init,
-        PushDataToPrinter,
-        StartPrinter
-    }
 
     public class Globalvariable
     {
@@ -51,7 +45,8 @@ namespace QR_MASAN_01
         public static string ProductBarcode { get; set; } = string.Empty;
         //public static string 
     }
-        public enum e_Mode
+
+    public enum e_Mode
     {
         OLDMode,
         NEWMode
@@ -89,7 +84,6 @@ namespace QR_MASAN_01
         public string ProductQR { get; internal set; }
     }
 
-
     public enum e_Server_Status
     {
         CONNECTED,
@@ -108,13 +102,6 @@ namespace QR_MASAN_01
         public static e_Server_Status Client_QR01 { get; set; } = e_Server_Status.DISCONNECTED;
         public static e_Server_Status Client_QR02 { get; set; } = e_Server_Status.DISCONNECTED;
         public static e_Server_Status Client_QR03 { get; set; } = e_Server_Status.DISCONNECTED;
-    }
-
-    public class ClientData
-    {
-        public string L3_QR01 { get; set; }
-        public string L3_QR02 { get; set; }
-        public string L3_QR03 { get; set; }
     }
 
     public enum e_PRINTER_Status
@@ -159,4 +146,27 @@ namespace QR_MASAN_01
         public static bool ByPass_Printer_Status { get; set; } = false;
         public static bool ByPass_Ready { get; set; } = false;
     }
+
+    public static class GlobalSettings
+    {
+        // Dictionary lưu key-value từ Excel
+        public static Dictionary<string, string> Settings = new Dictionary<string, string>();
+
+        // Hàm tiện lấy ra kiểu string
+        public static string Get(string key)
+        {
+            if (Settings.ContainsKey(key))
+                return Settings[key];
+            return string.Empty;
+        }
+
+        // Hàm tiện lấy ra kiểu int
+        public static int GetInt(string key)
+        {
+            if (Settings.ContainsKey(key) && int.TryParse(Settings[key], out int value))
+                return value;
+            return 0;
+        }
+    }
+
 }
