@@ -165,6 +165,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dialogs\CreateRecipe.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\CreateRecipe.Designer.cs">
+      <DependentUpon>CreateRecipe.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Entertext.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -212,12 +218,21 @@
     <Compile Include="Views\ScanQR.Designer.cs">
       <DependentUpon>ScanQR.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\F1PLC.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Settings\F1PLC.Designer.cs">
+      <DependentUpon>F1PLC.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\PLCSetting.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Views\Settings\PLCSetting.Designer.cs">
       <DependentUpon>PLCSetting.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Dialogs\CreateRecipe.resx">
+      <DependentUpon>CreateRecipe.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\Entertext.resx">
       <DependentUpon>Entertext.cs</DependentUpon>
     </EmbeddedResource>
@@ -248,6 +263,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ScanQR.resx">
       <DependentUpon>ScanQR.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Settings\F1PLC.resx">
+      <DependentUpon>F1PLC.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Settings\PLCSetting.resx">
       <DependentUpon>PLCSetting.cs</DependentUpon>

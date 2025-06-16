@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using MFI_Service;
 using QR_MASAN_01.Views;
 using QR_MASAN_01.Mid;
+using QR_MASAN_01.Views.Settings;
 
 
 
@@ -29,7 +30,9 @@ namespace QR_MASAN_01
         ScanQR scanQR = new ScanQR();
        //F1PLC _f1PLC = new F1PLC();
        FormTest FormTest = new FormTest();
-        Settings _setings = new Settings();
+       Settings _setings = new Settings();
+
+        F1PLC _f1PLC = new F1PLC();
         public FMainQR01()
         {
             InitializeComponent();
@@ -67,6 +70,8 @@ namespace QR_MASAN_01
            // uiNavMenu1.CreateNode(AddPage(_f1Cloudv2, 1007));
 
             uiNavMenu1.CreateNode(AddPage(FormTest, 1008));
+
+            uiNavMenu1.CreateNode(AddPage(_f1PLC, 1009));
 
             uiNavMenu1.SelectPage(1001);
 

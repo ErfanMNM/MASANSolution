@@ -574,6 +574,7 @@
             this.swMode.ActiveColor = System.Drawing.Color.DodgerBlue;
             this.swMode.ActiveText = "Không in";
             this.swMode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.swMode.Enabled = false;
             this.swMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.swMode.InActiveColor = System.Drawing.Color.Green;
             this.swMode.InActiveText = "In Kiểm";
@@ -943,7 +944,7 @@
             this.tabPage2.Controls.Add(this.uiTableLayoutPanel19);
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(457, 373);
+            this.tabPage2.Size = new System.Drawing.Size(200, 60);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Thống kê";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -1857,7 +1858,7 @@
             this.tabPage3.Controls.Add(this.opHisConsole);
             this.tabPage3.Location = new System.Drawing.Point(0, 40);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(457, 373);
+            this.tabPage3.Size = new System.Drawing.Size(200, 60);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Lịch sử";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1874,7 +1875,7 @@
             this.opHisConsole.Name = "opHisConsole";
             this.opHisConsole.Padding = new System.Windows.Forms.Padding(2);
             this.opHisConsole.ShowText = false;
-            this.opHisConsole.Size = new System.Drawing.Size(457, 373);
+            this.opHisConsole.Size = new System.Drawing.Size(200, 60);
             this.opHisConsole.TabIndex = 0;
             this.opHisConsole.Text = "uiListBox1";
             // 

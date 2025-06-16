@@ -309,12 +309,16 @@ namespace QR_MASAN_01
                     //Tạo mới mã QR
                     case e_Data_Status.CREATING:
                         // tạo mã không trùng
-                    int count = 1_000_000;
+                        int count = 1_000_000;
+                        if (Globalvariable.APPMODE == e_Mode.OLDMode)
+                        {
+                            count = 100;
+                        }
+                    
                         HashSet<string> uniqueCodes = GenerateUniqueRandomCodes(8, count);
                         Random random = new Random();
 
                         List<string> filedata = uniqueCodes.ToList();
-
                         using (SQLiteConnection conn = new SQLiteConnection($"Data Source={_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName};Version=3;"))
                         {
                             string sql = $@" INSERT INTO `QRContent`
@@ -354,6 +358,8 @@ namespace QR_MASAN_01
                                 this.HideStatusForm();
                             }
                         }
+
+
                         //Tạo xong dữ liệu
                         LogUpdate($"Tạo dữ liệu mã QR thành công, tổng số mã: {filedata.Count}");
                         Globalvariable.Data_Status = e_Data_Status.PUSH;
