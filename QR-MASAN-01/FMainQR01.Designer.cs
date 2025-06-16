@@ -50,6 +50,7 @@
             this.WKCheck = new System.ComponentModel.BackgroundWorker();
             this.ClockWK = new System.ComponentModel.BackgroundWorker();
             this.Internet = new SPMS1.InternetClass(this.components);
+            this.lblAllStatus = new Sunny.UI.UIPanel();
             this.mainPanelLayout.SuspendLayout();
             this.uiTopbar.SuspendLayout();
             this.header.SuspendLayout();
@@ -212,6 +213,7 @@
             this.footer.Controls.Add(this.uiPanel1, 0, 0);
             this.footer.Controls.Add(this.lblClock, 5, 0);
             this.footer.Controls.Add(this.lblInternet, 4, 0);
+            this.footer.Controls.Add(this.lblAllStatus, 3, 0);
             this.footer.Name = "footer";
             this.footer.TagString = null;
             // 
@@ -250,6 +252,16 @@
             // Internet
             // 
             this.Internet.Url = "8.8.8.8";
+            // 
+            // lblAllStatus
+            // 
+            this.lblAllStatus.FillColor = System.Drawing.Color.Red;
+            resources.ApplyResources(this.lblAllStatus, "lblAllStatus");
+            this.lblAllStatus.ForeColor = System.Drawing.Color.Yellow;
+            this.lblAllStatus.Name = "lblAllStatus";
+            this.lblAllStatus.Radius = 0;
+            this.lblAllStatus.RectColor = System.Drawing.Color.DodgerBlue;
+            this.lblAllStatus.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // FMainQR01
             // 
@@ -296,6 +308,7 @@
         private Sunny.UI.UISymbolButton btnMini;
         private Sunny.UI.UISymbolButton btnAppClose;
         private Sunny.UI.UITabControl uiTabControl1;
+        private Sunny.UI.UIPanel lblAllStatus;
     }
 }
 

@@ -1027,9 +1027,22 @@ namespace QR_MASAN_01
                 {
                     swMode.Active = false;
                 }
+                bool printers = false;
 
-                //Ready
-                if (GCamera.Camera_Status == e_Camera_Status.CONNECTED && Globalvariable.Data_Status == e_Data_Status.READY && Globalvariable.PLCConnect)
+                if (GPrinter.Printer_Status == e_PRINTER_Status.PRINTING)
+                {
+                    printers = true;
+                }
+                else
+                {
+                    printers = false;
+                    if(Globalvariable.APPMODE == e_Mode.OLDMode)
+                    {
+                        printers = true;
+                    }
+                }
+                    //Ready
+                    if (GCamera.Camera_Status == e_Camera_Status.CONNECTED && Globalvariable.Data_Status == e_Data_Status.READY && Globalvariable.PLCConnect)
                 {
                     if (Globalvariable.AllReady)
                     {

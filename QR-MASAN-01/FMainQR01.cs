@@ -129,6 +129,19 @@ namespace QR_MASAN_01
 
                     demso = 0;
                 }
+
+                if(Globalvariable.AllReady)
+                {
+                    lblAllStatus.Text = "Hệ thống sẵn sàng";
+                    lblAllStatus.FillColor = Color.Green;
+                    lblAllStatus.ForeColor = Color.White;
+                }
+                else
+                {
+                    lblAllStatus.Text = "Hệ thống chưa sẵn sàng";
+                    lblAllStatus.FillColor = Color.Red;
+                    lblAllStatus.ForeColor = Color.White;
+                }
             }
         }
 
