@@ -1027,14 +1027,14 @@ namespace QR_MASAN_01
 
                 //chế độ dữ liệu mới cũ
 
-                if (Globalvariable.APPMODE == e_Mode.OLDMode)
-                {
-                    swMode.Active = true;
-                }
-                else
-                {
-                    swMode.Active = false;
-                }
+                //if (Globalvariable.APPMODE == e_Mode.OLDMode)
+                //{
+                //    swMode.Active = true;
+                //}
+                //else
+                //{
+                //    swMode.Active = false;
+                //}
                 bool printers = false;
 
                 if (GPrinter.Printer_Status == e_PRINTER_Status.PRINTING)
@@ -1469,14 +1469,14 @@ namespace QR_MASAN_01
 
         private void swMode_ValueChanged(object sender, bool value)
         {
-            if (swMode.Active)
-            {
-                Globalvariable.APPMODE = e_Mode.OLDMode;
-            }
-            else
-            {
-                Globalvariable.APPMODE = e_Mode.NEWMode;
-            }
+            //if (swMode.Active)
+            //{
+            //    Globalvariable.APPMODE = e_Mode.OLDMode;
+            //}
+            //else
+            //{
+            //    Globalvariable.APPMODE = e_Mode.NEWMode;
+            //}
         }
 
         private void ipConsole_DoubleClick(object sender, EventArgs e)
@@ -1545,6 +1545,21 @@ namespace QR_MASAN_01
                 }
                 opWK6.Text = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT6}";
             }));
+        }
+
+        private void Camera_c_ClientCallBack(SPMS1.enumClient eAE, string _strData)
+        {
+            switch (eAE)
+            {
+                case SPMS1.enumClient.CONNECTED:
+                    break;
+                case SPMS1.enumClient.DISCONNECTED:
+                    break;
+                case SPMS1.enumClient.RECEIVED:
+                    break;
+                case SPMS1.enumClient.RECONNECT:
+                    break;
+            }
         }
     }
 }

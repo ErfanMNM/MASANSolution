@@ -51,7 +51,6 @@
             this.uiTableLayoutPanel4 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel9 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel12 = new Sunny.UI.UITableLayoutPanel();
-            this.swMode = new Sunny.UI.UISwitch();
             this.uiPanel18 = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel11 = new Sunny.UI.UITableLayoutPanel();
             this.swModeData = new Sunny.UI.UISwitch();
@@ -167,6 +166,8 @@
             this.WK_CMR4 = new System.ComponentModel.BackgroundWorker();
             this.WK_CMR5 = new System.ComponentModel.BackgroundWorker();
             this.WK_CMR6 = new System.ComponentModel.BackgroundWorker();
+            this.Camera_c = new SPMS1.TCPClient(this.components);
+            this.opCMR02Stt = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTableLayoutPanel5.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -556,7 +557,7 @@
             this.uiTableLayoutPanel12.BackColor = System.Drawing.Color.PaleTurquoise;
             this.uiTableLayoutPanel12.ColumnCount = 1;
             this.uiTableLayoutPanel12.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTableLayoutPanel12.Controls.Add(this.swMode, 0, 1);
+            this.uiTableLayoutPanel12.Controls.Add(this.opCMR02Stt, 0, 1);
             this.uiTableLayoutPanel12.Controls.Add(this.uiPanel18, 0, 0);
             this.uiTableLayoutPanel12.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTableLayoutPanel12.Location = new System.Drawing.Point(241, 79);
@@ -568,23 +569,6 @@
             this.uiTableLayoutPanel12.Size = new System.Drawing.Size(110, 73);
             this.uiTableLayoutPanel12.TabIndex = 16;
             this.uiTableLayoutPanel12.TagString = null;
-            // 
-            // swMode
-            // 
-            this.swMode.ActiveColor = System.Drawing.Color.DodgerBlue;
-            this.swMode.ActiveText = "Không in";
-            this.swMode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.swMode.Enabled = false;
-            this.swMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.swMode.InActiveColor = System.Drawing.Color.Green;
-            this.swMode.InActiveText = "In Kiểm";
-            this.swMode.Location = new System.Drawing.Point(3, 32);
-            this.swMode.MinimumSize = new System.Drawing.Size(1, 1);
-            this.swMode.Name = "swMode";
-            this.swMode.Size = new System.Drawing.Size(104, 38);
-            this.swMode.SwitchShape = Sunny.UI.UISwitch.UISwitchShape.Square;
-            this.swMode.TabIndex = 5;
-            this.swMode.ValueChanged += new Sunny.UI.UISwitch.OnValueChanged(this.swMode_ValueChanged);
             // 
             // uiPanel18
             // 
@@ -599,7 +583,7 @@
             this.uiPanel18.RectColor = System.Drawing.Color.Teal;
             this.uiPanel18.Size = new System.Drawing.Size(106, 25);
             this.uiPanel18.TabIndex = 1;
-            this.uiPanel18.Text = "Chế độ";
+            this.uiPanel18.Text = "Camera 02";
             this.uiPanel18.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiTableLayoutPanel11
@@ -780,7 +764,7 @@
             this.uiPanel8.RectColor = System.Drawing.Color.Teal;
             this.uiPanel8.Size = new System.Drawing.Size(117, 25);
             this.uiPanel8.TabIndex = 1;
-            this.uiPanel8.Text = "Camera";
+            this.uiPanel8.Text = "Camera 01";
             this.uiPanel8.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opCamera
@@ -2301,6 +2285,27 @@
             this.WK_CMR6.WorkerSupportsCancellation = true;
             this.WK_CMR6.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_CMR6_DoWork);
             // 
+            // Camera_c
+            // 
+            this.Camera_c.IP = "127.0.0.1";
+            this.Camera_c.Port = 6968;
+            this.Camera_c.ClientCallBack += new SPMS1.TCPClient.EventForClient(this.Camera_c_ClientCallBack);
+            // 
+            // opCMR02Stt
+            // 
+            this.opCMR02Stt.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opCMR02Stt.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.opCMR02Stt.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opCMR02Stt.Location = new System.Drawing.Point(2, 31);
+            this.opCMR02Stt.Margin = new System.Windows.Forms.Padding(2);
+            this.opCMR02Stt.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opCMR02Stt.Name = "opCMR02Stt";
+            this.opCMR02Stt.Radius = 3;
+            this.opCMR02Stt.Size = new System.Drawing.Size(106, 40);
+            this.opCMR02Stt.TabIndex = 3;
+            this.opCMR02Stt.Text = "-";
+            this.opCMR02Stt.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // F1Dashboard
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -2485,7 +2490,6 @@
         private Sunny.UI.UILabel uiLabel9;
         private Sunny.UI.UILabel uiLabel10;
         private Sunny.UI.UIDigitalLabel lblPass;
-        private Sunny.UI.UISwitch swMode;
         private Sunny.UI.UISwitch swModeData;
         private System.ComponentModel.BackgroundWorker WK_CMR3;
         private System.ComponentModel.BackgroundWorker WK_CMR4;
@@ -2500,5 +2504,7 @@
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel1;
         private Sunny.UI.UIPanel uiPanel1;
         private Sunny.UI.UIPanel opWK4;
+        private SPMS1.TCPClient Camera_c;
+        private Sunny.UI.UIPanel opCMR02Stt;
     }
 }
