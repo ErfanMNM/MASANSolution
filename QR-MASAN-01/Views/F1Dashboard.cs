@@ -1367,17 +1367,19 @@ namespace QR_MASAN_01
         {
             while(!WK_120Update.CancellationPending)
             {
-
+                //cập nhật
                 if (Globalvariable.UpdateQueue120.Count > 0)
                 {
                     UpdateActiveStatus(Globalvariable.UpdateQueue120.Dequeue());
                 }
 
+                //thêm mới
                 if(Globalvariable.AddQueue120.Count > 0)
                 {
                     string code = Globalvariable.AddQueue120.Dequeue();
                     Add_QR_To_SQLite(code);
                     Globalvariable.MaxID_QR++;
+
                     Globalvariable.ProductQR_Dictionary[code] = new ProductData
                     {
                         ProductID = Globalvariable.MaxID_QR,
@@ -1385,6 +1387,8 @@ namespace QR_MASAN_01
                         TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
                     };
                 }
+
+
                 Thread.Sleep(100);
             }
         }
