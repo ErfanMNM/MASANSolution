@@ -11,6 +11,12 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Server_Service", "Server_Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SupportApp", "SupportApp\SupportApp.csproj", "{68E4BB0D-F0F6-4D0B-B960-42DAF82CCC6F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Printer", "Printer", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Printer", "PRINTER\Printer\Printer.csproj", "{EF9C2D80-3D32-4D94-AD6E-73B9441DB6C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NorwixV2", "PRINTER\NorwixV2\NorwixV2.csproj", "{98F832B6-660A-4B00-B201-0B5A0479EDF2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,9 +61,29 @@ Global
 		{68E4BB0D-F0F6-4D0B-B960-42DAF82CCC6F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{68E4BB0D-F0F6-4D0B-B960-42DAF82CCC6F}.Release|x64.ActiveCfg = Release|Any CPU
 		{68E4BB0D-F0F6-4D0B-B960-42DAF82CCC6F}.Release|x64.Build.0 = Release|Any CPU
+		{EF9C2D80-3D32-4D94-AD6E-73B9441DB6C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF9C2D80-3D32-4D94-AD6E-73B9441DB6C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF9C2D80-3D32-4D94-AD6E-73B9441DB6C5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EF9C2D80-3D32-4D94-AD6E-73B9441DB6C5}.Debug|x64.Build.0 = Debug|Any CPU
+		{EF9C2D80-3D32-4D94-AD6E-73B9441DB6C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF9C2D80-3D32-4D94-AD6E-73B9441DB6C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF9C2D80-3D32-4D94-AD6E-73B9441DB6C5}.Release|x64.ActiveCfg = Release|Any CPU
+		{EF9C2D80-3D32-4D94-AD6E-73B9441DB6C5}.Release|x64.Build.0 = Release|Any CPU
+		{98F832B6-660A-4B00-B201-0B5A0479EDF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98F832B6-660A-4B00-B201-0B5A0479EDF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98F832B6-660A-4B00-B201-0B5A0479EDF2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{98F832B6-660A-4B00-B201-0B5A0479EDF2}.Debug|x64.Build.0 = Debug|Any CPU
+		{98F832B6-660A-4B00-B201-0B5A0479EDF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98F832B6-660A-4B00-B201-0B5A0479EDF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98F832B6-660A-4B00-B201-0B5A0479EDF2}.Release|x64.ActiveCfg = Release|Any CPU
+		{98F832B6-660A-4B00-B201-0B5A0479EDF2}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EF9C2D80-3D32-4D94-AD6E-73B9441DB6C5} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{98F832B6-660A-4B00-B201-0B5A0479EDF2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {77DFBE4F-038F-497B-A19E-5AFEC419A982}

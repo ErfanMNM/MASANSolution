@@ -43,6 +43,9 @@ namespace QR_MASAN_01
         public static int MaxID_QR { get; set; } = 0;
 
         public static string ProductBarcode { get; set; } = string.Empty;
+
+        public static string QRCode_Folder { get; set; } = string.Empty;
+        public static string QRCode_FileName { get; set; } = string.Empty;
         //public static string 
     }
 
@@ -93,7 +96,8 @@ namespace QR_MASAN_01
     public class GCamera
     {
         public static e_Camera_Status Camera_Status {  get; set; } = e_Camera_Status.DISCONNECTED;
-        
+        public static e_Camera_Status Camera_Status_02 { get; set; } = e_Camera_Status.DISCONNECTED;
+
     }
 
     public class GServer

@@ -212,6 +212,18 @@
     <Compile Include="Views\MFI_Service\MFI_Service.Designer.cs">
       <DependentUpon>MFI_Service.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\Printers\MyLanPrinter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Printers\MyLanPrinter.Designer.cs">
+      <DependentUpon>MyLanPrinter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Printers\Printer_V7.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Printers\Printer_V7.Designer.cs">
+      <DependentUpon>Printer_V7.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\ScanQR.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -261,6 +273,12 @@
     <EmbeddedResource Include="Views\MFI_Service\MFI_Service.resx">
       <DependentUpon>MFI_Service.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\Printers\MyLanPrinter.resx">
+      <DependentUpon>MyLanPrinter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Printers\Printer_V7.resx">
+      <DependentUpon>Printer_V7.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\ScanQR.resx">
       <DependentUpon>ScanQR.cs</DependentUpon>
     </EmbeddedResource>
@@ -285,6 +303,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PRINTER\NorwixV2\NorwixV2.csproj">
+      <Project>{98f832b6-660a-4b00-b201-0b5a0479edf2}</Project>
+      <Name>NorwixV2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PRINTER\Printer\Printer.csproj">
+      <Project>{ef9c2d80-3d32-4d94-ad6e-73b9441db6c5}</Project>
+      <Name>Printer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SPMS1\SPMS1.csproj">
       <Project>{b4d6cb7d-fa06-46a0-abb3-21d3ed7a0c77}</Project>
       <Name>SPMS1</Name>

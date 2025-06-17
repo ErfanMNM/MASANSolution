@@ -14,6 +14,7 @@ using MFI_Service;
 using QR_MASAN_01.Views;
 using QR_MASAN_01.Mid;
 using QR_MASAN_01.Views.Settings;
+using QR_MASAN_01.Views.Printers;
 
 
 
@@ -31,6 +32,8 @@ namespace QR_MASAN_01
        //F1PLC _f1PLC = new F1PLC();
        FormTest FormTest = new FormTest();
        Settings _setings = new Settings();
+        MyLanPrinter _myLanPrinter = new MyLanPrinter();
+        Printer_V7 _printer_V7 = new Printer_V7();
 
         F1PLC _f1PLC = new F1PLC();
         public FMainQR01()
@@ -39,10 +42,12 @@ namespace QR_MASAN_01
 
             WKCheck.RunWorkerAsync();
 
-            RenderControlForm();
+            
             ClockWK.RunWorkerAsync();
 
             _setings.LoadSettings("C:/Phan_Mem/Configs.xlsx");
+
+            RenderControlForm();
         }
 
         private void btnAppClose_Click(object sender, EventArgs e)
@@ -56,29 +61,34 @@ namespace QR_MASAN_01
 
             uiNavMenu1.TabControl = uiTabControl1;
             uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
-
-           // uiNavMenu1.CreateNode(AddPage(_f1PLC, 1002));
-
            uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
-
-            //uiNavMenu1.CreateNode(AddPage(_F1Printer, 1004));
-
-            //uiNavMenu1.CreateNode(AddPage(_F1Data, 1005));
-
            uiNavMenu1.CreateNode(AddPage(scanQR, 1006));
-
-           // uiNavMenu1.CreateNode(AddPage(_f1Cloudv2, 1007));
-
             uiNavMenu1.CreateNode(AddPage(FormTest, 1008));
-
             uiNavMenu1.CreateNode(AddPage(_f1PLC, 1009));
-
             uiNavMenu1.SelectPage(1001);
-
-          //  _F1Printer.SET(SETCODE.Init);
           _FMFI.FMFI_INIT();
-           // _f1Cloud.F1Cloud_INIT();
            scanQR.INIT();
+
+            //kiểm soát máy in
+
+            switch (GlobalSettings.Get("PRINTER"))
+            {
+                case "ML":
+                    uiNavMenu1.CreateNode(AddPage(_myLanPrinter, 1011));
+                    break;
+                case "V7":
+                    uiNavMenu1.CreateNode(AddPage(_printer_V7, 1012));
+                    break;
+                case "UC22":
+                    //uiNavMenu1.CreateNode(AddPage(new F1Printer(), 1004));
+                    break;
+                case "NONE":
+                    // Không làm gì cả
+                    break;
+                default:
+                    this.ShowWarningDialog("Printer Error", "Printer type not supported.", UIStyle.Red);
+                    break;
+            }
         }
 
 

@@ -283,6 +283,8 @@ namespace QR_MASAN_01
                         //gửi thông tin qua máy in
                         if (Globalvariable.APPMODE == e_Mode.NEWMode)
                         {
+                            Globalvariable.QRCode_Folder = _clientMFI.QRCode_Folder;
+                            Globalvariable.QRCode_FileName = _clientMFI.QRCode_FileName;
                             Globalvariable.Data_Status = e_Data_Status.PRINTER_PUSH;
                         }
                         else
@@ -609,7 +611,7 @@ namespace QR_MASAN_01
             switch (eAE)
             {
                 case SPMS1.enumClient.CONNECTED:
-                    if (GCamera.Camera_Status == e_Camera_Status.DISCONNECTED)
+                    if (GCamera.Camera_Status != e_Camera_Status.CONNECTED)
                     {
                         GCamera.Camera_Status = e_Camera_Status.CONNECTED;
                         Invoke(new Action(() =>
@@ -620,7 +622,7 @@ namespace QR_MASAN_01
                     }
                     break;
                 case SPMS1.enumClient.DISCONNECTED:
-                    if (GCamera.Camera_Status == e_Camera_Status.CONNECTED)
+                    if (GCamera.Camera_Status != e_Camera_Status.DISCONNECTED)
                     {
                         GCamera.Camera_Status = e_Camera_Status.DISCONNECTED;
                         Invoke(new Action(() =>
@@ -1005,6 +1007,8 @@ namespace QR_MASAN_01
                     opCamera.FillColor = Globalvariable.WB_Color;
                 }
 
+                
+
                 if (!Globalvariable.PLCConnect)
                 {
                     opPLCStatus.FillColor = Globalvariable.WB_Color;
@@ -1049,8 +1053,26 @@ namespace QR_MASAN_01
                         printers = true;
                     }
                 }
+
+                if(GlobalSettings.GetInt("CAMERA_SLOT") == 1)
+                {
+                    GCamera.Camera_Status_02 = e_Camera_Status.CONNECTED;
+
+                    this.Invoke(new Action(() =>
+                    {
+                        opCMR02Stt.Text = "Không dùng";
+                        opCMR02Stt.FillColor = Color.Yellow;
+                    }));
+                }
+                else
+                {
+                    if (GCamera.Camera_Status_02 == e_Camera_Status.DISCONNECTED)
+                    {
+                        opCMR02Stt.FillColor = Globalvariable.WB_Color;
+                    }
+                }
                     //Ready
-                    if (GCamera.Camera_Status == e_Camera_Status.CONNECTED && Globalvariable.Data_Status == e_Data_Status.READY && Globalvariable.PLCConnect)
+                    if (GCamera.Camera_Status == e_Camera_Status.CONNECTED && GCamera.Camera_Status_02 == e_Camera_Status.CONNECTED && Globalvariable.Data_Status == e_Data_Status.READY && Globalvariable.PLCConnect)
                 {
                     if (Globalvariable.AllReady)
                     {
@@ -1067,19 +1089,11 @@ namespace QR_MASAN_01
                         {
                             PLC.Ready = 0;
                         }
-                        this.Invoke(new Action(() =>
-                        {
-                            opStatus.Text = "Hệ thống sẵn sàng";
-                            opStatus.FillColor = Color.Green;
-                        }));
+                       
                     }
                 }
                 else
                 {
-                    this.Invoke(new Action(() =>
-                    {
-                        opStatus.FillColor = Globalvariable.WB_Color;
-                    }));
 
                     if (!Globalvariable.AllReady)
                     {
@@ -1087,11 +1101,6 @@ namespace QR_MASAN_01
                     }
                     else
                     {
-                        this.Invoke(new Action(() =>
-                        {
-                            opStatus.Text = "Đang dừng";
-
-                        }));
                         Globalvariable.AllReady = false;
                     }
                 }
@@ -1140,7 +1149,7 @@ namespace QR_MASAN_01
                         ClearPLC = false;
                     }));
                 }
-
+                //máy in
                 if(Globalvariable.APPMODE == e_Mode.NEWMode)
                 {
                     switch (GPrinter.Printer_Status)
@@ -1556,14 +1565,93 @@ namespace QR_MASAN_01
             switch (eAE)
             {
                 case SPMS1.enumClient.CONNECTED:
+                    if (GCamera.Camera_Status_02 == e_Camera_Status.DISCONNECTED)
+                    {
+                        GCamera.Camera_Status_02 = e_Camera_Status.CONNECTED;
+                        Invoke(new Action(() =>
+                        {
+                            opCMR02Stt.Text = "Sẵn sàng";
+                            opCMR02Stt.FillColor = Globalvariable.OK_Color;
+                        }));
+                    }
                     break;
                 case SPMS1.enumClient.DISCONNECTED:
+                    if (GCamera.Camera_Status_02 == e_Camera_Status.CONNECTED)
+                    {
+                        GCamera.Camera_Status_02 = e_Camera_Status.DISCONNECTED;
+                        Invoke(new Action(() =>
+                        {
+                            opCMR02Stt.Text = "Mất kết nối";
+                        }));
+                    }
                     break;
                 case SPMS1.enumClient.RECEIVED:
+
+                    //if (Globalvariable.Data_Status == e_Data_Status.READY)
+                    //{
+                    //    Counter.Camera120Count++;
+                    //    try
+                    //    {
+                    //        if (!WK_CMR1.IsBusy)
+                    //        {
+                    //            WK_CMR1.RunWorkerAsync(_strData);
+                    //        }
+                    //        else if (!WK_CMR2.IsBusy)
+                    //        {
+                    //            WK_CMR2.RunWorkerAsync(_strData);
+                    //        }
+                    //        else if (!WK_CMR3.IsBusy)
+                    //        {
+                    //            WK_CMR3.RunWorkerAsync(_strData);
+                    //        }
+                    //        else if (!WK_CMR4.IsBusy)
+                    //        {
+                    //            WK_CMR4.RunWorkerAsync(_strData);
+                    //        }
+                    //        else if (!WK_CMR5.IsBusy)
+                    //        {
+                    //            WK_CMR5.RunWorkerAsync(_strData);
+                    //        }
+                    //        else if (!WK_CMR6.IsBusy)
+                    //        {
+                    //            WK_CMR6.RunWorkerAsync(_strData);
+                    //        }
+                    //        else
+                    //        {
+                    //            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : Không đủ luồng xử lí");
+                    //            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                    //        }
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        this.Invoke(new Action(() =>
+                    //        {
+                    //            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : {ex.Message}");
+                    //            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                    //        }));
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    LogUpdate("Máy chưa sẵn sàng");
+                    //}
+
                     break;
                 case SPMS1.enumClient.RECONNECT:
+
+                    Invoke(new Action(() =>
+                    {
+                        opCMR02Stt.Text = "Kết nối lại";
+                        opCMR02Stt.FillColor = Color.Red;
+                    }));
+
                     break;
             }
+        }
+
+        private void uiTitlePanel5_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
