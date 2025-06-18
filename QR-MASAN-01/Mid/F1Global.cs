@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MainClass;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Drawing;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace QR_MASAN_01
 {
+    
     public class GPrinter
     {
         public static bool IsPush { get; set; } = false;
@@ -20,25 +22,33 @@ namespace QR_MASAN_01
 
     public class Globalvariable
     {
+        public static Counter_Info GCounter { get; set; } = new Counter_Info();
+
+        public static UI_Info C1_UI { get; set; } = new UI_Info();
         public static Color WB_Color { get; set; }
         public static Color NG_Color { get; set; } = Color.FromArgb(255, 128, 0);
         public static Color OK_Color { get; set; } = Color.FromArgb(243, 249, 255);
-        public static Dictionary<string, ProductData> ProductQR_Dictionary = new Dictionary<string, ProductData>();
-        public static e_Server_Status Server_Status { get; set;} = e_Server_Status.DISCONNECTED;
-        public static bool AllReady {  get; set; } = false;
+
+        public static Dictionary<string, ProductData> Main_Content_Dictionary = new Dictionary<string, ProductData>();
+
+        public static Dictionary<string, ProductData> C1_Content_Dictionary = new Dictionary<string, ProductData>();
+        public static Dictionary<string, ProductData> C2_Content_Dictionary = new Dictionary<string, ProductData>();
+
+        public static Queue<string> Add_Content_To_SQLite_Queue = new Queue<string>();
+        public static Queue<int> Update_Content_To_SQLite_Queue = new Queue<int>();
+        public static Queue<string> Rework_Content_To_SQLite_Queue = new Queue<string>();
+
+        public static int MaxID_Content { get; set; } = 0;
+
+        public static e_Server_Status Server_Status { get; set; } = e_Server_Status.DISCONNECTED;
+        public static bool AllReady { get; set; } = false;
         public static bool PLCConnect { get; set; } = false;
         public static e_Data_Status Data_Status { get; set; } = e_Data_Status.STARTUP;
-        public static string MFI_ID { get; set; } ="0";
+        public static string MFI_ID { get; set; } = "0";
         public static bool ISRerun { get; set; } = false;
         public static string Server_Url { get; set; } = "https://sv2.th.io.vn/";
-        public static e_Mode APPMODE { get; set; } = e_Mode.OLDMode;
 
         // Tạo một Queue để lưu trữ các chuỗi
-        public static Queue<int> UpdateQueue120 = new Queue<int>();
-
-        public static Queue<string> AddQueue120 = new Queue<string>();
-
-        public static string QRgoc { get; set; } = string.Empty;
 
         public static int MaxID_QR { get; set; } = 0;
 
@@ -84,7 +94,6 @@ namespace QR_MASAN_01
         public int ProductID { get; set; }
         public int Active { get; set; }
         public string TimeStamp { get; set; }
-        public string ProductQR { get; internal set; }
     }
 
     public enum e_Server_Status
@@ -95,7 +104,7 @@ namespace QR_MASAN_01
 
     public class GCamera
     {
-        public static e_Camera_Status Camera_Status {  get; set; } = e_Camera_Status.DISCONNECTED;
+        public static e_Camera_Status Camera_Status { get; set; } = e_Camera_Status.DISCONNECTED;
         public static e_Camera_Status Camera_Status_02 { get; set; } = e_Camera_Status.DISCONNECTED;
 
     }

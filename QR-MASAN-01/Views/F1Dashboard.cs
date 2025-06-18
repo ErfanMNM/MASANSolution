@@ -25,7 +25,7 @@ namespace QR_MASAN_01
         public F1Dashboard()
         {
             InitializeComponent();
-            WK_Update120.RunWorkerAsync();
+            WK_Process_AUData.RunWorkerAsync();
         }
         
         MFI_Info _clientMFI = new MFI_Info();
@@ -35,6 +35,7 @@ namespace QR_MASAN_01
         //lấy xem có thông tin phiên tạo mới hay không
 
         #region Các chương trình tạo dữ liệu MFI, đồng bộ với máy chủ
+
         List<string> keys = new List<string> { "Case_Barcode", "Product_Barcode", "Case_LOT", "Batch_Code", "Block_Size", "Case_Size", "Pallet_Size", "SanLuong", "Operator", "Pallet_QR_Type", "MFI_ID", "QRCode_Folder", "QRCode_FileName", "MFI_Status" };
 
         //Luồng chính xử lý sự kiện đồng bộ
@@ -281,7 +282,7 @@ namespace QR_MASAN_01
                     //Đẩy dữ liệu cho máy in
                     case e_Data_Status.PRINTER_PUSH:
                         //gửi thông tin qua máy in
-                        if (Globalvariable.APPMODE == e_Mode.NEWMode)
+                        if (GlobalSettings.Get("APPMODE") == "NO_ADD")
                         {
                             Globalvariable.QRCode_Folder = _clientMFI.QRCode_Folder;
                             Globalvariable.QRCode_FileName = _clientMFI.QRCode_FileName;
@@ -312,7 +313,7 @@ namespace QR_MASAN_01
                     case e_Data_Status.CREATING:
                         // tạo mã không trùng
                         int count = 1_000_000;
-                        if (Globalvariable.APPMODE == e_Mode.OLDMode)
+                        if (GlobalSettings.Get("APPMODE") == "ADD_Data")
                         {
                             count = 100;
                         }
@@ -523,6 +524,7 @@ namespace QR_MASAN_01
             // Dictionary để lưu dữ liệu với CaseQR làm key
            // Dictionary<string, ProductData> ProductQR_Dictionary = new Dictionary<string, ProductData>();
             string connectionString = $@"Data Source={_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName};Version=3;";
+
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
@@ -535,6 +537,7 @@ namespace QR_MASAN_01
                 {
                     adapter.Fill(dataTable);
                 }
+                Globalvariable.MaxID_Content = Convert.ToInt32(dataTable.Rows[dataTable.Rows.Count - 1]["ProductID"]);
                 // Duyệt qua các hàng trong DataTable và thêm vào List<string>
                 foreach (DataRow row in dataTable.Rows)
                 {
@@ -545,12 +548,30 @@ namespace QR_MASAN_01
                     string timeStamp = row["TimestampActive"].ToString(); ; // TimeStamp
 
                     // Thêm dữ liệu vào Dictionary với CaseQR làm key
-                  Globalvariable.ProductQR_Dictionary[ProductQR] = new ProductData
+                    Globalvariable.Main_Content_Dictionary[ProductQR] = new ProductData
                     {
                         ProductID = ProductID,
                         Active = active,
                         TimeStamp = timeStamp
                     };
+                    
+                    //nếu có 2 camera thì đổ thêm cho vui
+                    if (GlobalSettings.GetInt("CAMERA_SLOT") > 1 )
+                    {
+                        Globalvariable.C1_Content_Dictionary[ProductQR] = new ProductData
+                        {
+                            ProductID = ProductID,
+                            Active = active,
+                            TimeStamp = timeStamp
+                        };
+
+                        Globalvariable.C2_Content_Dictionary[ProductQR] = new ProductData
+                        {
+                            ProductID = ProductID,
+                            Active = active,
+                            TimeStamp = timeStamp
+                        };
+                    }
                 }
 
                 this.Invoke(new Action(() =>
@@ -591,7 +612,7 @@ namespace QR_MASAN_01
         {
             WK_Server_check.RunWorkerAsync();
             WK_Update.RunWorkerAsync();
-            WK_120Update.RunWorkerAsync();
+            WK_UI_CAM_Update.RunWorkerAsync();
             Camera.Connect();
             PLC.PLC_IP = GlobalSettings.Get("PLC_IP");
             PLC.PLC_PORT = GlobalSettings.GetInt("PLC_PORT");
@@ -602,7 +623,7 @@ namespace QR_MASAN_01
         public string QR_Content_His = "";
         public string timeProcess = "0";
         public  int QRContentCount = 0;
-        public bool ISPass = false;
+        public bool ISPass = true;
 
         #region Xử lý tín hiệu từ camera
 
@@ -650,18 +671,6 @@ namespace QR_MASAN_01
                             {
                                 WK_CMR3.RunWorkerAsync(_strData);
                             }
-                            else if (!WK_CMR4.IsBusy)
-                            {
-                                WK_CMR4.RunWorkerAsync(_strData);
-                            }
-                            else if (!WK_CMR5.IsBusy)
-                            {
-                                WK_CMR5.RunWorkerAsync(_strData);
-                            }
-                            else if (!WK_CMR6.IsBusy)
-                            {
-                                WK_CMR6.RunWorkerAsync(_strData);
-                            }
                             else
                             {
                                 ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : Không đủ luồng xử lí");
@@ -684,273 +693,355 @@ namespace QR_MASAN_01
                     
                     break;
                 case SPMS1.enumClient.RECONNECT:
+                    if (GCamera.Camera_Status != e_Camera_Status.RECONNECT)
+                    {
+                        GCamera.Camera_Status = e_Camera_Status.RECONNECT;
 
                         Invoke(new Action(() =>
                         {
                             opCamera.Text = "Kết nối lại";
-                            opCamera.FillColor = Color.Red;
                         }));
+                    }
+                    
                     
                     break;
             }
         }
 
         double TimeSendPLC = 0;
-        public void WhenDataRecive(string _strData)
+
+        public void Camera_01_Data_Recive(string _strData)
         {
-            //Khi nhận được tín hiệu
+            //Kích hoạt hệ thống đo đạc
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            if (!_strData.IsNullOrEmpty() && _strData.Contains(";"))
+            //Kiểm tra tính hợp lệ của dữ liệu
+            if (!_strData.IsNullOrEmpty())
             {
-                string[] codes = _strData.Split(';');
-                if (codes.Length > 1)
+                string codeClear = _strData.Replace("\r\n","").Replace("\r","").Replace("\n","");
+
+                //kiểm tra xem pass hay fail
+                if (codeClear.Contains("FAIL"))
                 {
-                    string cleanedCode = codes[0].Trim().Replace("\n", "").Replace("\r", "");
-                    //tăng bộ đếm QR
-                    Counter.QRCount++;
-                    if (cleanedCode.Length > 3)
+                    Globalvariable.C1_UI.Curent_Content = "Không đọc được";
+                    Globalvariable.C1_UI.IsPass = false;
+                    //gửi xuống PLC và xử lý tại đây
+                    OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                    if (write.IsSuccess)
                     {
-                        QR_Content = cleanedCode;
-                        // Ví dụ: Tìm kiếm dữ liệu bằng QR
-                        string searchQR = cleanedCode; // QR cần tìm
-                        if (cleanedCode.Contains("FAIL"))
-                        {
-                            QR_Content = "Không đọc được";
-                            Counter.Fail++;
-                            ISPass = false;
-                            OperateResult write = PLC.plc.Write("D10", short.Parse("0"));
-                            if (write.IsSuccess)
-                            {
-                                Counter.Send0ToPLC_OK++;
-                            }
-                            else
-                            {
-                                Counter.Send0ToPLC_Fail++;
-                            }
-
-                            stopwatch.Stop();
-                            TimeSendPLC = Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4);
-
-                        }
-                        else
-                        {
-                            if (Globalvariable.ProductQR_Dictionary.TryGetValue(searchQR, out ProductData ProductInfo))
-                            {
-                                if (ProductInfo.Active != 1)
-                                {
-                                    ISPass = true;
-                                    OperateResult write = PLC.plc.Write("D10", short.Parse("1"));
-                                    if (write.IsSuccess)
-                                    {
-                                        Counter.Send1ToPLC_OK++;
-                                    }
-                                    else
-                                    {
-                                        Counter.Send1ToPLC_Fail++;
-                                    }
-                                    TimeSendPLC = Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4);
-                                    ProductInfo.Active = 1;
-                                    ProductInfo.TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
-                                    Globalvariable.UpdateQueue120.Enqueue(ProductInfo.ProductID);
-                                }
-                                else
-                                {
-                                    if (Globalvariable.ISRerun)
-                                    {
-                                        OperateResult write = PLC.plc.Write("D10", short.Parse("1"));
-                                        if (write.IsSuccess)
-                                        {
-                                            Counter.Send1ToPLC_OK++;
-                                        }
-                                        else
-                                        {
-                                            Counter.Send1ToPLC_Fail++;
-                                        }
-                                        TimeSendPLC = Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4);
-                                        Counter.Rerun++;
-                                        ISPass = true;
-                                        QR_Content = "Thả lại :" + QR_Content;
-                                        //chế độ thả lại, không đá chai đã đọc
-                                    }
-                                    else
-                                    {
-                                        //đá chai trùng ra ngoài
-                                        OperateResult write = PLC.plc.Write("D10", short.Parse("0"));
-                                        if (write.IsSuccess)
-                                        {
-                                            Counter.Send0ToPLC_OK++;
-
-                                        }
-                                        else
-                                        {
-                                            Counter.Send0ToPLC_Fail++;
-                                        }
-                                        TimeSendPLC = Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4);
-                                        ISPass = false;
-                                        QR_Content = "Mã đã kích hoạt (trùng)";
-                                        Counter.Diff++;
-                                    }
-
-                                }
-
-                            }
-                            else
-                            {
-                                //đá chai không có trong data
-                                if (Globalvariable.APPMODE != e_Mode.OLDMode)
-                                {
-                                    //đá ra những mã không có trong máy
-                                    OperateResult write = PLC.plc.Write("D10", short.Parse("0"));
-                                    if (write.IsSuccess)
-                                    {
-                                        Counter.Send0ToPLC_OK++;
-
-                                    }
-                                    else
-                                    {
-                                        Counter.Send0ToPLC_Fail++;
-                                    }
-                                    TimeSendPLC = Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4);
-                                    ISPass = false;
-                                    Counter.Empty++;
-                                    QR_Content = "Không có trong CSDL";
-
-                                }
-                                else
-                                {
-                                    //kiểm tra xem có khác barcode hay không
-                                    try
-                                    {
-                                        string[] bCode = cleanedCode.Split("/");
-                                        if (bCode[bCode.Length - 1].Contains(_clientMFI.Product_Barcode))
-                                        {
-                                            OperateResult write = PLC.plc.Write("D10", short.Parse("1"));
-                                            if (write.IsSuccess)
-                                            {
-                                                Counter.Send1ToPLC_OK++;
-
-                                            }
-                                            else
-                                            {
-                                                Counter.Send1ToPLC_Fail++;
-                                            }
-                                            TimeSendPLC = Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4);
-                                            ISPass = true;
-                                            //ở chế độ cũ, không đá, thêm vào CSDL
-                                            Globalvariable.AddQueue120.Enqueue(cleanedCode);
-                                        }
-                                        else
-                                        {
-                                            QR_Content = "Mã Sai Cấu Trúc";
-                                            Alarm.Alarm1 = true;
-                                            Alarm.Alarm1_Count++;
-                                            OperateResult write = PLC.plc.Write("D10", short.Parse("0"));
-                                            if (write.IsSuccess)
-                                            {
-                                                Counter.Send0ToPLC_OK++;
-
-                                            }
-                                            else
-                                            {
-                                                Counter.Send0ToPLC_Fail++;
-                                            }
-                                            TimeSendPLC = Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4);
-                                            ISPass = false;
-                                            Counter.StructERR++;
-                                        }
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        QR_Content = "Mã Sai Cấu Trúc: " + ex.Message;
-                                        Alarm.Alarm1 = true;
-                                        Alarm.Alarm1_Count++;
-                                        OperateResult write = PLC.plc.Write("D10", short.Parse("0"));
-                                        if (write.IsSuccess)
-                                        {
-                                            Counter.Send0ToPLC_OK++;
-
-                                        }
-                                        else
-                                        {
-                                            Counter.Send0ToPLC_Fail++;
-                                        }
-                                        TimeSendPLC = Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4);
-                                        ISPass = false;
-                                        Counter.StructERR++;
-                                    }
-
-                                }
-                            }
-                        }
-
+                        Globalvariable.GCounter.PLC_0_Pass_C1++;
                     }
                     else
                     {
-                        QR_Content = "Mã Rỗng";
+                        Globalvariable.GCounter.PLC_0_Fail_C1++;
+                    }
+                }
+                else
+                {
+                    //Kiểm tra cấu trúc mã
+                    var _cContentR = CheckCodeFormatV2(codeClear, GlobalSettings.Get("Code_Content_Pattern"));
+
+                    if (_cContentR.IsOK)
+                    {
+                        //kiểm tra barcode xem đúng hay không
+                        if (codeClear.Split("/")[1].Contains(_clientMFI.Product_Barcode))
+                        {
+                            //nếu ở chế độ chạy 2 camera thì cam 01 chỉ có tác dụng kiểm tra pass/fail, định dạng, kiểm trùng nếu có
+
+                            //chế độ 1 camera thì camera này là camera chính
+                            if(GlobalSettings.GetInt("CAMERA_SLOT") <= 1)
+                            {
+                                //Kiểm tra mã
+                                if (Globalvariable.Main_Content_Dictionary.TryGetValue(codeClear, out ProductData ProductInfo))
+                                {
+                                    //mã đã active
+                                    if(ProductInfo.Active == 1)
+                                    {
+                                        //chế độ loại trùng bật => đá ra
+                                        if(!swModeData.Active)
+                                        {
+                                            Globalvariable.C1_UI.Curent_Content = "Mã đã kích hoạt (trùng)";
+                                            Globalvariable.C1_UI.IsPass = false;
+                                            //gửi xuống PLC và xử lý tại đây
+                                            OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                                            if (write.IsSuccess)
+                                            {
+                                                Globalvariable.GCounter.PLC_0_Pass_C1++;
+                                            }
+                                            else
+                                            {
+                                                Globalvariable.GCounter.PLC_0_Fail_C1++;
+                                            }
+                                        }
+
+                                        //loại trùng tắt => chế độ thả lại
+                                        else
+                                        {
+                                            Globalvariable.C1_UI.Curent_Content = "Thả lại:" + codeClear;
+                                            Globalvariable.C1_UI.IsPass = true;
+                                            //gửi xuống PLC và xử lý tại đây
+                                            OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("1"));
+                                            if (write.IsSuccess)
+                                            {
+                                                Globalvariable.GCounter.PLC_1_Pass_C1++;
+                                            }
+                                            else
+                                            {
+                                                Globalvariable.GCounter.PLC_1_Fail_C1++;
+                                            }
+                                        }
+                                        
+                                    }
+                                    //mã chưa active => active
+                                    else
+                                    {
+                                        Globalvariable.C1_UI.Curent_Content = codeClear;
+                                        Globalvariable.C1_UI.IsPass = true;
+                                        //gửi xuống PLC và xử lý tại đây
+                                        OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("1"));
+                                        if (write.IsSuccess)
+                                        {
+                                            Globalvariable.GCounter.PLC_1_Pass_C1++;
+                                        }
+                                        else
+                                        {
+                                            Globalvariable.GCounter.PLC_1_Fail_C1++;
+                                        }
+
+                                        Globalvariable.Update_Content_To_SQLite_Queue.Enqueue(ProductInfo.ProductID);
+
+                                        //cập nhật lại thông tin
+                                        ProductInfo.Active = 1;
+                                        ProductInfo.TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                                    }
+                                }
+                                //nếu mã chưa tồn tại => chưa active
+                                else
+                                {
+                                    Globalvariable.C1_UI.Curent_Content = codeClear;
+                                    Globalvariable.C1_UI.IsPass = true;
+                                    //ở mode nonprinter thì nếu chưa có tự thêm mới
+                                    if (GlobalSettings.Get("APPMODE") == "ADD_Data")
+                                    {
+                                        Globalvariable.MaxID_Content++;
+                                        ProductInfo = new ProductData
+                                        {
+                                            ProductID = Globalvariable.MaxID_Content,
+                                            Active = 1,
+                                            TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
+                                        };
+                                        Globalvariable.Main_Content_Dictionary[codeClear] = ProductInfo;
+
+                                        //báo pass xuống PLC
+                                        OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                                        if (write.IsSuccess)
+                                        {
+                                            Globalvariable.GCounter.PLC_1_Pass_C1++;
+                                        }
+                                        else
+                                        {
+                                            Globalvariable.GCounter.PLC_1_Fail_C1++;
+                                        }
+
+                                        //thêm vào hàng đợi để thêm vào SQLite
+                                        Globalvariable.Add_Content_To_SQLite_Queue.Enqueue(codeClear);
+
+                                    }
+
+                                    //ở chế độ không add thì đá ra
+                                    else
+                                    {
+                                        Globalvariable.C1_UI.Curent_Content = "Mã không tồn tại";
+                                        Globalvariable.C1_UI.IsPass = false;
+                                        OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                                        if (write.IsSuccess)
+                                        {
+                                            Globalvariable.GCounter.PLC_0_Pass_C1++;
+                                        }
+                                        else
+                                        {
+                                            Globalvariable.GCounter.PLC_0_Fail_C1++;
+                                        }
+                                    }  
+
+                                }
+
+                            }
+
+                            //Chế độ 2 cam thì camera này là camera phụ
+                            else
+                            {
+                                
+                            }
+
+                        }
+                        //sai mã vạch
+                        else
+                        {
+                            Globalvariable.C1_UI.Curent_Content = "Sai mã vạch";
+                            Globalvariable.C1_UI.IsPass = false;
+                            //gửi xuống PLC và xử lý tại đây
+                            OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                            if (write.IsSuccess)
+                            {
+                                Globalvariable.GCounter.PLC_0_Pass_C1++;
+                            }
+                            else
+                            {
+                                Globalvariable.GCounter.PLC_0_Fail_C1++;
+                            }
+
+                            Alarm.Alarm1 = true;
+                            Alarm.Alarm1_Count++;
+                        }
+                    }
+                    //Sai cấu trúc cơ bản
+                    else
+                    {
+                        Globalvariable.C1_UI.Curent_Content = "Sai cấu trúc!!!";
+                        Globalvariable.C1_UI.IsPass = false;
+                        //gửi xuống PLC và xử lý tại đây
+                        OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                        if (write.IsSuccess)
+                        {
+                            Globalvariable.GCounter.PLC_0_Pass_C1++;
+                        }
+                        else
+                        {
+                            Globalvariable.GCounter.PLC_0_Fail_C1++;
+                        }
+                    }
+                }
+               
+            }
+            //Mã rỗng
+            else
+            {
+                //mã không đúng, in ra màn hình thông báo
+
+                Globalvariable.C1_UI.Curent_Content = "Dữ liệu lỗi";
+                Globalvariable.C1_UI.IsPass = false;
+
+                //gửi xuống PLC và xử lý tại đây
+                OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("1"));
+                if (write.IsSuccess)
+                {
+                    Globalvariable.GCounter.PLC_0_Pass_C1++;
+                }
+                else
+                {
+                    Globalvariable.GCounter.PLC_0_Fail_C1++;
+                }
+            }
+        }
+
+        public (bool IsOK, string Message) CheckCodeFormatV2(string code, string pattern)
+        {
+            // Kiểm tra định dạng mã QR
+            if (string.IsNullOrEmpty(code))
+            {
+                return (false, "Mã QR không được để trống.");
+            }
+            // i.tcx.com.vn/[N13]0A509[N5][SN8] : các ký tự trong ngoặc [] là các ký tự quy định ví dụ N13 là 13 số, S8 là 8 ký tự chữ, SN8 là 8 ký tự chữ và số, dự vào đây kiểm tra định dạng mã
+            if (!System.Text.RegularExpressions.Regex.IsMatch(code, pattern))
+            {
+                return (false, "Sai định dạng");
+            }
+
+            return (true, "Mã QR hợp lệ.");
+        }
+
+        //send to PLC
+
+        private void Camera_c_ClientCallBack(SPMS1.enumClient eAE, string _strData)
+        {
+            switch (eAE)
+            {
+                case SPMS1.enumClient.CONNECTED:
+                    if (GCamera.Camera_Status_02 == e_Camera_Status.DISCONNECTED)
+                    {
+                        GCamera.Camera_Status_02 = e_Camera_Status.CONNECTED;
+                        Invoke(new Action(() =>
+                        {
+                            opCMR02Stt.Text = "Sẵn sàng";
+                            opCMR02Stt.FillColor = Globalvariable.OK_Color;
+                        }));
+                    }
+                    break;
+                case SPMS1.enumClient.DISCONNECTED:
+                    if (GCamera.Camera_Status_02 == e_Camera_Status.CONNECTED)
+                    {
+                        GCamera.Camera_Status_02 = e_Camera_Status.DISCONNECTED;
+                        Invoke(new Action(() =>
+                        {
+                            opCMR02Stt.Text = "Mất kết nối";
+                        }));
+                    }
+                    break;
+                case SPMS1.enumClient.RECEIVED:
+                    //xử lý dữ liệu nhận về
+                    if(WK_CMR4.IsBusy)
+                    {
+                        LogUpdate("Camera 2 đang bận xử lý dữ liệu, vui lòng đợi");
+                    }
+                    else
+                    {
+                        Camera2DataProcess(_strData);
+                    }
+                    break;
+                case SPMS1.enumClient.RECONNECT:
+
+                    Invoke(new Action(() =>
+                    {
+                        opCMR02Stt.Text = "Kết nối lại";
+                        opCMR02Stt.FillColor = Color.Red;
+                    }));
+
+                    break;
+            }
+        }
+
+        public void Camera2DataProcess(string inputData)
+        {
+            Globalvariable.GCounter.Total_Return_C2++;
+            //kiểm tra xem đã tồn tại ở CMR1 hay chưa
+            //Khi nhận được tín hiệu bật bộ đếm thời gian
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            //kiểm tra xem dữ liệu có đúng hay chưa
+            if (!inputData.IsNullOrEmpty() && inputData.Contains(";"))
+            {
+                //tách lấy dữ liệu thô
+                string[] codes = inputData.Split(';');
+                if (codes.Length > 1)
+                {
+                    string cleanedCode = codes[0].Trim().Replace("\n", "").Replace("\r", "").Replace("\r\n","");
+                    //tăng bộ đếm QR
+                    Globalvariable.GCounter.Total_Code_C2++;
+
+                    if (cleanedCode.Contains("FAIL"))
+                    {
+                        QR_Content = "Không đọc được";
+                        
+                        ISPass = false;
                         OperateResult write = PLC.plc.Write("D10", short.Parse("0"));
                         if (write.IsSuccess)
                         {
-                            Counter.Send0ToPLC_OK++;
-
+                            Globalvariable.GCounter.PLC_0_Pass_C2++;
                         }
                         else
                         {
-                            Counter.Send0ToPLC_Fail++;
+                            Globalvariable.GCounter.PLC_0_Fail_C2++;
                         }
-                        TimeSendPLC = Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4);
-                        ISPass = false;
-                        Counter.Empty++;
-                    }
-                    QRContentCount++;
-                    QR_Content_His = QR_Content;
 
+                        //stopwatch.Stop();
+                        //TimeSendPLC = Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4);
+
+                    }
                     //
-
-                }
-                else
-                {
-                    OperateResult write = PLC.plc.Write("D10", short.Parse("0"));
-                    if (write.IsSuccess)
-                    {
-                        Counter.Send0ToPLC_OK++;
-
-                    }
-                    else
-                    {
-                        Counter.Send0ToPLC_Fail++;
-                    }
-                    TimeSendPLC = Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4);
-                    ISPass = false;
-                    QR_Content = "Camera trả về rỗng : " + _strData;
-                    Counter.Empty++;
-                    QRContentCount++;
-                    QR_Content_His = QR_Content;
                 }
             }
-            else
-            {
-                OperateResult write = PLC.plc.Write("D10", short.Parse("0"));
-                if (write.IsSuccess)
-                {
-                    Counter.Send0ToPLC_OK++;
-
-                }
-                else
-                {
-                    Counter.Send0ToPLC_Fail++;
-                }
-                TimeSendPLC = Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4);
-                QR_Content = "SAI CÚ PHÁP";
-                ISPass = false;
-                Counter.Empty++;
-                QRContentCount++;
-                QR_Content_His = QR_Content;
-            }
-
-            timeProcess  = TimeSendPLC.ToString();
-
         }
 
         #endregion
@@ -1048,7 +1139,7 @@ namespace QR_MASAN_01
                 else
                 {
                     printers = false;
-                    if(Globalvariable.APPMODE == e_Mode.OLDMode)
+                    if(GlobalSettings.Get("APPMODE") == "ADD_Data")
                     {
                         printers = true;
                     }
@@ -1150,7 +1241,7 @@ namespace QR_MASAN_01
                     }));
                 }
                 //máy in
-                if(Globalvariable.APPMODE == e_Mode.NEWMode)
+                if(GlobalSettings.Get("APPMODE") == "U_PRINTER")
                 {
                     switch (GPrinter.Printer_Status)
                     {
@@ -1258,40 +1349,35 @@ namespace QR_MASAN_01
             }
         }
 
-        private void opCasePrinter_Click(object sender, EventArgs e)
-        {
-
-        }
-        public int QRconten_His_Last = 0;
 
         //Cập nhật mã vừa đọc lên màn hình
         private void WK_120Update_DoWork(object sender, DoWorkEventArgs e)
         {
-            while (!WK_120Update.CancellationPending)
+            while (!WK_UI_CAM_Update.CancellationPending)
             {
                 this.Invoke((Action)(() => {
-                    opQRContent.Text = QR_Content;
-                    if (ISPass)
+                    opContentC1.Text = Globalvariable.C1_UI.Curent_Content;
+                    if (Globalvariable.C1_UI.IsPass)
                     {
-                        opPass.Text = "TỐT";
-                        opPass.FillColor = Color.Green;
+                        opResultPassFailC1.Text = "TỐT";
+                        opResultPassFailC1.FillColor = Color.Green;
                     }
                     else
                     {
-                        opPass.Text = "LỖI";
-                        opPass.FillColor = Color.Red;
+                        opResultPassFailC1.Text = "LỖI";
+                        opResultPassFailC1.FillColor = Color.Red;
                     }
 
-                    if(QRconten_His_Last <= QRContentCount)
-                    {
-                        QRconten_His_Last++;
-                        opHisConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: #{QRconten_His_Last} {QR_Content_His} ({timeProcess}) ");
-                        opHisConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                        if (opHisConsole.Count > 10)
-                        {
-                            opHisConsole.Items.RemoveAt(0);
-                        }
-                    }
+                    //if(QRconten_His_Last <= QRContentCount)
+                    //{
+                    //    QRconten_His_Last++;
+                    //    opHisConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: #{QRconten_His_Last} {QR_Content_His} ({timeProcess}) ");
+                    //    opHisConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                    //    if (opHisConsole.Count > 10)
+                    //    {
+                    //        opHisConsole.Items.RemoveAt(0);
+                    //    }
+                    //}
 
                     if(Alarm.Alarm1)
                     {
@@ -1374,22 +1460,22 @@ namespace QR_MASAN_01
 
         private void WK_Update120_DoWork(object sender, DoWorkEventArgs e)
         {
-            while(!WK_120Update.CancellationPending)
+            while(!WK_UI_CAM_Update.CancellationPending)
             {
                 //cập nhật
-                if (Globalvariable.UpdateQueue120.Count > 0)
+                if (Globalvariable.Update_Content_To_SQLite_Queue.Count > 0)
                 {
-                    UpdateActiveStatus(Globalvariable.UpdateQueue120.Dequeue());
+                    UpdateActiveStatus(Globalvariable.Update_Content_To_SQLite_Queue.Dequeue());
                 }
 
                 //thêm mới
-                if(Globalvariable.AddQueue120.Count > 0)
+                if(Globalvariable.Add_Content_To_SQLite_Queue.Count > 0)
                 {
-                    string code = Globalvariable.AddQueue120.Dequeue();
+                    string code = Globalvariable.Add_Content_To_SQLite_Queue.Dequeue();
                     Add_QR_To_SQLite(code);
                     Globalvariable.MaxID_QR++;
 
-                    Globalvariable.ProductQR_Dictionary[code] = new ProductData
+                    Globalvariable.Main_Content_Dictionary[code] = new ProductData
                     {
                         ProductID = Globalvariable.MaxID_QR,
                         Active = 1,
@@ -1416,7 +1502,8 @@ namespace QR_MASAN_01
             stopwatch.Start();
             string inputString = e.Argument as string;
             opWK1.FillColor = Color.Green;
-            WhenDataRecive(inputString);
+            //WhenDataRecive(inputString);
+            Camera_01_Data_Recive(inputString);
             opWK1.FillColor = Color.White;
             stopwatch.Stop();
             this.Invoke(new Action(() =>
@@ -1436,7 +1523,8 @@ namespace QR_MASAN_01
             stopwatch.Start();
             string inputString = e.Argument as string;
             opWK2.FillColor = Color.Green;
-            WhenDataRecive(inputString);
+            //WhenDataRecive(inputString);
+            Camera2DataProcess(inputString);
             opWK2.FillColor = Color.White;
             stopwatch.Stop();
             this.Invoke(new Action(() =>
@@ -1456,7 +1544,8 @@ namespace QR_MASAN_01
             stopwatch.Start();
             string inputString = e.Argument as string;
             opWK3.FillColor = Color.Green;
-            WhenDataRecive(inputString);
+            //WhenDataRecive(inputString);
+            Camera2DataProcess(inputString);
             opWK3.FillColor = Color.White;
             stopwatch.Stop();
             this.Invoke(new Action(() =>
@@ -1480,18 +1569,6 @@ namespace QR_MASAN_01
             }
         }
 
-        private void swMode_ValueChanged(object sender, bool value)
-        {
-            //if (swMode.Active)
-            //{
-            //    Globalvariable.APPMODE = e_Mode.OLDMode;
-            //}
-            //else
-            //{
-            //    Globalvariable.APPMODE = e_Mode.NEWMode;
-            //}
-        }
-
         private void ipConsole_DoubleClick(object sender, EventArgs e)
         {
             this.ShowInfoDialog(ipConsole.SelectedItem as string);
@@ -1505,7 +1582,7 @@ namespace QR_MASAN_01
             stopwatch.Start();
             string inputString = e.Argument as string;
             opWK4.FillColor = Color.Green;
-            WhenDataRecive(inputString);
+            Camera2DataProcess(inputString);
             opWK4.FillColor = Color.White;
             stopwatch.Stop();
             this.Invoke(new Action(() =>
@@ -1526,7 +1603,7 @@ namespace QR_MASAN_01
             stopwatch.Start();
             string inputString = e.Argument as string;
             opWK5.FillColor = Color.Green;
-            WhenDataRecive(inputString);
+            Camera2DataProcess(inputString);
             opWK5.FillColor = Color.White;
             stopwatch.Stop();
             this.Invoke(new Action(() =>
@@ -1547,7 +1624,7 @@ namespace QR_MASAN_01
             stopwatch.Start();
             string inputString = e.Argument as string;
             opWK6.FillColor = Color.Green;
-            WhenDataRecive(inputString);
+            Camera2DataProcess(inputString);
             opWK6.FillColor = Color.White;
             stopwatch.Stop();
             this.Invoke(new Action(() =>
@@ -1560,94 +1637,7 @@ namespace QR_MASAN_01
             }));
         }
 
-        private void Camera_c_ClientCallBack(SPMS1.enumClient eAE, string _strData)
-        {
-            switch (eAE)
-            {
-                case SPMS1.enumClient.CONNECTED:
-                    if (GCamera.Camera_Status_02 == e_Camera_Status.DISCONNECTED)
-                    {
-                        GCamera.Camera_Status_02 = e_Camera_Status.CONNECTED;
-                        Invoke(new Action(() =>
-                        {
-                            opCMR02Stt.Text = "Sẵn sàng";
-                            opCMR02Stt.FillColor = Globalvariable.OK_Color;
-                        }));
-                    }
-                    break;
-                case SPMS1.enumClient.DISCONNECTED:
-                    if (GCamera.Camera_Status_02 == e_Camera_Status.CONNECTED)
-                    {
-                        GCamera.Camera_Status_02 = e_Camera_Status.DISCONNECTED;
-                        Invoke(new Action(() =>
-                        {
-                            opCMR02Stt.Text = "Mất kết nối";
-                        }));
-                    }
-                    break;
-                case SPMS1.enumClient.RECEIVED:
-
-                    //if (Globalvariable.Data_Status == e_Data_Status.READY)
-                    //{
-                    //    Counter.Camera120Count++;
-                    //    try
-                    //    {
-                    //        if (!WK_CMR1.IsBusy)
-                    //        {
-                    //            WK_CMR1.RunWorkerAsync(_strData);
-                    //        }
-                    //        else if (!WK_CMR2.IsBusy)
-                    //        {
-                    //            WK_CMR2.RunWorkerAsync(_strData);
-                    //        }
-                    //        else if (!WK_CMR3.IsBusy)
-                    //        {
-                    //            WK_CMR3.RunWorkerAsync(_strData);
-                    //        }
-                    //        else if (!WK_CMR4.IsBusy)
-                    //        {
-                    //            WK_CMR4.RunWorkerAsync(_strData);
-                    //        }
-                    //        else if (!WK_CMR5.IsBusy)
-                    //        {
-                    //            WK_CMR5.RunWorkerAsync(_strData);
-                    //        }
-                    //        else if (!WK_CMR6.IsBusy)
-                    //        {
-                    //            WK_CMR6.RunWorkerAsync(_strData);
-                    //        }
-                    //        else
-                    //        {
-                    //            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : Không đủ luồng xử lí");
-                    //            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                    //        }
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        this.Invoke(new Action(() =>
-                    //        {
-                    //            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : {ex.Message}");
-                    //            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                    //        }));
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    LogUpdate("Máy chưa sẵn sàng");
-                    //}
-
-                    break;
-                case SPMS1.enumClient.RECONNECT:
-
-                    Invoke(new Action(() =>
-                    {
-                        opCMR02Stt.Text = "Kết nối lại";
-                        opCMR02Stt.FillColor = Color.Red;
-                    }));
-
-                    break;
-            }
-        }
+        
 
         private void uiTitlePanel5_Click(object sender, EventArgs e)
         {

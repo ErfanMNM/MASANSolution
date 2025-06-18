@@ -118,7 +118,7 @@ namespace QR_MASAN_01
                 {
                     //ở chế độ tự động thêm
                     //Kiểm tra xem đúng mã hôm nay hay không
-                    if (Globalvariable.APPMODE == e_Mode.OLDMode)
+                    if (GlobalSettings.Get("APPMODE") == "ADD_Data")
                     {
                         //chỉ cần kiểm đúng định dạng là được
                         string pattern = @"i\.tcx\.com\.vn/.*\d{13}.*[a-zA-Z0-9]";
@@ -128,7 +128,7 @@ namespace QR_MASAN_01
                             if (searchQR.Contains(Globalvariable.ProductBarcode))
                             {
                                 //tìm trong Dictionary
-                                if (Globalvariable.ProductQR_Dictionary.TryGetValue(searchQR, out ProductData ProductInfo))
+                                if (Globalvariable.Main_Content_Dictionary.TryGetValue(searchQR, out ProductData ProductInfo))
                                 {
                                     if (ProductInfo.Active == 1)
                                     {
@@ -138,7 +138,7 @@ namespace QR_MASAN_01
                                     else
                                     {
                                         //thêm mã vào hàng chờ
-                                        Globalvariable.UpdateQueue120.Enqueue(ProductInfo.ProductID);
+                                        Globalvariable.Update_Content_To_SQLite_Queue.Enqueue(ProductInfo.ProductID);
                                         LogUpdate($"Mã này chưa Kích hoạt hôm nay - {searchQR} - Thêm vào hàng chờ kích hoạt");
                                         return;
                                     }
@@ -146,7 +146,7 @@ namespace QR_MASAN_01
                                 else
                                 {
                                     //thêm mã vào hàng chờ
-                                    Globalvariable.AddQueue120.Enqueue(searchQR);
+                                    Globalvariable.Add_Content_To_SQLite_Queue.Enqueue(searchQR);
                                     LogUpdate($"Mã này chưa Kích HOẠT - {searchQR} - Thêm vào hàng chờ kích hoạt");
                                     return;
                                 }
@@ -163,7 +163,7 @@ namespace QR_MASAN_01
                         }
 
                     }
-                    else if (Globalvariable.APPMODE == e_Mode.NEWMode)
+                    else if (GlobalSettings.Get("APPMODE") == "NO_ADD")
                     {
                         var _checkFormat = CheckCodeFormat(searchQR);
                         if (_checkFormat.IsOK)
@@ -171,7 +171,7 @@ namespace QR_MASAN_01
                             if (searchQR.Contains(Globalvariable.ProductBarcode))
                             {
                                 //tìm trong Dictionary
-                                if (Globalvariable.ProductQR_Dictionary.TryGetValue(searchQR, out ProductData ProductInfo))
+                                if (Globalvariable.Main_Content_Dictionary.TryGetValue(searchQR, out ProductData ProductInfo))
                                 {
                                     if (ProductInfo.Active == 1)
                                     {
@@ -181,7 +181,7 @@ namespace QR_MASAN_01
                                     else
                                     {
                                         //thêm mã vào hàng chờ
-                                        Globalvariable.AddQueue120.Enqueue(searchQR);
+                                        Globalvariable.Add_Content_To_SQLite_Queue.Enqueue(searchQR);
                                         LogUpdate($"Mã này chưa Kích hoạt hôm nay - {searchQR} - Thêm vào hàng chờ kích hoạt");
                                         return;
                                     }

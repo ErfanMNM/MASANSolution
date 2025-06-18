@@ -41,4 +41,33 @@ namespace MainClass
         public int Active { get; set; } // 1: đã kích hoạt, 0: chưa kích hoạt
         public string TimeStamp { get; set; } // thời gian kích hoạt
     }
+
+    public class Counter_Info
+    {
+        public int Total_Code_C2 { get; set; } = 0;
+        public int Total_Return_C2 { get; set; } = 0;
+        public int Camera_Fail_C2 { get; set; } = 0;
+        public int PLC_0_Fail_C2 { get; set; } = 0;
+        public int PLC_0_Pass_C2 { get; set; } = 0;
+
+        public int PLC_0_Fail_C1 { get; set; } = 0;
+        public int PLC_0_Pass_C1 { get; set; } = 0;
+        public int PLC_1_Fail_C1 { get; set; } = 0;
+        public int PLC_1_Pass_C1 { get; set; } = 0;
+
+        public int Total_Code_C1 { get; set; } = 0;
+        public int Total_Return_C1 { get; set; } = 0;
+        public int Camera_Fail_C1 { get; set; } = 0;
+        public int Camera_Pass_C1 { get; set; } = 0;
+
+    }
+
+    public class UI_Info
+    {
+        public string Curent_Content { get; set; } = "0";
+        public bool IsPass { get; set; } = true;
+        public bool IsRework { get; set; } = false;
+        public bool IsFormat { get; set; } = false;
+        public string Last_Content { get; set; } = "0";
+    }
 }
