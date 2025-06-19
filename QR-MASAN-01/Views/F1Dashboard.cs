@@ -747,56 +747,33 @@ namespace QR_MASAN_01
                         //kiểm tra barcode xem đúng hay không
                         if (codeClear.Split("/")[1].Contains(_clientMFI.Product_Barcode))
                         {
-                            //nếu ở chế độ chạy 2 camera thì cam 01 chỉ có tác dụng kiểm tra pass/fail, định dạng, kiểm trùng nếu có
-
-                            //chế độ 1 camera thì camera này là camera chính
-                            if(GlobalSettings.GetInt("CAMERA_SLOT") <= 1)
+                            //Kiểm tra mã
+                            if (Globalvariable.Main_Content_Dictionary.TryGetValue(codeClear, out ProductData ProductInfo))
                             {
-                                //Kiểm tra mã
-                                if (Globalvariable.Main_Content_Dictionary.TryGetValue(codeClear, out ProductData ProductInfo))
+                                //mã đã active
+                                if (ProductInfo.Active == 1)
                                 {
-                                    //mã đã active
-                                    if(ProductInfo.Active == 1)
+                                    //chế độ loại trùng bật => đá ra
+                                    if (!swModeData.Active)
                                     {
-                                        //chế độ loại trùng bật => đá ra
-                                        if(!swModeData.Active)
+                                        Globalvariable.C1_UI.Curent_Content = "Mã đã kích hoạt (trùng)";
+                                        Globalvariable.C1_UI.IsPass = false;
+                                        //gửi xuống PLC và xử lý tại đây
+                                        OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                                        if (write.IsSuccess)
                                         {
-                                            Globalvariable.C1_UI.Curent_Content = "Mã đã kích hoạt (trùng)";
-                                            Globalvariable.C1_UI.IsPass = false;
-                                            //gửi xuống PLC và xử lý tại đây
-                                            OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
-                                            if (write.IsSuccess)
-                                            {
-                                                Globalvariable.GCounter.PLC_0_Pass_C1++;
-                                            }
-                                            else
-                                            {
-                                                Globalvariable.GCounter.PLC_0_Fail_C1++;
-                                            }
+                                            Globalvariable.GCounter.PLC_0_Pass_C1++;
                                         }
-
-                                        //loại trùng tắt => chế độ thả lại
                                         else
                                         {
-                                            Globalvariable.C1_UI.Curent_Content = "Thả lại:" + codeClear;
-                                            Globalvariable.C1_UI.IsPass = true;
-                                            //gửi xuống PLC và xử lý tại đây
-                                            OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("1"));
-                                            if (write.IsSuccess)
-                                            {
-                                                Globalvariable.GCounter.PLC_1_Pass_C1++;
-                                            }
-                                            else
-                                            {
-                                                Globalvariable.GCounter.PLC_1_Fail_C1++;
-                                            }
+                                            Globalvariable.GCounter.PLC_0_Fail_C1++;
                                         }
-                                        
                                     }
-                                    //mã chưa active => active
+
+                                    //loại trùng tắt => chế độ thả lại
                                     else
                                     {
-                                        Globalvariable.C1_UI.Curent_Content = codeClear;
+                                        Globalvariable.C1_UI.Curent_Content = "Thả lại:" + codeClear;
                                         Globalvariable.C1_UI.IsPass = true;
                                         //gửi xuống PLC và xử lý tại đây
                                         OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("1"));
@@ -808,71 +785,122 @@ namespace QR_MASAN_01
                                         {
                                             Globalvariable.GCounter.PLC_1_Fail_C1++;
                                         }
-
-                                        Globalvariable.Update_Content_To_SQLite_Queue.Enqueue(ProductInfo.ProductID);
-
-                                        //cập nhật lại thông tin
-                                        ProductInfo.Active = 1;
-                                        ProductInfo.TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
                                     }
+
                                 }
-                                //nếu mã chưa tồn tại => chưa active
+                                //mã chưa active => active
                                 else
                                 {
                                     Globalvariable.C1_UI.Curent_Content = codeClear;
                                     Globalvariable.C1_UI.IsPass = true;
-                                    //ở mode nonprinter thì nếu chưa có tự thêm mới
-                                    if (GlobalSettings.Get("APPMODE") == "ADD_Data")
+                                    //gửi xuống PLC và xử lý tại đây
+                                    OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("1"));
+                                    if (write.IsSuccess)
                                     {
-                                        Globalvariable.MaxID_Content++;
-                                        ProductInfo = new ProductData
+                                        Globalvariable.GCounter.PLC_1_Pass_C1++;
+                                    }
+                                    else
+                                    {
+                                        Globalvariable.GCounter.PLC_1_Fail_C1++;
+                                    }
+
+                                    Globalvariable.Update_Content_To_SQLite_Queue.Enqueue(ProductInfo.ProductID);
+
+                                    //cập nhật lại thông tin
+                                    ProductInfo.Active = 1;
+                                    ProductInfo.TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                                }
+                            }
+                            //nếu mã chưa tồn tại => chưa active
+                            else
+                            {
+                                Globalvariable.C1_UI.Curent_Content = codeClear;
+                                Globalvariable.C1_UI.IsPass = true;
+                                //ở mode nonprinter thì nếu chưa có tự thêm mới
+                                if (GlobalSettings.Get("APPMODE") == "ADD_Data")
+                                {
+                                    Globalvariable.MaxID_Content++;
+                                    ProductInfo = new ProductData
+                                    {
+                                        ProductID = Globalvariable.MaxID_Content,
+                                        Active = 1,
+                                        TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
+                                    };
+                                    Globalvariable.Main_Content_Dictionary[codeClear] = ProductInfo;
+
+                                    //báo pass xuống PLC
+                                    OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                                    if (write.IsSuccess)
+                                    {
+                                        Globalvariable.GCounter.PLC_1_Pass_C1++;
+                                    }
+                                    else
+                                    {
+                                        Globalvariable.GCounter.PLC_1_Fail_C1++;
+                                    }
+
+                                    //thêm vào hàng đợi để thêm vào SQLite
+                                    Globalvariable.Add_Content_To_SQLite_Queue.Enqueue(codeClear);
+
+                                }
+
+                                //ở chế độ không add thì đá ra
+                                else
+                                {
+                                    Globalvariable.C1_UI.Curent_Content = "Mã không tồn tại";
+                                    Globalvariable.C1_UI.IsPass = false;
+                                    OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                                    if (write.IsSuccess)
+                                    {
+                                        Globalvariable.GCounter.PLC_0_Pass_C1++;
+                                    }
+                                    else
+                                    {
+                                        Globalvariable.GCounter.PLC_0_Fail_C1++;
+                                    }
+                                }
+
+                            }
+
+                            //Xử lý ở bể data riêng
+                            //chế độ 2 camera thì camera này là camera chính
+                            if (GlobalSettings.GetInt("CAMERA_SLOT") > 1)
+                            {
+                                //Kiểm tra mã đã kích hoạt hay chưa
+                                if(Globalvariable.C1_Content_Dictionary.TryGetValue(codeClear, out ProductData C1ProductInfo))
+                                {
+                                    //nếu đã kích hoạt thì không làm gì cả
+                                    if (C1ProductInfo.Active == 1)
+                                    {
+                                        //free
+                                    }
+                                    else
+                                    {
+                                        //chưa kích hoạt thì cập nhật lại thông tin
+                                        C1ProductInfo.Active = 1;
+                                        C1ProductInfo.TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                                    }
+                                }
+                                else
+                                {
+                                    if(GlobalSettings.Get("APPMODE")== "ADD_Data")
+                                    {
+                                        //nếu chưa có thì thêm mới vào C1
+                                        C1ProductInfo = new ProductData
                                         {
                                             ProductID = Globalvariable.MaxID_Content,
                                             Active = 1,
                                             TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
                                         };
-                                        Globalvariable.Main_Content_Dictionary[codeClear] = ProductInfo;
-
-                                        //báo pass xuống PLC
-                                        OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
-                                        if (write.IsSuccess)
-                                        {
-                                            Globalvariable.GCounter.PLC_1_Pass_C1++;
-                                        }
-                                        else
-                                        {
-                                            Globalvariable.GCounter.PLC_1_Fail_C1++;
-                                        }
-
-                                        //thêm vào hàng đợi để thêm vào SQLite
-                                        Globalvariable.Add_Content_To_SQLite_Queue.Enqueue(codeClear);
-
+                                        Globalvariable.C1_Content_Dictionary[codeClear] = C1ProductInfo;
                                     }
-
-                                    //ở chế độ không add thì đá ra
                                     else
                                     {
-                                        Globalvariable.C1_UI.Curent_Content = "Mã không tồn tại";
-                                        Globalvariable.C1_UI.IsPass = false;
-                                        OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
-                                        if (write.IsSuccess)
-                                        {
-                                            Globalvariable.GCounter.PLC_0_Pass_C1++;
-                                        }
-                                        else
-                                        {
-                                            Globalvariable.GCounter.PLC_0_Fail_C1++;
-                                        }
-                                    }  
-
+                                        //không làm gì cả
+                                    }
+                                    
                                 }
 
-                            }
-
-                            //Chế độ 2 cam thì camera này là camera phụ
-                            else
-                            {
-                                
                             }
 
                         }
