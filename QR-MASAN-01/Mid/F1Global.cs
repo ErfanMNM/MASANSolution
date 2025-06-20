@@ -25,6 +25,7 @@ namespace QR_MASAN_01
         public static Counter_Info GCounter { get; set; } = new Counter_Info();
 
         public static UI_Info C1_UI { get; set; } = new UI_Info();
+        public static UI_Info C2_UI { get; set; } = new UI_Info();
         public static Color WB_Color { get; set; }
         public static Color NG_Color { get; set; } = Color.FromArgb(255, 128, 0);
         public static Color OK_Color { get; set; } = Color.FromArgb(243, 249, 255);
@@ -37,6 +38,14 @@ namespace QR_MASAN_01
         public static Queue<string> Add_Content_To_SQLite_Queue = new Queue<string>();
         public static Queue<int> Update_Content_To_SQLite_Queue = new Queue<int>();
         public static Queue<string> Rework_Content_To_SQLite_Queue = new Queue<string>();
+
+        public static Queue<string> C1_Add_Content_To_SQLite_Queue = new Queue<string>();
+        public static Queue<int> C1_Update_Content_To_SQLite_Queue = new Queue<int>();
+        public static Queue<string> C1_Rework_Content_To_SQLite_Queue = new Queue<string>();
+
+        public static Queue<string> C2_Add_Content_To_SQLite_Queue = new Queue<string>();
+        public static Queue<int> C2_Update_Content_To_SQLite_Queue = new Queue<int>();
+        public static Queue<string> C2_Rework_Content_To_SQLite_Queue = new Queue<string>();
 
         public static int MaxID_Content { get; set; } = 0;
 
