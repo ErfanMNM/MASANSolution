@@ -2798,13 +2798,13 @@
             // 
             this.WK_UI_CAM_Update.WorkerReportsProgress = true;
             this.WK_UI_CAM_Update.WorkerSupportsCancellation = true;
-            this.WK_UI_CAM_Update.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_120Update_DoWork);
+            this.WK_UI_CAM_Update.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Update_Result_To_UI_DoWork);
             // 
             // WK_AddSQLite
             // 
             this.WK_AddSQLite.WorkerReportsProgress = true;
             this.WK_AddSQLite.WorkerSupportsCancellation = true;
-            this.WK_AddSQLite.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_AddSQLite_DoWork);
+            this.WK_AddSQLite.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Add_SQLite_DoWork);
             // 
             // WK_CMR1
             // 
@@ -2816,7 +2816,7 @@
             // 
             this.WK_Process_AUData.WorkerReportsProgress = true;
             this.WK_Process_AUData.WorkerSupportsCancellation = true;
-            this.WK_Process_AUData.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Update120_DoWork);
+            this.WK_Process_AUData.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Process_SQLite_DoWork);
             // 
             // WK_CMR2
             // 

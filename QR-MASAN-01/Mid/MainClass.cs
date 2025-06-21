@@ -19,8 +19,11 @@ namespace MainClass
         public string Operator { get; set; }
         public string Pallet_QR_Type { get; set; }
         public string MFI_ID { get; set; }
-        public string QRCode_Folder { get; set; }
-        public string QRCode_FileName { get; set; }
+        public string Data_Content_Folder { get; set; }
+        public string Data_Content_Filename { get; set; }
+        public string Data_Content_Filename_C1 { get; set; }
+        public string Data_Content_Filename_C2 { get; set; }
+
         public e_MFI_Status MFI_Status { get; set; } = e_MFI_Status.STARTUP;
     }
 

@@ -143,6 +143,7 @@ namespace QR_MASAN_01
     public enum e_Data_Status
     {
         READY,
+        NEW,
         PUSHOK,
         STARTUP,
         GET,
