@@ -110,6 +110,9 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="NorwixV2">
+      <HintPath>..\PRINTER\NorwixV2\obj\Debug\NorwixV2.dll</HintPath>
+    </Reference>
     <Reference Include="RBush, Version=4.0.0.0, Culture=neutral, PublicKeyToken=c77e27b81f4d0187, processorArchitecture=MSIL">
       <HintPath>..\packages\RBush.Signed.4.0.0\lib\net47\RBush.dll</HintPath>
     </Reference>
@@ -206,6 +209,12 @@
     <Compile Include="Views\FormTest.Designer.cs">
       <DependentUpon>FormTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\FStatistics.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\FStatistics.Designer.cs">
+      <DependentUpon>FStatistics.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\MFI_Service\MFI_Service.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -223,6 +232,12 @@
     </Compile>
     <Compile Include="Views\Printers\Printer_V7.Designer.cs">
       <DependentUpon>Printer_V7.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Scada\FCameraS.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Scada\FCameraS.Designer.cs">
+      <DependentUpon>FCameraS.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\ScanQR.cs">
       <SubType>Form</SubType>
@@ -270,6 +285,9 @@
     <EmbeddedResource Include="Views\FormTest.resx">
       <DependentUpon>FormTest.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\FStatistics.resx">
+      <DependentUpon>FStatistics.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\MFI_Service\MFI_Service.resx">
       <DependentUpon>MFI_Service.cs</DependentUpon>
     </EmbeddedResource>
@@ -278,6 +296,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Printers\Printer_V7.resx">
       <DependentUpon>Printer_V7.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Scada\FCameraS.resx">
+      <DependentUpon>FCameraS.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ScanQR.resx">
       <DependentUpon>ScanQR.cs</DependentUpon>

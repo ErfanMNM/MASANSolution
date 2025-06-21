@@ -41,16 +41,16 @@
             this.opUser = new Sunny.UI.UISymbolLabel();
             this.btnMini = new Sunny.UI.UISymbolButton();
             this.btnAppClose = new Sunny.UI.UISymbolButton();
-            this.uiTabControl1 = new Sunny.UI.UITabControl();
             this.footer = new Sunny.UI.UITableLayoutPanel();
-            this.uiPanel1 = new Sunny.UI.UIPanel();
             this.lblClock = new Sunny.UI.UIPanel();
             this.lblInternet = new Sunny.UI.UIPanel();
+            this.lblAllStatus = new Sunny.UI.UIPanel();
             this.WKCheck = new System.ComponentModel.BackgroundWorker();
             this.ClockWK = new System.ComponentModel.BackgroundWorker();
             this.Internet = new SPMS1.InternetClass(this.components);
-            this.lblAllStatus = new Sunny.UI.UIPanel();
             this.LogoImg = new Sunny.UI.UIPanel();
+            this.uiScrollingText1 = new Sunny.UI.UIScrollingText();
+            this.uiTabControl1 = new Sunny.UI.UITabControl();
             this.mainPanelLayout.SuspendLayout();
             this.uiTopbar.SuspendLayout();
             this.header.SuspendLayout();
@@ -74,9 +74,9 @@
             // 
             this.uiTopbar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.uiTopbar.Controls.Add(this.header);
-            resources.ApplyResources(this.uiTopbar, "uiTopbar");
             this.uiTopbar.FillColor = System.Drawing.Color.Azure;
             this.uiTopbar.FillColor2 = System.Drawing.Color.Azure;
+            resources.ApplyResources(this.uiTopbar, "uiTopbar");
             this.uiTopbar.Name = "uiTopbar";
             this.uiTopbar.RectColor = System.Drawing.SystemColors.Menu;
             this.uiTopbar.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -184,35 +184,16 @@
             this.btnAppClose.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnAppClose.Click += new System.EventHandler(this.btnAppClose_Click);
             // 
-            // uiTabControl1
-            // 
-            resources.ApplyResources(this.uiTabControl1, "uiTabControl1");
-            this.uiTabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
-            this.uiTabControl1.MainPage = "";
-            this.uiTabControl1.MenuStyle = Sunny.UI.UIMenuStyle.Custom;
-            this.uiTabControl1.Name = "uiTabControl1";
-            this.uiTabControl1.SelectedIndex = 0;
-            this.uiTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
-            this.uiTabControl1.TabBackColor = System.Drawing.Color.PaleTurquoise;
-            this.uiTabControl1.TabVisible = false;
-            this.uiTabControl1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            // 
             // footer
             // 
             this.footer.BackColor = System.Drawing.Color.Green;
             resources.ApplyResources(this.footer, "footer");
-            this.footer.Controls.Add(this.uiPanel1, 0, 0);
-            this.footer.Controls.Add(this.lblClock, 5, 0);
-            this.footer.Controls.Add(this.lblInternet, 4, 0);
-            this.footer.Controls.Add(this.lblAllStatus, 3, 0);
+            this.footer.Controls.Add(this.lblClock, 3, 0);
+            this.footer.Controls.Add(this.lblInternet, 2, 0);
+            this.footer.Controls.Add(this.lblAllStatus, 1, 0);
+            this.footer.Controls.Add(this.uiScrollingText1, 0, 0);
             this.footer.Name = "footer";
             this.footer.TagString = null;
-            // 
-            // uiPanel1
-            // 
-            resources.ApplyResources(this.uiPanel1, "uiPanel1");
-            this.uiPanel1.Name = "uiPanel1";
-            this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblClock
             // 
@@ -230,6 +211,16 @@
             this.lblInternet.RectColor = System.Drawing.Color.DodgerBlue;
             this.lblInternet.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // lblAllStatus
+            // 
+            this.lblAllStatus.FillColor = System.Drawing.Color.Red;
+            resources.ApplyResources(this.lblAllStatus, "lblAllStatus");
+            this.lblAllStatus.ForeColor = System.Drawing.Color.Yellow;
+            this.lblAllStatus.Name = "lblAllStatus";
+            this.lblAllStatus.Radius = 0;
+            this.lblAllStatus.RectColor = System.Drawing.Color.DodgerBlue;
+            this.lblAllStatus.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // WKCheck
             // 
             this.WKCheck.WorkerSupportsCancellation = true;
@@ -244,16 +235,6 @@
             // 
             this.Internet.Url = "8.8.8.8";
             // 
-            // lblAllStatus
-            // 
-            this.lblAllStatus.FillColor = System.Drawing.Color.Red;
-            resources.ApplyResources(this.lblAllStatus, "lblAllStatus");
-            this.lblAllStatus.ForeColor = System.Drawing.Color.Yellow;
-            this.lblAllStatus.Name = "lblAllStatus";
-            this.lblAllStatus.Radius = 0;
-            this.lblAllStatus.RectColor = System.Drawing.Color.DodgerBlue;
-            this.lblAllStatus.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // LogoImg
             // 
             this.LogoImg.BackColor = System.Drawing.Color.Transparent;
@@ -262,6 +243,28 @@
             this.LogoImg.Name = "LogoImg";
             this.LogoImg.RectColor = System.Drawing.Color.Transparent;
             this.LogoImg.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiScrollingText1
+            // 
+            this.uiScrollingText1.Active = true;
+            resources.ApplyResources(this.uiScrollingText1, "uiScrollingText1");
+            this.uiScrollingText1.Interval = 50;
+            this.uiScrollingText1.Name = "uiScrollingText1";
+            this.uiScrollingText1.Style = Sunny.UI.UIStyle.Custom;
+            // 
+            // uiTabControl1
+            // 
+            resources.ApplyResources(this.uiTabControl1, "uiTabControl1");
+            this.uiTabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
+            this.uiTabControl1.MainPage = "";
+            this.uiTabControl1.MenuStyle = Sunny.UI.UIMenuStyle.Custom;
+            this.uiTabControl1.Name = "uiTabControl1";
+            this.uiTabControl1.SelectedIndex = 0;
+            this.uiTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
+            this.uiTabControl1.TabBackColor = System.Drawing.Color.PaleTurquoise;
+            this.uiTabControl1.TabVisible = false;
+            this.uiTabControl1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.uiTabControl1.SelectedIndexChanged += new System.EventHandler(this.uiTabControl1_SelectedIndexChanged);
             // 
             // FMainQR01
             // 
@@ -297,7 +300,6 @@
         private System.ComponentModel.BackgroundWorker WKCheck;
         private SPMS1.InternetClass Internet;
         private Sunny.UI.UITableLayoutPanel footer;
-        private Sunny.UI.UIPanel uiPanel1;
         private Sunny.UI.UIPanel lblClock;
         private Sunny.UI.UIPanel lblInternet;
         private System.ComponentModel.BackgroundWorker ClockWK;
@@ -307,8 +309,9 @@
         private Sunny.UI.UISymbolLabel opUser;
         private Sunny.UI.UISymbolButton btnMini;
         private Sunny.UI.UISymbolButton btnAppClose;
-        private Sunny.UI.UITabControl uiTabControl1;
         private Sunny.UI.UIPanel lblAllStatus;
+        private Sunny.UI.UIScrollingText uiScrollingText1;
+        private Sunny.UI.UITabControl uiTabControl1;
     }
 }
 

@@ -34,6 +34,7 @@ namespace QR_MASAN_01
        Settings _setings = new Settings();
         MyLanPrinter _myLanPrinter = new MyLanPrinter();
         Printer_V7 _printer_V7 = new Printer_V7();
+        FStatistics _FStatistics = new FStatistics();
 
         F1PLC _f1PLC = new F1PLC();
         public FMainQR01()
@@ -62,9 +63,10 @@ namespace QR_MASAN_01
             uiNavMenu1.TabControl = uiTabControl1;
             uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
            uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
-           uiNavMenu1.CreateNode(AddPage(scanQR, 1006));
-            uiNavMenu1.CreateNode(AddPage(FormTest, 1008));
+           uiNavMenu1.CreateNode(AddPage(scanQR, 1004));
+            uiNavMenu1.CreateNode(AddPage(FormTest, 1998));
             uiNavMenu1.CreateNode(AddPage(_f1PLC, 1009));
+            uiNavMenu1.CreateNode(AddPage(_FStatistics, 1002));
             uiNavMenu1.SelectPage(1001);
           _FMFI.FMFI_INIT();
            scanQR.INIT();
@@ -86,7 +88,7 @@ namespace QR_MASAN_01
                     // Không làm gì cả
                     break;
                 default:
-                    this.ShowWarningDialog("Printer Error", "Printer type not supported.", UIStyle.Red);
+                    //không làm gì cả
                     break;
             }
         }
@@ -200,6 +202,11 @@ namespace QR_MASAN_01
         private void btnMini_Click(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Minimized;
+        }
+
+        private void uiTabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

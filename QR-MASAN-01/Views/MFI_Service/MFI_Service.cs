@@ -132,7 +132,15 @@ namespace MFI_Service
             WK_Update.RunWorkerAsync();
             WK_MFI.RunWorkerAsync();
             WK_Server_Status.RunWorkerAsync();
-            LoadExcelToProductList($@"C:\Phan_Mem\MS_Product.xlsx");
+            try
+            {
+                LoadExcelToProductList($@"C:\Phan_Mem\MS_Product.xlsx");
+            }
+            catch (Exception ex)
+            {
+                this.ShowErrorDialog($"Lỗi: {ex.Message}");
+            }
+            
         }
         public void MFI_Update_HMI () {
             ipBatchCode.Items.Clear();

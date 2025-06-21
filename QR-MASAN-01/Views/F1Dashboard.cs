@@ -44,8 +44,8 @@ namespace QR_MASAN_01
 
             while (!WK_Server_check.CancellationPending)
             {
-                try
-                {
+                //try
+                //{
                     switch (Globalvariable.Data_Status)
                     {
                         //Trạng thái sẵn sàng bình thường
@@ -54,7 +54,7 @@ namespace QR_MASAN_01
                             break;
                         //Trạng thái xử lý khi có mã mới
                         case e_Data_Status.NEW:
-
+                            Process_MFI_When_New();
                             break;
                         //Trạng thái khi mở phần mềm lần đầu tiên
                         case e_Data_Status.STARTUP:
@@ -68,7 +68,7 @@ namespace QR_MASAN_01
 
                             //nếu ở chế độ 2 camera thì đầy thêm 2 camera nữa
 
-                            if (GlobalSettings.Get("") == "NO_ADD")
+                            if (GlobalSettings.GetInt("CAMERA_SLOT") > 1)
                             {
                                 LogUpdate("S2_Đẩy dữ liệu camera C1");
                                 Push_Data_To_Dic_C1();
@@ -76,14 +76,18 @@ namespace QR_MASAN_01
                                 Push_Data_To_Dic_C2();
                             }
 
+                            //Chuyển sang trạng thái đẩy dữ liệu cho máy in
+                            Globalvariable.Data_Status = e_Data_Status.PRINTER_PUSH;
+
                             break;
                         //Đẩy dữ liệu cho máy in
                         case e_Data_Status.PRINTER_PUSH:
                             //gửi thông tin qua máy in
-                            if (GlobalSettings.Get("APPMODE") == "NO_ADD")
+                            if (GlobalSettings.Get("PRINTER") != "NONE")
                             {
-                                Globalvariable.QRCode_Folder = _clientMFI.QRCode_Folder;
-                                Globalvariable.QRCode_FileName = _clientMFI.QRCode_FileName;
+                                //Gửi thông tin lên global.
+                                Globalvariable.QRCode_Folder = _clientMFI.Data_Content_Folder;
+                                Globalvariable.QRCode_FileName = _clientMFI.Data_Content_Filename;
                                 Globalvariable.Data_Status = e_Data_Status.PRINTER_PUSH;
                             }
                             else
@@ -132,7 +136,7 @@ namespace QR_MASAN_01
 
                             List<string> filedata = uniqueCodes.ToList();
 
-                            using (SQLiteConnection conn = new SQLiteConnection($"Data Source={_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Folder};Version=3;"))
+                            using (SQLiteConnection conn = new SQLiteConnection($"Data Source={_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename};Version=3;"))
                             {
                                 string sql = $@" INSERT INTO `QRContent`
                                       (ProductQR)
@@ -189,11 +193,11 @@ namespace QR_MASAN_01
                             //Bật siêu biển cảnh báo lỗi
                             break;
                     }
-                }
-                catch(Exception ex)
-                {
-                    LogUpdate($"Lỗi trong quá trình xử lý: {ex.Message}");
-                }
+                //}
+                //catch(Exception ex)
+                //{
+                //    LogUpdate($"Lỗi trong quá trình xử lý: {ex.Message}");
+                //}
 
 
                 Thread.Sleep(5000); // Chờ 2 giây trước khi gửi request tiếp theo
@@ -216,14 +220,30 @@ namespace QR_MASAN_01
                 }
 
                 //kiểm tra xem thông tin có khác thông tin đang chạy hay không
-                if (_clientMFI.MFI_ID != _gfsv.Values["MFI_ID"].ToString() && _clientMFI.Batch_Code != _gfsv.Values["Batch_Code"] && _clientMFI.Product_Barcode != _gfsv.Values["Product_Barcode"])
+                if ( _clientMFI.MFI_ID != _gfsv.Values["MFI_ID"].ToString() || _clientMFI.Batch_Code != _gfsv.Values["Batch_Code"].ToString() ||_clientMFI.Product_Barcode != _gfsv.Values["Product_Barcode"].ToString() )
                 {
+                    //lụm thông tin mới
+
+                    //các thông tin vào Client_MFI
+                    _clientMFI.Case_Barcode = _gfsv.Values["Case_Barcode"].ToString();
+                    _clientMFI.Product_Barcode = _gfsv.Values["Product_Barcode"].ToString();
+                    _clientMFI.Case_LOT = _gfsv.Values["Case_LOT"].ToString();
+                    _clientMFI.Batch_Code = _gfsv.Values["Batch_Code"].ToString();
+                    _clientMFI.Block_Size = _gfsv.Values["Block_Size"].ToString();
+                    _clientMFI.Case_Size = _gfsv.Values["Case_Size"].ToString();
+                    _clientMFI.Pallet_Size = _gfsv.Values["Pallet_Size"].ToString();
+                    _clientMFI.SanLuong = _gfsv.Values["SanLuong"].ToString();
+                    _clientMFI.Operator = _gfsv.Values["Operator"].ToString();
+                    _clientMFI.Pallet_QR_Type = _gfsv.Values["Pallet_QR_Type"].ToString();
+                    _clientMFI.MFI_ID = _gfsv.Values["MFI_ID"].ToString();
+
+                    _clientMFI.Data_Content_Folder = $@"Client_Database/{_clientMFI.Case_LOT.Split("-")[2].ToString()}/{_clientMFI.Case_LOT.Split("-")[1].ToString()}/";
+
                     LogUpdate($"Thông tin sản xuất đã thay đổi, cập nhật lại thông tin mới từ máy chủ");
                     Globalvariable.Data_Status = e_Data_Status.NEW;
                 }
 
             }
-
             else
             {
                 if (Globalvariable.Server_Status != e_Server_Status.DISCONNECTED)
@@ -241,6 +261,35 @@ namespace QR_MASAN_01
             Update_MFI_HMI();
             //Gửi trạng thái máy ready lên máy chủ
             Push_MFI_To_Server("QR01Status", "1");
+        }
+
+        private void Process_MFI_When_New()
+        {
+
+            //kiểm tra thư mục tồn tại hay chưa
+            if (!Directory.Exists(_clientMFI.Data_Content_Filename))
+            {
+                Directory.CreateDirectory(_clientMFI.Data_Content_Folder);
+            }
+
+            _clientMFI.Data_Content_Filename = $"ProductCode_{_clientMFI.Case_LOT}_{_clientMFI.Batch_Code}_{_clientMFI.Product_Barcode}.db";
+
+            //tiếp tục cho các file của các camera còn lại
+            _clientMFI.Data_Content_Filename_C1 = $"ProductCode_{_clientMFI.Case_LOT}_{_clientMFI.Batch_Code}_{_clientMFI.Product_Barcode}_C1.db";
+            _clientMFI.Data_Content_Filename_C2 = $"ProductCode_{_clientMFI.Case_LOT}_{_clientMFI.Batch_Code}_{_clientMFI.Product_Barcode}_C2.db";
+
+            if (!File.Exists(_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename) || !File.Exists(_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename_C1) || !File.Exists(_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename_C2))
+            {
+                //Chưa có file nào tồn tại, chuyển qua chế độ tạo mới
+                Globalvariable.Data_Status = e_Data_Status.CREATING;
+            }
+            else
+            {
+
+                //Đã có file tồn tại, chuyển qua chế độ đẩy dữ liệu
+                Globalvariable.Data_Status = e_Data_Status.PUSH;
+                LogUpdate($"Đã có dữ liệu sản xuất, chuyển sang chế độ đẩy dữ liệu");
+            }
         }
 
         private void Process_MFI_When_Startup()
@@ -288,19 +337,18 @@ namespace QR_MASAN_01
                     _clientMFI.Data_Content_Filename_C1 = $"ProductCode_{_clientMFI.Case_LOT}_{_clientMFI.Batch_Code}_{_clientMFI.Product_Barcode}_C1.db";
                     _clientMFI.Data_Content_Filename_C2 = $"ProductCode_{_clientMFI.Case_LOT}_{_clientMFI.Batch_Code}_{_clientMFI.Product_Barcode}_C2.db";
 
-                    //nếu chưa có bắt đầu tạo CSDL, tạo 3 file luôn để đỡ lăn tăn vụ chuyển chế độ
-
-                    //file dữ liệu chính
-
                     if (!File.Exists(_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename) || !File.Exists(_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename_C1) || !File.Exists(_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename_C2))
                     {
                         //Chưa có file nào tồn tại, chuyển qua chế độ tạo mới
                         Globalvariable.Data_Status = e_Data_Status.CREATING;
                     }
+
+                    //đủ file chuyển sang đẩy
+                    Globalvariable.Data_Status = e_Data_Status.PUSH;
+                    LogUpdate($"Đã có dữ liệu sản xuất, chuyển sang chế độ đẩy dữ liệu");
                 }
                 else
                 {
-
                     LogUpdate($"Máy chủ chưa phản hồi");
                 }
             }
@@ -313,9 +361,6 @@ namespace QR_MASAN_01
         private void Create_new_Database_SQLite_File()
         {
             SQLiteConnection.CreateFile(_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename);
-
-            SQLiteConnection.CreateFile(_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename_C1);
-            SQLiteConnection.CreateFile(_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename_C2);
 
             using (SQLiteConnection conn = new SQLiteConnection($"Data Source={_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename};Version=3;"))
             {
@@ -503,7 +548,7 @@ namespace QR_MASAN_01
             // Dictionary để lưu dữ liệu với CaseQR làm key
            // Dictionary<string, ProductData> ProductQR_Dictionary = new Dictionary<string, ProductData>();
            //Đẩy vào dic chính
-            string connectionString = $@"Data Source={_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Folder};Version=3;";
+            string connectionString = $@"Data Source={_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename};Version=3;";
 
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
@@ -661,6 +706,10 @@ namespace QR_MASAN_01
             WK_Update.RunWorkerAsync();
             WK_UI_CAM_Update.RunWorkerAsync();
             Camera.Connect();
+            if(GlobalSettings.GetInt("CAMERA_SLOT") > 1)
+            {
+                Camera_c.Connect();
+            }
             PLC.PLC_IP = GlobalSettings.Get("PLC_IP");
             PLC.PLC_PORT = GlobalSettings.GetInt("PLC_PORT");
             PLC.InitPLC();
@@ -755,7 +804,69 @@ namespace QR_MASAN_01
             }
         }
 
-        double TimeSendPLC = 0;
+        //camera 02
+        private void Camera_c_ClientCallBack(SPMS1.enumClient eAE, string _strData)
+        {
+            switch (eAE)
+            {
+                case SPMS1.enumClient.CONNECTED:
+                    if (GCamera.Camera_Status_02 == e_Camera_Status.DISCONNECTED)
+                    {
+                        GCamera.Camera_Status_02 = e_Camera_Status.CONNECTED;
+                        Invoke(new Action(() =>
+                        {
+                            opCMR02Stt.Text = "Sẵn sàng";
+                            opCMR02Stt.FillColor = Globalvariable.OK_Color;
+                        }));
+                    }
+                    break;
+                case SPMS1.enumClient.DISCONNECTED:
+                    if (GCamera.Camera_Status_02 == e_Camera_Status.CONNECTED)
+                    {
+                        GCamera.Camera_Status_02 = e_Camera_Status.DISCONNECTED;
+                        Invoke(new Action(() =>
+                        {
+                            opCMR02Stt.Text = "Mất kết nối";
+                        }));
+                    }
+                    break;
+                case SPMS1.enumClient.RECEIVED:
+                    //xử lý dữ liệu nhận về
+                    if (!WK_CMR4.IsBusy)
+                    {
+                        WK_CMR4.RunWorkerAsync(_strData);
+                    }
+                    else if (!WK_CMR5.IsBusy)
+                    {
+                        WK_CMR5.RunWorkerAsync(_strData);
+                    }
+                    else if (!WK_CMR6.IsBusy)
+                    {
+                        WK_CMR6.RunWorkerAsync(_strData);
+                    }
+                    else
+                    {
+                        this.Invoke(new Action(() =>
+                        {
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera 02 trả về : Không đủ luồng xử lí");
+                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                        }));
+
+                        Send_Result_Content_C2(e_Content_Result.ERROR, "Lỗi khi camera 02 trả về: Không đủ luồng xử lí");
+                    }
+                    break;
+                case SPMS1.enumClient.RECONNECT:
+
+                    Invoke(new Action(() =>
+                    {
+                        opCMR02Stt.Text = "Kết nối lại";
+                        opCMR02Stt.FillColor = Color.Red;
+                    }));
+
+                    break;
+            }
+        }
+
 
         public void Camera_01_Data_Recive(string _strData)
         {
@@ -1244,8 +1355,20 @@ namespace QR_MASAN_01
 
                 case e_Content_Result.ERROR:
 
-                    break;
+                    Globalvariable.C2_UI.Curent_Content = _content;
+                    Globalvariable.C2_UI.IsPass = false;
 
+                    //gửi xuống PLC và xử lý tại đây
+                    OperateResult write9 = PLC.plc.Write(GlobalSettings.Get("PLC_C2_RejectDM"), short.Parse("0"));
+                    if (write9.IsSuccess)
+                    {
+                        Globalvariable.GCounter.PLC_0_Pass_C2++;
+                    }
+                    else
+                    {
+                        Globalvariable.GCounter.PLC_0_Fail_C2++;
+                    }
+                    break;
                 case e_Content_Result.ERR_FORMAT:
 
                     Globalvariable.C2_UI.Curent_Content = "Sai cấu trúc!!!";
@@ -1311,92 +1434,59 @@ namespace QR_MASAN_01
             return (true, "Mã QR hợp lệ.");
         }
 
-        //send to PLC
-        private void Camera_c_ClientCallBack(SPMS1.enumClient eAE, string _strData)
-        {
-            switch (eAE)
-            {
-                case SPMS1.enumClient.CONNECTED:
-                    if (GCamera.Camera_Status_02 == e_Camera_Status.DISCONNECTED)
-                    {
-                        GCamera.Camera_Status_02 = e_Camera_Status.CONNECTED;
-                        Invoke(new Action(() =>
-                        {
-                            opCMR02Stt.Text = "Sẵn sàng";
-                            opCMR02Stt.FillColor = Globalvariable.OK_Color;
-                        }));
-                    }
-                    break;
-                case SPMS1.enumClient.DISCONNECTED:
-                    if (GCamera.Camera_Status_02 == e_Camera_Status.CONNECTED)
-                    {
-                        GCamera.Camera_Status_02 = e_Camera_Status.DISCONNECTED;
-                        Invoke(new Action(() =>
-                        {
-                            opCMR02Stt.Text = "Mất kết nối";
-                        }));
-                    }
-                    break;
-                case SPMS1.enumClient.RECEIVED:
-                    //xử lý dữ liệu nhận về
-                    if(WK_CMR4.IsBusy)
-                    {
-                        LogUpdate("Camera 2 đang bận xử lý dữ liệu, vui lòng đợi");
-                    }
-                    else
-                    {
-                        Camera2DataProcess(_strData);
-                    }
-                    break;
-                case SPMS1.enumClient.RECONNECT:
-
-                    Invoke(new Action(() =>
-                    {
-                        opCMR02Stt.Text = "Kết nối lại";
-                        opCMR02Stt.FillColor = Color.Red;
-                    }));
-
-                    break;
-            }
-        }
-
         #endregion
-        public void Update_Active_Status(int rowId)
+        public void Update_Active_Status_Main(int rowId)
         {
-            using (SQLiteConnection connection = new SQLiteConnection($"Data Source={_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName};Version=3;"))
+            using (SQLiteConnection connection = new SQLiteConnection($"Data Source={_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename};Version=3;"))
             {
                 connection.Open();
-                string query = "UPDATE `QRContent` SET `Active` = '1', `TimeStampActive` = @TimeStamp  WHERE _rowid_ = @RowId";
+                string query = "UPDATE `QRContent` SET `Active` = '1', `TimeStampActive` = @TimeStampActive, `TimeUnixActive` = @TimeUnixActive  WHERE _rowid_ = @RowId";
 
                 using (SQLiteCommand command = new SQLiteCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@RowId", rowId);
-                    command.Parameters.AddWithValue("@TimeStamp", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
-
+                    command.Parameters.AddWithValue("@TimeStampActive", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
+                    command.Parameters.AddWithValue("@TimeUnixActive", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
                     int rowsAffected = command.ExecuteNonQuery();
                 }
             }
         }
 
-        public int Add_Content_To_SQLite(string Content)
+        public void Add_Content_To_SQLite_Main(string Content)
         {
-            using (SQLiteConnection connection = new SQLiteConnection($"Data Source={_clientMFI.QRCode_Folder + _clientMFI.QRCode_FileName};Version=3;"))
+            using (SQLiteConnection connection = new SQLiteConnection($"Data Source={_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename};Version=3;"))
             {
                 connection.Open();
-                string query = "INSERT INTO `QRContent` (ProductQR,Active, TimestampActive) VALUES (@QR,1,@TimeStamp);";
+                string query = "INSERT INTO `QRContent` (ProductQR, Active, TimestampActive, TimeUnixActive) VALUES (@QR,1,@TimeStamp,@TimeUnix);";
 
                 using (SQLiteCommand command = new SQLiteCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@QR", Content);
                     command.Parameters.AddWithValue("@TimeStamp", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
-
+                    command.Parameters.AddWithValue("@TimeUnix", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
                     int rowsAffected = command.ExecuteNonQuery();
                 }
 
                 using (SQLiteCommand cmd = new SQLiteCommand("SELECT last_insert_rowid();", connection))
                 {
-                    int id = (int)cmd.ExecuteScalar();
-                    return id; // Trả về ID của bản ghi mới được thêm
+                    long id = (long)cmd.ExecuteScalar();
+
+                    //cập nhật vào Globalvariable.Main_Content_Dictionary
+                    if (Globalvariable.Main_Content_Dictionary.TryGetValue(Content, out ProductData productData))
+                    {
+                        // Nếu đã có trong dictionary, cập nhật ProductID
+                        productData.ProductID = Convert.ToInt32(id);
+                    }
+                    else
+                    {
+                        // Nếu chưa có, thêm mới vào dictionary
+                        Globalvariable.Main_Content_Dictionary[Content] = new ProductData
+                        {
+                            ProductID = Convert.ToInt32(id),
+                            Active = 1,
+                            TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
+                        };
+                    }
                 }
             }
         }
@@ -1523,10 +1613,10 @@ namespace QR_MASAN_01
                 {
                     PLC.Ready = 1;
                 }
-                if(TimeSendPLC >= MaxTimeSend)
-                {
-                    MaxTimeSend = TimeSendPLC;
-                }
+                //if(TimeSendPLC >= MaxTimeSend)
+                //{
+                //    MaxTimeSend = TimeSendPLC;
+                //}
                 this.Invoke(new Action(() =>
                 {
                     lblTotal.Value = PLC.plc.ReadInt32("D40").Content;
@@ -1549,7 +1639,7 @@ namespace QR_MASAN_01
                     opPLCSend0OK.Text = Counter.Send0ToPLC_OK.ToString();
                     opPLCSend0Fail.Text = Counter.Send0ToPLC_Fail.ToString();
 
-                    opPLCTime.Text = TimeSendPLC.ToString() +"/"+MaxTimeSend.ToString();
+                    //opPLCTime.Text = TimeSendPLC.ToString() +"/"+MaxTimeSend.ToString();
 
 
                 }));
@@ -1781,25 +1871,15 @@ namespace QR_MASAN_01
                 //cập nhật
                 if (Globalvariable.Update_Content_To_SQLite_Queue.Count > 0)
                 {
-                    UpdateActiveStatus(Globalvariable.Update_Content_To_SQLite_Queue.Dequeue());
+                    Update_Active_Status_Main(Globalvariable.Update_Content_To_SQLite_Queue.Dequeue());
                 }
 
                 //thêm mới
                 if(Globalvariable.Add_Content_To_SQLite_Queue.Count > 0)
                 {
                     string code = Globalvariable.Add_Content_To_SQLite_Queue.Dequeue();
-                    Add_QR_To_SQLite(code);
-                    Globalvariable.MaxID_QR++;
-
-                    Globalvariable.Main_Content_Dictionary[code] = new ProductData
-                    {
-                        ProductID = Globalvariable.MaxID_QR,
-                        Active = 1,
-                        TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
-                    };
+                    Add_Content_To_SQLite_Main(code);
                 }
-
-
                 Thread.Sleep(100);
             }
         }
@@ -1840,7 +1920,7 @@ namespace QR_MASAN_01
             string inputString = e.Argument as string;
             opWK2.FillColor = Color.Green;
             //WhenDataRecive(inputString);
-            Camera2DataProcess(inputString);
+            Camera_01_Data_Recive(inputString);
             opWK2.FillColor = Color.White;
             stopwatch.Stop();
             this.Invoke(new Action(() =>
@@ -1861,7 +1941,7 @@ namespace QR_MASAN_01
             string inputString = e.Argument as string;
             opWK3.FillColor = Color.Green;
             //WhenDataRecive(inputString);
-            Camera2DataProcess(inputString);
+            Camera_01_Data_Recive(inputString);
             opWK3.FillColor = Color.White;
             stopwatch.Stop();
             this.Invoke(new Action(() =>
@@ -1896,7 +1976,7 @@ namespace QR_MASAN_01
             stopwatch.Start();
             string inputString = e.Argument as string;
             opWK4.FillColor = Color.Green;
-            Camera2DataProcess(inputString);
+            Camera_02_Data_Recive(inputString);
             opWK4.FillColor = Color.White;
             stopwatch.Stop();
             this.Invoke(new Action(() =>
@@ -1916,7 +1996,7 @@ namespace QR_MASAN_01
             stopwatch.Start();
             string inputString = e.Argument as string;
             opWK5.FillColor = Color.Green;
-            Camera2DataProcess(inputString);
+            Camera_02_Data_Recive(inputString);
             opWK5.FillColor = Color.White;
             stopwatch.Stop();
             this.Invoke(new Action(() =>
@@ -1936,7 +2016,7 @@ namespace QR_MASAN_01
             stopwatch.Start();
             string inputString = e.Argument as string;
             opWK6.FillColor = Color.Green;
-            Camera2DataProcess(inputString);
+            Camera_02_Data_Recive(inputString);
             opWK6.FillColor = Color.White;
             stopwatch.Stop();
             this.Invoke(new Action(() =>

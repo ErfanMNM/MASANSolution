@@ -1,6 +1,6 @@
-﻿namespace QR_MASAN_01.Views.Printers
+﻿namespace QR_MASAN_01.Views.Scada
 {
-    partial class Printer_V7
+    partial class FCameraS
     {
         /// <summary>
         /// Required designer variable.
@@ -28,28 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.uc_NorwixV21 = new NorwixV2.uc_NorwixV2();
             this.SuspendLayout();
             // 
-            // uc_NorwixV21
+            // FCameraS
             // 
-            this.uc_NorwixV21.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uc_NorwixV21.Location = new System.Drawing.Point(12, -2);
-            this.uc_NorwixV21.Name = "uc_NorwixV21";
-            this.uc_NorwixV21.Size = new System.Drawing.Size(778, 476);
-            this.uc_NorwixV21.TabIndex = 0;
-            // 
-            // Printer_V7
-            // 
-            this.ClientSize = new System.Drawing.Size(802, 460);
-            this.Controls.Add(this.uc_NorwixV21);
-            this.Name = "Printer_V7";
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.ClientSize = new System.Drawing.Size(649, 534);
+            this.Name = "FCameraS";
+            this.Text = "FCameraS";
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private NorwixV2.uc_NorwixV2 uc_NorwixV21;
     }
 }

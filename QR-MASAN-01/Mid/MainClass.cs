@@ -55,15 +55,15 @@ namespace MainClass
         public int PLC_1_Fail_C2 { get; set; } = 0;
         public int PLC_1_Pass_C2 { get; set; } = 0;
 
-        public int PLC_0_Fail_C1 { get; set; } = 0;
-        public int PLC_0_Pass_C1 { get; set; } = 0;
-        public int PLC_1_Fail_C1 { get; set; } = 0;
-        public int PLC_1_Pass_C1 { get; set; } = 0;
-
+        
         public int Total_Code_C1 { get; set; } = 0;
         public int Total_Return_C1 { get; set; } = 0;
         public int Camera_Fail_C1 { get; set; } = 0;
         public int Camera_Pass_C1 { get; set; } = 0;
+        public int PLC_0_Fail_C1 { get; set; } = 0;
+        public int PLC_0_Pass_C1 { get; set; } = 0;
+        public int PLC_1_Fail_C1 { get; set; } = 0;
+        public int PLC_1_Pass_C1 { get; set; } = 0;
 
     }
 
