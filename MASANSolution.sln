@@ -15,9 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Printer", "Printer", "{02EA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Printer", "PRINTER\Printer\Printer.csproj", "{EF9C2D80-3D32-4D94-AD6E-73B9441DB6C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NorwixV2", "PRINTER\NorwixV2\NorwixV2.csproj", "{98F832B6-660A-4B00-B201-0B5A0479EDF2}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extentions", "Extentions", "{0819DD72-E044-4225-8079-68DE10D62537}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NorwixV2", "PRINTER\NorwixV2\NorwixV2.csproj", "{98F832B6-660A-4B00-B201-0B5A0479EDF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

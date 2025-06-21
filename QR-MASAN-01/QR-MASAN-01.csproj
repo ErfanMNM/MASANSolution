@@ -303,10 +303,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PRINTER\NorwixV2\NorwixV2.csproj">
-      <Project>{98f832b6-660a-4b00-b201-0b5a0479edf2}</Project>
-      <Name>NorwixV2</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PRINTER\Printer\Printer.csproj">
       <Project>{ef9c2d80-3d32-4d94-ad6e-73b9441db6c5}</Project>
       <Name>Printer</Name>

@@ -188,7 +188,6 @@
             this.opContentC2 = new Sunny.UI.UIPanel();
             this.opResultPassFailC2 = new Sunny.UI.UIPanel();
             this.WK_Update = new System.ComponentModel.BackgroundWorker();
-            this.WK_Push_Data_To_Dic = new System.ComponentModel.BackgroundWorker();
             this.WK_UI_CAM_Update = new System.ComponentModel.BackgroundWorker();
             this.WK_AddSQLite = new System.ComponentModel.BackgroundWorker();
             this.WK_CMR1 = new System.ComponentModel.BackgroundWorker();
@@ -2730,9 +2729,9 @@
             // cam02
             // 
             this.cam02.Controls.Add(this.uiTableLayoutPanel37);
-            this.cam02.Location = new System.Drawing.Point(0, 30);
+            this.cam02.Location = new System.Drawing.Point(0, 40);
             this.cam02.Name = "cam02";
-            this.cam02.Size = new System.Drawing.Size(457, 87);
+            this.cam02.Size = new System.Drawing.Size(200, 60);
             this.cam02.TabIndex = 1;
             this.cam02.Text = "CAMERA 02";
             this.cam02.UseVisualStyleBackColor = true;
@@ -2749,7 +2748,7 @@
             this.uiTableLayoutPanel37.Name = "uiTableLayoutPanel37";
             this.uiTableLayoutPanel37.RowCount = 1;
             this.uiTableLayoutPanel37.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel37.Size = new System.Drawing.Size(457, 87);
+            this.uiTableLayoutPanel37.Size = new System.Drawing.Size(200, 60);
             this.uiTableLayoutPanel37.TabIndex = 10;
             this.uiTableLayoutPanel37.TagString = null;
             // 
@@ -2757,11 +2756,11 @@
             // 
             this.opContentC2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opContentC2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opContentC2.Location = new System.Drawing.Point(124, 2);
+            this.opContentC2.Location = new System.Drawing.Point(55, 2);
             this.opContentC2.Margin = new System.Windows.Forms.Padding(2);
             this.opContentC2.MinimumSize = new System.Drawing.Size(1, 1);
             this.opContentC2.Name = "opContentC2";
-            this.opContentC2.Size = new System.Drawing.Size(331, 83);
+            this.opContentC2.Size = new System.Drawing.Size(143, 56);
             this.opContentC2.TabIndex = 5;
             this.opContentC2.Text = "i.tcx.com.vn/189312345678900A50918124aLYmSaM6";
             this.opContentC2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2776,7 +2775,7 @@
             this.opResultPassFailC2.Margin = new System.Windows.Forms.Padding(2);
             this.opResultPassFailC2.MinimumSize = new System.Drawing.Size(1, 1);
             this.opResultPassFailC2.Name = "opResultPassFailC2";
-            this.opResultPassFailC2.Size = new System.Drawing.Size(118, 83);
+            this.opResultPassFailC2.Size = new System.Drawing.Size(49, 56);
             this.opResultPassFailC2.TabIndex = 4;
             this.opResultPassFailC2.Text = "TỐT";
             this.opResultPassFailC2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2786,13 +2785,6 @@
             this.WK_Update.WorkerReportsProgress = true;
             this.WK_Update.WorkerSupportsCancellation = true;
             this.WK_Update.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Update_DoWork);
-            // 
-            // WK_Push_Data_To_Dic
-            // 
-            this.WK_Push_Data_To_Dic.WorkerReportsProgress = true;
-            this.WK_Push_Data_To_Dic.WorkerSupportsCancellation = true;
-            this.WK_Push_Data_To_Dic.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Push_Data_To_Dic_DoWork);
-            this.WK_Push_Data_To_Dic.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.WK_Push_Data_To_Dic_RunWorkerCompleted);
             // 
             // WK_UI_CAM_Update
             // 
@@ -2977,7 +2969,6 @@
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel14;
         private Sunny.UI.UIPanel uiPanel9;
         private Sunny.UI.UIPanel opPrinter;
-        private System.ComponentModel.BackgroundWorker WK_Push_Data_To_Dic;
         private SPMS1.OmronPLC_Hsl PLC;
         private System.ComponentModel.BackgroundWorker WK_UI_CAM_Update;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel13;
