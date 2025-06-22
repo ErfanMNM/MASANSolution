@@ -56,14 +56,32 @@ namespace MainClass
         public int PLC_1_Pass_C2 { get; set; } = 0;
 
         
-        public int Total_Code_C1 { get; set; } = 0;
-        public int Total_Return_C1 { get; set; } = 0;
-        public int Camera_Fail_C1 { get; set; } = 0;
-        public int Camera_Pass_C1 { get; set; } = 0;
+        public int Total_C1 { get; set; } = 0;
+        public int Total_Pass_C1 { get; set; } = 0;
+        public int Total_Failed_C1 { get; set; } = 0;
+
+        public int Camera_Read_Fail_C1 { get; set; } = 0;
+        public int Duplicate_C1 { get; set; } = 0;
+        public int Format_C1 { get; set; } = 0;
+
+        public int Empty_C1 { get; set; } = 0;
+        public int Rework_C1 { get; set; } = 0;
+        public int Unknown_C1 { get; set; } = 0;
+
+
+
         public int PLC_0_Fail_C1 { get; set; } = 0;
         public int PLC_0_Pass_C1 { get; set; } = 0;
-        public int PLC_1_Fail_C1 { get; set; } = 0;
         public int PLC_1_Pass_C1 { get; set; } = 0;
+        
+        public int PLC_1_Fail_C1 { get; set; } = 0;
+        public string TimeSendPLC_C1 { get; set; } = "0/0";
+        public string TimeProcess_C1 { get; set; } = "0/0";
+
+        public string WK1_TimeProcess_C1 { get; set; } = "0/0";
+        public string WK2_TimeProcess_C1 { get; set; } = "0/0";
+        public string WK3_TimeProcess_C1 { get; set; } = "0/0";
+
 
     }
 
