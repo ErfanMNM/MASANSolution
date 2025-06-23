@@ -1,4 +1,5 @@
 ﻿using MainClass;
+using QR_MASAN_01.Auth;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -29,6 +30,7 @@ namespace QR_MASAN_01
         public static Color WB_Color { get; set; }
         public static Color NG_Color { get; set; } = Color.FromArgb(255, 128, 0);
         public static Color OK_Color { get; set; } = Color.FromArgb(243, 249, 255);
+
 
         public static Dictionary<string, ProductData> Main_Content_Dictionary = new Dictionary<string, ProductData>();
 
@@ -68,7 +70,7 @@ namespace QR_MASAN_01
 
         public static long TimeUnixPrinter { get; set; } = 0;
 
-        //public static string 
+        public static UserData CurrentUser { get; set; } = new UserData(); // Lưu thông tin người dùng hiện tại
     }
 
     public enum e_Mode

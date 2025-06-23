@@ -24,13 +24,8 @@ namespace QR_MASAN_01.Views
         {
             if(!WK_Update.IsBusy)
             {
-                WK_Update.CancelAsync();
+                WK_Update.RunWorkerAsync();
             }
-        }
-
-        private void uiSymbolButton1_Click(object sender, EventArgs e)
-        {
-            uiTabControl1.SelectedTab = uiTabControl1.TabPages["tabPage2"];
         }
 
         private void WK_Update_DoWork(object sender, DoWorkEventArgs e)

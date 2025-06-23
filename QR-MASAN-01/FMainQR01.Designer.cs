@@ -34,6 +34,7 @@
             this.uiTopbar = new Sunny.UI.UIPanel();
             this.header = new Sunny.UI.UITableLayoutPanel();
             this.Logo = new Sunny.UI.UITableLayoutPanel();
+            this.LogoImg = new Sunny.UI.UIPanel();
             this.Logotext = new Sunny.UI.UIPanel();
             this.BodyPanel = new Sunny.UI.UITableLayoutPanel();
             this.navPanel = new Sunny.UI.UITableLayoutPanel();
@@ -41,16 +42,15 @@
             this.opUser = new Sunny.UI.UISymbolLabel();
             this.btnMini = new Sunny.UI.UISymbolButton();
             this.btnAppClose = new Sunny.UI.UISymbolButton();
+            this.uiTabControl1 = new Sunny.UI.UITabControl();
             this.footer = new Sunny.UI.UITableLayoutPanel();
             this.lblClock = new Sunny.UI.UIPanel();
             this.lblInternet = new Sunny.UI.UIPanel();
             this.lblAllStatus = new Sunny.UI.UIPanel();
+            this.uiScrollingText1 = new Sunny.UI.UIScrollingText();
             this.WKCheck = new System.ComponentModel.BackgroundWorker();
             this.ClockWK = new System.ComponentModel.BackgroundWorker();
             this.Internet = new SPMS1.InternetClass(this.components);
-            this.LogoImg = new Sunny.UI.UIPanel();
-            this.uiScrollingText1 = new Sunny.UI.UIScrollingText();
-            this.uiTabControl1 = new Sunny.UI.UITabControl();
             this.mainPanelLayout.SuspendLayout();
             this.uiTopbar.SuspendLayout();
             this.header.SuspendLayout();
@@ -98,6 +98,15 @@
             this.Logo.Name = "Logo";
             this.Logo.TagString = null;
             this.Logo.Paint += new System.Windows.Forms.PaintEventHandler(this.Logo_Paint);
+            // 
+            // LogoImg
+            // 
+            this.LogoImg.BackColor = System.Drawing.Color.Transparent;
+            this.LogoImg.BackgroundImage = global::QR_MASAN_01.Properties.Resources.LogoTanTien;
+            resources.ApplyResources(this.LogoImg, "LogoImg");
+            this.LogoImg.Name = "LogoImg";
+            this.LogoImg.RectColor = System.Drawing.Color.Transparent;
+            this.LogoImg.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Logotext
             // 
@@ -159,6 +168,8 @@
             resources.ApplyResources(this.opUser, "opUser");
             this.opUser.Name = "opUser";
             this.opUser.Symbol = 62142;
+            this.opUser.SymbolSize = 30;
+            this.opUser.Click += new System.EventHandler(this.opUser_Click);
             // 
             // btnMini
             // 
@@ -183,6 +194,20 @@
             this.btnAppClose.TipsColor = System.Drawing.Color.RoyalBlue;
             this.btnAppClose.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnAppClose.Click += new System.EventHandler(this.btnAppClose_Click);
+            // 
+            // uiTabControl1
+            // 
+            resources.ApplyResources(this.uiTabControl1, "uiTabControl1");
+            this.uiTabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
+            this.uiTabControl1.MainPage = "";
+            this.uiTabControl1.MenuStyle = Sunny.UI.UIMenuStyle.Custom;
+            this.uiTabControl1.Name = "uiTabControl1";
+            this.uiTabControl1.SelectedIndex = 0;
+            this.uiTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
+            this.uiTabControl1.TabBackColor = System.Drawing.Color.PaleTurquoise;
+            this.uiTabControl1.TabVisible = false;
+            this.uiTabControl1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.uiTabControl1.SelectedIndexChanged += new System.EventHandler(this.uiTabControl1_SelectedIndexChanged);
             // 
             // footer
             // 
@@ -221,6 +246,14 @@
             this.lblAllStatus.RectColor = System.Drawing.Color.DodgerBlue;
             this.lblAllStatus.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // uiScrollingText1
+            // 
+            this.uiScrollingText1.Active = true;
+            resources.ApplyResources(this.uiScrollingText1, "uiScrollingText1");
+            this.uiScrollingText1.Interval = 50;
+            this.uiScrollingText1.Name = "uiScrollingText1";
+            this.uiScrollingText1.Style = Sunny.UI.UIStyle.Custom;
+            // 
             // WKCheck
             // 
             this.WKCheck.WorkerSupportsCancellation = true;
@@ -234,37 +267,6 @@
             // Internet
             // 
             this.Internet.Url = "8.8.8.8";
-            // 
-            // LogoImg
-            // 
-            this.LogoImg.BackColor = System.Drawing.Color.Transparent;
-            this.LogoImg.BackgroundImage = global::QR_MASAN_01.Properties.Resources.LogoTanTien;
-            resources.ApplyResources(this.LogoImg, "LogoImg");
-            this.LogoImg.Name = "LogoImg";
-            this.LogoImg.RectColor = System.Drawing.Color.Transparent;
-            this.LogoImg.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiScrollingText1
-            // 
-            this.uiScrollingText1.Active = true;
-            resources.ApplyResources(this.uiScrollingText1, "uiScrollingText1");
-            this.uiScrollingText1.Interval = 50;
-            this.uiScrollingText1.Name = "uiScrollingText1";
-            this.uiScrollingText1.Style = Sunny.UI.UIStyle.Custom;
-            // 
-            // uiTabControl1
-            // 
-            resources.ApplyResources(this.uiTabControl1, "uiTabControl1");
-            this.uiTabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
-            this.uiTabControl1.MainPage = "";
-            this.uiTabControl1.MenuStyle = Sunny.UI.UIMenuStyle.Custom;
-            this.uiTabControl1.Name = "uiTabControl1";
-            this.uiTabControl1.SelectedIndex = 0;
-            this.uiTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
-            this.uiTabControl1.TabBackColor = System.Drawing.Color.PaleTurquoise;
-            this.uiTabControl1.TabVisible = false;
-            this.uiTabControl1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.uiTabControl1.SelectedIndexChanged += new System.EventHandler(this.uiTabControl1_SelectedIndexChanged);
             // 
             // FMainQR01
             // 

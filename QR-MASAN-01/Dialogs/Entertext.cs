@@ -17,9 +17,14 @@ namespace Diaglogs
         public string TextValue { get; set; }
         private bool isShiftEnabled = true; // Trạng thái Shift
         private bool isSymbolEnabled = false; // Trạng thái Symbol
+        public string TileText { get; set; } = "Nhập văn bản";
+
+        public bool IsPassword { get; set; } = false; // Biến để xác định có phải nhập mật khẩu hay không
         public Entertext()
         {
             InitializeComponent();
+
+            
         }
 
         private void uiSymbolButton1_Click(object sender, EventArgs e)
@@ -151,6 +156,39 @@ namespace Diaglogs
         private void Entertext_Load(object sender, EventArgs e)
         {
             textPadTextBox.Text = TextValue;
+
+            // Thiết lập tiêu đề của form
+            uiTitlePanel1.Text = TileText;
+
+            // Thiết lập chế độ nhập liệu
+            if (IsPassword)
+            {
+                textPadTextBox.PasswordChar = '*'; // Hiển thị mật khẩu
+                btnEyePass.Visible = true; // Hiển thị nút mắt để hiển thị/ẩn mật khẩu
+            }
+            else
+            {
+                textPadTextBox.PasswordChar = '\0'; // Hiển thị ký tự thực
+                btnEyePass.Visible = false; // Ẩn nút mắt
+            }
+        }
+
+        private void btnEyePass_Click(object sender, EventArgs e)
+        {
+            if(textPadTextBox.PasswordChar == '*')
+            {
+                // Hiển thị mật khẩu
+                textPadTextBox.PasswordChar = '\0'; // Hiển thị ký tự thực
+                // Cập nhật biểu tượng nút
+                btnEyePass.Symbol = 361550; // Biểu tượng mắt mở
+            }
+            else
+            {
+                // Ẩn mật khẩu
+                textPadTextBox.PasswordChar = '*'; // Hiển thị mật khẩu
+                // Cập nhật biểu tượng nút
+                btnEyePass.Symbol = 361552; // Biểu tượng mắt đóng
+            }
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace QR_MASAN_01
 {
@@ -15,6 +17,7 @@ namespace QR_MASAN_01
             PLC,
             ERROR,
             USER_ACTION,
+            LOGIN,
             SYSTEM_EVENT
         }
 
@@ -91,6 +94,65 @@ namespace QR_MASAN_01
 
         }
 
+        //sử dụng hàm này để lấy log từ sqlite trả về dạng datatable, lấy theo số lượng nhận vào từ page 
+        //ví dụ: GetLogsFromSQLite(e_LogType.CAMERA, 10, 100) sẽ lấy bản ghi từ 10 đến 100 của loại CAMERA lưu ý lấy từ ID lớn nhất ngược lại
+        public static DataTable Get_Logs_From_SQLite(e_LogType logType, int Page,  int Size)
+        {
+            string dbFilePath = "C:/.ABC/TanTienHiTech.dbmmccmsacc"; // Đường dẫn đến file SQLite
+            DataTable dt = new DataTable();
+            using (SQLiteConnection connection = new SQLiteConnection($"Data Source={dbFilePath};Version=3;"))
+            {
+                connection.Open();
+                string query = @"
+                    SELECT * FROM SystemLogs 
+                    WHERE LogType = @LogType 
+                    ORDER BY ID DESC 
+                    LIMIT @page, @size";
+                using (var command = new SQLiteCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@LogType", logType.ToString());
+                    command.Parameters.AddWithValue("@page", Page);
+                    command.Parameters.AddWithValue("@size", Size);
+                    using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(command))
+                    {
+                        adapter.Fill(dt);
+                    }
+                }
+            }
+            return dt;
+        }
+
+        //lấy số lượng bản ghi của loại log lấy dạng SQLiteDataAdapter để tránh kẹt
+        public static int Get_Log_Count(e_LogType logType)
+        {
+            string dbFilePath = "C:/.ABC/TanTienHiTech.dbmmccmsacc"; // Đường dẫn đến file SQLite
+            using (SQLiteConnection connection = new SQLiteConnection($"Data Source={dbFilePath};Version=3;"))
+            {
+                connection.Open();
+                string query = @"
+                    SELECT COUNT(*) FROM SystemLogs 
+                    WHERE LogType = @LogType";
+
+                using (var command = new SQLiteCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@LogType", logType.ToString());
+
+                    using (var adapter = new SQLiteDataAdapter(command))
+                    {
+                        DataTable dataTable = new DataTable();
+                        adapter.Fill(dataTable);
+                        if (dataTable.Rows.Count > 0)
+                        {
+                            return Convert.ToInt32(dataTable.Rows[0][0]);
+                        }
+                        else
+                        {
+                            return 0; // Không có bản ghi nào
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public class MFI_Logs

@@ -70,7 +70,9 @@
             this.uiTableLayoutPanel6 = new Sunny.UI.UITableLayoutPanel();
             this.btnClear = new Sunny.UI.UISymbolButton();
             this.Close = new Sunny.UI.UISymbolButton();
+            this.uiTableLayoutPanel7 = new Sunny.UI.UITableLayoutPanel();
             this.textPadTextBox = new Sunny.UI.UITextBox();
+            this.btnEyePass = new Sunny.UI.UISymbolButton();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel5.SuspendLayout();
@@ -78,6 +80,7 @@
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTableLayoutPanel2.SuspendLayout();
             this.uiTableLayoutPanel6.SuspendLayout();
+            this.uiTableLayoutPanel7.SuspendLayout();
             this.SuspendLayout();
             // 
             // uiTitlePanel1
@@ -93,7 +96,7 @@
             this.uiTitlePanel1.Name = "uiTitlePanel1";
             this.uiTitlePanel1.Padding = new System.Windows.Forms.Padding(1, 45, 1, 1);
             this.uiTitlePanel1.ShowText = false;
-            this.uiTitlePanel1.Size = new System.Drawing.Size(670, 275);
+            this.uiTitlePanel1.Size = new System.Drawing.Size(670, 319);
             this.uiTitlePanel1.TabIndex = 0;
             this.uiTitlePanel1.Text = "Nhập thông tin";
             this.uiTitlePanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -112,12 +115,12 @@
             this.uiTableLayoutPanel1.Location = new System.Drawing.Point(1, 45);
             this.uiTableLayoutPanel1.Name = "uiTableLayoutPanel1";
             this.uiTableLayoutPanel1.RowCount = 5;
-            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.uiTableLayoutPanel1.Size = new System.Drawing.Size(668, 229);
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 23.80952F));
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 18.68132F));
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 19.04762F));
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 19.41392F));
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20.14652F));
+            this.uiTableLayoutPanel1.Size = new System.Drawing.Size(668, 273);
             this.uiTableLayoutPanel1.TabIndex = 2;
             this.uiTableLayoutPanel1.TagString = null;
             // 
@@ -135,11 +138,11 @@
             this.uiTableLayoutPanel5.Controls.Add(this.S123, 0, 0);
             this.uiTableLayoutPanel5.Controls.Add(this.uiSymbolButton1, 4, 0);
             this.uiTableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel5.Location = new System.Drawing.Point(3, 183);
+            this.uiTableLayoutPanel5.Location = new System.Drawing.Point(3, 220);
             this.uiTableLayoutPanel5.Name = "uiTableLayoutPanel5";
             this.uiTableLayoutPanel5.RowCount = 1;
             this.uiTableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTableLayoutPanel5.Size = new System.Drawing.Size(662, 43);
+            this.uiTableLayoutPanel5.Size = new System.Drawing.Size(662, 50);
             this.uiTableLayoutPanel5.TabIndex = 5;
             this.uiTableLayoutPanel5.TagString = null;
             // 
@@ -153,7 +156,9 @@
             this.Dot.Location = new System.Drawing.Point(465, 3);
             this.Dot.MinimumSize = new System.Drawing.Size(1, 1);
             this.Dot.Name = "Dot";
-            this.Dot.Size = new System.Drawing.Size(58, 37);
+            this.Dot.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.Dot.RectSize = 2;
+            this.Dot.Size = new System.Drawing.Size(58, 44);
             this.Dot.TabIndex = 8;
             this.Dot.Text = ".";
             this.Dot.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -169,7 +174,9 @@
             this.Space.Location = new System.Drawing.Point(168, 3);
             this.Space.MinimumSize = new System.Drawing.Size(1, 1);
             this.Space.Name = "Space";
-            this.Space.Size = new System.Drawing.Size(291, 37);
+            this.Space.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.Space.RectSize = 2;
+            this.Space.Size = new System.Drawing.Size(291, 44);
             this.Space.TabIndex = 5;
             this.Space.Text = "_";
             this.Space.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -185,7 +192,7 @@
             this.Dot2.Location = new System.Drawing.Point(102, 3);
             this.Dot2.MinimumSize = new System.Drawing.Size(1, 1);
             this.Dot2.Name = "Dot2";
-            this.Dot2.Size = new System.Drawing.Size(60, 37);
+            this.Dot2.Size = new System.Drawing.Size(60, 44);
             this.Dot2.TabIndex = 2;
             this.Dot2.Text = ",";
             this.Dot2.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -202,7 +209,7 @@
             this.S123.MinimumSize = new System.Drawing.Size(1, 1);
             this.S123.Name = "S123";
             this.S123.Radius = 28;
-            this.S123.Size = new System.Drawing.Size(93, 37);
+            this.S123.Size = new System.Drawing.Size(93, 44);
             this.S123.TabIndex = 1;
             this.S123.Text = "?123";
             this.S123.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -219,7 +226,7 @@
             this.uiSymbolButton1.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiSymbolButton1.Name = "uiSymbolButton1";
             this.uiSymbolButton1.Radius = 28;
-            this.uiSymbolButton1.Size = new System.Drawing.Size(130, 37);
+            this.uiSymbolButton1.Size = new System.Drawing.Size(130, 44);
             this.uiSymbolButton1.Symbol = 61452;
             this.uiSymbolButton1.TabIndex = 9;
             this.uiSymbolButton1.Text = "Enter";
@@ -248,11 +255,11 @@
             this.uiTableLayoutPanel4.Controls.Add(this.Shift, 0, 0);
             this.uiTableLayoutPanel4.Controls.Add(this.uiSymbolButton2, 8, 0);
             this.uiTableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel4.Location = new System.Drawing.Point(3, 138);
+            this.uiTableLayoutPanel4.Location = new System.Drawing.Point(3, 168);
             this.uiTableLayoutPanel4.Name = "uiTableLayoutPanel4";
             this.uiTableLayoutPanel4.RowCount = 1;
             this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTableLayoutPanel4.Size = new System.Drawing.Size(662, 39);
+            this.uiTableLayoutPanel4.Size = new System.Drawing.Size(662, 46);
             this.uiTableLayoutPanel4.TabIndex = 4;
             this.uiTableLayoutPanel4.TagString = null;
             // 
@@ -266,7 +273,9 @@
             this.M.Location = new System.Drawing.Point(498, 3);
             this.M.MinimumSize = new System.Drawing.Size(1, 1);
             this.M.Name = "M";
-            this.M.Size = new System.Drawing.Size(60, 33);
+            this.M.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.M.RectSize = 2;
+            this.M.Size = new System.Drawing.Size(60, 40);
             this.M.TabIndex = 8;
             this.M.Text = "M";
             this.M.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -282,7 +291,9 @@
             this.N.Location = new System.Drawing.Point(432, 3);
             this.N.MinimumSize = new System.Drawing.Size(1, 1);
             this.N.Name = "N";
-            this.N.Size = new System.Drawing.Size(60, 33);
+            this.N.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.N.RectSize = 2;
+            this.N.Size = new System.Drawing.Size(60, 40);
             this.N.TabIndex = 7;
             this.N.Text = "N";
             this.N.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -298,7 +309,9 @@
             this.B.Location = new System.Drawing.Point(366, 3);
             this.B.MinimumSize = new System.Drawing.Size(1, 1);
             this.B.Name = "B";
-            this.B.Size = new System.Drawing.Size(60, 33);
+            this.B.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.B.RectSize = 2;
+            this.B.Size = new System.Drawing.Size(60, 40);
             this.B.TabIndex = 6;
             this.B.Text = "B";
             this.B.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -314,7 +327,9 @@
             this.V.Location = new System.Drawing.Point(300, 3);
             this.V.MinimumSize = new System.Drawing.Size(1, 1);
             this.V.Name = "V";
-            this.V.Size = new System.Drawing.Size(60, 33);
+            this.V.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.V.RectSize = 2;
+            this.V.Size = new System.Drawing.Size(60, 40);
             this.V.TabIndex = 5;
             this.V.Text = "V";
             this.V.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -330,7 +345,9 @@
             this.C.Location = new System.Drawing.Point(234, 3);
             this.C.MinimumSize = new System.Drawing.Size(1, 1);
             this.C.Name = "C";
-            this.C.Size = new System.Drawing.Size(60, 33);
+            this.C.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.C.RectSize = 2;
+            this.C.Size = new System.Drawing.Size(60, 40);
             this.C.TabIndex = 4;
             this.C.Text = "C";
             this.C.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -346,7 +363,9 @@
             this.X.Location = new System.Drawing.Point(168, 3);
             this.X.MinimumSize = new System.Drawing.Size(1, 1);
             this.X.Name = "X";
-            this.X.Size = new System.Drawing.Size(60, 33);
+            this.X.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.X.RectSize = 2;
+            this.X.Size = new System.Drawing.Size(60, 40);
             this.X.TabIndex = 3;
             this.X.Text = "X";
             this.X.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -362,7 +381,9 @@
             this.Z.Location = new System.Drawing.Point(102, 3);
             this.Z.MinimumSize = new System.Drawing.Size(1, 1);
             this.Z.Name = "Z";
-            this.Z.Size = new System.Drawing.Size(60, 33);
+            this.Z.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.Z.RectSize = 2;
+            this.Z.Size = new System.Drawing.Size(60, 40);
             this.Z.TabIndex = 2;
             this.Z.Text = "Z";
             this.Z.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -378,7 +399,7 @@
             this.Shift.Location = new System.Drawing.Point(3, 3);
             this.Shift.MinimumSize = new System.Drawing.Size(1, 1);
             this.Shift.Name = "Shift";
-            this.Shift.Size = new System.Drawing.Size(93, 33);
+            this.Shift.Size = new System.Drawing.Size(93, 40);
             this.Shift.Symbol = 58;
             this.Shift.TabIndex = 10;
             this.Shift.Text = "Shift";
@@ -394,7 +415,9 @@
             this.uiSymbolButton2.Location = new System.Drawing.Point(564, 3);
             this.uiSymbolButton2.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiSymbolButton2.Name = "uiSymbolButton2";
-            this.uiSymbolButton2.Size = new System.Drawing.Size(95, 33);
+            this.uiSymbolButton2.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.uiSymbolButton2.RectSize = 2;
+            this.uiSymbolButton2.Size = new System.Drawing.Size(95, 40);
             this.uiSymbolButton2.Symbol = 557674;
             this.uiSymbolButton2.TabIndex = 11;
             this.uiSymbolButton2.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -424,11 +447,11 @@
             this.uiTableLayoutPanel3.Controls.Add(this.S, 2, 0);
             this.uiTableLayoutPanel3.Controls.Add(this.A, 1, 0);
             this.uiTableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel3.Location = new System.Drawing.Point(3, 93);
+            this.uiTableLayoutPanel3.Location = new System.Drawing.Point(3, 117);
             this.uiTableLayoutPanel3.Name = "uiTableLayoutPanel3";
             this.uiTableLayoutPanel3.RowCount = 1;
             this.uiTableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTableLayoutPanel3.Size = new System.Drawing.Size(662, 39);
+            this.uiTableLayoutPanel3.Size = new System.Drawing.Size(662, 45);
             this.uiTableLayoutPanel3.TabIndex = 1;
             this.uiTableLayoutPanel3.TagString = null;
             // 
@@ -442,7 +465,9 @@
             this.L.Location = new System.Drawing.Point(564, 3);
             this.L.MinimumSize = new System.Drawing.Size(1, 1);
             this.L.Name = "L";
-            this.L.Size = new System.Drawing.Size(60, 33);
+            this.L.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.L.RectSize = 2;
+            this.L.Size = new System.Drawing.Size(60, 39);
             this.L.TabIndex = 9;
             this.L.Text = "L";
             this.L.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -458,7 +483,9 @@
             this.K.Location = new System.Drawing.Point(498, 3);
             this.K.MinimumSize = new System.Drawing.Size(1, 1);
             this.K.Name = "K";
-            this.K.Size = new System.Drawing.Size(60, 33);
+            this.K.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.K.RectSize = 2;
+            this.K.Size = new System.Drawing.Size(60, 39);
             this.K.TabIndex = 8;
             this.K.Text = "K";
             this.K.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -474,7 +501,9 @@
             this.J.Location = new System.Drawing.Point(432, 3);
             this.J.MinimumSize = new System.Drawing.Size(1, 1);
             this.J.Name = "J";
-            this.J.Size = new System.Drawing.Size(60, 33);
+            this.J.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.J.RectSize = 2;
+            this.J.Size = new System.Drawing.Size(60, 39);
             this.J.TabIndex = 7;
             this.J.Text = "J";
             this.J.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -490,7 +519,9 @@
             this.H.Location = new System.Drawing.Point(366, 3);
             this.H.MinimumSize = new System.Drawing.Size(1, 1);
             this.H.Name = "H";
-            this.H.Size = new System.Drawing.Size(60, 33);
+            this.H.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.H.RectSize = 2;
+            this.H.Size = new System.Drawing.Size(60, 39);
             this.H.TabIndex = 6;
             this.H.Text = "H";
             this.H.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -506,7 +537,9 @@
             this.G.Location = new System.Drawing.Point(300, 3);
             this.G.MinimumSize = new System.Drawing.Size(1, 1);
             this.G.Name = "G";
-            this.G.Size = new System.Drawing.Size(60, 33);
+            this.G.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.G.RectSize = 2;
+            this.G.Size = new System.Drawing.Size(60, 39);
             this.G.TabIndex = 5;
             this.G.Text = "G";
             this.G.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -522,7 +555,9 @@
             this.F.Location = new System.Drawing.Point(234, 3);
             this.F.MinimumSize = new System.Drawing.Size(1, 1);
             this.F.Name = "F";
-            this.F.Size = new System.Drawing.Size(60, 33);
+            this.F.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.F.RectSize = 2;
+            this.F.Size = new System.Drawing.Size(60, 39);
             this.F.TabIndex = 4;
             this.F.Text = "F";
             this.F.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -538,7 +573,9 @@
             this.D.Location = new System.Drawing.Point(168, 3);
             this.D.MinimumSize = new System.Drawing.Size(1, 1);
             this.D.Name = "D";
-            this.D.Size = new System.Drawing.Size(60, 33);
+            this.D.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.D.RectSize = 2;
+            this.D.Size = new System.Drawing.Size(60, 39);
             this.D.TabIndex = 3;
             this.D.Text = "D";
             this.D.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -554,7 +591,9 @@
             this.S.Location = new System.Drawing.Point(102, 3);
             this.S.MinimumSize = new System.Drawing.Size(1, 1);
             this.S.Name = "S";
-            this.S.Size = new System.Drawing.Size(60, 33);
+            this.S.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.S.RectSize = 2;
+            this.S.Size = new System.Drawing.Size(60, 39);
             this.S.TabIndex = 2;
             this.S.Text = "S";
             this.S.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -570,7 +609,9 @@
             this.A.Location = new System.Drawing.Point(36, 3);
             this.A.MinimumSize = new System.Drawing.Size(1, 1);
             this.A.Name = "A";
-            this.A.Size = new System.Drawing.Size(60, 33);
+            this.A.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.A.RectSize = 2;
+            this.A.Size = new System.Drawing.Size(60, 39);
             this.A.TabIndex = 1;
             this.A.Text = "A";
             this.A.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -600,11 +641,11 @@
             this.uiTableLayoutPanel2.Controls.Add(this.W, 1, 0);
             this.uiTableLayoutPanel2.Controls.Add(this.Q, 0, 0);
             this.uiTableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel2.Location = new System.Drawing.Point(3, 48);
+            this.uiTableLayoutPanel2.Location = new System.Drawing.Point(3, 67);
             this.uiTableLayoutPanel2.Name = "uiTableLayoutPanel2";
             this.uiTableLayoutPanel2.RowCount = 1;
             this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTableLayoutPanel2.Size = new System.Drawing.Size(662, 39);
+            this.uiTableLayoutPanel2.Size = new System.Drawing.Size(662, 44);
             this.uiTableLayoutPanel2.TabIndex = 0;
             this.uiTableLayoutPanel2.TagString = null;
             // 
@@ -618,7 +659,9 @@
             this.P.Location = new System.Drawing.Point(597, 3);
             this.P.MinimumSize = new System.Drawing.Size(1, 1);
             this.P.Name = "P";
-            this.P.Size = new System.Drawing.Size(62, 33);
+            this.P.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.P.RectSize = 2;
+            this.P.Size = new System.Drawing.Size(62, 38);
             this.P.TabIndex = 9;
             this.P.Text = "P";
             this.P.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -634,7 +677,9 @@
             this.O.Location = new System.Drawing.Point(531, 3);
             this.O.MinimumSize = new System.Drawing.Size(1, 1);
             this.O.Name = "O";
-            this.O.Size = new System.Drawing.Size(60, 33);
+            this.O.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.O.RectSize = 2;
+            this.O.Size = new System.Drawing.Size(60, 38);
             this.O.TabIndex = 8;
             this.O.Text = "O";
             this.O.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -650,7 +695,9 @@
             this.I.Location = new System.Drawing.Point(465, 3);
             this.I.MinimumSize = new System.Drawing.Size(1, 1);
             this.I.Name = "I";
-            this.I.Size = new System.Drawing.Size(60, 33);
+            this.I.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.I.RectSize = 2;
+            this.I.Size = new System.Drawing.Size(60, 38);
             this.I.TabIndex = 7;
             this.I.Text = "I";
             this.I.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -666,7 +713,9 @@
             this.U.Location = new System.Drawing.Point(399, 3);
             this.U.MinimumSize = new System.Drawing.Size(1, 1);
             this.U.Name = "U";
-            this.U.Size = new System.Drawing.Size(60, 33);
+            this.U.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.U.RectSize = 2;
+            this.U.Size = new System.Drawing.Size(60, 38);
             this.U.TabIndex = 6;
             this.U.Text = "U";
             this.U.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -682,7 +731,9 @@
             this.Y.Location = new System.Drawing.Point(333, 3);
             this.Y.MinimumSize = new System.Drawing.Size(1, 1);
             this.Y.Name = "Y";
-            this.Y.Size = new System.Drawing.Size(60, 33);
+            this.Y.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.Y.RectSize = 2;
+            this.Y.Size = new System.Drawing.Size(60, 38);
             this.Y.TabIndex = 5;
             this.Y.Text = "Y";
             this.Y.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -698,7 +749,9 @@
             this.T.Location = new System.Drawing.Point(267, 3);
             this.T.MinimumSize = new System.Drawing.Size(1, 1);
             this.T.Name = "T";
-            this.T.Size = new System.Drawing.Size(60, 33);
+            this.T.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.T.RectSize = 2;
+            this.T.Size = new System.Drawing.Size(60, 38);
             this.T.TabIndex = 4;
             this.T.Text = "T";
             this.T.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -714,7 +767,9 @@
             this.R.Location = new System.Drawing.Point(201, 3);
             this.R.MinimumSize = new System.Drawing.Size(1, 1);
             this.R.Name = "R";
-            this.R.Size = new System.Drawing.Size(60, 33);
+            this.R.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.R.RectSize = 2;
+            this.R.Size = new System.Drawing.Size(60, 38);
             this.R.TabIndex = 3;
             this.R.Text = "R";
             this.R.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -730,7 +785,9 @@
             this.E.Location = new System.Drawing.Point(135, 3);
             this.E.MinimumSize = new System.Drawing.Size(1, 1);
             this.E.Name = "E";
-            this.E.Size = new System.Drawing.Size(60, 33);
+            this.E.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.E.RectSize = 2;
+            this.E.Size = new System.Drawing.Size(60, 38);
             this.E.TabIndex = 2;
             this.E.Text = "E";
             this.E.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -746,7 +803,9 @@
             this.W.Location = new System.Drawing.Point(69, 3);
             this.W.MinimumSize = new System.Drawing.Size(1, 1);
             this.W.Name = "W";
-            this.W.Size = new System.Drawing.Size(60, 33);
+            this.W.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.W.RectSize = 2;
+            this.W.Size = new System.Drawing.Size(60, 38);
             this.W.TabIndex = 1;
             this.W.Text = "W";
             this.W.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -762,7 +821,9 @@
             this.Q.Location = new System.Drawing.Point(3, 3);
             this.Q.MinimumSize = new System.Drawing.Size(1, 1);
             this.Q.Name = "Q";
-            this.Q.Size = new System.Drawing.Size(60, 33);
+            this.Q.RectColor = System.Drawing.Color.DeepSkyBlue;
+            this.Q.RectSize = 2;
+            this.Q.Size = new System.Drawing.Size(60, 38);
             this.Q.TabIndex = 0;
             this.Q.Text = "Q";
             this.Q.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -771,18 +832,18 @@
             // uiTableLayoutPanel6
             // 
             this.uiTableLayoutPanel6.ColumnCount = 3;
-            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 83.92523F));
-            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.07477F));
-            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 45F));
+            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 84.06504F));
+            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15.93496F));
+            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 46F));
             this.uiTableLayoutPanel6.Controls.Add(this.btnClear, 1, 0);
             this.uiTableLayoutPanel6.Controls.Add(this.Close, 2, 0);
-            this.uiTableLayoutPanel6.Controls.Add(this.textPadTextBox, 0, 0);
+            this.uiTableLayoutPanel6.Controls.Add(this.uiTableLayoutPanel7, 0, 0);
             this.uiTableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTableLayoutPanel6.Location = new System.Drawing.Point(3, 3);
             this.uiTableLayoutPanel6.Name = "uiTableLayoutPanel6";
             this.uiTableLayoutPanel6.RowCount = 1;
             this.uiTableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel6.Size = new System.Drawing.Size(662, 39);
+            this.uiTableLayoutPanel6.Size = new System.Drawing.Size(662, 58);
             this.uiTableLayoutPanel6.TabIndex = 6;
             this.uiTableLayoutPanel6.TagString = null;
             // 
@@ -796,7 +857,7 @@
             this.btnClear.Location = new System.Drawing.Point(520, 3);
             this.btnClear.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(93, 33);
+            this.btnClear.Size = new System.Drawing.Size(92, 52);
             this.btnClear.Symbol = 61460;
             this.btnClear.SymbolColor = System.Drawing.SystemColors.WindowText;
             this.btnClear.TabIndex = 8;
@@ -810,36 +871,72 @@
             this.Close.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Close.FillColor = System.Drawing.Color.OrangeRed;
             this.Close.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.Close.Location = new System.Drawing.Point(619, 3);
+            this.Close.Location = new System.Drawing.Point(618, 3);
             this.Close.MinimumSize = new System.Drawing.Size(1, 1);
             this.Close.Name = "Close";
-            this.Close.Size = new System.Drawing.Size(40, 33);
+            this.Close.Size = new System.Drawing.Size(41, 52);
             this.Close.Symbol = 61453;
             this.Close.TabIndex = 3;
             this.Close.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.Close.Click += new System.EventHandler(this.Close_Click);
+            // 
+            // uiTableLayoutPanel7
+            // 
+            this.uiTableLayoutPanel7.ColumnCount = 2;
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 92.38281F));
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 7.617188F));
+            this.uiTableLayoutPanel7.Controls.Add(this.btnEyePass, 1, 0);
+            this.uiTableLayoutPanel7.Controls.Add(this.textPadTextBox, 0, 0);
+            this.uiTableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel7.Location = new System.Drawing.Point(2, 2);
+            this.uiTableLayoutPanel7.Margin = new System.Windows.Forms.Padding(2);
+            this.uiTableLayoutPanel7.Name = "uiTableLayoutPanel7";
+            this.uiTableLayoutPanel7.RowCount = 1;
+            this.uiTableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel7.Size = new System.Drawing.Size(513, 54);
+            this.uiTableLayoutPanel7.TabIndex = 9;
+            this.uiTableLayoutPanel7.TagString = null;
             // 
             // textPadTextBox
             // 
             this.textPadTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.textPadTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textPadTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.textPadTextBox.Location = new System.Drawing.Point(4, 5);
-            this.textPadTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.textPadTextBox.Location = new System.Drawing.Point(2, 2);
+            this.textPadTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.textPadTextBox.MinimumSize = new System.Drawing.Size(1, 16);
             this.textPadTextBox.Name = "textPadTextBox";
             this.textPadTextBox.Padding = new System.Windows.Forms.Padding(5);
             this.textPadTextBox.ShowText = false;
-            this.textPadTextBox.Size = new System.Drawing.Size(509, 29);
-            this.textPadTextBox.TabIndex = 7;
+            this.textPadTextBox.Size = new System.Drawing.Size(469, 50);
+            this.textPadTextBox.TabIndex = 8;
             this.textPadTextBox.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.textPadTextBox.Watermark = "";
+            // 
+            // btnEyePass
+            // 
+            this.btnEyePass.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnEyePass.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnEyePass.FillColor = System.Drawing.Color.LightSeaGreen;
+            this.btnEyePass.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnEyePass.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.btnEyePass.Location = new System.Drawing.Point(476, 3);
+            this.btnEyePass.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnEyePass.Name = "btnEyePass";
+            this.btnEyePass.Size = new System.Drawing.Size(34, 48);
+            this.btnEyePass.Symbol = 361552;
+            this.btnEyePass.SymbolColor = System.Drawing.SystemColors.WindowText;
+            this.btnEyePass.SymbolOffset = new System.Drawing.Point(-4, 0);
+            this.btnEyePass.SymbolSize = 26;
+            this.btnEyePass.TabIndex = 9;
+            this.btnEyePass.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnEyePass.Click += new System.EventHandler(this.btnEyePass_Click);
             // 
             // Entertext
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(670, 275);
+            this.ClientSize = new System.Drawing.Size(670, 319);
             this.Controls.Add(this.uiTitlePanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Entertext";
@@ -852,6 +949,7 @@
             this.uiTableLayoutPanel3.ResumeLayout(false);
             this.uiTableLayoutPanel2.ResumeLayout(false);
             this.uiTableLayoutPanel6.ResumeLayout(false);
+            this.uiTableLayoutPanel7.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -900,6 +998,8 @@
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel6;
         private Sunny.UI.UISymbolButton btnClear;
         private Sunny.UI.UISymbolButton Close;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel7;
+        private Sunny.UI.UISymbolButton btnEyePass;
         private Sunny.UI.UITextBox textPadTextBox;
     }
 }

@@ -52,7 +52,6 @@ namespace QR_MASAN_01
                 UIStyles.CultureInfo = CultureInfos.en_US;
                 this.MainTabControl = uiTabControl1;
                 uiNavMenu1.TabControl = uiTabControl1;
-
                 WKCheck.RunWorkerAsync();
                 
                 _setings.LoadSettings("C:/Phan_Mem/Configs.xlsx");
@@ -73,6 +72,7 @@ namespace QR_MASAN_01
             // Ghi log sự kiện đóng ứng dụng
             SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_EVENT, "Đóng ứng dụng", "System", "Người dùng đã đóng ứng dụng");
             SystemLogs.LogQueue.Enqueue(systemLogs);
+            ClockWK.CancelAsync();
             Environment.Exit(0);
         }
         private void RenderControlForm()
@@ -90,7 +90,7 @@ namespace QR_MASAN_01
 
           _FMFI.FMFI_INIT();
            scanQR.INIT();
-           FSystemlogs.INIT();
+           
 
             //kiểm soát máy in
 
@@ -196,7 +196,7 @@ namespace QR_MASAN_01
             //đồng hồ
             while(!ClockWK.CancellationPending)
             {
-                if (UserInfo.UserName == string.Empty)
+                if (Globalvariable.CurrentUser.Username == string.Empty)
                 {
                     this.Invoke(new Action(() =>
                     {
@@ -211,11 +211,27 @@ namespace QR_MASAN_01
                 }
                 else
                 {
-                    //nế             u đã đăng nhập thì render các control form
+                    //nếu đã đăng nhập thì render các control form
                     this.Invoke(new Action(() =>
                     {
                         if (uiNavMenu1.Nodes.Count == 1)
                         {
+                            opUser.Text = Globalvariable.CurrentUser.Username;
+                            switch (Globalvariable.CurrentUser.Role)
+                            {
+                                case "Admin":
+                                    opUser.ForeColor = Color.Red;
+                                    break;
+                                case "Operator":
+                                    opUser.ForeColor = Color.Blue;
+                                    break;
+                                case "Worker":
+                                    opUser.ForeColor = Color.Green;
+                                    break;
+                                default:
+                                    opUser.ForeColor = Color.Gray;
+                                    break;
+                            }
                             uiNavMenu1.Nodes[0].Remove();
                             RenderControlForm();
                         }
@@ -226,24 +242,6 @@ namespace QR_MASAN_01
                 Thread.Sleep(100);
             }
             
-        }
-
-        private void uiSymbolLabel1_Click(object sender, EventArgs e)
-        {
-            string value = "";
-            if (this.ShowInputPasswordDialog(ref value, false, "Enter Password", false, 30))
-            {
-                if (value != "tantien512" || string.IsNullOrEmpty(value))
-                {
-                    this.ShowWarningDialog("Incorrect password.", "Incorrect password or you do not have the authorization to perform this action. Please check again.", UIStyle.Red);
-                    return;
-                }
-                else {
-                    this.ShowWarningDialog("SU Enable.", "SU Enable.", UIStyle.Red);
-                    //uiNavMenu1.CreateNode(AddPage(new F1Superuser(), 1999));
-                }
-
-            }
         }
 
         private void Logo_Paint(object sender, PaintEventArgs e)
@@ -257,6 +255,11 @@ namespace QR_MASAN_01
         }
 
         private void uiTabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void opUser_Click(object sender, EventArgs e)
         {
 
         }
