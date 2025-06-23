@@ -15,6 +15,8 @@ using QR_MASAN_01.Views;
 using QR_MASAN_01.Mid;
 using QR_MASAN_01.Views.Settings;
 using QR_MASAN_01.Views.Printers;
+using QR_MASAN_01.Views.Scada;
+using QR_MASAN_01.Auth;
 
 
 
@@ -35,41 +37,60 @@ namespace QR_MASAN_01
         MyLanPrinter _myLanPrinter = new MyLanPrinter();
         Printer_V7 _printer_V7 = new Printer_V7();
         FStatistics _FStatistics = new FStatistics();
-
+        FSystemlogs FSystemlogs = new FSystemlogs();
         F1PLC _f1PLC = new F1PLC();
+        LoginForm loginForm = new LoginForm();
+
         public FMainQR01()
         {
-            InitializeComponent();
+            //khởi động phần mềm
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_EVENT, "Phần mềm khởi động", "System", "Bắt đầu khởi động");
+            SystemLogs.LogQueue.Enqueue(systemLogs);
+            try
+            {
+                InitializeComponent();
+                UIStyles.CultureInfo = CultureInfos.en_US;
+                this.MainTabControl = uiTabControl1;
+                uiNavMenu1.TabControl = uiTabControl1;
 
-            WKCheck.RunWorkerAsync();
-
-            
-            ClockWK.RunWorkerAsync();
-
-            _setings.LoadSettings("C:/Phan_Mem/Configs.xlsx");
-
-            RenderControlForm();
+                WKCheck.RunWorkerAsync();
+                
+                _setings.LoadSettings("C:/Phan_Mem/Configs.xlsx");
+                
+            }
+            catch (Exception ex)
+            {
+                // Ghi log lỗi vào hàng đợi
+                SystemLogs.LogQueue.Enqueue(new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.ERROR, "Lỗi khởi động phần mềm", "System", ex.Message));
+                // Hiển thị thông báo lỗi cho người dùng
+                this.ShowErrorDialog("Lỗi khởi động phần mềm", ex.Message, UIStyle.Red);
+            }
+                
         }
 
         private void btnAppClose_Click(object sender, EventArgs e)
         {
+            // Ghi log sự kiện đóng ứng dụng
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_EVENT, "Đóng ứng dụng", "System", "Người dùng đã đóng ứng dụng");
+            SystemLogs.LogQueue.Enqueue(systemLogs);
             Environment.Exit(0);
         }
         private void RenderControlForm()
         {
-            UIStyles.CultureInfo = CultureInfos.en_US;
-            this.MainTabControl = uiTabControl1;
-
-            uiNavMenu1.TabControl = uiTabControl1;
+            
             uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
            uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
            uiNavMenu1.CreateNode(AddPage(scanQR, 1004));
             uiNavMenu1.CreateNode(AddPage(FormTest, 1998));
             uiNavMenu1.CreateNode(AddPage(_f1PLC, 1009));
             uiNavMenu1.CreateNode(AddPage(_FStatistics, 1002));
+            uiNavMenu1.CreateNode(AddPage(FSystemlogs, 1005));
             uiNavMenu1.SelectPage(1001);
+
+
           _FMFI.FMFI_INIT();
            scanQR.INIT();
+           FSystemlogs.INIT();
 
             //kiểm soát máy in
 
@@ -92,10 +113,9 @@ namespace QR_MASAN_01
                     break;
             }
         }
-
-
         private void ToggleFullScreen()
         {
+
             if (this.WindowState != FormWindowState.Maximized)
             {
                 // Lưu trữ trạng thái và kích thước hiện tại để có thể khôi phục lại sau
@@ -115,8 +135,9 @@ namespace QR_MASAN_01
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+
             ToggleFullScreen();
-           
+            ClockWK.RunWorkerAsync();
         }
         //kiểm tra mấy thứ linh tinh
         bool InternetConnection = false;
@@ -127,31 +148,36 @@ namespace QR_MASAN_01
 
             while (!WKCheck.CancellationPending)
             {
-                demso++;
-                Thread.Sleep(500);
-
+                Thread.Sleep(1000);
                 //internet
-                if (demso == 10)
-                {
+
                     InternetConnection = Internet.IsOK();
                     InternetSpeed = Internet.GetInternetSpeed();
 
-                    if (InternetConnection)
+                if (InternetConnection)
+                {
+                    lblInternet.Text = $"Internet:{InternetSpeed:F1} KBps";
+                    lblInternet.FillColor = Color.FromArgb(243, 249, 255);
+                }
+                else
+                {
+                    demso++;
+                    if (demso > 10)
                     {
-                        lblInternet.Text = $"Internet:{InternetSpeed:F1} KBps";
-                        lblInternet.FillColor = Color.FromArgb(243, 249, 255);
-                    }
-                    else
-                    {
+                        //ghi log lỗi
+                        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.ERROR, "Lỗi kết nối Internet", "System", "Không thể kết nối Internet trong 10 giây");
+                        SystemLogs.LogQueue.Enqueue(systemLogs);
+                        demso = 0;
                         lblInternet.Text = "Internet: Lỗi";
                         lblInternet.FillColor = Color.Red;
                     }
 
-                    demso = 0;
                 }
+
 
                 if(Globalvariable.AllReady)
                 {
+
                     lblAllStatus.Text = "Hệ thống sẵn sàng";
                     lblAllStatus.FillColor = Color.Green;
                     lblAllStatus.ForeColor = Color.White;
@@ -170,6 +196,32 @@ namespace QR_MASAN_01
             //đồng hồ
             while(!ClockWK.CancellationPending)
             {
+                if (UserInfo.UserName == string.Empty)
+                {
+                    this.Invoke(new Action(() =>
+                    {
+                        if (uiNavMenu1.Nodes.Count <= 0)
+                        {
+                            uiNavMenu1.CreateNode(AddPage(loginForm, 1999));
+                            uiNavMenu1.SelectPage(1999);
+                        }
+
+                    }));
+
+                }
+                else
+                {
+                    //nế             u đã đăng nhập thì render các control form
+                    this.Invoke(new Action(() =>
+                    {
+                        if (uiNavMenu1.Nodes.Count == 1)
+                        {
+                            uiNavMenu1.Nodes[0].Remove();
+                            RenderControlForm();
+                        }
+                    }));
+
+                }
                 lblClock.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
                 Thread.Sleep(100);
             }

@@ -47,15 +47,33 @@ namespace MainClass
 
     public class Counter_Info
     {
-        public int Total_Code_C2 { get; set; } = 0;
-        public int Total_Return_C2 { get; set; } = 0;
-        public int Camera_Fail_C2 { get; set; } = 0;
+        public int Total_C2 { get; set; } = 0;
+        public int Total_Pass_C2 { get; set; } = 0;
+        public int Total_Failed_C2 { get; set; } = 0;
+
+        public int Camera_Read_Fail_C2 { get; set; } = 0;
+        public int Duplicate_C2 { get; set; } = 0;
+        public int Format_C2 { get; set; } = 0;
+
+        public int Empty_C2 { get; set; } = 0;
+        public int Rework_C2 { get; set; } = 0;
+        public int Unknown_C2 { get; set; } = 0;
+
+
+
         public int PLC_0_Fail_C2 { get; set; } = 0;
         public int PLC_0_Pass_C2 { get; set; } = 0;
-        public int PLC_1_Fail_C2 { get; set; } = 0;
         public int PLC_1_Pass_C2 { get; set; } = 0;
 
-        
+        public int PLC_1_Fail_C2 { get; set; } = 0;
+        public string TimeSendPLC_C2 { get; set; } = "0/0";
+        public string TimeProcess_C2 { get; set; } = "0/0";
+
+        public string WK4_TimeProcess_C2 { get; set; } = "0/0";
+        public string WK5_TimeProcess_C2 { get; set; } = "0/0";
+        public string WK6_TimeProcess_C2 { get; set; } = "0/0";
+
+
         public int Total_C1 { get; set; } = 0;
         public int Total_Pass_C1 { get; set; } = 0;
         public int Total_Failed_C1 { get; set; } = 0;

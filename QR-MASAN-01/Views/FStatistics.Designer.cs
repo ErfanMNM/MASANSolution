@@ -2079,12 +2079,18 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Location = new System.Drawing.Point(0, 50);
+            this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(840, 624);
+            this.tabPage2.Size = new System.Drawing.Size(200, 60);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Sản lượng";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // WK_Update
+            // 
+            this.WK_Update.WorkerReportsProgress = true;
+            this.WK_Update.WorkerSupportsCancellation = true;
+            this.WK_Update.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Update_DoWork);
             // 
             // FStatistics
             // 

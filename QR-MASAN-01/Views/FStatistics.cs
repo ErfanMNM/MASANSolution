@@ -14,16 +14,28 @@ namespace QR_MASAN_01.Views
 {
     public partial class FStatistics : UIPage
     {
-        FCameraS _cameraS = new FCameraS();
         public FStatistics()
         {
             InitializeComponent();
             
         }
 
+        public void INIT()
+        {
+            if(!WK_Update.IsBusy)
+            {
+                WK_Update.CancelAsync();
+            }
+        }
+
         private void uiSymbolButton1_Click(object sender, EventArgs e)
         {
             uiTabControl1.SelectedTab = uiTabControl1.TabPages["tabPage2"];
+        }
+
+        private void WK_Update_DoWork(object sender, DoWorkEventArgs e)
+        {
+
         }
     }
 }

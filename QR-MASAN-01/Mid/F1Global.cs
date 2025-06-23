@@ -35,17 +35,17 @@ namespace QR_MASAN_01
         public static Dictionary<string, ProductData> C1_Content_Dictionary = new Dictionary<string, ProductData>();
         public static Dictionary<string, ProductData> C2_Content_Dictionary = new Dictionary<string, ProductData>();
 
-        public static Queue<string> Add_Content_To_SQLite_Queue = new Queue<string>();
-        public static Queue<int> Update_Content_To_SQLite_Queue = new Queue<int>();
-        public static Queue<string> Rework_Content_To_SQLite_Queue = new Queue<string>();
+        public static Queue <(string, ProductData)> Add_Content_To_SQLite_Queue = new Queue<(string, ProductData)>();
+        public static Queue<ProductData> Update_Content_To_SQLite_Queue = new Queue<ProductData>();
+        public static Queue<ProductData> Rework_Content_To_SQLite_Queue = new Queue<ProductData>();
 
-        public static Queue<string> C1_Add_Content_To_SQLite_Queue = new Queue<string>();
-        public static Queue<int> C1_Update_Content_To_SQLite_Queue = new Queue<int>();
-        public static Queue<string> C1_Rework_Content_To_SQLite_Queue = new Queue<string>();
+        public static Queue<(string, ProductData)> C1_Add_Content_To_SQLite_Queue = new Queue<(string, ProductData)>();
+        public static Queue<ProductData> C1_Update_Content_To_SQLite_Queue = new Queue<ProductData>();
+        public static Queue<ProductData> C1_Rework_Content_To_SQLite_Queue = new Queue<ProductData>();
 
-        public static Queue<string> C2_Add_Content_To_SQLite_Queue = new Queue<string>();
-        public static Queue<int> C2_Update_Content_To_SQLite_Queue = new Queue<int>();
-        public static Queue<string> C2_Rework_Content_To_SQLite_Queue = new Queue<string>();
+        public static Queue<(string, ProductData)> C2_Add_Content_To_SQLite_Queue = new Queue<(string, ProductData)>();
+        public static Queue<ProductData> C2_Update_Content_To_SQLite_Queue = new Queue<ProductData>();
+        public static Queue<ProductData> C2_Rework_Content_To_SQLite_Queue = new Queue<ProductData>();
 
         public static int MaxID_Content { get; set; } = 0;
 
@@ -65,6 +65,9 @@ namespace QR_MASAN_01
 
         public static string QRCode_Folder { get; set; } = string.Empty;
         public static string QRCode_FileName { get; set; } = string.Empty;
+
+        public static long TimeUnixPrinter { get; set; } = 0;
+
         //public static string 
     }
 
@@ -102,7 +105,10 @@ namespace QR_MASAN_01
     {
         public int ProductID { get; set; }
         public int Active { get; set; }
-        public string TimeStamp { get; set; }
+        public string TimeStampActive { get; set; }
+        public long TimeUnixActive { get; set; }
+        public string TimeStampPrinted { get; set; }
+        public long TimeUnixPrinted { get; set; }
     }
 
     public enum e_Server_Status

@@ -138,7 +138,7 @@ namespace QR_MASAN_01
                                     else
                                     {
                                         //thêm mã vào hàng chờ
-                                        Globalvariable.Update_Content_To_SQLite_Queue.Enqueue(ProductInfo.ProductID);
+                                        Globalvariable.Update_Content_To_SQLite_Queue.Enqueue(ProductInfo);
                                         LogUpdate($"Mã này chưa Kích hoạt hôm nay - {searchQR} - Thêm vào hàng chờ kích hoạt");
                                         return;
                                     }
@@ -146,7 +146,16 @@ namespace QR_MASAN_01
                                 else
                                 {
                                     //thêm mã vào hàng chờ
-                                    Globalvariable.Add_Content_To_SQLite_Queue.Enqueue(searchQR);
+                                    ProductData newProductData = new ProductData
+                                    {
+                                        ProductID = 0,
+                                        Active = 0, // Chưa kích hoạt
+                                        TimeStampActive = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                                        TimeUnixActive = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                                        TimeStampPrinted = "ReActive",
+                                        TimeUnixPrinted = 0,
+                                    };
+                                    Globalvariable.Add_Content_To_SQLite_Queue.Enqueue((searchQR,newProductData));
                                     LogUpdate($"Mã này chưa Kích HOẠT - {searchQR} - Thêm vào hàng chờ kích hoạt");
                                     return;
                                 }
@@ -181,7 +190,17 @@ namespace QR_MASAN_01
                                     else
                                     {
                                         //thêm mã vào hàng chờ
-                                        Globalvariable.Add_Content_To_SQLite_Queue.Enqueue(searchQR);
+                                        //thêm mã vào hàng chờ
+                                        ProductData newProductData = new ProductData
+                                        {
+                                            ProductID = 0,
+                                            Active = 0, // Chưa kích hoạt
+                                            TimeStampActive = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                                            TimeUnixActive = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                                            TimeStampPrinted = "ReActive",
+                                            TimeUnixPrinted = 0,
+                                        };
+                                        Globalvariable.Add_Content_To_SQLite_Queue.Enqueue((searchQR, newProductData));
                                         LogUpdate($"Mã này chưa Kích hoạt hôm nay - {searchQR} - Thêm vào hàng chờ kích hoạt");
                                         return;
                                     }

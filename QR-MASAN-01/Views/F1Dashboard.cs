@@ -119,6 +119,7 @@ namespace QR_MASAN_01
                                 //lỗi nghiêm trọng nè, tức file này đã tồn tại
 
                                 Globalvariable.Data_Status = e_Data_Status.UNKNOWN;
+                                break;
                             }
                             //tạo file mới
                             Create_new_Database_SQLite_File();
@@ -341,6 +342,8 @@ namespace QR_MASAN_01
                     {
                         //Chưa có file nào tồn tại, chuyển qua chế độ tạo mới
                         Globalvariable.Data_Status = e_Data_Status.CREATING;
+
+                        return;
                     }
 
                     //đủ file chuyển sang đẩy
@@ -368,7 +371,7 @@ namespace QR_MASAN_01
 
                 // Tạo bảng mẫu
                 string a = $@"INSERT INTO `ProductDetails` (BatchCode ,CaseCode ,ProductCode ,BlockSize ,CaseSize ,PalletSize ,OperatorName ,TimeStamp ) 
-                            VALUES ('{_clientMFI.Batch_Code}','{_clientMFI.Case_Barcode}','{_clientMFI.Product_Barcode}','{_clientMFI.Block_Size}','{_clientMFI.Case_Size}','{_clientMFI.Pallet_Size}','Operator','{DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")}');";
+                            VALUES ('{_clientMFI.Batch_Code}','{_clientMFI.Case_Barcode}','{_clientMFI.Product_Barcode}','{_clientMFI.Block_Size}','{_clientMFI.Case_Size}','{_clientMFI.Pallet_Size}','Operator','{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}');";
                 string createTableQuery = $@"
                                     CREATE TABLE IF NOT EXISTS `QRContent` (
                                         ProductID INTEGER NOT NULL UNIQUE,
@@ -569,14 +572,22 @@ namespace QR_MASAN_01
                     int ProductID = Convert.ToInt32(row["ProductID"]); // CaseID
                     string ProductQR = row["ProductQR"].ToString(); // CaseQR
                     int active = Convert.ToInt32(row["Active"]); // Active
-                    string timeStamp = row["TimestampActive"].ToString(); ; // TimeStamp
+                    string timeStampA = row["TimestampActive"].ToString(); ; 
+                    string timeStampP = row["TimestampPrinted"].ToString(); ;
+                    int timeUnixA = Convert.ToInt32(row["TimeUnixActive"]) ; 
+                    int timeUnixP = Convert.ToInt32(row["TimeUnixPrinted"]); 
+
 
                     // Thêm dữ liệu vào Dictionary với CaseQR làm key
                     Globalvariable.Main_Content_Dictionary[ProductQR] = new ProductData
                     {
                         ProductID = ProductID,
                         Active = active,
-                        TimeStamp = timeStamp
+                        TimeStampActive = timeStampA,
+                        TimeStampPrinted = timeStampP,
+                        TimeUnixActive = timeUnixA,
+                        TimeUnixPrinted = timeUnixP
+
                     };
                     
                 }
@@ -618,14 +629,22 @@ namespace QR_MASAN_01
                     int ProductID = Convert.ToInt32(row["ProductID"]); // CaseID
                     string ProductQR = row["ProductQR"].ToString(); // CaseQR
                     int active = Convert.ToInt32(row["Active"]); // Active
-                    string timeStamp = row["TimestampActive"].ToString(); ; // TimeStamp
+                    string timeStampA = row["TimestampActive"].ToString(); ;
+                    string timeStampP = row["TimestampPrinted"].ToString(); ;
+                    int timeUnixA = Convert.ToInt32(row["TimeUnixActive"]);
+                    int timeUnixP = Convert.ToInt32(row["TimeUnixPrinted"]);
+
 
                     // Thêm dữ liệu vào Dictionary với CaseQR làm key
-                    Globalvariable.C1_Content_Dictionary[ProductQR] = new ProductData
+                    Globalvariable.Main_Content_Dictionary[ProductQR] = new ProductData
                     {
                         ProductID = ProductID,
                         Active = active,
-                        TimeStamp = timeStamp
+                        TimeStampActive = timeStampA,
+                        TimeStampPrinted = timeStampP,
+                        TimeUnixActive = timeUnixA,
+                        TimeUnixPrinted = timeUnixP
+
                     };
                 }
 
@@ -666,14 +685,22 @@ namespace QR_MASAN_01
                     int ProductID = Convert.ToInt32(row["ProductID"]); // CaseID
                     string ProductQR = row["ProductQR"].ToString(); // CaseQR
                     int active = Convert.ToInt32(row["Active"]); // Active
-                    string timeStamp = row["TimestampActive"].ToString(); ; // TimeStamp
+                    string timeStampA = row["TimestampActive"].ToString(); ;
+                    string timeStampP = row["TimestampPrinted"].ToString(); ;
+                    int timeUnixA = Convert.ToInt32(row["TimeUnixActive"]);
+                    int timeUnixP = Convert.ToInt32(row["TimeUnixPrinted"]);
+
 
                     // Thêm dữ liệu vào Dictionary với CaseQR làm key
-                    Globalvariable.C2_Content_Dictionary[ProductQR] = new ProductData
+                    Globalvariable.Main_Content_Dictionary[ProductQR] = new ProductData
                     {
                         ProductID = ProductID,
                         Active = active,
-                        TimeStamp = timeStamp
+                        TimeStampActive = timeStampA,
+                        TimeStampPrinted = timeStampP,
+                        TimeUnixActive = timeUnixA,
+                        TimeUnixPrinted = timeUnixP
+
                     };
                 }
 
@@ -810,37 +837,7 @@ namespace QR_MASAN_01
                 {
                     PLC.Ready = 1;
                 }
-                //if(TimeSendPLC >= MaxTimeSend)
-                //{
-                //    MaxTimeSend = TimeSendPLC;
-                //}
-                this.Invoke(new Action(() =>
-                {
-                    lblTotal.Value = PLC.plc.ReadInt32("D40").Content;
-                    lblPass.Value = PLC.plc.ReadInt32("D34").Content;
-                    lblFail.Value = PLC.plc.ReadInt32("D32").Content;
-                    lblTimeOut.Value = PLC.plc.ReadInt32("D38").Content;
-                    lblLineSpeed.Value = PLC.plc.ReadInt32("D70").Content;
-
-                    //Bộ đếm phần mềm
-                    opFail.Text = Counter.Fail.ToString();
-                    opDiff.Text = Counter.Diff.ToString();
-                    opEmpty.Text = Counter.Empty.ToString();
-                    opRerun.Text = Counter.Rerun.ToString();
-                    opQRCount.Text = Counter.QRCount.ToString();
-                    opCamer120Count.Text = Counter.Camera120Count.ToString();
-
-                    opPLCSend1OK.Text = Counter.Send1ToPLC_OK.ToString();
-                    opPLCSend1Fail.Text = Counter.Send1ToPLC_Fail.ToString();
-
-                    opPLCSend0OK.Text = Counter.Send0ToPLC_OK.ToString();
-                    opPLCSend0Fail.Text = Counter.Send0ToPLC_Fail.ToString();
-
-                    //opPLCTime.Text = TimeSendPLC.ToString() +"/"+MaxTimeSend.ToString();
-
-
-                }));
-
+                
                 if (ClearPLC)
                 {
                     this.Invoke(new Action(() =>
@@ -954,6 +951,18 @@ namespace QR_MASAN_01
                         opResultPassFailC1.FillColor = Color.Red;
                     }
 
+                    opContentC2.Text = Globalvariable.C2_UI.Curent_Content;
+
+                    if (Globalvariable.C2_UI.IsPass)
+                    {
+                        opResultPassFailC2.Text = "TỐT";
+                        opResultPassFailC2.FillColor = Color.Green;
+                    }
+                    else
+                    {
+                        opResultPassFailC2.Text = "LỖI";
+                        opResultPassFailC2.FillColor = Color.Red;
+                    }
 
 
                     if (Alarm.Alarm1)
@@ -1019,7 +1028,16 @@ namespace QR_MASAN_01
                     break;
                 case SPMS1.enumClient.RECEIVED:
 
-                    if(Globalvariable.Data_Status == e_Data_Status.READY)
+                    if (GCamera.Camera_Status != e_Camera_Status.CONNECTED)
+                    {
+                        GCamera.Camera_Status = e_Camera_Status.CONNECTED;
+                        Invoke(new Action(() =>
+                        {
+                            opCamera.Text = "Sẵn sàng";
+                            opCamera.FillColor = Globalvariable.OK_Color;
+                        }));
+                    }
+                    if (Globalvariable.Data_Status == e_Data_Status.READY)
                     {
                         Globalvariable.GCounter.Total_C1++;
                         try
@@ -1100,6 +1118,15 @@ namespace QR_MASAN_01
                     }
                     break;
                 case SPMS1.enumClient.RECEIVED:
+                    if (GCamera.Camera_Status != e_Camera_Status.CONNECTED)
+                    {
+                        GCamera.Camera_Status = e_Camera_Status.CONNECTED;
+                        Invoke(new Action(() =>
+                        {
+                            opCamera.Text = "Sẵn sàng";
+                            opCamera.FillColor = Globalvariable.OK_Color;
+                        }));
+                    }
                     //xử lý dữ liệu nhận về
                     if (!WK_CMR4.IsBusy)
                     {
@@ -1154,12 +1181,16 @@ namespace QR_MASAN_01
                     //Kiểm tra mã đã kích hoạt hay chưa
                     if (Globalvariable.C1_Content_Dictionary.TryGetValue(codeClear, out ProductData C1ProductInfo))
                     {
-                        //nếu đã kích hoạt thì không làm gì cả
                         if (C1ProductInfo.Active != 1)
                         {
-                            //free//chưa kích hoạt thì cập nhật lại thông tin
                             C1ProductInfo.Active = 1;
-                            C1ProductInfo.TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                            C1ProductInfo.TimeStampActive = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                            //chuyển từ chuỗi int time  thành string time
+                            C1ProductInfo.TimeStampPrinted = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                            //lấy giờ hiện tại đếm từ 1970
+                            C1ProductInfo.TimeUnixActive = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                            C1ProductInfo.TimeUnixPrinted = Globalvariable.TimeUnixPrinter;
+
                         }
                     }
 
@@ -1173,9 +1204,13 @@ namespace QR_MASAN_01
                             {
                                 ProductID = 0,
                                 Active = 1,
-                                TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
+                                TimeStampActive = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                                TimeStampPrinted = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                                TimeUnixActive = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                                TimeUnixPrinted = Globalvariable.TimeUnixPrinter
                             };
                             Globalvariable.C1_Content_Dictionary[codeClear] = C1ProductInfo;
+                            Globalvariable.C1_Add_Content_To_SQLite_Queue.Enqueue((codeClear, C1ProductInfo));
                         }
                         else
                         {
@@ -1218,14 +1253,16 @@ namespace QR_MASAN_01
                         Send_Result_Content_C1(e_Content_Result.REWORK, codeClear);
                         return;
                     }
-                    //cập nhật SQLite
-                    Globalvariable.Update_Content_To_SQLite_Queue.Enqueue(ProductInfo.ProductID);
+                    
 
                     //cập nhật lại thông tin
                     ProductInfo.Active = 1;
-                    ProductInfo.TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
-
-                    //mã chưa active => active
+                    ProductInfo.TimeStampActive = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    ProductInfo.TimeStampPrinted = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                    ProductInfo.TimeUnixActive = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                    ProductInfo.TimeUnixPrinted = Globalvariable.TimeUnixPrinter;
+                    //cập nhật SQLite
+                    Globalvariable.Update_Content_To_SQLite_Queue.Enqueue(ProductInfo);
                     Send_Result_Content_C1(e_Content_Result.PASS, codeClear);
                     return;
 
@@ -1245,12 +1282,14 @@ namespace QR_MASAN_01
                     {
                         ProductID = 0,
                         Active = 1,
-                        TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
+                        TimeStampActive = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                        TimeStampPrinted = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                        TimeUnixActive = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                     };
 
                     Globalvariable.Main_Content_Dictionary[codeClear] = ProductInfo;
                     //thêm vào hàng đợi để thêm vào SQLite
-                    Globalvariable.Add_Content_To_SQLite_Queue.Enqueue(codeClear);
+                    Globalvariable.Add_Content_To_SQLite_Queue.Enqueue((codeClear,ProductInfo));
                     //báo pass xuống PLC
                     Send_Result_Content_C1(e_Content_Result.PASS, codeClear);
                     return;
@@ -1284,8 +1323,12 @@ namespace QR_MASAN_01
                     {
                         //chưa kích hoạt thì cập nhật lại thông tin
                         ProductInfo.Active = 1;
-                        ProductInfo.TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
-                        Globalvariable.Update_Content_To_SQLite_Queue.Enqueue(ProductInfo.ProductID);
+                        ProductInfo.TimeStampActive = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                        ProductInfo.TimeStampPrinted = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                        ProductInfo.TimeUnixActive = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                        ProductInfo.TimeUnixPrinted = Globalvariable.TimeUnixPrinter;
+                        //cập nhật SQLite
+                        Globalvariable.Update_Content_To_SQLite_Queue.Enqueue(ProductInfo);
                     }
                 }
                 //nếu chưa tồn tại
@@ -1298,10 +1341,14 @@ namespace QR_MASAN_01
                         {
                             ProductID = 0,
                             Active = 1,
-                            TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
+                            TimeStampActive = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                            TimeStampPrinted = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                            TimeUnixActive = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                            TimeUnixPrinted = Globalvariable.TimeUnixPrinter
+
                         };
                         Globalvariable.Main_Content_Dictionary[codeClear] = ProductInfo;
-                        Globalvariable.Add_Content_To_SQLite_Queue.Enqueue(codeClear);
+                        Globalvariable.Add_Content_To_SQLite_Queue.Enqueue((codeClear, ProductInfo));
                     }
                 }
                 //không đọc được
@@ -1341,11 +1388,15 @@ namespace QR_MASAN_01
                     //mã chưa active thì active
 
                     //cập nhật SQLite
-                    Globalvariable.C2_Update_Content_To_SQLite_Queue.Enqueue(C2ProductInfo.ProductID);
+                    Globalvariable.C2_Update_Content_To_SQLite_Queue.Enqueue(C2ProductInfo);
 
                     //cập nhật lại thông tin
                     C2ProductInfo.Active = 1;
-                    C2ProductInfo.TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                    C2ProductInfo.TimeStampActive = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    C2ProductInfo.TimeStampPrinted = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                    C2ProductInfo.TimeUnixActive = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                    C2ProductInfo.TimeUnixPrinted = Globalvariable.TimeUnixPrinter;
+
 
                     //mã chưa active => active
                     Send_Result_Content_C2(e_Content_Result.PASS, codeClear);
@@ -1366,11 +1417,15 @@ namespace QR_MASAN_01
                     {
                         ProductID = 0,
                         Active = 1,
-                        TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
+                        TimeStampActive = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                        TimeStampPrinted = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                        TimeUnixActive = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                        TimeUnixPrinted = Globalvariable.TimeUnixPrinter
+
                     };
                     Globalvariable.C2_Content_Dictionary[codeClear] = C2ProductInfo;
                     //thêm vào hàng đợi để thêm vào SQLite
-                    Globalvariable.C2_Add_Content_To_SQLite_Queue.Enqueue(codeClear);
+                    Globalvariable.C2_Add_Content_To_SQLite_Queue.Enqueue((codeClear, C2ProductInfo));
                     //báo pass xuống PLC
                     Send_Result_Content_C2(e_Content_Result.PASS, codeClear);
                     return;
@@ -1396,7 +1451,6 @@ namespace QR_MASAN_01
             ERROR, //lỗi không xác định
             ERR_FORMAT, //lỗi định dạng
             NOT_FOUND //không tìm thấy mã
-
         }
 
         public void Send_Result_Content_C1(e_Content_Result content_Result, string _content)
@@ -1688,34 +1742,49 @@ namespace QR_MASAN_01
             return (true, "Mã QR hợp lệ.");
         }
 
-        public void Update_Active_Status_Main(int rowId)
+        public void Update_Active_Status_Main(ProductData _productInfo)
         {
+            
             using (SQLiteConnection connection = new SQLiteConnection($"Data Source={_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename};Version=3;"))
             {
                 connection.Open();
-                string query = "UPDATE `QRContent` SET `Active` = '1', `TimeStampActive` = @TimeStampActive, `TimeUnixActive` = @TimeUnixActive  WHERE _rowid_ = @RowId";
+                string query = "UPDATE `QRContent` SET " +
+                               "`Active` = '1', " +
+                               "`TimeStampActive` = @TimeStampActive, " +
+                               "`TimeUnixActive` = @TimeUnixActive  " +
+                               "`TimeStampPrinted` = @TimestampPrinted" +
+                               "`TimeUnixPrinted` = @TimeUnixPrinted" +
+                               "WHERE _rowid_ = @RowId";
 
                 using (SQLiteCommand command = new SQLiteCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@RowId", rowId);
-                    command.Parameters.AddWithValue("@TimeStampActive", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
-                    command.Parameters.AddWithValue("@TimeUnixActive", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+                    command.Parameters.AddWithValue("@RowId", _productInfo.ProductID);
+                    command.Parameters.AddWithValue("@TimeStampActive", _productInfo.TimeStampActive);
+                    command.Parameters.AddWithValue("@TimeUnixActive",_productInfo.TimeUnixActive);
+
+                    command.Parameters.AddWithValue("@TimeStampPrinted", _productInfo.TimeStampPrinted);
+                    command.Parameters.AddWithValue("@TimeUnixPrinted", _productInfo.TimeUnixPrinted);
                     int rowsAffected = command.ExecuteNonQuery();
                 }
             }
         }
-        public void Add_Content_To_SQLite_Main(string Content)
+        public void Add_Content_To_SQLite_Main((string Content, ProductData _productinfo) _Queue)
         {
             using (SQLiteConnection connection = new SQLiteConnection($"Data Source={_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename};Version=3;"))
             {
                 connection.Open();
-                string query = "INSERT INTO `QRContent` (ProductQR, Active, TimestampActive, TimeUnixActive) VALUES (@QR,1,@TimeStamp,@TimeUnix);";
+                string query = "INSERT INTO `QRContent` " +
+                            "(ProductQR, Active, TimestampActive, TimeUnixActive, TimestampPrinted, TimeUnixPrinted) " +
+                    "VALUES (@QR,1,@TimeStamp,@TimeUnix,@TimestampPrinted, @TimeUnixPrinted);";
 
                 using (SQLiteCommand command = new SQLiteCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@QR", Content);
-                    command.Parameters.AddWithValue("@TimeStamp", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
-                    command.Parameters.AddWithValue("@TimeUnix", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+                    command.Parameters.AddWithValue("@QR", _Queue.Content);
+                    command.Parameters.AddWithValue("@TimeStamp", _Queue._productinfo.TimeStampActive);
+                    command.Parameters.AddWithValue("@TimeUnix", _Queue._productinfo.TimeUnixActive);
+                    command.Parameters.AddWithValue("@TimestampPrinted", _Queue._productinfo.TimeStampPrinted);
+                    command.Parameters.AddWithValue("@TimeUnixPrinted", _Queue._productinfo.TimeUnixPrinted);
+
                     int rowsAffected = command.ExecuteNonQuery();
                 }
 
@@ -1724,7 +1793,7 @@ namespace QR_MASAN_01
                     long id = (long)cmd.ExecuteScalar();
 
                     //cập nhật vào Globalvariable.Main_Content_Dictionary
-                    if (Globalvariable.Main_Content_Dictionary.TryGetValue(Content, out ProductData productData))
+                    if (Globalvariable.Main_Content_Dictionary.TryGetValue(_Queue.Content, out ProductData productData))
                     {
                         // Nếu đã có trong dictionary, cập nhật ProductID
                         productData.ProductID = Convert.ToInt32(id);
@@ -1732,46 +1801,63 @@ namespace QR_MASAN_01
                     else
                     {
                         // Nếu chưa có, thêm mới vào dictionary
-                        Globalvariable.Main_Content_Dictionary[Content] = new ProductData
+                        Globalvariable.Main_Content_Dictionary[_Queue.Content] = new ProductData
                         {
                             ProductID = Convert.ToInt32(id),
                             Active = 1,
-                            TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
+                            TimeStampActive = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                            TimeStampPrinted = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                            TimeUnixActive = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                            TimeUnixPrinted = Globalvariable.TimeUnixPrinter
+
                         };
                     }
                 }
             }
         }
 
-
-        public void Update_Active_Status_C1(int rowId)
+        public void Update_Active_Status_C1(ProductData _productInfo)
         {
             using (SQLiteConnection connection = new SQLiteConnection($"Data Source={_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename_C1};Version=3;"))
             {
                 connection.Open();
-                string query = "UPDATE `QRContent` SET `Active` = '1', `TimeStampActive` = @TimeStampActive, `TimeUnixActive` = @TimeUnixActive  WHERE _rowid_ = @RowId";
+                string query = "UPDATE `QRContent` SET " +
+                               "`Active` = '1', " +
+                               "`TimeStampActive` = @TimeStampActive, " +
+                               "`TimeUnixActive` = @TimeUnixActive  " +
+                               "`TimeStampPrinted` = @TimestampPrinted" +
+                               "`TimeUnixPrinted` = @TimeUnixPrinted" +
+                               "WHERE _rowid_ = @RowId";
 
                 using (SQLiteCommand command = new SQLiteCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@RowId", rowId);
-                    command.Parameters.AddWithValue("@TimeStampActive", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
-                    command.Parameters.AddWithValue("@TimeUnixActive", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+                    command.Parameters.AddWithValue("@RowId", _productInfo.ProductID);
+                    command.Parameters.AddWithValue("@TimeStampActive", _productInfo.TimeStampActive);
+                    command.Parameters.AddWithValue("@TimeUnixActive", _productInfo.TimeUnixActive);
+
+                    command.Parameters.AddWithValue("@TimeStampPrinted", _productInfo.TimeStampPrinted);
+                    command.Parameters.AddWithValue("@TimeUnixPrinted", _productInfo.TimeUnixPrinted);
                     int rowsAffected = command.ExecuteNonQuery();
                 }
             }
         }
-        public void Add_Content_To_SQLite_C1(string Content)
+        public void Add_Content_To_SQLite_C1((string Content, ProductData _productinfo) _Queue)
         {
             using (SQLiteConnection connection = new SQLiteConnection($"Data Source={_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename_C1};Version=3;"))
             {
                 connection.Open();
-                string query = "INSERT INTO `QRContent` (ProductQR, Active, TimestampActive, TimeUnixActive) VALUES (@QR,1,@TimeStamp,@TimeUnix);";
+                string query = "INSERT INTO `QRContent` " +
+                            "(ProductQR, Active, TimestampActive, TimeUnixActive, TimestampPrinted, TimeUnixPrinted) " +
+                    "VALUES (@QR,1,@TimeStamp,@TimeUnix,@TimestampPrinted, @TimeUnixPrinted);";
 
                 using (SQLiteCommand command = new SQLiteCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@QR", Content);
-                    command.Parameters.AddWithValue("@TimeStamp", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
-                    command.Parameters.AddWithValue("@TimeUnix", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+                    command.Parameters.AddWithValue("@QR", _Queue.Content);
+                    command.Parameters.AddWithValue("@TimeStamp", _Queue._productinfo.TimeStampActive);
+                    command.Parameters.AddWithValue("@TimeUnix", _Queue._productinfo.TimeUnixActive);
+                    command.Parameters.AddWithValue("@TimestampPrinted", _Queue._productinfo.TimeStampPrinted);
+                    command.Parameters.AddWithValue("@TimeUnixPrinted", _Queue._productinfo.TimeUnixPrinted);
+
                     int rowsAffected = command.ExecuteNonQuery();
                 }
 
@@ -1780,7 +1866,7 @@ namespace QR_MASAN_01
                     long id = (long)cmd.ExecuteScalar();
 
                     //cập nhật vào Globalvariable.Main_Content_Dictionary
-                    if (Globalvariable.Main_Content_Dictionary.TryGetValue(Content, out ProductData productData))
+                    if (Globalvariable.C1_Content_Dictionary.TryGetValue(_Queue.Content, out ProductData productData))
                     {
                         // Nếu đã có trong dictionary, cập nhật ProductID
                         productData.ProductID = Convert.ToInt32(id);
@@ -1788,45 +1874,64 @@ namespace QR_MASAN_01
                     else
                     {
                         // Nếu chưa có, thêm mới vào dictionary
-                        Globalvariable.Main_Content_Dictionary[Content] = new ProductData
+                        Globalvariable.C1_Content_Dictionary[_Queue.Content] = new ProductData
                         {
                             ProductID = Convert.ToInt32(id),
                             Active = 1,
-                            TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
+                            TimeStampActive = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                            TimeStampPrinted = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                            TimeUnixActive = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                            TimeUnixPrinted = Globalvariable.TimeUnixPrinter
+
                         };
                     }
                 }
             }
         }
 
-        public void Update_Active_Status_C2(int rowId)
+        public void Update_Active_Status_C2(ProductData _productInfo)
         {
+
             using (SQLiteConnection connection = new SQLiteConnection($"Data Source={_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename_C2};Version=3;"))
             {
                 connection.Open();
-                string query = "UPDATE `QRContent` SET `Active` = '1', `TimeStampActive` = @TimeStampActive, `TimeUnixActive` = @TimeUnixActive  WHERE _rowid_ = @RowId";
+                string query = "UPDATE `QRContent` SET " +
+                               "`Active` = '1', " +
+                               "`TimeStampActive` = @TimeStampActive, " +
+                               "`TimeUnixActive` = @TimeUnixActive  " +
+                               "`TimeStampPrinted` = @TimestampPrinted" +
+                               "`TimeUnixPrinted` = @TimeUnixPrinted" +
+                               "WHERE _rowid_ = @RowId";
 
                 using (SQLiteCommand command = new SQLiteCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@RowId", rowId);
-                    command.Parameters.AddWithValue("@TimeStampActive", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
-                    command.Parameters.AddWithValue("@TimeUnixActive", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+                    command.Parameters.AddWithValue("@RowId", _productInfo.ProductID);
+                    command.Parameters.AddWithValue("@TimeStampActive", _productInfo.TimeStampActive);
+                    command.Parameters.AddWithValue("@TimeUnixActive", _productInfo.TimeUnixActive);
+
+                    command.Parameters.AddWithValue("@TimeStampPrinted", _productInfo.TimeStampPrinted);
+                    command.Parameters.AddWithValue("@TimeUnixPrinted", _productInfo.TimeUnixPrinted);
                     int rowsAffected = command.ExecuteNonQuery();
                 }
             }
         }
-        public void Add_Content_To_SQLite_C2(string Content)
+        public void Add_Content_To_SQLite_C2((string Content, ProductData _productinfo) _Queue)
         {
             using (SQLiteConnection connection = new SQLiteConnection($"Data Source={_clientMFI.Data_Content_Folder + _clientMFI.Data_Content_Filename_C2};Version=3;"))
             {
                 connection.Open();
-                string query = "INSERT INTO `QRContent` (ProductQR, Active, TimestampActive, TimeUnixActive) VALUES (@QR,1,@TimeStamp,@TimeUnix);";
+                string query = "INSERT INTO `QRContent` " +
+                            "(ProductQR, Active, TimestampActive, TimeUnixActive, TimestampPrinted, TimeUnixPrinted) " +
+                    "VALUES (@QR,1,@TimeStamp,@TimeUnix,@TimestampPrinted, @TimeUnixPrinted);";
 
                 using (SQLiteCommand command = new SQLiteCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@QR", Content);
-                    command.Parameters.AddWithValue("@TimeStamp", DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"));
-                    command.Parameters.AddWithValue("@TimeUnix", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+                    command.Parameters.AddWithValue("@QR", _Queue.Content);
+                    command.Parameters.AddWithValue("@TimeStamp", _Queue._productinfo.TimeStampActive);
+                    command.Parameters.AddWithValue("@TimeUnix", _Queue._productinfo.TimeUnixActive);
+                    command.Parameters.AddWithValue("@TimestampPrinted", _Queue._productinfo.TimeStampPrinted);
+                    command.Parameters.AddWithValue("@TimeUnixPrinted", _Queue._productinfo.TimeUnixPrinted);
+
                     int rowsAffected = command.ExecuteNonQuery();
                 }
 
@@ -1835,7 +1940,7 @@ namespace QR_MASAN_01
                     long id = (long)cmd.ExecuteScalar();
 
                     //cập nhật vào Globalvariable.Main_Content_Dictionary
-                    if (Globalvariable.Main_Content_Dictionary.TryGetValue(Content, out ProductData productData))
+                    if (Globalvariable.C2_Content_Dictionary.TryGetValue(_Queue.Content, out ProductData productData))
                     {
                         // Nếu đã có trong dictionary, cập nhật ProductID
                         productData.ProductID = Convert.ToInt32(id);
@@ -1843,11 +1948,15 @@ namespace QR_MASAN_01
                     else
                     {
                         // Nếu chưa có, thêm mới vào dictionary
-                        Globalvariable.Main_Content_Dictionary[Content] = new ProductData
+                        Globalvariable.C2_Content_Dictionary[_Queue.Content] = new ProductData
                         {
                             ProductID = Convert.ToInt32(id),
                             Active = 1,
-                            TimeStamp = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
+                            TimeStampActive = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                            TimeStampPrinted = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                            TimeUnixActive = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                            TimeUnixPrinted = Globalvariable.TimeUnixPrinter
+
                         };
                     }
                 }
@@ -1856,8 +1965,6 @@ namespace QR_MASAN_01
 
         #endregion
 
-        
-       
         private void PLC_PLCStatus_OnChange(object sender, SPMS1.OmronPLC_Hsl.PLCStatusEventArgs e)
         {
             switch (e.Status)
@@ -1883,31 +1990,18 @@ namespace QR_MASAN_01
 
         private void btnResetCounter_Click(object sender, EventArgs e)
         {
-            //btnResetCounter.Enabled = false;
+
             OperateResult write = PLC.plc.Write("D22", short.Parse("1"));
             if (write.IsSuccess)
             {
-                //btnResetCounter.Enabled = true;
+
                 lblFail.Value = 0;
                 lblPass.Value = 0;
                 lblTotal.Value = 0;
-
-                Counter.Rerun = 0;
-                Counter.Diff = 0;
-                Counter.Empty = 0;
-                Counter.Fail = 0;
-                Counter.QRCount = 0;
-                Counter.StructERR = 0;
-
-                Counter.Send0ToPLC_OK = 0;
-                Counter.Send0ToPLC_Fail = 0;
-                Counter.Camera120Count = 0;
-                Counter.Send1ToPLC_OK = 0;
-                Counter.Send1ToPLC_Fail = 0;
             }
             else
             {
-               // btnResetCounter.Enabled = true;
+
             }
         }
 
@@ -1941,19 +2035,15 @@ namespace QR_MASAN_01
             }
         }
 
-        private void WK_Add_SQLite_DoWork(object sender, DoWorkEventArgs e)
-        {
-            while (!WK_AddSQLite.CancellationPending)
-            {
-
-                Thread.Sleep(1000000000);
-            }
-        }
-
         private void WK_Process_SQLite_DoWork(object sender, DoWorkEventArgs e)
         {
             while(!WK_UI_CAM_Update.CancellationPending)
             {
+                
+                if(Globalvariable.TimeUnixPrinter == 0)
+                {
+                    Globalvariable.TimeUnixPrinter = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                }
                 //Bể chính
 
                 //cập nhật
@@ -1965,8 +2055,7 @@ namespace QR_MASAN_01
                 //thêm mới
                 if(Globalvariable.Add_Content_To_SQLite_Queue.Count > 0)
                 {
-                    string code = Globalvariable.Add_Content_To_SQLite_Queue.Dequeue();
-                    Add_Content_To_SQLite_Main(code);
+                    Add_Content_To_SQLite_Main(Globalvariable.Add_Content_To_SQLite_Queue.Dequeue());
                 }
 
                 //Bể C1
@@ -1978,8 +2067,7 @@ namespace QR_MASAN_01
                 //thêm mới
                 if (Globalvariable.C1_Add_Content_To_SQLite_Queue.Count > 0)
                 {
-                    string code = Globalvariable.C1_Add_Content_To_SQLite_Queue.Dequeue();
-                    Add_Content_To_SQLite_C1(code);
+                    Add_Content_To_SQLite_C1(Globalvariable.C1_Add_Content_To_SQLite_Queue.Dequeue());
                 }
                 //Bể C2
                 //cập nhật
@@ -1990,13 +2078,13 @@ namespace QR_MASAN_01
                 //thêm mới
                 if (Globalvariable.C2_Add_Content_To_SQLite_Queue.Count > 0)
                 {
-                    string code = Globalvariable.C2_Add_Content_To_SQLite_Queue.Dequeue();
-                    Add_Content_To_SQLite_C2(code);
+                    Add_Content_To_SQLite_C2(Globalvariable.C2_Add_Content_To_SQLite_Queue.Dequeue());
                 }
                 Thread.Sleep(100);
             }
         }
 
+        #region Các luồng xử lý dữ liệu khi có tín hiệu
         private double maxTimeT1 = 0;
         private double maxTimeT2 = 0;
         private double maxTimeT3 = 0;
@@ -2010,19 +2098,17 @@ namespace QR_MASAN_01
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             string inputString = e.Argument as string;
-            opWK1.FillColor = Color.Green;
-            //WhenDataRecive(inputString);
+            
             Camera_01_Data_Recive(inputString);
-            opWK1.FillColor = Color.White;
+
             stopwatch.Stop();
-            this.Invoke(new Action(() =>
-            {
+
                 if (stopwatch.Elapsed.TotalMilliseconds > maxTimeT1)
                 {
                     maxTimeT1 = stopwatch.Elapsed.TotalMilliseconds;
                 }
-                opWK1.Text = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT1}" ;
-            }));
+                Globalvariable.GCounter.WK1_TimeProcess_C1 = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT1}" ;
+
         }
         private void WK_CMR2_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -2031,19 +2117,18 @@ namespace QR_MASAN_01
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             string inputString = e.Argument as string;
-            opWK2.FillColor = Color.Green;
+
             //WhenDataRecive(inputString);
             Camera_01_Data_Recive(inputString);
-            opWK2.FillColor = Color.White;
+
             stopwatch.Stop();
-            this.Invoke(new Action(() =>
+
+            if (stopwatch.Elapsed.TotalMilliseconds > maxTimeT2)
             {
-                if (stopwatch.Elapsed.TotalMilliseconds > maxTimeT2)
-                {
-                    maxTimeT2 = stopwatch.Elapsed.TotalMilliseconds;
-                }
-                opWK2.Text = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT2}";
-            }));
+                maxTimeT2 = stopwatch.Elapsed.TotalMilliseconds;
+            }
+            Globalvariable.GCounter.WK2_TimeProcess_C1 = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT2}";
+
         }
         private void WK_CMR3_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -2052,23 +2137,85 @@ namespace QR_MASAN_01
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             string inputString = e.Argument as string;
-            opWK3.FillColor = Color.Green;
+
             //WhenDataRecive(inputString);
             Camera_01_Data_Recive(inputString);
-            opWK3.FillColor = Color.White;
+
             stopwatch.Stop();
-            this.Invoke(new Action(() =>
-            {
+
                 if (stopwatch.Elapsed.TotalMilliseconds > maxTimeT3)
                 {
                     maxTimeT3 = stopwatch.Elapsed.TotalMilliseconds;
                 }
-                opWK3.Text = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT3}";
-            }));
+            Globalvariable.GCounter.WK3_TimeProcess_C1 = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT3}";
         }
+        
+
+        private void WK_CMR4_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var worker = sender as BackgroundWorker;
+            // Nhận dữ liệu truyền vào
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            string inputString = e.Argument as string;
+
+            Camera_02_Data_Recive(inputString);
+
+            stopwatch.Stop();
+
+                if (stopwatch.Elapsed.TotalMilliseconds > maxTimeT4)
+                {
+                    maxTimeT4 = stopwatch.Elapsed.TotalMilliseconds;
+                }
+                Globalvariable.GCounter.WK4_TimeProcess_C2 = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT4}";
+            }
+        private void WK_CMR5_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var worker = sender as BackgroundWorker;
+            // Nhận dữ liệu truyền vào
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            string inputString = e.Argument as string;
+            
+            Camera_02_Data_Recive(inputString);
+            
+            stopwatch.Stop();
+
+                if (stopwatch.Elapsed.TotalMilliseconds > maxTimeT5)
+                {
+                    maxTimeT5 = stopwatch.Elapsed.TotalMilliseconds;
+                }
+                Globalvariable.GCounter.WK5_TimeProcess_C2 = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT5}";
+            }
+        private void WK_CMR6_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var worker = sender as BackgroundWorker;
+            // Nhận dữ liệu truyền vào
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            string inputString = e.Argument as string;
+
+            Camera_02_Data_Recive(inputString);
+
+            stopwatch.Stop();
+
+                if (stopwatch.Elapsed.TotalMilliseconds > maxTimeT6)
+                {
+                    maxTimeT6 = stopwatch.Elapsed.TotalMilliseconds;
+                }
+                Globalvariable.GCounter.WK5_TimeProcess_C2 = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT5}";
+            }
+
+        #endregion
+
+        private void uiTitlePanel5_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void swModeData_ValueChanged(object sender, bool value)
         {
-            if(swModeData.Active)
+            if (swModeData.Active)
             {
                 Globalvariable.ISRerun = true;
             }
@@ -2080,71 +2227,6 @@ namespace QR_MASAN_01
         private void ipConsole_DoubleClick(object sender, EventArgs e)
         {
             this.ShowInfoDialog(ipConsole.SelectedItem as string);
-        }
-        private void WK_CMR4_DoWork(object sender, DoWorkEventArgs e)
-        {
-            var worker = sender as BackgroundWorker;
-            // Nhận dữ liệu truyền vào
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            string inputString = e.Argument as string;
-            opWK4.FillColor = Color.Green;
-            Camera_02_Data_Recive(inputString);
-            opWK4.FillColor = Color.White;
-            stopwatch.Stop();
-            this.Invoke(new Action(() =>
-            {
-                if (stopwatch.Elapsed.TotalMilliseconds > maxTimeT4)
-                {
-                    maxTimeT4 = stopwatch.Elapsed.TotalMilliseconds;
-                }
-                opWK4.Text = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT4}";
-            }));
-        }
-        private void WK_CMR5_DoWork(object sender, DoWorkEventArgs e)
-        {
-            var worker = sender as BackgroundWorker;
-            // Nhận dữ liệu truyền vào
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            string inputString = e.Argument as string;
-            opWK5.FillColor = Color.Green;
-            Camera_02_Data_Recive(inputString);
-            opWK5.FillColor = Color.White;
-            stopwatch.Stop();
-            this.Invoke(new Action(() =>
-            {
-                if (stopwatch.Elapsed.TotalMilliseconds > maxTimeT5)
-                {
-                    maxTimeT5 = stopwatch.Elapsed.TotalMilliseconds;
-                }
-                opWK5.Text = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT5}";
-            }));
-        }
-        private void WK_CMR6_DoWork(object sender, DoWorkEventArgs e)
-        {
-            var worker = sender as BackgroundWorker;
-            // Nhận dữ liệu truyền vào
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            string inputString = e.Argument as string;
-            opWK6.FillColor = Color.Green;
-            Camera_02_Data_Recive(inputString);
-            opWK6.FillColor = Color.White;
-            stopwatch.Stop();
-            this.Invoke(new Action(() =>
-            {
-                if (stopwatch.Elapsed.TotalMilliseconds > maxTimeT6)
-                {
-                    maxTimeT6 = stopwatch.Elapsed.TotalMilliseconds;
-                }
-                opWK6.Text = $"{Math.Round(stopwatch.Elapsed.TotalMilliseconds, 4).ToString()}/{maxTimeT6}";
-            }));
-        }
-
-        private void uiTitlePanel5_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
