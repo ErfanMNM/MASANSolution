@@ -2,6 +2,7 @@
 using MainClass;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SpT;
 using Sunny.UI;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,39 @@ namespace QR_MASAN_01
             InitializeComponent();
             WK_Process_AUData.RunWorkerAsync();
         }
-        
+
+        public void INIT()
+        {
+            try
+            {
+                // Khởi tạo các thành phần cần thiết
+                WK_Server_check.RunWorkerAsync();
+                WK_Update.RunWorkerAsync();
+                WK_UI_CAM_Update.RunWorkerAsync();
+                Camera.Connect();
+                if (GlobalSettings.GetInt("CAMERA_SLOT") > 1)
+                {
+                    Camera_c.Connect();
+                }
+                PLC.PLC_IP = GoogleSheetConfigHelper.Instance.GetSetting("PLC_IP");
+                PLC.PLC_PORT = Convert.ToInt32(GoogleSheetConfigHelper.Instance.GetSetting("PLC_PORT"));
+                PLC.PLC_Ready_DM = GoogleSheetConfigHelper.Instance.GetSetting("PLC_Ready_DM");
+                PLC.InitPLC();
+            }
+            catch (Exception ex)
+            {
+                SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.ERROR, "Lỗi khởi tạo Dashboard", "System", ex.Message);
+                SystemLogs.InsertToSQLite(systemLogs);
+
+                // Hiển thị thông báo lỗi trên giao diện
+                this.ShowErrorDialog("Lỗi khởi tạo Dashboard, Vui lòng tắt máy mở lại", ex.Message);
+                //Hiện lên box
+                LogUpdate($"Lỗi khởi tạo Dashboard: {ex.Message}");
+                LogUpdate($"VUI LÒNG TẮT MÁY MỞ LẠI");
+            }
+
+        }
+
         MFI_Info _clientMFI = new MFI_Info();
         bool ClearPLC = false;
 
@@ -44,8 +77,8 @@ namespace QR_MASAN_01
 
             while (!WK_Server_check.CancellationPending)
             {
-                //try
-                //{
+                try
+                {
                     switch (Globalvariable.Data_Status)
                     {
                         //Trạng thái sẵn sàng bình thường
@@ -194,13 +227,14 @@ namespace QR_MASAN_01
                             //Bật siêu biển cảnh báo lỗi
                             break;
                     }
-                //}
-                //catch(Exception ex)
-                //{
-                //    LogUpdate($"Lỗi trong quá trình xử lý: {ex.Message}");
-                //}
-
-
+                }
+                catch (Exception ex)
+                {
+                    LogUpdate($"Lỗi trong quá trình xử lý: {ex.Message}");
+                    SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.ERROR, "Lỗi trong quá trình xử lý MFI", "System", ex.Message);
+                    //thêm vào Queue để ghi log
+                    SystemLogs.LogQueue.Enqueue(systemLogs);
+                }
                 Thread.Sleep(5000); // Chờ 2 giây trước khi gửi request tiếp theo
             }
         }
@@ -208,6 +242,7 @@ namespace QR_MASAN_01
         private void Process_MFI_When_Ready()
         {
             var _gfsv = GetMultipleKeys(keys);
+            int retryCount = 0;
             if (_gfsv.IsSuccess)
             {
                 if (Globalvariable.Server_Status != e_Server_Status.CONNECTED)
@@ -247,6 +282,15 @@ namespace QR_MASAN_01
             }
             else
             {
+                retryCount++;
+                if(retryCount > 5)
+                {
+                    retryCount = 0;
+                    //cập nhật sys log
+                    SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SERVER_ERROR, "Lỗi kết nối máy chủ", "System", _gfsv.Message);
+                    //thêm vào Queue để ghi log
+                    SystemLogs.LogQueue.Enqueue(systemLogs);
+                }
                 if (Globalvariable.Server_Status != e_Server_Status.DISCONNECTED)
                 {
                     Globalvariable.Server_Status = e_Server_Status.DISCONNECTED;
@@ -292,7 +336,8 @@ namespace QR_MASAN_01
                 LogUpdate($"Đã có dữ liệu sản xuất, chuyển sang chế độ đẩy dữ liệu");
             }
         }
-
+        int SystemLogsCount = 1;
+        int SystemLogsCount_2 = 1;
         private void Process_MFI_When_Startup()
         {
             LogUpdate("Giao diện màn hình máy QR Chai phiên bản 10.23.531");
@@ -352,12 +397,34 @@ namespace QR_MASAN_01
                 }
                 else
                 {
+                    //Không có MFI ID, tức là máy chủ chưa phản hồi hoặc chưa có dữ liệu
                     LogUpdate($"Máy chủ chưa phản hồi");
+                    SystemLogsCount--;
+                    if (SystemLogsCount <= 0)
+                    {
+                        SystemLogsCount = 10;
+                        //ghi log vào sys log
+                        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SERVER_ERROR, "Không có MFI ID", "System", "Máy chủ chưa phản hồi hoặc chưa có dữ liệu");
+                        //thêm vào Queue để ghi log
+                        SystemLogs.LogQueue.Enqueue(systemLogs);
+                    }
+                    
                 }
             }
             else
             {
+
                 LogUpdate($"Lỗi khi lấy dữ liệu từ máy chủ: {message}");
+                SystemLogsCount_2--;
+                if (SystemLogsCount_2 <= 0)
+                {
+                    SystemLogsCount_2 = 10;
+                    //ghi log vào sys log
+                SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SERVER_ERROR, "Lỗi khi lấy dữ liệu từ máy chủ", "System", message);
+                //thêm vào Queue để ghi log
+                SystemLogs.LogQueue.Enqueue(systemLogs);
+                }
+                
             }
         }
 
@@ -978,20 +1045,6 @@ namespace QR_MASAN_01
         #endregion
 
         //Load lần đầu
-        private void FDashboard_Initialize(object sender, EventArgs e)
-        {
-            WK_Server_check.RunWorkerAsync();
-            WK_Update.RunWorkerAsync();
-            WK_UI_CAM_Update.RunWorkerAsync();
-            Camera.Connect();
-            if(GlobalSettings.GetInt("CAMERA_SLOT") > 1)
-            {
-                Camera_c.Connect();
-            }
-            PLC.PLC_IP = GlobalSettings.Get("PLC_IP");
-            PLC.PLC_PORT = GlobalSettings.GetInt("PLC_PORT");
-            PLC.InitPLC();
-        }
 
         public string QR_Content = "Ver 18972";
         public string QR_Content_His = "";
@@ -1058,6 +1111,11 @@ namespace QR_MASAN_01
                             {
                                 ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : Không đủ luồng xử lí");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+
+                                //ghi log lỗi
+                                SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.CAMERA_ERROR, "Lỗi khi camera trả về C1", Globalvariable.CurrentUser.Username, "Không đủ luồng xử lí");
+                                //thêm vào Queue để ghi log
+                                SystemLogs.LogQueue.Enqueue(systemLogs);
                             }
                         }
                         catch (Exception ex)
@@ -1067,6 +1125,11 @@ namespace QR_MASAN_01
                                 ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : {ex.Message}");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                             }));
+
+                            //ghi log lỗi
+                            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.CAMERA_ERROR, "Lỗi khi camera trả về C1", Globalvariable.CurrentUser.Username, ex.Message);
+                            //thêm vào Queue để ghi log
+                            SystemLogs.LogQueue.Enqueue(systemLogs);
                         }
                     }
                     else
@@ -1097,7 +1160,7 @@ namespace QR_MASAN_01
             switch (eAE)
             {
                 case SPMS1.enumClient.CONNECTED:
-                    if (GCamera.Camera_Status_02 == e_Camera_Status.DISCONNECTED)
+                    if (GCamera.Camera_Status_02 != e_Camera_Status.DISCONNECTED)
                     {
                         GCamera.Camera_Status_02 = e_Camera_Status.CONNECTED;
                         Invoke(new Action(() =>
@@ -1108,7 +1171,7 @@ namespace QR_MASAN_01
                     }
                     break;
                 case SPMS1.enumClient.DISCONNECTED:
-                    if (GCamera.Camera_Status_02 == e_Camera_Status.CONNECTED)
+                    if (GCamera.Camera_Status_02 != e_Camera_Status.CONNECTED)
                     {
                         GCamera.Camera_Status_02 = e_Camera_Status.DISCONNECTED;
                         Invoke(new Action(() =>
@@ -1149,6 +1212,11 @@ namespace QR_MASAN_01
                         }));
 
                         Send_Result_Content_C2(e_Content_Result.ERROR, "Lỗi khi camera 02 trả về: Không đủ luồng xử lí");
+
+                        //ghi log lỗi
+                        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.CAMERA_ERROR, "Lỗi khi camera trả về C2", Globalvariable.CurrentUser.Username, "Không đủ luồng xử lí");
+                        //thêm vào Queue để ghi log
+                        SystemLogs.LogQueue.Enqueue(systemLogs);
                     }
                     break;
                 case SPMS1.enumClient.RECONNECT:
@@ -1441,6 +1509,9 @@ namespace QR_MASAN_01
 
         }
 
+        #region Quản lý PLC và gửi tín hiệu PLC
+
+
         public enum e_Content_Result
         {
             PASS,//tốt
@@ -1463,7 +1534,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.Curent_Content = _content;
                     Globalvariable.C1_UI.IsPass = true;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("1"));
+                    OperateResult write = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C1_RejectDM"), short.Parse("1"));
                     if (write.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_1_Pass_C1++;
@@ -1483,7 +1554,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.IsPass = false;
 
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write1 = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                    OperateResult write1 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C1_RejectDM"), short.Parse("0"));
 
                     if (write1.IsSuccess)
                     {
@@ -1503,7 +1574,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.Curent_Content = "Thả lại:" + _content;
                     Globalvariable.C1_UI.IsPass = true;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write5 = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("1"));
+                    OperateResult write5 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C1_RejectDM"), short.Parse("1"));
                     if (write5.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_1_Pass_C1++;
@@ -1522,7 +1593,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.Curent_Content = "Mã đã kích hoạt (trùng)";
                     Globalvariable.C1_UI.IsPass = false;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write4 = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                    OperateResult write4 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C1_RejectDM"), short.Parse("0"));
                     if (write4.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C1++;
@@ -1541,7 +1612,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.Curent_Content = _content;
                     Globalvariable.C1_UI.IsPass = false;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write3 = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                    OperateResult write3 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C1_RejectDM"), short.Parse("0"));
                     if (write3.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C1++;
@@ -1562,7 +1633,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.IsPass = false;
 
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write2 = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                    OperateResult write2 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C1_RejectDM"), short.Parse("0"));
                     if (write2.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C1++;
@@ -1579,7 +1650,7 @@ namespace QR_MASAN_01
                     Globalvariable.GCounter.Total_Failed_C1++;
                     Globalvariable.C1_UI.Curent_Content = "Mã không tồn tại";
                     Globalvariable.C1_UI.IsPass = false;
-                    OperateResult write8 = PLC.plc.Write(GlobalSettings.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                    OperateResult write8 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C1_RejectDM"), short.Parse("0"));
                     if (write8.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C1++;
@@ -1601,7 +1672,7 @@ namespace QR_MASAN_01
                     Globalvariable.C2_UI.Curent_Content = _content;
                     Globalvariable.C2_UI.IsPass = true;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write = PLC.plc.Write(GlobalSettings.Get("PLC_C2_RejectDM"), short.Parse("1"));
+                    OperateResult write = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C2_RejectDM"), short.Parse("1"));
                     if (write.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_1_Pass_C2++;
@@ -1618,7 +1689,7 @@ namespace QR_MASAN_01
                     Globalvariable.C2_UI.IsPass = false;
 
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write1 = PLC.plc.Write(GlobalSettings.Get("PLC_C2_RejectDM"), short.Parse("0"));
+                    OperateResult write1 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C2_RejectDM"), short.Parse("0"));
 
                     if (write1.IsSuccess)
                     {
@@ -1635,7 +1706,7 @@ namespace QR_MASAN_01
                     Globalvariable.C2_UI.Curent_Content = "Thả lại:" + _content;
                     Globalvariable.C2_UI.IsPass = true;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write5 = PLC.plc.Write(GlobalSettings.Get("PLC_C2_RejectDM"), short.Parse("1"));
+                    OperateResult write5 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C2_RejectDM"), short.Parse("1"));
                     if (write5.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_1_Pass_C2++;
@@ -1698,7 +1769,7 @@ namespace QR_MASAN_01
                     Globalvariable.C2_UI.IsPass = false;
 
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write2 = PLC.plc.Write(GlobalSettings.Get("PLC_C2_RejectDM"), short.Parse("0"));
+                    OperateResult write2 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C2_RejectDM"), short.Parse("0"));
                     if (write2.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C2++;
@@ -1713,7 +1784,7 @@ namespace QR_MASAN_01
 
                     Globalvariable.C2_UI.Curent_Content = "Mã không tồn tại";
                     Globalvariable.C2_UI.IsPass = false;
-                    OperateResult write8 = PLC.plc.Write(GlobalSettings.Get("PLC_C2_RejectDM"), short.Parse("0"));
+                    OperateResult write8 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C2_RejectDM"), short.Parse("0"));
                     if (write8.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C2++;
@@ -1725,6 +1796,31 @@ namespace QR_MASAN_01
                     break;
             }
         }
+
+        private void PLC_PLCStatus_OnChange(object sender, SPMS1.OmronPLC_Hsl.PLCStatusEventArgs e)
+        {
+            switch (e.Status)
+            {
+                case SPMS1.OmronPLC_Hsl.PLCStatus.Connecting:
+                    Globalvariable.PLCConnect = true;
+                    this.Invoke(new Action(() =>
+                    {
+                        opPLCStatus.Text = "Kết nối";
+                        opPLCStatus.FillColor = Globalvariable.OK_Color;
+                    }));
+                    break;
+                case SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect:
+                    Globalvariable.PLCConnect = false;
+                    this.Invoke(new Action(() =>
+                    {
+                        opPLCStatus.Text = "Mất kết nối";
+                        opPLCStatus.FillColor = Globalvariable.NG_Color;
+                    }));
+                    break;
+            }
+        }
+        #endregion
+
 
         public (bool IsOK, string Message) CheckCodeFormatV2(string code, string pattern)
         {
@@ -1964,29 +2060,6 @@ namespace QR_MASAN_01
         }
 
         #endregion
-
-        private void PLC_PLCStatus_OnChange(object sender, SPMS1.OmronPLC_Hsl.PLCStatusEventArgs e)
-        {
-            switch (e.Status)
-            {
-                case SPMS1.OmronPLC_Hsl.PLCStatus.Connecting:
-                    Globalvariable.PLCConnect = true;
-                    this.Invoke(new Action(() =>
-                    {
-                        opPLCStatus.Text = "Kết nối";
-                        opPLCStatus.FillColor = Globalvariable.OK_Color;
-                    }));
-                    break;
-                case SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect:
-                    Globalvariable.PLCConnect = false;
-                    this.Invoke(new Action(() =>
-                    {
-                        opPLCStatus.Text = "Mất kết nối";
-                        opPLCStatus.FillColor = Globalvariable.NG_Color;
-                    }));
-                    break;
-            }
-        }
 
         private void btnResetCounter_Click(object sender, EventArgs e)
         {

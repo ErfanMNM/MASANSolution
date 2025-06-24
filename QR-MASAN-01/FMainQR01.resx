@@ -157,7 +157,7 @@
     <value>LogoImg</value>
   </data>
   <data name="&gt;&gt;LogoImg.Type" xml:space="preserve">
-    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
   <data name="&gt;&gt;LogoImg.Parent" xml:space="preserve">
     <value>Logo</value>
@@ -193,7 +193,7 @@
     <value>Logotext</value>
   </data>
   <data name="&gt;&gt;Logotext.Type" xml:space="preserve">
-    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
   <data name="&gt;&gt;Logotext.Parent" xml:space="preserve">
     <value>Logo</value>
@@ -220,7 +220,7 @@
     <value>Logo</value>
   </data>
   <data name="&gt;&gt;Logo.Type" xml:space="preserve">
-    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
   <data name="&gt;&gt;Logo.Parent" xml:space="preserve">
     <value>header</value>
@@ -229,7 +229,40 @@
     <value>0</value>
   </data>
   <data name="Logo.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LogoImg" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="Logotext" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,90,Percent,50" /&gt;&lt;Rows Styles="Percent,48,3871" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LogoImg" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="Logotext" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,90,Percent,50" /&gt;&lt;Rows Styles="Percent,48.3871" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="opUser.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="opUser.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="opUser.Location" type="System.Drawing.Point, System.Drawing">
+    <value>843, 3</value>
+  </data>
+  <data name="opUser.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1, 1</value>
+  </data>
+  <data name="opUser.Size" type="System.Drawing.Size, System.Drawing">
+    <value>178, 49</value>
+  </data>
+  <data name="opUser.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="opUser.Text" xml:space="preserve">
+    <value>Operator</value>
+  </data>
+  <data name="&gt;&gt;opUser.Name" xml:space="preserve">
+    <value>opUser</value>
+  </data>
+  <data name="&gt;&gt;opUser.Type" xml:space="preserve">
+    <value>Sunny.UI.UISymbolLabel, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;opUser.Parent" xml:space="preserve">
+    <value>header</value>
+  </data>
+  <data name="&gt;&gt;opUser.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="header.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
@@ -250,7 +283,7 @@
     <value>header</value>
   </data>
   <data name="&gt;&gt;header.Type" xml:space="preserve">
-    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
   <data name="&gt;&gt;header.Parent" xml:space="preserve">
     <value>uiTopbar</value>
@@ -259,7 +292,7 @@
     <value>0</value>
   </data>
   <data name="header.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="Logo" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,23,82813,Percent,76,17188" /&gt;&lt;Rows Styles="Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="Logo" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="opUser" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,23.82813,Percent,76.17188" /&gt;&lt;Rows Styles="Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="uiTopbar.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 12pt</value>
@@ -286,7 +319,7 @@
     <value>uiTopbar</value>
   </data>
   <data name="&gt;&gt;uiTopbar.Type" xml:space="preserve">
-    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
   <data name="&gt;&gt;uiTopbar.Parent" xml:space="preserve">
     <value>mainPanelLayout</value>
@@ -299,6 +332,42 @@
   </data>
   <data name="navPanel.ColumnCount" type="System.Int32, mscorlib">
     <value>1</value>
+  </data>
+  <data name="btnDeActive.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="btnDeActive.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Tahoma, 15.75pt, style=Bold</value>
+  </data>
+  <data name="btnDeActive.Location" type="System.Drawing.Point, System.Drawing">
+    <value>2, 519</value>
+  </data>
+  <data name="btnDeActive.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="btnDeActive.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1, 1</value>
+  </data>
+  <data name="btnDeActive.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 52</value>
+  </data>
+  <data name="btnDeActive.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="btnDeActive.Text" xml:space="preserve">
+    <value>Dừng kiểm</value>
+  </data>
+  <data name="&gt;&gt;btnDeActive.Name" xml:space="preserve">
+    <value>btnDeActive</value>
+  </data>
+  <data name="&gt;&gt;btnDeActive.Type" xml:space="preserve">
+    <value>Sunny.UI.UISymbolButton, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;btnDeActive.Parent" xml:space="preserve">
+    <value>navPanel</value>
+  </data>
+  <data name="&gt;&gt;btnDeActive.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="uiNavMenu1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -313,7 +382,7 @@
     <value>0, 0, 0, 0</value>
   </data>
   <data name="uiNavMenu1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>184, 551</value>
+    <value>184, 517</value>
   </data>
   <data name="uiNavMenu1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -322,82 +391,19 @@
     <value>uiNavMenu1</value>
   </data>
   <data name="&gt;&gt;uiNavMenu1.Type" xml:space="preserve">
-    <value>Sunny.UI.UINavMenu, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UINavMenu, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
   <data name="&gt;&gt;uiNavMenu1.Parent" xml:space="preserve">
     <value>navPanel</value>
   </data>
   <data name="&gt;&gt;uiNavMenu1.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="opUser.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 12pt</value>
-  </data>
-  <data name="opUser.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 554</value>
-  </data>
-  <data name="opUser.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>1, 1</value>
-  </data>
-  <data name="opUser.Size" type="System.Drawing.Size, System.Drawing">
-    <value>178, 36</value>
-  </data>
-  <data name="opUser.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="opUser.Text" xml:space="preserve">
-    <value>Operator</value>
-  </data>
-  <data name="&gt;&gt;opUser.Name" xml:space="preserve">
-    <value>opUser</value>
-  </data>
-  <data name="&gt;&gt;opUser.Type" xml:space="preserve">
-    <value>Sunny.UI.UISymbolLabel, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
-  </data>
-  <data name="&gt;&gt;opUser.Parent" xml:space="preserve">
-    <value>navPanel</value>
-  </data>
-  <data name="&gt;&gt;opUser.ZOrder" xml:space="preserve">
     <value>1</value>
-  </data>
-  <data name="btnMini.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 12pt</value>
-  </data>
-  <data name="btnMini.Location" type="System.Drawing.Point, System.Drawing">
-    <value>2, 595</value>
-  </data>
-  <data name="btnMini.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
-  </data>
-  <data name="btnMini.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>1, 1</value>
-  </data>
-  <data name="btnMini.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 38</value>
-  </data>
-  <data name="btnMini.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="btnMini.Text" xml:space="preserve">
-    <value>Thu nhỏ</value>
-  </data>
-  <data name="&gt;&gt;btnMini.Name" xml:space="preserve">
-    <value>btnMini</value>
-  </data>
-  <data name="&gt;&gt;btnMini.Type" xml:space="preserve">
-    <value>Sunny.UI.UISymbolButton, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
-  </data>
-  <data name="&gt;&gt;btnMini.Parent" xml:space="preserve">
-    <value>navPanel</value>
-  </data>
-  <data name="&gt;&gt;btnMini.ZOrder" xml:space="preserve">
-    <value>2</value>
   </data>
   <data name="btnAppClose.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 12pt</value>
   </data>
   <data name="btnAppClose.Location" type="System.Drawing.Point, System.Drawing">
-    <value>2, 637</value>
+    <value>2, 628</value>
   </data>
   <data name="btnAppClose.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
@@ -406,7 +412,7 @@
     <value>1, 1</value>
   </data>
   <data name="btnAppClose.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 35</value>
+    <value>180, 44</value>
   </data>
   <data name="btnAppClose.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -418,12 +424,45 @@
     <value>btnAppClose</value>
   </data>
   <data name="&gt;&gt;btnAppClose.Type" xml:space="preserve">
-    <value>Sunny.UI.UISymbolButton, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UISymbolButton, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
   <data name="&gt;&gt;btnAppClose.Parent" xml:space="preserve">
     <value>navPanel</value>
   </data>
   <data name="&gt;&gt;btnAppClose.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="btnMini.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt</value>
+  </data>
+  <data name="btnMini.Location" type="System.Drawing.Point, System.Drawing">
+    <value>2, 575</value>
+  </data>
+  <data name="btnMini.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 2, 2, 2</value>
+  </data>
+  <data name="btnMini.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1, 1</value>
+  </data>
+  <data name="btnMini.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 49</value>
+  </data>
+  <data name="btnMini.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="btnMini.Text" xml:space="preserve">
+    <value>Thu nhỏ</value>
+  </data>
+  <data name="&gt;&gt;btnMini.Name" xml:space="preserve">
+    <value>btnMini</value>
+  </data>
+  <data name="&gt;&gt;btnMini.Type" xml:space="preserve">
+    <value>Sunny.UI.UISymbolButton, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;btnMini.Parent" xml:space="preserve">
+    <value>navPanel</value>
+  </data>
+  <data name="&gt;&gt;btnMini.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
   <data name="navPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
@@ -448,7 +487,7 @@
     <value>navPanel</value>
   </data>
   <data name="&gt;&gt;navPanel.Type" xml:space="preserve">
-    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
   <data name="&gt;&gt;navPanel.Parent" xml:space="preserve">
     <value>BodyPanel</value>
@@ -457,7 +496,7 @@
     <value>0</value>
   </data>
   <data name="navPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="uiNavMenu1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="opUser" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="btnMini" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="btnAppClose" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,100,Absolute,42,Absolute,42,Absolute,39" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="btnDeActive" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="uiNavMenu1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="btnAppClose" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="btnMini" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,100,Absolute,56,Absolute,53,Absolute,48" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="uiTabControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -484,7 +523,7 @@
     <value>uiTabControl1</value>
   </data>
   <data name="&gt;&gt;uiTabControl1.Type" xml:space="preserve">
-    <value>Sunny.UI.UITabControl, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UITabControl, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
   <data name="&gt;&gt;uiTabControl1.Parent" xml:space="preserve">
     <value>BodyPanel</value>
@@ -514,7 +553,7 @@
     <value>BodyPanel</value>
   </data>
   <data name="&gt;&gt;BodyPanel.Type" xml:space="preserve">
-    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
   <data name="&gt;&gt;BodyPanel.Parent" xml:space="preserve">
     <value>mainPanelLayout</value>
@@ -556,7 +595,7 @@
     <value>lblClock</value>
   </data>
   <data name="&gt;&gt;lblClock.Type" xml:space="preserve">
-    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
   <data name="&gt;&gt;lblClock.Parent" xml:space="preserve">
     <value>footer</value>
@@ -589,7 +628,7 @@
     <value>lblInternet</value>
   </data>
   <data name="&gt;&gt;lblInternet.Type" xml:space="preserve">
-    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
   <data name="&gt;&gt;lblInternet.Parent" xml:space="preserve">
     <value>footer</value>
@@ -622,7 +661,7 @@
     <value>lblAllStatus</value>
   </data>
   <data name="&gt;&gt;lblAllStatus.Type" xml:space="preserve">
-    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
   <data name="&gt;&gt;lblAllStatus.Parent" xml:space="preserve">
     <value>footer</value>
@@ -658,7 +697,7 @@
     <value>uiScrollingText1</value>
   </data>
   <data name="&gt;&gt;uiScrollingText1.Type" xml:space="preserve">
-    <value>Sunny.UI.UIScrollingText, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UIScrollingText, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
   <data name="&gt;&gt;uiScrollingText1.Parent" xml:space="preserve">
     <value>footer</value>
@@ -688,7 +727,7 @@
     <value>footer</value>
   </data>
   <data name="&gt;&gt;footer.Type" xml:space="preserve">
-    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
   <data name="&gt;&gt;footer.Parent" xml:space="preserve">
     <value>mainPanelLayout</value>
@@ -721,7 +760,7 @@
     <value>mainPanelLayout</value>
   </data>
   <data name="&gt;&gt;mainPanelLayout.Type" xml:space="preserve">
-    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UITableLayoutPanel, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
   <data name="&gt;&gt;mainPanelLayout.Parent" xml:space="preserve">
     <value>$this</value>
@@ -730,7 +769,7 @@
     <value>0</value>
   </data>
   <data name="mainPanelLayout.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="uiTopbar" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="BodyPanel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="footer" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,7,161458,Percent,87,76041,Percent,5" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="uiTopbar" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="BodyPanel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="footer" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,7.161458,Percent,87.76041,Percent,5" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="WKCheck.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
@@ -749,6 +788,9 @@
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 8.25pt</value>
+  </data>
+  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
   </data>
   <data name="$this.MaximumSize" type="System.Drawing.Size, System.Drawing">
     <value>1024, 768</value>
@@ -787,6 +829,6 @@
     <value>FMainQR01</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>Sunny.UI.UIForm2, SunnyUI, Version=3.8.4.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+    <value>Sunny.UI.UIForm2, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
   </data>
 </root>

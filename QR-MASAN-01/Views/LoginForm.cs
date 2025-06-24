@@ -239,19 +239,11 @@ namespace QR_MASAN_01.Views
 
         //}
 
-        //private string HashPassword(string password, string salt)
-        //{
-        //    using (SHA256 sha256 = SHA256.Create())
-        //    {
-        //        byte[] combinedBytes = Encoding.UTF8.GetBytes(password + salt);
-        //        byte[] hashBytes = sha256.ComputeHash(combinedBytes);
-        //        return Convert.ToBase64String(hashBytes);
-        //    }
-        //}
+
 
         //private void CreateDatabaseIfNotExists()
         //{
-        //    if (!File.Exists(dbFile))
+        //    if (!System.IO.File.Exists(dbFile))
         //    {
         //        SQLiteConnection.CreateFile(dbFile);
         //    }

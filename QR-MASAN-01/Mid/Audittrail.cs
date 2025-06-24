@@ -13,14 +13,18 @@ namespace QR_MASAN_01
     {
         public enum e_LogType
         {
-            CAMERA,
+            SYSTEM, // Sự kiện hệ thống chung
+            CAMERA_ERROR,
             PLC,
             ERROR,
             USER_ACTION,
             LOGIN,
-            SYSTEM_EVENT
+            SYSTEM_EVENT,
+            SAVE_LOG_EXPORT, // Lưu nhật ký xuất báo cáo
+            MFI, // Sự kiện liên quan đến MFI
+            SERVER, // Sự kiện liên quan đến máy chủ
+            SERVER_ERROR, // Lỗi máy chủ
         }
-
         public string TimeStamp { get; set; } // Thời gian xảy ra sự kiện, định dạng ISO 8601
         public long TimeUnix { get;set; }// Thời gian Unix (số giây kể từ 01/01/1970)
         public e_LogType LogType { get; set; }
@@ -43,7 +47,7 @@ namespace QR_MASAN_01
         // Thêm một bản ghi vào hàng đợi
 
         //hàm Insert vào sqlite (sqlite helper)
-        
+
         public static void InsertToSQLite(SystemLogs systemLogs_Data)
         {
             //kiểm tra xem file log đã tồn tại chưa, nếu chưa thì tạo mới
@@ -96,16 +100,26 @@ namespace QR_MASAN_01
 
         //sử dụng hàm này để lấy log từ sqlite trả về dạng datatable, lấy theo số lượng nhận vào từ page 
         //ví dụ: GetLogsFromSQLite(e_LogType.CAMERA, 10, 100) sẽ lấy bản ghi từ 10 đến 100 của loại CAMERA lưu ý lấy từ ID lớn nhất ngược lại
-        public static DataTable Get_Logs_From_SQLite(e_LogType logType, int Page,  int Size)
+        //tạo 1 long datfrom =  - 30 ngày
+        //tạo 1 long dateto = 0 (hiện tại)
+
+        public static DataTable Get_Logs_From_SQLite(e_LogType logType, int Page,  int Size, long DateFrom, long DateTo)
         {
             string dbFilePath = "C:/.ABC/TanTienHiTech.dbmmccmsacc"; // Đường dẫn đến file SQLite
+            DataTable dataTable = new DataTable();
             DataTable dt = new DataTable();
+            dt.Columns.Add("STT", typeof(int));
+            dt.Columns.Add("Thời gian", typeof(string));
+            dt.Columns.Add("Loại", typeof(string));
+            dt.Columns.Add("Nội dung", typeof(string));
+            dt.Columns.Add("Người dùng", typeof(string));
+            dt.Columns.Add("Chi tiết", typeof(string));
             using (SQLiteConnection connection = new SQLiteConnection($"Data Source={dbFilePath};Version=3;"))
             {
                 connection.Open();
                 string query = @"
                     SELECT * FROM SystemLogs 
-                    WHERE LogType = @LogType 
+                    WHERE LogType = @LogType AND TimeUnix >= @DateFrom AND TimeUnix <= @DateTo
                     ORDER BY ID DESC 
                     LIMIT @page, @size";
                 using (var command = new SQLiteCommand(query, connection))
@@ -113,9 +127,19 @@ namespace QR_MASAN_01
                     command.Parameters.AddWithValue("@LogType", logType.ToString());
                     command.Parameters.AddWithValue("@page", Page);
                     command.Parameters.AddWithValue("@size", Size);
+                    command.Parameters.AddWithValue("@DateFrom", DateFrom);
+                    command.Parameters.AddWithValue("@DateTo", DateTo);
                     using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(command))
                     {
-                        adapter.Fill(dt);
+                        adapter.Fill(dataTable);
+                        //chuyêbr
+                        //đổ dữ liệu vào DataTable dt
+                        for (int i = 0; i < dataTable.Rows.Count; i++)
+                        {
+                            DataRow row = dataTable.Rows[i];
+                            dt.Rows.Add(row["ID"], row["TimeStamp"], row["LogType"], row["Message"], row["User"], row["Details"]);
+                        }
+
                     }
                 }
             }
@@ -181,4 +205,6 @@ namespace QR_MASAN_01
             Details = details;
         }
     }
+
+    
 }

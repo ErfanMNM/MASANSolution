@@ -118,6 +118,7 @@
             this.ipConsole = new Sunny.UI.UIListBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.opHisConsole = new Sunny.UI.UIListBox();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
             this.lblAlarm = new Sunny.UI.UIPanel();
             this.panelinfoCode = new Sunny.UI.UITitlePanel();
@@ -144,7 +145,6 @@
             this.Camera = new SPMS1.TCPClient(this.components);
             this.PLC = new SPMS1.OmronPLC_Hsl(this.components);
             this.Camera_c = new SPMS1.TCPClient(this.components);
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTitlePanel5.SuspendLayout();
             this.uiTabControl2.SuspendLayout();
@@ -1582,7 +1582,7 @@
             this.tabPage3.Controls.Add(this.opHisConsole);
             this.tabPage3.Location = new System.Drawing.Point(0, 40);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(457, 357);
+            this.tabPage3.Size = new System.Drawing.Size(200, 60);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Lịch sử";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1599,9 +1599,18 @@
             this.opHisConsole.Name = "opHisConsole";
             this.opHisConsole.Padding = new System.Windows.Forms.Padding(2);
             this.opHisConsole.ShowText = false;
-            this.opHisConsole.Size = new System.Drawing.Size(457, 357);
+            this.opHisConsole.Size = new System.Drawing.Size(200, 60);
             this.opHisConsole.TabIndex = 0;
             this.opHisConsole.Text = "uiListBox1";
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Location = new System.Drawing.Point(0, 40);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Size = new System.Drawing.Size(200, 60);
+            this.tabPage2.TabIndex = 3;
+            this.tabPage2.Text = "Lịch sử 2";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // uiTableLayoutPanel2
             // 
@@ -1874,15 +1883,6 @@
             this.Camera_c.Port = 6968;
             this.Camera_c.ClientCallBack += new SPMS1.TCPClient.EventForClient(this.Camera_c_ClientCallBack);
             // 
-            // tabPage2
-            // 
-            this.tabPage2.Location = new System.Drawing.Point(0, 40);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(457, 357);
-            this.tabPage2.TabIndex = 3;
-            this.tabPage2.Text = "Lịch sử 2";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
             // F1Dashboard
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1891,7 +1891,6 @@
             this.Name = "F1Dashboard";
             this.Symbol = 62162;
             this.Text = "Trang chủ";
-            this.Load += new System.EventHandler(this.FDashboard_Initialize);
             this.uiTableLayoutPanel3.ResumeLayout(false);
             this.uiTitlePanel5.ResumeLayout(false);
             this.uiTabControl2.ResumeLayout(false);

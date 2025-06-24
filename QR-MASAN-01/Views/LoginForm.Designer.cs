@@ -88,7 +88,7 @@
             this.ipPassword.Size = new System.Drawing.Size(466, 54);
             this.ipPassword.Symbol = 361475;
             this.ipPassword.TabIndex = 3;
-            this.ipPassword.Text = "Mật khẩu";
+            this.ipPassword.Text = "a";
             this.ipPassword.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipPassword.Watermark = "";
             this.ipPassword.DoubleClick += new System.EventHandler(this.ipPassword_DoubleClick);
@@ -107,7 +107,7 @@
             this.ipUserName.Size = new System.Drawing.Size(466, 55);
             this.ipUserName.Symbol = 62142;
             this.ipUserName.TabIndex = 0;
-            this.ipUserName.Text = "Tên vận hành";
+            this.ipUserName.Text = "SA";
             this.ipUserName.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipUserName.Watermark = "";
             this.ipUserName.DoubleClick += new System.EventHandler(this.ipUserName_DoubleClick);

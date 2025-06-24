@@ -1,4 +1,12 @@
-﻿using Sunny.UI;
+﻿using MFI_Service;
+using QR_MASAN_01.Auth;
+using QR_MASAN_01.Mid;
+using QR_MASAN_01.Views;
+using QR_MASAN_01.Views.Printers;
+using QR_MASAN_01.Views.Scada;
+using QR_MASAN_01.Views.Settings;
+using SpT;
+using Sunny.UI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,14 +17,8 @@ using System.Net.NetworkInformation;
 using System.Security.Policy;
 using System.Text;
 using System.Threading;
+using static QR_MASAN_01.SystemLogs;
 using System.Windows.Forms;
-using MFI_Service;
-using QR_MASAN_01.Views;
-using QR_MASAN_01.Mid;
-using QR_MASAN_01.Views.Settings;
-using QR_MASAN_01.Views.Printers;
-using QR_MASAN_01.Views.Scada;
-using QR_MASAN_01.Auth;
 
 
 
@@ -46,6 +48,7 @@ namespace QR_MASAN_01
             //khởi động phần mềm
             SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_EVENT, "Phần mềm khởi động", "System", "Bắt đầu khởi động");
             SystemLogs.LogQueue.Enqueue(systemLogs);
+
             try
             {
                 InitializeComponent();
@@ -55,7 +58,13 @@ namespace QR_MASAN_01
                 WKCheck.RunWorkerAsync();
                 
                 _setings.LoadSettings("C:/Phan_Mem/Configs.xlsx");
-                
+
+                GoogleSheetConfigHelper.Init(
+                                            "credentials.json",
+                                            "1V2xjY6AA4URrtcwUorQE54Ud5KyI7Ev2hpDPMMcXVTI",
+                                            "PLC!A1:C100"
+                                        );
+
             }
             catch (Exception ex)
             {
@@ -79,16 +88,16 @@ namespace QR_MASAN_01
         {
             
             uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
-           uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
-           uiNavMenu1.CreateNode(AddPage(scanQR, 1004));
-            uiNavMenu1.CreateNode(AddPage(FormTest, 1998));
+            uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
+            uiNavMenu1.CreateNode(AddPage(scanQR, 1004));
+            //uiNavMenu1.CreateNode(AddPage(FormTest, 1998));
             uiNavMenu1.CreateNode(AddPage(_f1PLC, 1009));
             uiNavMenu1.CreateNode(AddPage(_FStatistics, 1002));
             uiNavMenu1.CreateNode(AddPage(FSystemlogs, 1005));
             uiNavMenu1.SelectPage(1001);
 
-
-          _FMFI.FMFI_INIT();
+            _F1Dashboard.INIT();
+            _FMFI.FMFI_INIT();
            scanQR.INIT();
            
 
@@ -142,6 +151,7 @@ namespace QR_MASAN_01
         //kiểm tra mấy thứ linh tinh
         bool InternetConnection = false;
         double InternetSpeed = 0;
+
         private void WKCheck_DoWork(object sender, DoWorkEventArgs e)
         {
             int demso = 0;
@@ -196,6 +206,21 @@ namespace QR_MASAN_01
             //đồng hồ
             while(!ClockWK.CancellationPending)
             {
+                try
+                {
+                    // Kiểm tra hàng đợi và thêm bản ghi vào SQLite
+                    if (LogQueue.Count > 0)
+                    {
+                        InsertToSQLite(LogQueue.Dequeue());
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    // Ghi log lỗi vào hàng đợi
+                    this.ShowErrorDialog("Lỗi ghi log vào SQLite", ex.Message, UIStyle.Red);
+                }
+
                 if (Globalvariable.CurrentUser.Username == string.Empty)
                 {
                     this.Invoke(new Action(() =>

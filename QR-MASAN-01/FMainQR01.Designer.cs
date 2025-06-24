@@ -39,7 +39,6 @@
             this.BodyPanel = new Sunny.UI.UITableLayoutPanel();
             this.navPanel = new Sunny.UI.UITableLayoutPanel();
             this.uiNavMenu1 = new Sunny.UI.UINavMenu();
-            this.opUser = new Sunny.UI.UISymbolLabel();
             this.btnMini = new Sunny.UI.UISymbolButton();
             this.btnAppClose = new Sunny.UI.UISymbolButton();
             this.uiTabControl1 = new Sunny.UI.UITabControl();
@@ -50,6 +49,8 @@
             this.uiScrollingText1 = new Sunny.UI.UIScrollingText();
             this.WKCheck = new System.ComponentModel.BackgroundWorker();
             this.ClockWK = new System.ComponentModel.BackgroundWorker();
+            this.btnDeActive = new Sunny.UI.UISymbolButton();
+            this.opUser = new Sunny.UI.UISymbolLabel();
             this.Internet = new SPMS1.InternetClass(this.components);
             this.mainPanelLayout.SuspendLayout();
             this.uiTopbar.SuspendLayout();
@@ -86,6 +87,7 @@
             this.header.BackColor = System.Drawing.Color.Lavender;
             resources.ApplyResources(this.header, "header");
             this.header.Controls.Add(this.Logo, 0, 0);
+            this.header.Controls.Add(this.opUser, 1, 0);
             this.header.Name = "header";
             this.header.TagString = null;
             // 
@@ -131,10 +133,10 @@
             // navPanel
             // 
             resources.ApplyResources(this.navPanel, "navPanel");
+            this.navPanel.Controls.Add(this.btnDeActive, 0, 1);
             this.navPanel.Controls.Add(this.uiNavMenu1, 0, 0);
-            this.navPanel.Controls.Add(this.opUser, 0, 1);
-            this.navPanel.Controls.Add(this.btnMini, 0, 2);
             this.navPanel.Controls.Add(this.btnAppClose, 0, 3);
+            this.navPanel.Controls.Add(this.btnMini, 0, 2);
             this.navPanel.Name = "navPanel";
             this.navPanel.TagString = null;
             // 
@@ -162,14 +164,6 @@
             this.uiNavMenu1.ShowRootLines = false;
             this.uiNavMenu1.ShowTips = true;
             this.uiNavMenu1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            // 
-            // opUser
-            // 
-            resources.ApplyResources(this.opUser, "opUser");
-            this.opUser.Name = "opUser";
-            this.opUser.Symbol = 62142;
-            this.opUser.SymbolSize = 30;
-            this.opUser.Click += new System.EventHandler(this.opUser_Click);
             // 
             // btnMini
             // 
@@ -264,6 +258,28 @@
             this.ClockWK.WorkerSupportsCancellation = true;
             this.ClockWK.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ClockWK_DoWork);
             // 
+            // btnDeActive
+            // 
+            this.btnDeActive.Cursor = System.Windows.Forms.Cursors.Hand;
+            resources.ApplyResources(this.btnDeActive, "btnDeActive");
+            this.btnDeActive.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.btnDeActive.ForeColor = System.Drawing.Color.DarkRed;
+            this.btnDeActive.Name = "btnDeActive";
+            this.btnDeActive.Radius = 0;
+            this.btnDeActive.RectColor = System.Drawing.Color.Blue;
+            this.btnDeActive.RectSize = 2;
+            this.btnDeActive.Symbol = 557571;
+            this.btnDeActive.SymbolColor = System.Drawing.Color.Purple;
+            this.btnDeActive.TipsColor = System.Drawing.Color.RoyalBlue;
+            this.btnDeActive.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            // 
+            // opUser
+            // 
+            resources.ApplyResources(this.opUser, "opUser");
+            this.opUser.Name = "opUser";
+            this.opUser.Symbol = 62142;
+            this.opUser.SymbolSize = 30;
+            // 
             // Internet
             // 
             this.Internet.Url = "8.8.8.8";
@@ -308,12 +324,13 @@
         private Sunny.UI.UITableLayoutPanel BodyPanel;
         private Sunny.UI.UITableLayoutPanel navPanel;
         private Sunny.UI.UINavMenu uiNavMenu1;
-        private Sunny.UI.UISymbolLabel opUser;
         private Sunny.UI.UISymbolButton btnMini;
         private Sunny.UI.UISymbolButton btnAppClose;
         private Sunny.UI.UIPanel lblAllStatus;
         private Sunny.UI.UIScrollingText uiScrollingText1;
         private Sunny.UI.UITabControl uiTabControl1;
+        private Sunny.UI.UISymbolButton btnDeActive;
+        private Sunny.UI.UISymbolLabel opUser;
     }
 }
 
