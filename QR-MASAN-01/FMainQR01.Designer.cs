@@ -36,22 +36,24 @@
             this.Logo = new Sunny.UI.UITableLayoutPanel();
             this.LogoImg = new Sunny.UI.UIPanel();
             this.Logotext = new Sunny.UI.UIPanel();
+            this.opUser = new Sunny.UI.UISymbolLabel();
             this.BodyPanel = new Sunny.UI.UITableLayoutPanel();
             this.navPanel = new Sunny.UI.UITableLayoutPanel();
+            this.btnDeActive = new Sunny.UI.UISymbolButton();
             this.uiNavMenu1 = new Sunny.UI.UINavMenu();
-            this.btnMini = new Sunny.UI.UISymbolButton();
             this.btnAppClose = new Sunny.UI.UISymbolButton();
+            this.btnMini = new Sunny.UI.UISymbolButton();
             this.uiTabControl1 = new Sunny.UI.UITabControl();
             this.footer = new Sunny.UI.UITableLayoutPanel();
             this.lblClock = new Sunny.UI.UIPanel();
             this.lblInternet = new Sunny.UI.UIPanel();
             this.lblAllStatus = new Sunny.UI.UIPanel();
-            this.uiScrollingText1 = new Sunny.UI.UIScrollingText();
             this.WKCheck = new System.ComponentModel.BackgroundWorker();
             this.ClockWK = new System.ComponentModel.BackgroundWorker();
-            this.btnDeActive = new Sunny.UI.UISymbolButton();
-            this.opUser = new Sunny.UI.UISymbolLabel();
             this.Internet = new SPMS1.InternetClass(this.components);
+            this.uiScrollingText1 = new Sunny.UI.UIScrollingText();
+            this.opLaserPrinterTime = new Sunny.UI.UIPanel();
+            this.WK_LaserPrinterTime = new System.ComponentModel.BackgroundWorker();
             this.mainPanelLayout.SuspendLayout();
             this.uiTopbar.SuspendLayout();
             this.header.SuspendLayout();
@@ -122,6 +124,13 @@
             this.Logotext.RectColor = System.Drawing.Color.Transparent;
             this.Logotext.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // opUser
+            // 
+            resources.ApplyResources(this.opUser, "opUser");
+            this.opUser.Name = "opUser";
+            this.opUser.Symbol = 62142;
+            this.opUser.SymbolSize = 30;
+            // 
             // BodyPanel
             // 
             resources.ApplyResources(this.BodyPanel, "BodyPanel");
@@ -139,6 +148,21 @@
             this.navPanel.Controls.Add(this.btnMini, 0, 2);
             this.navPanel.Name = "navPanel";
             this.navPanel.TagString = null;
+            // 
+            // btnDeActive
+            // 
+            this.btnDeActive.Cursor = System.Windows.Forms.Cursors.Hand;
+            resources.ApplyResources(this.btnDeActive, "btnDeActive");
+            this.btnDeActive.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.btnDeActive.ForeColor = System.Drawing.Color.DarkRed;
+            this.btnDeActive.Name = "btnDeActive";
+            this.btnDeActive.Radius = 0;
+            this.btnDeActive.RectColor = System.Drawing.Color.Blue;
+            this.btnDeActive.RectSize = 2;
+            this.btnDeActive.Symbol = 557571;
+            this.btnDeActive.SymbolColor = System.Drawing.Color.Purple;
+            this.btnDeActive.TipsColor = System.Drawing.Color.RoyalBlue;
+            this.btnDeActive.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             // 
             // uiNavMenu1
             // 
@@ -165,18 +189,6 @@
             this.uiNavMenu1.ShowTips = true;
             this.uiNavMenu1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             // 
-            // btnMini
-            // 
-            this.btnMini.Cursor = System.Windows.Forms.Cursors.Hand;
-            resources.ApplyResources(this.btnMini, "btnMini");
-            this.btnMini.Name = "btnMini";
-            this.btnMini.Radius = 0;
-            this.btnMini.RectColor = System.Drawing.Color.Blue;
-            this.btnMini.Symbol = 61544;
-            this.btnMini.TipsColor = System.Drawing.Color.RoyalBlue;
-            this.btnMini.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnMini.Click += new System.EventHandler(this.btnMini_Click);
-            // 
             // btnAppClose
             // 
             this.btnAppClose.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -188,6 +200,18 @@
             this.btnAppClose.TipsColor = System.Drawing.Color.RoyalBlue;
             this.btnAppClose.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnAppClose.Click += new System.EventHandler(this.btnAppClose_Click);
+            // 
+            // btnMini
+            // 
+            this.btnMini.Cursor = System.Windows.Forms.Cursors.Hand;
+            resources.ApplyResources(this.btnMini, "btnMini");
+            this.btnMini.Name = "btnMini";
+            this.btnMini.Radius = 0;
+            this.btnMini.RectColor = System.Drawing.Color.Blue;
+            this.btnMini.Symbol = 61544;
+            this.btnMini.TipsColor = System.Drawing.Color.RoyalBlue;
+            this.btnMini.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnMini.Click += new System.EventHandler(this.btnMini_Click);
             // 
             // uiTabControl1
             // 
@@ -207,10 +231,11 @@
             // 
             this.footer.BackColor = System.Drawing.Color.Green;
             resources.ApplyResources(this.footer, "footer");
-            this.footer.Controls.Add(this.lblClock, 3, 0);
-            this.footer.Controls.Add(this.lblInternet, 2, 0);
-            this.footer.Controls.Add(this.lblAllStatus, 1, 0);
+            this.footer.Controls.Add(this.opLaserPrinterTime, 2, 0);
             this.footer.Controls.Add(this.uiScrollingText1, 0, 0);
+            this.footer.Controls.Add(this.lblClock, 4, 0);
+            this.footer.Controls.Add(this.lblInternet, 3, 0);
+            this.footer.Controls.Add(this.lblAllStatus, 1, 0);
             this.footer.Name = "footer";
             this.footer.TagString = null;
             // 
@@ -240,14 +265,6 @@
             this.lblAllStatus.RectColor = System.Drawing.Color.DodgerBlue;
             this.lblAllStatus.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // uiScrollingText1
-            // 
-            this.uiScrollingText1.Active = true;
-            resources.ApplyResources(this.uiScrollingText1, "uiScrollingText1");
-            this.uiScrollingText1.Interval = 50;
-            this.uiScrollingText1.Name = "uiScrollingText1";
-            this.uiScrollingText1.Style = Sunny.UI.UIStyle.Custom;
-            // 
             // WKCheck
             // 
             this.WKCheck.WorkerSupportsCancellation = true;
@@ -258,31 +275,32 @@
             this.ClockWK.WorkerSupportsCancellation = true;
             this.ClockWK.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ClockWK_DoWork);
             // 
-            // btnDeActive
-            // 
-            this.btnDeActive.Cursor = System.Windows.Forms.Cursors.Hand;
-            resources.ApplyResources(this.btnDeActive, "btnDeActive");
-            this.btnDeActive.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.btnDeActive.ForeColor = System.Drawing.Color.DarkRed;
-            this.btnDeActive.Name = "btnDeActive";
-            this.btnDeActive.Radius = 0;
-            this.btnDeActive.RectColor = System.Drawing.Color.Blue;
-            this.btnDeActive.RectSize = 2;
-            this.btnDeActive.Symbol = 557571;
-            this.btnDeActive.SymbolColor = System.Drawing.Color.Purple;
-            this.btnDeActive.TipsColor = System.Drawing.Color.RoyalBlue;
-            this.btnDeActive.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            // 
-            // opUser
-            // 
-            resources.ApplyResources(this.opUser, "opUser");
-            this.opUser.Name = "opUser";
-            this.opUser.Symbol = 62142;
-            this.opUser.SymbolSize = 30;
-            // 
             // Internet
             // 
             this.Internet.Url = "8.8.8.8";
+            // 
+            // uiScrollingText1
+            // 
+            this.uiScrollingText1.Active = true;
+            resources.ApplyResources(this.uiScrollingText1, "uiScrollingText1");
+            this.uiScrollingText1.Interval = 50;
+            this.uiScrollingText1.Name = "uiScrollingText1";
+            this.uiScrollingText1.Style = Sunny.UI.UIStyle.Custom;
+            // 
+            // opLaserPrinterTime
+            // 
+            this.opLaserPrinterTime.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            resources.ApplyResources(this.opLaserPrinterTime, "opLaserPrinterTime");
+            this.opLaserPrinterTime.Name = "opLaserPrinterTime";
+            this.opLaserPrinterTime.Radius = 0;
+            this.opLaserPrinterTime.RectColor = System.Drawing.Color.Blue;
+            this.opLaserPrinterTime.RectSize = 2;
+            this.opLaserPrinterTime.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // WK_LaserPrinterTime
+            // 
+            this.WK_LaserPrinterTime.WorkerSupportsCancellation = true;
+            this.WK_LaserPrinterTime.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_LaserPrinterTime_DoWork);
             // 
             // FMainQR01
             // 
@@ -327,10 +345,12 @@
         private Sunny.UI.UISymbolButton btnMini;
         private Sunny.UI.UISymbolButton btnAppClose;
         private Sunny.UI.UIPanel lblAllStatus;
-        private Sunny.UI.UIScrollingText uiScrollingText1;
         private Sunny.UI.UITabControl uiTabControl1;
         private Sunny.UI.UISymbolButton btnDeActive;
         private Sunny.UI.UISymbolLabel opUser;
+        private Sunny.UI.UIPanel opLaserPrinterTime;
+        private Sunny.UI.UIScrollingText uiScrollingText1;
+        private System.ComponentModel.BackgroundWorker WK_LaserPrinterTime;
     }
 }
 

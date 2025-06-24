@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Norwix", "PRINTER\Unoplus\N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpT", "SpT\SpT.csproj", "{EB745670-E877-411C-AB3F-253E16C30D82}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "TimeService", "TimeService\TimeService.esproj", "{CA780962-0131-A18A-F625-97D06D8FFD1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,18 @@ Global
 		{EB745670-E877-411C-AB3F-253E16C30D82}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EB745670-E877-411C-AB3F-253E16C30D82}.Release|x64.ActiveCfg = Release|Any CPU
 		{EB745670-E877-411C-AB3F-253E16C30D82}.Release|x64.Build.0 = Release|Any CPU
+		{CA780962-0131-A18A-F625-97D06D8FFD1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA780962-0131-A18A-F625-97D06D8FFD1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA780962-0131-A18A-F625-97D06D8FFD1E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{CA780962-0131-A18A-F625-97D06D8FFD1E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CA780962-0131-A18A-F625-97D06D8FFD1E}.Debug|x64.Build.0 = Debug|Any CPU
+		{CA780962-0131-A18A-F625-97D06D8FFD1E}.Debug|x64.Deploy.0 = Debug|Any CPU
+		{CA780962-0131-A18A-F625-97D06D8FFD1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA780962-0131-A18A-F625-97D06D8FFD1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA780962-0131-A18A-F625-97D06D8FFD1E}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{CA780962-0131-A18A-F625-97D06D8FFD1E}.Release|x64.ActiveCfg = Release|Any CPU
+		{CA780962-0131-A18A-F625-97D06D8FFD1E}.Release|x64.Build.0 = Release|Any CPU
+		{CA780962-0131-A18A-F625-97D06D8FFD1E}.Release|x64.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

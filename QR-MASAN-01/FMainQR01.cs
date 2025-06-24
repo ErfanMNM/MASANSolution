@@ -19,6 +19,8 @@ using System.Text;
 using System.Threading;
 using static QR_MASAN_01.SystemLogs;
 using System.Windows.Forms;
+using System.Net.Http;
+using System.Globalization;
 
 
 
@@ -56,14 +58,23 @@ namespace QR_MASAN_01
                 this.MainTabControl = uiTabControl1;
                 uiNavMenu1.TabControl = uiTabControl1;
                 WKCheck.RunWorkerAsync();
-                
+                //set mặc định timeprinter là giờ hiện tại
+                Globalvariable.TimeUnixPrinter = DateTimeOffset.Now.ToUnixTimeSeconds();
+
                 _setings.LoadSettings("C:/Phan_Mem/Configs.xlsx");
 
-                GoogleSheetConfigHelper.Init(
-                                            "credentials.json",
-                                            "1V2xjY6AA4URrtcwUorQE54Ud5KyI7Ev2hpDPMMcXVTI",
-                                            "PLC!A1:C100"
-                                        );
+                //GoogleSheetConfigHelper.Init(
+                //                            "credentials.json",
+                //                            "1V2xjY6AA4URrtcwUorQE54Ud5KyI7Ev2hpDPMMcXVTI",
+                //                            "PLC!A1:C100"
+                //                        );
+
+                PLCAddress.Init(
+                                "credentials.json",
+                                "1V2xjY6AA4URrtcwUorQE54Ud5KyI7Ev2hpDPMMcXVTI",
+                                "PLC!A1:C100"
+                            );
+
 
             }
             catch (Exception ex)
@@ -82,6 +93,7 @@ namespace QR_MASAN_01
             SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_EVENT, "Đóng ứng dụng", "System", "Người dùng đã đóng ứng dụng");
             SystemLogs.LogQueue.Enqueue(systemLogs);
             ClockWK.CancelAsync();
+            
             Environment.Exit(0);
         }
         private void RenderControlForm()
@@ -146,6 +158,7 @@ namespace QR_MASAN_01
         {
 
             ToggleFullScreen();
+            WK_LaserPrinterTime.RunWorkerAsync();
             ClockWK.RunWorkerAsync();
         }
         //kiểm tra mấy thứ linh tinh
@@ -283,10 +296,64 @@ namespace QR_MASAN_01
         {
 
         }
-
-        private void opUser_Click(object sender, EventArgs e)
+        int logs = 11;
+        private async void WK_LaserPrinterTime_DoWork(object sender, DoWorkEventArgs e)
         {
+            while(!WK_LaserPrinterTime.CancellationPending)
+            {
+                try
+                {
+                    HttpClient HttpClient = new HttpClient();
 
+                    // Lấy chuỗi thời gian từ URL máy in
+                    string timeString = await HttpClient.GetStringAsync(GlobalSettings.Get("LASER_PRINTER_URL"));
+                    timeString = timeString.Trim();
+
+                    // Parse datetime từ chuỗi nhận được (giả sử đúng format)
+                   if( DateTime.TryParse(timeString, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime dateTime))
+                    {
+                        Globalvariable.TimeUnixPrinter = ((DateTimeOffset)dateTime).ToUnixTimeSeconds();
+
+                        this.Invoke(new Action(() =>
+                        {
+                            opLaserPrinterTime.Text = $"{dateTime.ToString("dd-MM-yyyy HH:mm:ss")}";
+                            opLaserPrinterTime.ForeColor = Color.Green;
+                        }));
+                    }
+                    else
+                    {
+                        Globalvariable.TimeUnixPrinter++;
+                        this.Invoke(new Action(() =>
+                        {
+                            //chuyển số giây Unix sang định dạng ngày giờ hiện lên texbox
+                            timeString = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).ToString("dd-MM-yyyy HH:mm:ss", new CultureInfo("en-US"));
+                            opLaserPrinterTime.Text = $"{timeString}";
+                            opLaserPrinterTime.ForeColor = Color.Red;
+
+                        }));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Globalvariable.TimeUnixPrinter++;
+                    this.Invoke(new Action(() =>
+                    {
+                        opLaserPrinterTime.Text = $"{DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).ToString("dd-MM-yyyy HH:mm:ss", new CultureInfo("en-US"))}";
+                        opLaserPrinterTime.ForeColor = Color.Red;
+                    }));
+                    logs++;
+                    if (logs > 10)
+                    {
+                        logs = 0;
+                        //ghi log lỗi
+                        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.ERROR, "Lỗi kết nối máy in laser", "System", ex.Message);
+                        SystemLogs.LogQueue.Enqueue(systemLogs);
+                    }
+                    
+                }
+
+                Thread.Sleep(1000);
+            }
         }
     }
 }

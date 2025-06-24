@@ -15,7 +15,7 @@ namespace QR_MASAN_01
         {
             SYSTEM, // Sự kiện hệ thống chung
             CAMERA_ERROR,
-            PLC,
+            PLC_ERROR,
             ERROR,
             USER_ACTION,
             LOGIN,

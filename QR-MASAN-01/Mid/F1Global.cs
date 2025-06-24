@@ -59,6 +59,8 @@ namespace QR_MASAN_01
         public static bool ISRerun { get; set; } = false;
         public static string Server_Url { get; set; } = "https://sv2.th.io.vn/";
 
+        public static string Laser_Printer_Url { get; set; } = "http://127.0.0.1:9000/get-time";
+
         // Tạo một Queue để lưu trữ các chuỗi
 
         public static int MaxID_QR { get; set; } = 0;
@@ -69,6 +71,7 @@ namespace QR_MASAN_01
         public static string QRCode_FileName { get; set; } = string.Empty;
 
         public static long TimeUnixPrinter { get; set; } = 0;
+
 
         public static UserData CurrentUser { get; set; } = new UserData(); // Lưu thông tin người dùng hiện tại
     }

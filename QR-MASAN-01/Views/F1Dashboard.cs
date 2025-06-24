@@ -42,9 +42,9 @@ namespace QR_MASAN_01
                 {
                     Camera_c.Connect();
                 }
-                PLC.PLC_IP = GoogleSheetConfigHelper.Instance.GetSetting("PLC_IP");
-                PLC.PLC_PORT = Convert.ToInt32(GoogleSheetConfigHelper.Instance.GetSetting("PLC_PORT"));
-                PLC.PLC_Ready_DM = GoogleSheetConfigHelper.Instance.GetSetting("PLC_Ready_DM");
+                PLC.PLC_IP = PLCAddress.Get("PLC_IP");
+                PLC.PLC_PORT = Convert.ToInt32(PLCAddress.Get("PLC_PORT"));
+                PLC.PLC_Ready_DM = PLCAddress.Get("PLC_Ready_DM");
                 PLC.InitPLC();
             }
             catch (Exception ex)
@@ -141,6 +141,11 @@ namespace QR_MASAN_01
                                 ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Dữ liệu máy QR số 1 hoàn tất ");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                             }));
+                            // Ghi log vào sys log
+                            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_EVENT, "Dữ liệu máy QR số 1 hoàn tất", Globalvariable.CurrentUser.Username, JsonConvert.SerializeObject(_clientMFI));
+                            //thêm vào Queue để ghi log
+                            SystemLogs.LogQueue.Enqueue(systemLogs);
+
                             Globalvariable.Data_Status = e_Data_Status.READY;
 
                             break;
@@ -310,6 +315,10 @@ namespace QR_MASAN_01
 
         private void Process_MFI_When_New()
         {
+            //ghi nhận full MFI mới vào log
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.MFI, "MFI mới được tạo", Globalvariable.CurrentUser.Username, JsonConvert.SerializeObject(_clientMFI));
+            //thêm vào Queue để ghi log
+            SystemLogs.LogQueue.Enqueue(systemLogs);
 
             //kiểm tra thư mục tồn tại hay chưa
             if (!Directory.Exists(_clientMFI.Data_Content_Filename))
@@ -1160,7 +1169,7 @@ namespace QR_MASAN_01
             switch (eAE)
             {
                 case SPMS1.enumClient.CONNECTED:
-                    if (GCamera.Camera_Status_02 != e_Camera_Status.DISCONNECTED)
+                    if (GCamera.Camera_Status_02 != e_Camera_Status.CONNECTED)
                     {
                         GCamera.Camera_Status_02 = e_Camera_Status.CONNECTED;
                         Invoke(new Action(() =>
@@ -1171,7 +1180,7 @@ namespace QR_MASAN_01
                     }
                     break;
                 case SPMS1.enumClient.DISCONNECTED:
-                    if (GCamera.Camera_Status_02 != e_Camera_Status.CONNECTED)
+                    if (GCamera.Camera_Status_02 != e_Camera_Status.DISCONNECTED)
                     {
                         GCamera.Camera_Status_02 = e_Camera_Status.DISCONNECTED;
                         Invoke(new Action(() =>
@@ -1534,7 +1543,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.Curent_Content = _content;
                     Globalvariable.C1_UI.IsPass = true;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C1_RejectDM"), short.Parse("1"));
+                    OperateResult write = PLC.plc.Write(PLCAddress.Get("PLC_C1_RejectDM"), short.Parse("1"));
                     if (write.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_1_Pass_C1++;
@@ -1554,7 +1563,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.IsPass = false;
 
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write1 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C1_RejectDM"), short.Parse("0"));
+                    OperateResult write1 = PLC.plc.Write(PLCAddress.Get("PLC_C1_RejectDM"), short.Parse("0"));
 
                     if (write1.IsSuccess)
                     {
@@ -1574,7 +1583,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.Curent_Content = "Thả lại:" + _content;
                     Globalvariable.C1_UI.IsPass = true;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write5 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C1_RejectDM"), short.Parse("1"));
+                    OperateResult write5 = PLC.plc.Write(PLCAddress.Get("PLC_C1_RejectDM"), short.Parse("1"));
                     if (write5.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_1_Pass_C1++;
@@ -1593,7 +1602,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.Curent_Content = "Mã đã kích hoạt (trùng)";
                     Globalvariable.C1_UI.IsPass = false;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write4 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C1_RejectDM"), short.Parse("0"));
+                    OperateResult write4 = PLC.plc.Write(PLCAddress.Get("PLC_C1_RejectDM"), short.Parse("0"));
                     if (write4.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C1++;
@@ -1612,7 +1621,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.Curent_Content = _content;
                     Globalvariable.C1_UI.IsPass = false;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write3 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C1_RejectDM"), short.Parse("0"));
+                    OperateResult write3 = PLC.plc.Write(PLCAddress.Get("PLC_C1_RejectDM"), short.Parse("0"));
                     if (write3.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C1++;
@@ -1633,7 +1642,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.IsPass = false;
 
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write2 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C1_RejectDM"), short.Parse("0"));
+                    OperateResult write2 = PLC.plc.Write(PLCAddress.Get("PLC_C1_RejectDM"), short.Parse("0"));
                     if (write2.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C1++;
@@ -1650,7 +1659,7 @@ namespace QR_MASAN_01
                     Globalvariable.GCounter.Total_Failed_C1++;
                     Globalvariable.C1_UI.Curent_Content = "Mã không tồn tại";
                     Globalvariable.C1_UI.IsPass = false;
-                    OperateResult write8 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C1_RejectDM"), short.Parse("0"));
+                    OperateResult write8 = PLC.plc.Write(PLCAddress.Get("PLC_C1_RejectDM"), short.Parse("0"));
                     if (write8.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C1++;
@@ -1672,7 +1681,7 @@ namespace QR_MASAN_01
                     Globalvariable.C2_UI.Curent_Content = _content;
                     Globalvariable.C2_UI.IsPass = true;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C2_RejectDM"), short.Parse("1"));
+                    OperateResult write = PLC.plc.Write(PLCAddress.Get("PLC_C2_RejectDM"), short.Parse("1"));
                     if (write.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_1_Pass_C2++;
@@ -1689,7 +1698,7 @@ namespace QR_MASAN_01
                     Globalvariable.C2_UI.IsPass = false;
 
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write1 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C2_RejectDM"), short.Parse("0"));
+                    OperateResult write1 = PLC.plc.Write(PLCAddress.Get("PLC_C2_RejectDM"), short.Parse("0"));
 
                     if (write1.IsSuccess)
                     {
@@ -1706,7 +1715,7 @@ namespace QR_MASAN_01
                     Globalvariable.C2_UI.Curent_Content = "Thả lại:" + _content;
                     Globalvariable.C2_UI.IsPass = true;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write5 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C2_RejectDM"), short.Parse("1"));
+                    OperateResult write5 = PLC.plc.Write(PLCAddress.Get("PLC_C2_RejectDM"), short.Parse("1"));
                     if (write5.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_1_Pass_C2++;
@@ -1769,7 +1778,7 @@ namespace QR_MASAN_01
                     Globalvariable.C2_UI.IsPass = false;
 
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write2 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C2_RejectDM"), short.Parse("0"));
+                    OperateResult write2 = PLC.plc.Write(PLCAddress.Get("PLC_C2_RejectDM"), short.Parse("0"));
                     if (write2.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C2++;
@@ -1784,7 +1793,7 @@ namespace QR_MASAN_01
 
                     Globalvariable.C2_UI.Curent_Content = "Mã không tồn tại";
                     Globalvariable.C2_UI.IsPass = false;
-                    OperateResult write8 = PLC.plc.Write(GoogleSheetConfigHelper.Instance.GetSetting("PLC_C2_RejectDM"), short.Parse("0"));
+                    OperateResult write8 = PLC.plc.Write(PLCAddress.Get("PLC_C2_RejectDM"), short.Parse("0"));
                     if (write8.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C2++;

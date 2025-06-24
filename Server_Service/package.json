@@ -4,7 +4,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-"build": "electron-builder",
+    "build": "electron-builder",
     "package": "electron-packager . TempStorage --platform=win32 --arch=x64 --icon=icon.ico --out=dist --overwrite"
   },
   "keywords": [],
@@ -13,12 +13,23 @@
   "description": "",
   "dependencies": {
     "cors": "^2.8.5",
-    "electron": "^35.0.0",
-    "electron-packager": "^17.1.2",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "electron": "^35.0.0"
   },
   "devDependencies": {
+    "electron-packager": "^17.1.2",
     "electron-builder": "^26.0.12",
     "eslint": "^9.26.0"
+  },
+  "build": {
+    "appId": "com.example.tranfer_service",
+    "productName": "TranferService",
+    "win": {
+      "target": "nsis",
+      "icon": "icon.ico"
+    },
+    "directories": {
+      "output": "dist"
+    }
   }
 }

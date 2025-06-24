@@ -1,3 +1,6 @@
 <Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.2518757">
-
+  <PropertyGroup>
+    <BuildCommand>npm run package </BuildCommand>
+    <BuildOutputFolder>dist/TempStorage/</BuildOutputFolder>
+  </PropertyGroup>
 </Project>

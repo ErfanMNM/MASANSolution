@@ -1,0 +1,114 @@
+﻿using Google.Apis.Auth.OAuth2;
+using Google.Apis.Services;
+using Google.Apis.Sheets.v4;
+using Newtonsoft;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace QR_MASAN_01
+{
+    public static class PLCAddress
+    {
+        private static readonly string LocalCachePath = "plc_addresses.json";
+        private static readonly Dictionary<string, string> _addressMap = new Dictionary<string, string>();
+
+        public static IReadOnlyDictionary<string, string> AddressMap => _addressMap;
+
+        /// <summary>
+        /// Init: load từ Google Sheet, fallback Local nếu fail.
+        /// </summary>
+        public static void Init(string credentialsPath, string spreadsheetId, string range)
+        {
+            try
+            {
+                Console.WriteLine("Đang tải PLC Address từ Google Sheet...");
+                var onlineData = LoadFromGoogleSheet(credentialsPath, spreadsheetId, range);
+                ApplyData(onlineData);
+                SaveToLocal(onlineData);
+                Console.WriteLine("Tải từ Google Sheet thành công!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi tải Google Sheet: {ex.Message}");
+                Console.WriteLine("Đang tải từ file local cache...");
+                var localData = LoadFromLocal();
+                ApplyData(localData);
+            }
+        }
+
+        /// <summary>
+        /// Lấy địa chỉ DM theo key.
+        /// </summary>
+        public static string Get(string key)
+        {
+            if (_addressMap.ContainsKey(key))
+                return _addressMap[key];
+            throw new KeyNotFoundException($"Không tìm thấy địa chỉ PLC cho key: {key}");
+        }
+
+        private static Dictionary<string, string> LoadFromGoogleSheet(string credentialsPath, string spreadsheetId, string range)
+        {
+            GoogleCredential credential;
+            using (var stream = new FileStream(credentialsPath, FileMode.Open, FileAccess.Read))
+            {
+                credential = GoogleCredential.FromStream(stream)
+                    .CreateScoped(SheetsService.Scope.SpreadsheetsReadonly);
+            }
+
+            var service = new SheetsService(new BaseClientService.Initializer
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "PLCAddressLoader"
+            });
+
+            var request = service.Spreadsheets.Values.Get(spreadsheetId, range);
+            var response = request.Execute();
+            var result = new Dictionary<string, string>();
+
+            if (response.Values != null && response.Values.Count > 0)
+            {
+                foreach (var row in response.Values.Skip(1)) // skip header
+                {
+                    if (row.Count >= 3)
+                    {
+                        string name = row[0]?.ToString()?.Trim();
+                        string dm = row[2]?.ToString()?.Trim();
+                        if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(dm))
+                        {
+                            result[name] = dm;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+        private static void ApplyData(Dictionary<string, string> data)
+        {
+            _addressMap.Clear();
+            foreach (var kv in data)
+                _addressMap[kv.Key] = kv.Value;
+        }
+
+        private static void SaveToLocal(Dictionary<string, string> data)
+        {
+            var json = JsonConvert.SerializeObject(data, Formatting.Indented);
+            File.WriteAllText(LocalCachePath, json);
+        }
+
+        private static Dictionary<string, string> LoadFromLocal()
+        {
+            if (!File.Exists(LocalCachePath))
+                throw new FileNotFoundException("Local PLC address cache không tồn tại!");
+
+            var json = File.ReadAllText(LocalCachePath);
+            return JsonConvert.DeserializeObject<Dictionary<string, string>>(json)
+                   ?? new Dictionary<string, string>();
+        }
+    }
+}
