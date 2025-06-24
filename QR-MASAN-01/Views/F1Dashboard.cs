@@ -14,7 +14,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using static MFI_Service.MFI_Service_Form;
@@ -1003,6 +1002,20 @@ namespace QR_MASAN_01
                     }));
                 }
 
+
+                //Kiểm tra PLC_ACTIVE_DM nếu = 1 set Globale ACTIVE = true dùng hsl
+                OperateResult<int> read = PLC.plc.ReadInt32("D100");
+                if (read.IsSuccess)
+                {
+                    if (read.Content == 1)
+                    {
+                        Globalvariable.ACTIVE = true;
+                    }
+                    else
+                    {
+                        Globalvariable.ACTIVE = false;
+                    }
+                }
 
 
                 Thread.Sleep(1000);

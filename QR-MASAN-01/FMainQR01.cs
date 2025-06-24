@@ -44,6 +44,7 @@ namespace QR_MASAN_01
         FSystemlogs FSystemlogs = new FSystemlogs();
         F1PLC _f1PLC = new F1PLC();
         LoginForm loginForm = new LoginForm();
+        DeActive deActive = new DeActive();
 
         public FMainQR01()
         {
@@ -96,9 +97,9 @@ namespace QR_MASAN_01
             
             Environment.Exit(0);
         }
-        private void RenderControlForm()
+        private void RenderControlForm(bool active = true)
         {
-            
+            uiNavMenu1.Nodes.Clear();
             uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
             uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
             uiNavMenu1.CreateNode(AddPage(scanQR, 1004));
@@ -106,11 +107,18 @@ namespace QR_MASAN_01
             uiNavMenu1.CreateNode(AddPage(_f1PLC, 1009));
             uiNavMenu1.CreateNode(AddPage(_FStatistics, 1002));
             uiNavMenu1.CreateNode(AddPage(FSystemlogs, 1005));
+            
             uiNavMenu1.SelectPage(1001);
 
-            _F1Dashboard.INIT();
-            _FMFI.FMFI_INIT();
-           scanQR.INIT();
+            if(active)
+            {
+                uiNavMenu1.CreateNode(AddPage(deActive, 1998));
+                uiNavMenu1.Nodes.RemoveAt(uiNavMenu1.Nodes.Count - 1);
+                _F1Dashboard.INIT();
+                _FMFI.FMFI_INIT();
+                scanQR.INIT();
+            }
+            
            
 
             //kiểm soát máy in
@@ -214,6 +222,9 @@ namespace QR_MASAN_01
             }
         }
 
+        bool started = false;
+        bool rendered = false;
+        bool active_rendered = false;
         private void ClockWK_DoWork(object sender, DoWorkEventArgs e)
         {
             //đồng hồ
@@ -236,6 +247,7 @@ namespace QR_MASAN_01
 
                 if (Globalvariable.CurrentUser.Username == string.Empty)
                 {
+                    
                     this.Invoke(new Action(() =>
                     {
                         if (uiNavMenu1.Nodes.Count <= 0)
@@ -252,7 +264,8 @@ namespace QR_MASAN_01
                     //nếu đã đăng nhập thì render các control form
                     this.Invoke(new Action(() =>
                     {
-                        if (uiNavMenu1.Nodes.Count == 1)
+                        //render lần đầu
+                        if (!started)
                         {
                             opUser.Text = Globalvariable.CurrentUser.Username;
                             switch (Globalvariable.CurrentUser.Role)
@@ -272,9 +285,62 @@ namespace QR_MASAN_01
                             }
                             uiNavMenu1.Nodes[0].Remove();
                             RenderControlForm();
+                            started = true;
+                            rendered = true;
                         }
-                    }));
+                        //khi đã đăng nhập và đã render lần đầu
+                        else
+                        {
+                            //nếu không active thì render lại deactive
+                            if (!Globalvariable.ACTIVE && !active_rendered)
+                            {
+                                uiNavMenu1.CreateNode("DA",1998);
 
+                                uiNavMenu1.SelectPage(1998);
+                                uiNavMenu1.Enabled = false; //vô hiệu hóa menu
+                                active_rendered = true;
+                                rendered = false;
+                            }
+                            else if (!Globalvariable.ACTIVE && active_rendered)
+                            {
+                                // không làm gì cả
+                            }
+                            //nếu active thì render lại các control form
+                            else
+                            {
+                                if (!rendered)
+                                {
+                                    //bật menu
+                                    uiNavMenu1.Enabled = true;
+                                    uiNavMenu1.Nodes.RemoveAt(uiNavMenu1.Nodes.Count -1);
+                                    uiNavMenu1.SelectPage(1001); // chọn trang Dashboard
+                                    rendered = true;
+                                    active_rendered = false; // reset active_rendered để có thể render lại khi cần
+                                                             //nếu đã render thì chỉ cần cập nhật thông tin người dùng
+                                    opUser.Text = Globalvariable.CurrentUser.Username;
+                                    switch (Globalvariable.CurrentUser.Role)
+                                    {
+                                        case "Admin":
+                                            opUser.ForeColor = Color.Red;
+                                            break;
+                                        case "Operator":
+                                            opUser.ForeColor = Color.Blue;
+                                            break;
+                                        case "Worker":
+                                            opUser.ForeColor = Color.Green;
+                                            break;
+                                        default:
+                                            opUser.ForeColor = Color.Gray;
+                                            break;
+                                    }
+                                }
+                                
+                            }
+                        }
+
+                        
+
+                    }));
                 }
                 lblClock.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
                 Thread.Sleep(100);
