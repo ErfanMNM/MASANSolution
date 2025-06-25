@@ -14,6 +14,7 @@ namespace QR_MASAN_01
         public enum e_LogType
         {
             SYSTEM, // Sự kiện hệ thống chung
+            ALL,
             CAMERA_ERROR,
             PLC_ERROR,
             ERROR,
@@ -103,7 +104,7 @@ namespace QR_MASAN_01
         //tạo 1 long datfrom =  - 30 ngày
         //tạo 1 long dateto = 0 (hiện tại)
 
-        public static DataTable Get_Logs_From_SQLite(e_LogType logType, int Page,  int Size, long DateFrom, long DateTo)
+        public static DataTable Get_Logs_From_SQLite(e_LogType logType, int Page,  int Size, long DateFrom, long DateTo, bool getALL = false)
         {
             string dbFilePath = "C:/.ABC/TanTienHiTech.dbmmccmsacc"; // Đường dẫn đến file SQLite
             DataTable dataTable = new DataTable();
@@ -114,6 +115,7 @@ namespace QR_MASAN_01
             dt.Columns.Add("Nội dung", typeof(string));
             dt.Columns.Add("Người dùng", typeof(string));
             dt.Columns.Add("Chi tiết", typeof(string));
+            
             using (SQLiteConnection connection = new SQLiteConnection($"Data Source={dbFilePath};Version=3;"))
             {
                 connection.Open();
@@ -122,6 +124,14 @@ namespace QR_MASAN_01
                     WHERE LogType = @LogType AND TimeUnix >= @DateFrom AND TimeUnix <= @DateTo
                     ORDER BY ID DESC 
                     LIMIT @page, @size";
+                if (getALL)
+                {
+                    query = @"
+                        SELECT * FROM SystemLogs 
+                        WHERE TimeUnix >= @DateFrom AND TimeUnix <= @DateTo
+                        ORDER BY ID DESC 
+                        LIMIT @page, @size";
+                }
                 using (var command = new SQLiteCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@LogType", logType.ToString());

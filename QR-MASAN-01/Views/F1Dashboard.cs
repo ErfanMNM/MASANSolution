@@ -875,7 +875,7 @@ namespace QR_MASAN_01
                     }
                 }
                 //Ready
-                if (GCamera.Camera_Status == e_Camera_Status.CONNECTED && GCamera.Camera_Status_02 == e_Camera_Status.CONNECTED && Globalvariable.Data_Status == e_Data_Status.READY && Globalvariable.PLCConnect)
+                if (GCamera.Camera_Status == e_Camera_Status.CONNECTED && GCamera.Camera_Status_02 == e_Camera_Status.CONNECTED && Globalvariable.Data_Status == e_Data_Status.READY && Globalvariable.PLCConnect && Globalvariable.setReady)
                 {
                     if (Globalvariable.AllReady)
                     {

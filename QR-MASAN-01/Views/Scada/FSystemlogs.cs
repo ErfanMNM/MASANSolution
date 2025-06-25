@@ -74,7 +74,7 @@ namespace QR_MASAN_01.Views.Scada
         DataTable LogsData;
         long DateFrom = 0;
         long DateTo = 0;
-
+        bool getALL = false; // Biến này có thể dùng để xác định có lấy tất cả dữ liệu hay không
         private void WK_Getlogs_DoWork(object sender, DoWorkEventArgs e)
         {
             try
@@ -90,7 +90,19 @@ namespace QR_MASAN_01.Views.Scada
                 }));
 
                 LogCount = Get_Log_Count(LogType);
-                LogsData = Get_Logs_From_SQLite(LogType, uiPagination1.ActivePage - 1, size, DateFrom, DateTo);
+                // Lấy dữ liệu từ SQLite
+                if (getALL)
+                {
+                    // Nếu getALL là true, lấy tất cả dữ liệu
+                    LogsData = Get_Logs_From_SQLite(LogType, 0, LogCount, DateFrom, DateTo, true);
+                    getALL = false; // Đặt lại biến getALL để không lấy tất cả dữ liệu trong lần tiếp theo  
+                }
+                else
+                {
+                    // Lấy dữ liệu theo phân trang
+                    LogsData = Get_Logs_From_SQLite(LogType, uiPagination1.ActivePage - 1, size, DateFrom, DateTo);
+                }
+                    
             }
             catch (Exception ex)
             {
@@ -234,6 +246,25 @@ namespace QR_MASAN_01.Views.Scada
                 SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_LogType.ERROR, "CSV - Lỗi xuất báo cáo nhật ký hệ thống", Globalvariable.CurrentUser.Username, ex.Message);
                 LogQueue.Enqueue(systemLogs);
                 this.ShowErrorTip($"Lỗi xuất báo cáo: {ex.Message}", 2000);
+            }
+
+        }
+
+        private void btnGetAll_Click(object sender, EventArgs e)
+        {
+            //hiện bảng confirm lại đúng sai
+
+            if (this.ShowAskDialog2("Bạn có chắc chắn tải hết dữ liệu? Máy sẽ có nguy cơ bị treo vài phút", true))
+            {
+                getALL = true; // Đặt biến getALL để lấy tất cả dữ liệu
+                if (!WK_Getlogs.IsBusy)
+                {
+                    WK_Getlogs.RunWorkerAsync();
+                }
+            }
+            else
+            {
+
             }
 
         }

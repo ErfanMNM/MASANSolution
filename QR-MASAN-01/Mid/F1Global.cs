@@ -53,6 +53,7 @@ namespace QR_MASAN_01
 
         public static e_Server_Status Server_Status { get; set; } = e_Server_Status.DISCONNECTED;
         public static bool AllReady { get; set; } = false;
+        public static bool setReady { get; set; } = true;
         public static bool PLCConnect { get; set; } = false;
         public static e_Data_Status Data_Status { get; set; } = e_Data_Status.STARTUP;
         public static string MFI_ID { get; set; } = "0";

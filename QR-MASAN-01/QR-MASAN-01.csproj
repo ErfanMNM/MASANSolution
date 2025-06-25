@@ -365,6 +365,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Views\DeActive.resx">
+      <DependentUpon>DeActive.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\F1Dashboard.resx">
       <DependentUpon>F1Dashboard.cs</DependentUpon>
     </EmbeddedResource>
