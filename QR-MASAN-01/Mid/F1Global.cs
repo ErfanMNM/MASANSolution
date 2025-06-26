@@ -77,6 +77,8 @@ namespace QR_MASAN_01
         public static UserData CurrentUser { get; set; } = new UserData(); // Lưu thông tin người dùng hiện tại
 
         public static bool ACTIVE { get; set; } = true;
+        public static bool ACTIVE_C1 { get; set; } = true;
+        public static bool ACTIVE_C2 { get; set; } = true;
     }
 
     public enum e_Mode

@@ -45,14 +45,14 @@
             this.btnMini = new Sunny.UI.UISymbolButton();
             this.uiTabControl1 = new Sunny.UI.UITabControl();
             this.footer = new Sunny.UI.UITableLayoutPanel();
+            this.opLaserPrinterTime = new Sunny.UI.UIPanel();
+            this.uiScrollingText1 = new Sunny.UI.UIScrollingText();
             this.lblClock = new Sunny.UI.UIPanel();
             this.lblInternet = new Sunny.UI.UIPanel();
             this.lblAllStatus = new Sunny.UI.UIPanel();
             this.WKCheck = new System.ComponentModel.BackgroundWorker();
             this.ClockWK = new System.ComponentModel.BackgroundWorker();
             this.Internet = new SPMS1.InternetClass(this.components);
-            this.uiScrollingText1 = new Sunny.UI.UIScrollingText();
-            this.opLaserPrinterTime = new Sunny.UI.UIPanel();
             this.WK_LaserPrinterTime = new System.ComponentModel.BackgroundWorker();
             this.mainPanelLayout.SuspendLayout();
             this.uiTopbar.SuspendLayout();
@@ -152,8 +152,8 @@
             // btnDeActive
             // 
             this.btnDeActive.Cursor = System.Windows.Forms.Cursors.Hand;
-            resources.ApplyResources(this.btnDeActive, "btnDeActive");
             this.btnDeActive.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            resources.ApplyResources(this.btnDeActive, "btnDeActive");
             this.btnDeActive.ForeColor = System.Drawing.Color.DarkRed;
             this.btnDeActive.Name = "btnDeActive";
             this.btnDeActive.Radius = 0;
@@ -163,6 +163,7 @@
             this.btnDeActive.SymbolColor = System.Drawing.Color.Purple;
             this.btnDeActive.TipsColor = System.Drawing.Color.RoyalBlue;
             this.btnDeActive.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnDeActive.Click += new System.EventHandler(this.btnDeActive_Click);
             // 
             // uiNavMenu1
             // 
@@ -239,6 +240,24 @@
             this.footer.Name = "footer";
             this.footer.TagString = null;
             // 
+            // opLaserPrinterTime
+            // 
+            this.opLaserPrinterTime.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            resources.ApplyResources(this.opLaserPrinterTime, "opLaserPrinterTime");
+            this.opLaserPrinterTime.Name = "opLaserPrinterTime";
+            this.opLaserPrinterTime.Radius = 0;
+            this.opLaserPrinterTime.RectColor = System.Drawing.Color.Blue;
+            this.opLaserPrinterTime.RectSize = 2;
+            this.opLaserPrinterTime.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiScrollingText1
+            // 
+            this.uiScrollingText1.Active = true;
+            resources.ApplyResources(this.uiScrollingText1, "uiScrollingText1");
+            this.uiScrollingText1.Interval = 50;
+            this.uiScrollingText1.Name = "uiScrollingText1";
+            this.uiScrollingText1.Style = Sunny.UI.UIStyle.Custom;
+            // 
             // lblClock
             // 
             resources.ApplyResources(this.lblClock, "lblClock");
@@ -278,24 +297,6 @@
             // Internet
             // 
             this.Internet.Url = "8.8.8.8";
-            // 
-            // uiScrollingText1
-            // 
-            this.uiScrollingText1.Active = true;
-            resources.ApplyResources(this.uiScrollingText1, "uiScrollingText1");
-            this.uiScrollingText1.Interval = 50;
-            this.uiScrollingText1.Name = "uiScrollingText1";
-            this.uiScrollingText1.Style = Sunny.UI.UIStyle.Custom;
-            // 
-            // opLaserPrinterTime
-            // 
-            this.opLaserPrinterTime.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            resources.ApplyResources(this.opLaserPrinterTime, "opLaserPrinterTime");
-            this.opLaserPrinterTime.Name = "opLaserPrinterTime";
-            this.opLaserPrinterTime.Radius = 0;
-            this.opLaserPrinterTime.RectColor = System.Drawing.Color.Blue;
-            this.opLaserPrinterTime.RectSize = 2;
-            this.opLaserPrinterTime.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // WK_LaserPrinterTime
             // 

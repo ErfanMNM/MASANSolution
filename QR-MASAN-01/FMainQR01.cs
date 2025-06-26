@@ -18,6 +18,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using static QR_MASAN_01.SystemLogs;
+using static QR_MASAN_01.ActiveLogs;
 using System.Windows.Forms;
 using System.Net.Http;
 using System.Globalization;
@@ -28,16 +29,10 @@ namespace QR_MASAN_01
 {
     public partial class FMainQR01 : UIForm2
     {
-       //F1Printer _F1Printer = new F1Printer();
         F1Dashboard _F1Dashboard = new F1Dashboard();
-        ///F1Cloudv2 _f1Cloudv2 = new F1Cloudv2();
         MFI_Service_Form _FMFI = new MFI_Service_Form();
-        //F1Cloud _f1Cloud = new F1Cloud();
-       //F1Data _F1Data = new F1Data();
         ScanQR scanQR = new ScanQR();
-       //F1PLC _f1PLC = new F1PLC();
-       FormTest FormTest = new FormTest();
-       Settings _setings = new Settings();
+        Settings _setings = new Settings();
         MyLanPrinter _myLanPrinter = new MyLanPrinter();
         Printer_V7 _printer_V7 = new Printer_V7();
         FStatistics _FStatistics = new FStatistics();
@@ -46,6 +41,8 @@ namespace QR_MASAN_01
         LoginForm loginForm = new LoginForm();
         DeActive deActive = new DeActive();
 
+        public static e_Render_State Render_State = e_Render_State.LOGIN;
+        public static e_App_State App_State = e_App_State.LOGIN;
         public FMainQR01()
         {
             //khởi động phần mềm
@@ -84,7 +81,7 @@ namespace QR_MASAN_01
             catch (Exception ex)
             {
                 // Ghi log lỗi vào hàng đợi
-                SystemLogs.LogQueue.Enqueue(new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.ERROR, "Lỗi khởi động phần mềm", "System", ex.Message));
+                SystemLogs.LogQueue.Enqueue(new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi khởi động phần mềm", "System", ex.Message));
                 // Hiển thị thông báo lỗi cho người dùng
                 this.ShowErrorDialog("Lỗi khởi động phần mềm", ex.Message, UIStyle.Red);
             }
@@ -106,25 +103,22 @@ namespace QR_MASAN_01
             uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
             uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
             uiNavMenu1.CreateNode(AddPage(scanQR, 1004));
-            //uiNavMenu1.CreateNode(AddPage(FormTest, 1998));
             uiNavMenu1.CreateNode(AddPage(_f1PLC, 1009));
             uiNavMenu1.CreateNode(AddPage(_FStatistics, 1002));
             uiNavMenu1.CreateNode(AddPage(FSystemlogs, 1005));
-
             uiNavMenu1.CreateNode(AddPage(loginForm, 1999));
-
             uiNavMenu1.CreateNode(AddPage(deActive, 1998));
-
-            uiNavMenu1.Nodes[uiNavMenu1.Nodes.Count - 1].Remove(); // xóa trang đăng nhập khỏi menu ban đầu
+            uiNavMenu1.SelectPage(1999); //chọn trang Dashboard mặc định
             uiNavMenu1.Nodes[uiNavMenu1.Nodes.Count - 1].Remove();
+
+            uiNavMenu1.Visible = false; //ẩn menu ban đầu
+            uiNavMenu1.Enabled = false; //vô hiệu hóa menu ban đầu
+
+            Render_State = e_Render_State.LOGIN; //đặt trạng thái render ban đầu là LOGIN
 
             _F1Dashboard.INIT();
             _FMFI.FMFI_INIT();
             scanQR.INIT();
-
-            //uiNavMenu1.SelectPage(1001);
-            
-           
 
             //kiểm soát máy in
 
@@ -166,7 +160,6 @@ namespace QR_MASAN_01
                 this.FormBorderStyle = FormBorderStyle.Sizable;
             }
         }
-
         private void MainForm_Load(object sender, EventArgs e)
         {
             RenderControlForm();
@@ -201,7 +194,7 @@ namespace QR_MASAN_01
                     if (demso > 10)
                     {
                         //ghi log lỗi
-                        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.ERROR, "Lỗi kết nối Internet", "System", "Không thể kết nối Internet trong 10 giây");
+                        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi kết nối Internet", "System", "Không thể kết nối Internet trong 10 giây");
                         SystemLogs.LogQueue.Enqueue(systemLogs);
                         demso = 0;
                         lblInternet.Text = "Internet: Lỗi";
@@ -227,6 +220,10 @@ namespace QR_MASAN_01
             }
         }
 
+        /// <summary>
+        /// TUI THÍCH GHI UNACTIVE LÀ DEACTIVE CHỨ NÓ KHÔNG CÓ Ý NGHĨA GÌ ĐÂU NHA
+        /// </summary>
+
         bool login_rendered = false; // Biến để kiểm tra xem đã render trang đăng nhập hay chưa
         private void ClockWK_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -241,6 +238,11 @@ namespace QR_MASAN_01
                         InsertToSQLite(LogQueue.Dequeue());
                     }
 
+                    if(ActiveLogQueue.Count > 0)
+                    {
+                        ActiveInsertToSQLite(ActiveLogQueue.Dequeue());
+                    }
+
                 }
                 catch (Exception ex)
                 {
@@ -248,165 +250,129 @@ namespace QR_MASAN_01
                     this.ShowErrorDialog("Lỗi ghi log vào SQLite", ex.Message, UIStyle.Red);
                 }
 
-                //nếu chưa đăng nhập
-                if (Globalvariable.CurrentUser.Username == string.Empty)
+                switch (App_State)
                 {
-                    if(login_rendered == false)
-                    {
-                        this.Invoke(new Action(() =>
+                    case e_App_State.LOGIN:
+
+                        //kiểm tra xem đã render trang đăng nhập chưa
+                        if (Render_State != e_Render_State.LOGIN)
+                        {
+                            Render_State = e_Render_State.LOGIN; //đặt trạng thái render là LOGIN
+                            this.Invoke(new Action(() =>
+                            {
+
+                                uiNavMenu1.Nodes[uiNavMenu1.Nodes.Count - 1].Remove(); // xóa trang đăng nhập nếu đã đăng nhập
+                                uiNavMenu1.CreateNode("DM", 1999); // thêm trang đăng nhập vào menu
+                                uiNavMenu1.SelectPage(1999); // chọn trang đăng nhập
+                                uiNavMenu1.Enabled = false; //vô hiệu hóa menu
+                                uiNavMenu1.Visible = false; //ẩn menu
+                            }));
+                        }
+                        //kiểm tra xem đã đăng nhập chưa
+                        if (Globalvariable.CurrentUser.Username != string.Empty)
+                        {
+
+                            if (Globalvariable.ACTIVE)
+                            {
+                                //nếu đã đăng nhập và ACTIVE thì chuyển sang trạng thái ACTIVE
+                                App_State = e_App_State.ACTIVE;
+                            }
+                            else
+                            {
+                                //nếu đã đăng nhập nhưng không ACTIVE thì chuyển sang trạng thái UNACTIVE
+                                App_State = e_App_State.DEACTIVE;
+                            }
+                        }
+                        else
+                        {
+                            //nếu chưa đăng nhập thì vẫn ở trạng thái LOGIN
+                            App_State = e_App_State.LOGIN;
+                        }
+
+
+                        break;
+                    case e_App_State.ACTIVE:
+                        //kiểm tra xem đã render trang ACTIVE chưa
+                        if (Render_State != e_Render_State.ACTIVE)
+                        {
+                            Render_State = e_Render_State.ACTIVE; //đặt trạng thái render là ACTIVE
+                            this.Invoke(new Action(() =>
+                            {
+                                btnDeActive.Enabled = true;
+                                uiNavMenu1.Nodes[uiNavMenu1.Nodes.Count - 1].Remove(); // xóa trang cuối nếu đã đăng nhập
+                                uiNavMenu1.SelectPage(1001); // chọn trang Dashboard
+                                uiNavMenu1.Enabled = true; //bật menu
+                                uiNavMenu1.Visible = true; //hiện menu
+                            }));
+                        }
+
+                        //kiểm tra xem người dùng đã đăng nhập chưa
+                        if (Globalvariable.CurrentUser.Username == string.Empty)
+                        {
+                            //nếu chưa đăng nhập thì chuyển sang trạng thái LOGIN
+                            App_State = e_App_State.LOGIN;
+                        }
+                        else
+                        {
+
+                            if (Globalvariable.ACTIVE == false)
+                            {
+                                //nếu ACTIVE = false thì chuyển sang trạng thái DEACTIVE
+                                App_State = e_App_State.DEACTIVE;
+                            }
+                            else
+                            {
+                                //nếu ACTIVE = true thì vẫn ở trạng thái ACTIVE
+                                App_State = e_App_State.ACTIVE;
+                            }
+                        }
+                        break;
+                    case e_App_State.DEACTIVE:
+                        //kiểm tra xem đã render trang DEACTIVE chưa
+                        if (Render_State != e_Render_State.DEACTIVE)
                         {
                             
-                            uiNavMenu1.CreateNode("Đăng nhập", 1992); // thêm trang đăng nhập vào menu
-                            uiNavMenu1.SelectPage(1002); // chọn trang đăng nhập
-                            
-                            var a = uiNavMenu1.Nodes; // chọn trang đăng nhập
-                           // PageItem pageItem = uiNavMenu1.Nodes[uiNavMenu1.Nodes.Count - 1];
-                            //uiNavMenu1.Enabled = false; //vô hiệu hóa menu
-                            //uiNavMenu1.Visible = false; //ẩn menu
-                            login_rendered = true; //đánh dấu đã render trang đăng nhập
-                        }));
-                        
-                    }
-                    
+                            this.Invoke(new Action(() =>
+                            {
+                                
+                                if (Render_State == e_Render_State.LOGIN)
+                                {
+                                    uiNavMenu1.Nodes[uiNavMenu1.Nodes.Count - 1].Remove(); // xóa trang cuối nếu đã đăng nhập
+                                }
+                                btnDeActive.Enabled = false; 
+                                uiNavMenu1.CreateNode("DM", 1998); // thêm trang DEACTIVE vào menu
+                                uiNavMenu1.SelectPage(1998); // chọn trang DEACTIVE
+                                uiNavMenu1.Enabled = false; //vô hiệu hóa menu
+                                uiNavMenu1.Visible = false; //ẩn menu
+                            }));
 
-                }
-                else
-                {
-                    if(login_rendered)
-                    {
-                        this.Invoke(new Action(() =>
+                            Render_State = e_Render_State.DEACTIVE; //đặt trạng thái render là DEACTIVE
+                        }
+                        //kiểm tra xem người dùng đã đăng nhập chưa
+                        if (Globalvariable.CurrentUser.Username == string.Empty)
                         {
-                            uiNavMenu1.Nodes[uiNavMenu1.Nodes.Count - 1].Remove(); // xóa trang đăng nhập nếu đã đăng nhập
-                            uiNavMenu1.Enabled = true; //bật menu
-                            uiNavMenu1.Visible = true; //hiện menu
-                            uiNavMenu1.SelectPage(1001); // chọn trang Dashboard nếu đã đăng nhập
-                            login_rendered = false; //đánh dấu đã render trang đăng nhập
-                        }));
-                        
-                    }
-                    
+                            //nếu chưa đăng nhập thì chuyển sang trạng thái LOGIN
+                            App_State = e_App_State.LOGIN;
+                        }
+                        else
+                        {
+                            //nếu đã đăng nhập thì vẫn ở trạng thái DEACTIVE
+                            if (!Globalvariable.ACTIVE)
+                            {
+                                App_State = e_App_State.DEACTIVE; //nếu ACTIVE = false thì vẫn ở trạng thái DEACTIVE
+                            }
+                            else
+                            {
+                                App_State = e_App_State.ACTIVE; //nếu ACTIVE = true thì chuyển sang trạng thái ACTIVE
+                            }
+                        }
+                        break;
                 }
 
-                //    this.Invoke(new Action(() =>
-                //    {
-                //        if (uiNavMenu1.Nodes.Count <= 0)
-                //        {
-                //            uiNavMenu1.CreateNode(AddPage(loginForm, 1999));
-                //            uiNavMenu1.SelectPage(1999);
-                //        }
-
-                //    }));
-
-                //}
-                //else
-                //{
-                //    //nếu đã đăng nhập thì render các control form
-                //    this.Invoke(new Action(() =>
-                //    {
-                //        //render lần đầu
-                //        if (!started)
-                //        {
-                //            opUser.Text = Globalvariable.CurrentUser.Username;
-                //            switch (Globalvariable.CurrentUser.Role)
-                //            {
-                //                case "Admin":
-                //                    opUser.ForeColor = Color.Red;
-                //                    break;
-                //                case "Operator":
-                //                    opUser.ForeColor = Color.Blue;
-                //                    break;
-                //                case "Worker":
-                //                    opUser.ForeColor = Color.Green;
-                //                    break;
-                //                default:
-                //                    opUser.ForeColor = Color.Gray;
-                //                    break;
-                //            }
-                //            uiNavMenu1.Nodes[0].Remove();
-                //            RenderControlForm();
-                //            started = true;
-                //            rendered = true;
-
-                //            //nếu chưa active thì ẩn các thứ
-                //            if (!Globalvariable.ACTIVE)
-                //            {
-                //                uiNavMenu1.CreateNode("Tắt Kiểm", 1998);
-                //                uiNavMenu1.SelectPage(1998);
-                //                uiNavMenu1.Enabled = false; //vô hiệu hóa menu
-                //                uiNavMenu1.Visible = false; //ẩn menu
-                //                active_rendered = true; //đánh dấu đã render active
-                //                rendered = false;
-                //            }
-                //            else
-                //            {
-                //                //nếu active thì render lại các control form
-                //                uiNavMenu1.Visible = true;
-                //                uiNavMenu1.Enabled = true;
-                //                uiNavMenu1.Nodes.RemoveAt(uiNavMenu1.Nodes.Count - 1);
-                //                uiNavMenu1.SelectPage(1001); // chọn trang Dashboard
-                //            }
-
-                //        }
-                //        //khi đã đăng nhập và đã render lần đầu
-                //        else
-                //        {
-                //            //nếu không active thì render lại deactive
-                //            if (!Globalvariable.ACTIVE && !active_rendered)
-                //            {
-                //                uiNavMenu1.CreateNode("Tắt Kiểm",1998);
-                //                uiNavMenu1.SelectPage(1998);
-
-                //                uiNavMenu1.Enabled = false; //vô hiệu hóa menu
-                //                uiNavMenu1.Visible=false;   
-                //                active_rendered = true;
-                //                rendered = false;
-                //            }
-                //            else if (!Globalvariable.ACTIVE && active_rendered)
-                //            {
-                //                // không làm gì cả
-                //            }
-                //            //nếu active thì render lại các control form
-                //            else
-                //            {
-                //                if (!rendered)
-                //                {
-                //                    //bật menu
-                //                    uiNavMenu1.Visible = true;
-                //                    uiNavMenu1.Enabled = true;
-                //                    uiNavMenu1.Nodes.RemoveAt(uiNavMenu1.Nodes.Count -1);
-                //                    uiNavMenu1.SelectPage(1001); // chọn trang Dashboard
-                //                    rendered = true;
-                //                    active_rendered = false; // reset active_rendered để có thể render lại khi cần
-                //                                             //nếu đã render thì chỉ cần cập nhật thông tin người dùng
-                //                    opUser.Text = Globalvariable.CurrentUser.Username;
-                //                    switch (Globalvariable.CurrentUser.Role)
-                //                    {
-                //                        case "Admin":
-                //                            opUser.ForeColor = Color.Red;
-                //                            break;
-                //                        case "Operator":
-                //                            opUser.ForeColor = Color.Blue;
-                //                            break;
-                //                        case "Worker":
-                //                            opUser.ForeColor = Color.Green;
-                //                            break;
-                //                        default:
-                //                            opUser.ForeColor = Color.Gray;
-                //                            break;
-                //                    }
-                //                }
-
-                //            }
-                //        }
-
-
-
-                //    }));
-                //}
                 lblClock.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
                 Thread.Sleep(100);
             }
-            
+
         }
 
         private void Logo_Paint(object sender, PaintEventArgs e)
@@ -424,7 +390,7 @@ namespace QR_MASAN_01
 
         }
         int logs = 11;
-        private async void WK_LaserPrinterTime_DoWork(object sender, DoWorkEventArgs e)
+        private async void WK_LaserPrinterTime_DoWork(object sender, DoWorkEventArgs e) 
         {
             while(!WK_LaserPrinterTime.CancellationPending)
             {
@@ -473,7 +439,7 @@ namespace QR_MASAN_01
                     {
                         logs = 0;
                         //ghi log lỗi
-                        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.ERROR, "Lỗi kết nối máy in laser", "System", ex.Message);
+                        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi kết nối máy in laser", "System", ex.Message);
                         SystemLogs.LogQueue.Enqueue(systemLogs);
                     }
                     
@@ -482,7 +448,45 @@ namespace QR_MASAN_01
                 Thread.Sleep(1000);
             }
         }
+
+
+        public enum e_App_State
+        {
+            LOGIN,
+            ACTIVE,
+            DEACTIVE
+        }
+        public enum e_Render_State
+        {
+            LOGIN,
+            ACTIVE,
+            DEACTIVE
+        }
+        long timelastclick = 0;
+        long timecurrentclick = 15;
+
+        private void btnDeActive_Click(object sender, EventArgs e)
+        {
+            timecurrentclick = DateTimeOffset.Now.ToUnixTimeSeconds();
+            
+            if (timecurrentclick - timelastclick > 5)
+            {
+
+                //ghi nhận log người dùng nhấn nút dừng kiểm
+                SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_LogType.USER_ACTION, "Người dùng nhấn nút Dừng Kiểm", Globalvariable.CurrentUser.Username, "Người dùng nhấn nút Dừng Kiểm");
+                LogQueue.Enqueue(systemLogs);
+                this.ShowInfoTip("Đã gửi sự kiện, vui lòng chờ. Nếu quá lâu có thể nhấn lại");
+                //gửi xuống PLC
+
+                timecurrentclick = timelastclick = DateTimeOffset.Now.ToUnixTimeSeconds();
+            }
+            else
+            {
+                this.ShowErrorNotifier("Nhấn chậm chậm thôi, máy treo đó",false,2000);
+            }
+
+        }
     }
 
-    
+
 }

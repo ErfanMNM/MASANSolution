@@ -71,7 +71,7 @@ namespace QR_MASAN_01.Views
             catch (Exception ex)
             {
                 // Ghi log lỗi vào hàng đợi
-                SystemLogs.LogQueue.Enqueue(new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.ERROR, "Lỗi khi đăng nhập", "LoginForm", ex.Message));
+                SystemLogs.LogQueue.Enqueue(new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi khi đăng nhập", "LoginForm", ex.Message));
                 // Hiển thị thông báo lỗi cho người dùng
                 this.ShowErrorDialog("Lỗi khi đăng nhập", ex.Message, UIStyle.Red);
             }

@@ -93,7 +93,7 @@ app.get('/keys', (req, res) => {
     res.json({ keys: Object.keys(tempStorage) });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 49211;
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

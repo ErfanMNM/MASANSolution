@@ -33,11 +33,16 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.WK_AutoLog = new System.ComponentModel.BackgroundWorker();
+            this.WK_Getlogs = new System.ComponentModel.BackgroundWorker();
+            this.uiTabControl1 = new Sunny.UI.UITabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.uiTitlePanel1 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
             this.opDataG = new Sunny.UI.UIDataGridView();
             this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel4 = new Sunny.UI.UITableLayoutPanel();
+            this.btnGetAll = new Sunny.UI.UISymbolButton();
             this.ipDateFrom = new Sunny.UI.UIDatePicker();
             this.btnExportCsv = new Sunny.UI.UISymbolButton();
             this.btnExportPDF = new Sunny.UI.UISymbolButton();
@@ -48,9 +53,9 @@
             this.ipSize = new Sunny.UI.UIComboBox();
             this.uiPagination1 = new Sunny.UI.UIPagination();
             this.opTotalCount = new Sunny.UI.UIPanel();
-            this.WK_AutoLog = new System.ComponentModel.BackgroundWorker();
-            this.WK_Getlogs = new System.ComponentModel.BackgroundWorker();
-            this.btnGetAll = new Sunny.UI.UISymbolButton();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.uiTabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.opDataG)).BeginInit();
@@ -58,6 +63,46 @@
             this.uiTableLayoutPanel4.SuspendLayout();
             this.uiTableLayoutPanel3.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // WK_AutoLog
+            // 
+            this.WK_AutoLog.WorkerReportsProgress = true;
+            this.WK_AutoLog.WorkerSupportsCancellation = true;
+            this.WK_AutoLog.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_AutoLog_DoWork);
+            // 
+            // WK_Getlogs
+            // 
+            this.WK_Getlogs.WorkerReportsProgress = true;
+            this.WK_Getlogs.WorkerSupportsCancellation = true;
+            this.WK_Getlogs.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Getlogs_DoWork);
+            this.WK_Getlogs.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.WK_Getlogs_RunWorkerCompleted);
+            // 
+            // uiTabControl1
+            // 
+            this.uiTabControl1.Controls.Add(this.tabPage1);
+            this.uiTabControl1.Controls.Add(this.tabPage2);
+            this.uiTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
+            this.uiTabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTabControl1.ItemSize = new System.Drawing.Size(150, 40);
+            this.uiTabControl1.Location = new System.Drawing.Point(0, 0);
+            this.uiTabControl1.MainPage = "";
+            this.uiTabControl1.Name = "uiTabControl1";
+            this.uiTabControl1.SelectedIndex = 0;
+            this.uiTabControl1.Size = new System.Drawing.Size(840, 674);
+            this.uiTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
+            this.uiTabControl1.TabIndex = 0;
+            this.uiTabControl1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.uiTitlePanel1);
+            this.tabPage1.Location = new System.Drawing.Point(0, 40);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Size = new System.Drawing.Size(840, 634);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "tabPage1";
+            this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // uiTitlePanel1
             // 
@@ -70,8 +115,8 @@
             this.uiTitlePanel1.Name = "uiTitlePanel1";
             this.uiTitlePanel1.Padding = new System.Windows.Forms.Padding(1, 50, 1, 1);
             this.uiTitlePanel1.ShowText = false;
-            this.uiTitlePanel1.Size = new System.Drawing.Size(840, 674);
-            this.uiTitlePanel1.TabIndex = 0;
+            this.uiTitlePanel1.Size = new System.Drawing.Size(840, 634);
+            this.uiTitlePanel1.TabIndex = 1;
             this.uiTitlePanel1.Text = "QUẢN LÝ LỊCH SỬ HỆ THỐNG";
             this.uiTitlePanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             this.uiTitlePanel1.TitleHeight = 50;
@@ -88,7 +133,7 @@
             this.uiTableLayoutPanel1.RowCount = 2;
             this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 80.41734F));
             this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 19.58266F));
-            this.uiTableLayoutPanel1.Size = new System.Drawing.Size(838, 623);
+            this.uiTableLayoutPanel1.Size = new System.Drawing.Size(838, 583);
             this.uiTableLayoutPanel1.TabIndex = 17;
             this.uiTableLayoutPanel1.TagString = null;
             // 
@@ -141,7 +186,7 @@
             this.opDataG.RowsDefaultCellStyle = dataGridViewCellStyle5;
             this.opDataG.ScrollMode = Sunny.UI.UIDataGridView.UIDataGridViewScrollMode.Page;
             this.opDataG.SelectedIndex = -1;
-            this.opDataG.Size = new System.Drawing.Size(832, 495);
+            this.opDataG.Size = new System.Drawing.Size(832, 462);
             this.opDataG.StripeOddColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
             this.opDataG.TabIndex = 0;
             // 
@@ -151,12 +196,12 @@
             this.uiTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.uiTableLayoutPanel2.Controls.Add(this.uiTableLayoutPanel4, 0, 1);
             this.uiTableLayoutPanel2.Controls.Add(this.uiTableLayoutPanel3, 0, 0);
-            this.uiTableLayoutPanel2.Location = new System.Drawing.Point(3, 504);
+            this.uiTableLayoutPanel2.Location = new System.Drawing.Point(3, 471);
             this.uiTableLayoutPanel2.Name = "uiTableLayoutPanel2";
             this.uiTableLayoutPanel2.RowCount = 2;
             this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 44.82759F));
             this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 55.17241F));
-            this.uiTableLayoutPanel2.Size = new System.Drawing.Size(832, 116);
+            this.uiTableLayoutPanel2.Size = new System.Drawing.Size(832, 109);
             this.uiTableLayoutPanel2.TabIndex = 1;
             this.uiTableLayoutPanel2.TagString = null;
             // 
@@ -177,13 +222,31 @@
             this.uiTableLayoutPanel4.Controls.Add(this.btnGetLogs, 5, 0);
             this.uiTableLayoutPanel4.Controls.Add(this.ipLoginType, 4, 0);
             this.uiTableLayoutPanel4.Controls.Add(this.ipDateTo, 3, 0);
-            this.uiTableLayoutPanel4.Location = new System.Drawing.Point(3, 55);
+            this.uiTableLayoutPanel4.Location = new System.Drawing.Point(3, 51);
             this.uiTableLayoutPanel4.Name = "uiTableLayoutPanel4";
             this.uiTableLayoutPanel4.RowCount = 1;
             this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel4.Size = new System.Drawing.Size(826, 58);
+            this.uiTableLayoutPanel4.Size = new System.Drawing.Size(826, 55);
             this.uiTableLayoutPanel4.TabIndex = 3;
             this.uiTableLayoutPanel4.TagString = null;
+            // 
+            // btnGetAll
+            // 
+            this.btnGetAll.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnGetAll.FillColor = System.Drawing.Color.Aquamarine;
+            this.btnGetAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnGetAll.Location = new System.Drawing.Point(728, 3);
+            this.btnGetAll.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnGetAll.Name = "btnGetAll";
+            this.btnGetAll.RectColor = System.Drawing.Color.Blue;
+            this.btnGetAll.RectSize = 2;
+            this.btnGetAll.Size = new System.Drawing.Size(95, 49);
+            this.btnGetAll.Symbol = 559775;
+            this.btnGetAll.SymbolColor = System.Drawing.Color.MediumBlue;
+            this.btnGetAll.SymbolSize = 30;
+            this.btnGetAll.TabIndex = 12;
+            this.btnGetAll.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnGetAll.Click += new System.EventHandler(this.btnGetAll_Click);
             // 
             // ipDateFrom
             // 
@@ -198,7 +261,7 @@
             this.ipDateFrom.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
             this.ipDateFrom.RectColor = System.Drawing.Color.Blue;
             this.ipDateFrom.RectSize = 2;
-            this.ipDateFrom.Size = new System.Drawing.Size(127, 54);
+            this.ipDateFrom.Size = new System.Drawing.Size(127, 51);
             this.ipDateFrom.SymbolDropDown = 61555;
             this.ipDateFrom.SymbolNormal = 61555;
             this.ipDateFrom.SymbolSize = 24;
@@ -220,7 +283,7 @@
             this.btnExportCsv.Name = "btnExportCsv";
             this.btnExportCsv.RectColor = System.Drawing.Color.Blue;
             this.btnExportCsv.RectSize = 2;
-            this.btnExportCsv.Size = new System.Drawing.Size(65, 54);
+            this.btnExportCsv.Size = new System.Drawing.Size(65, 51);
             this.btnExportCsv.Symbol = 363197;
             this.btnExportCsv.SymbolColor = System.Drawing.Color.Green;
             this.btnExportCsv.SymbolSize = 50;
@@ -240,7 +303,7 @@
             this.btnExportPDF.Name = "btnExportPDF";
             this.btnExportPDF.RectColor = System.Drawing.Color.Blue;
             this.btnExportPDF.RectSize = 2;
-            this.btnExportPDF.Size = new System.Drawing.Size(65, 54);
+            this.btnExportPDF.Size = new System.Drawing.Size(65, 51);
             this.btnExportPDF.Symbol = 261889;
             this.btnExportPDF.SymbolColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
             this.btnExportPDF.SymbolSize = 50;
@@ -258,7 +321,7 @@
             this.btnGetLogs.Name = "btnGetLogs";
             this.btnGetLogs.RectColor = System.Drawing.Color.Blue;
             this.btnGetLogs.RectSize = 2;
-            this.btnGetLogs.Size = new System.Drawing.Size(77, 52);
+            this.btnGetLogs.Size = new System.Drawing.Size(77, 49);
             this.btnGetLogs.Symbol = 61473;
             this.btnGetLogs.SymbolColor = System.Drawing.Color.MediumBlue;
             this.btnGetLogs.SymbolSize = 30;
@@ -283,7 +346,7 @@
             this.ipLoginType.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
             this.ipLoginType.RectColor = System.Drawing.Color.Blue;
             this.ipLoginType.RectSize = 2;
-            this.ipLoginType.Size = new System.Drawing.Size(244, 54);
+            this.ipLoginType.Size = new System.Drawing.Size(244, 51);
             this.ipLoginType.SymbolSize = 24;
             this.ipLoginType.TabIndex = 6;
             this.ipLoginType.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
@@ -303,7 +366,7 @@
             this.ipDateTo.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
             this.ipDateTo.RectColor = System.Drawing.Color.Blue;
             this.ipDateTo.RectSize = 2;
-            this.ipDateTo.Size = new System.Drawing.Size(121, 54);
+            this.ipDateTo.Size = new System.Drawing.Size(121, 51);
             this.ipDateTo.SymbolDropDown = 61555;
             this.ipDateTo.SymbolNormal = 61555;
             this.ipDateTo.SymbolSize = 24;
@@ -327,7 +390,7 @@
             this.uiTableLayoutPanel3.Name = "uiTableLayoutPanel3";
             this.uiTableLayoutPanel3.RowCount = 1;
             this.uiTableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel3.Size = new System.Drawing.Size(826, 46);
+            this.uiTableLayoutPanel3.Size = new System.Drawing.Size(826, 42);
             this.uiTableLayoutPanel3.TabIndex = 2;
             this.uiTableLayoutPanel3.TagString = null;
             // 
@@ -353,7 +416,7 @@
             this.ipSize.MinimumSize = new System.Drawing.Size(63, 0);
             this.ipSize.Name = "ipSize";
             this.ipSize.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
-            this.ipSize.Size = new System.Drawing.Size(85, 36);
+            this.ipSize.Size = new System.Drawing.Size(85, 32);
             this.ipSize.SymbolSize = 24;
             this.ipSize.TabIndex = 7;
             this.ipSize.Text = "50";
@@ -374,7 +437,7 @@
             this.uiPagination1.PageSize = 2;
             this.uiPagination1.RectSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.None;
             this.uiPagination1.ShowText = false;
-            this.uiPagination1.Size = new System.Drawing.Size(593, 36);
+            this.uiPagination1.Size = new System.Drawing.Size(593, 32);
             this.uiPagination1.TabIndex = 2;
             this.uiPagination1.Text = "uiPagination1";
             this.uiPagination1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -388,51 +451,31 @@
             this.opTotalCount.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.opTotalCount.MinimumSize = new System.Drawing.Size(1, 1);
             this.opTotalCount.Name = "opTotalCount";
-            this.opTotalCount.Size = new System.Drawing.Size(124, 36);
+            this.opTotalCount.Size = new System.Drawing.Size(124, 32);
             this.opTotalCount.TabIndex = 8;
             this.opTotalCount.Text = "0";
             this.opTotalCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // WK_AutoLog
+            // tabPage2
             // 
-            this.WK_AutoLog.WorkerReportsProgress = true;
-            this.WK_AutoLog.WorkerSupportsCancellation = true;
-            this.WK_AutoLog.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_AutoLog_DoWork);
-            // 
-            // WK_Getlogs
-            // 
-            this.WK_Getlogs.WorkerReportsProgress = true;
-            this.WK_Getlogs.WorkerSupportsCancellation = true;
-            this.WK_Getlogs.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Getlogs_DoWork);
-            this.WK_Getlogs.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.WK_Getlogs_RunWorkerCompleted);
-            // 
-            // btnGetAll
-            // 
-            this.btnGetAll.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnGetAll.FillColor = System.Drawing.Color.Aquamarine;
-            this.btnGetAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnGetAll.Location = new System.Drawing.Point(728, 3);
-            this.btnGetAll.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btnGetAll.Name = "btnGetAll";
-            this.btnGetAll.RectColor = System.Drawing.Color.Blue;
-            this.btnGetAll.RectSize = 2;
-            this.btnGetAll.Size = new System.Drawing.Size(95, 52);
-            this.btnGetAll.Symbol = 559775;
-            this.btnGetAll.SymbolColor = System.Drawing.Color.MediumBlue;
-            this.btnGetAll.SymbolSize = 30;
-            this.btnGetAll.TabIndex = 12;
-            this.btnGetAll.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnGetAll.Click += new System.EventHandler(this.btnGetAll_Click);
+            this.tabPage2.Location = new System.Drawing.Point(0, 40);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Size = new System.Drawing.Size(200, 60);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "tabPage2";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // FSystemlogs
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(840, 674);
-            this.Controls.Add(this.uiTitlePanel1);
+            this.Controls.Add(this.uiTabControl1);
             this.Name = "FSystemlogs";
             this.Symbol = 57591;
             this.Text = "Truy vết";
             this.Initialize += new System.EventHandler(this.FSystemlogs_Initialize);
+            this.uiTabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
             this.uiTitlePanel1.ResumeLayout(false);
             this.uiTableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.opDataG)).EndInit();
@@ -444,24 +487,26 @@
         }
 
         #endregion
-
-        private Sunny.UI.UITitlePanel uiTitlePanel1;
-        private Sunny.UI.UIPagination uiPagination1;
         private System.ComponentModel.BackgroundWorker WK_AutoLog;
-        private Sunny.UI.UISymbolButton btnGetLogs;
-        private Sunny.UI.UIComboBox ipLoginType;
         private System.ComponentModel.BackgroundWorker WK_Getlogs;
+        private Sunny.UI.UITabControl uiTabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private Sunny.UI.UITitlePanel uiTitlePanel1;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel1;
+        private Sunny.UI.UIDataGridView opDataG;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel2;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel4;
-        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel3;
-        private Sunny.UI.UIComboBox ipSize;
-        private Sunny.UI.UIPanel opTotalCount;
-        private Sunny.UI.UIDataGridView opDataG;
+        private Sunny.UI.UISymbolButton btnGetAll;
+        private Sunny.UI.UIDatePicker ipDateFrom;
         private Sunny.UI.UISymbolButton btnExportCsv;
         private Sunny.UI.UISymbolButton btnExportPDF;
+        private Sunny.UI.UISymbolButton btnGetLogs;
+        private Sunny.UI.UIComboBox ipLoginType;
         private Sunny.UI.UIDatePicker ipDateTo;
-        private Sunny.UI.UIDatePicker ipDateFrom;
-        private Sunny.UI.UISymbolButton btnGetAll;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel3;
+        private Sunny.UI.UIComboBox ipSize;
+        private Sunny.UI.UIPagination uiPagination1;
+        private Sunny.UI.UIPanel opTotalCount;
+        private System.Windows.Forms.TabPage tabPage2;
     }
 }

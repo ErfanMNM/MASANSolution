@@ -130,7 +130,6 @@ namespace QR_MASAN_01.Views.Scada
             uiPagination1.TotalCount = LogCount;
             uiPagination1.PageSize = size;
         }
-
         private void FSystemlogs_Initialize(object sender, EventArgs e)
         {
             //ghi nhận log người dùng bật form
@@ -176,7 +175,7 @@ namespace QR_MASAN_01.Views.Scada
             catch (Exception ex)
             {
                 // Ghi nhận log lỗi khi xuất báo cáo
-                SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_LogType.ERROR, "REPORT - Lỗi xuất báo cáo nhật ký hệ thống", Globalvariable.CurrentUser.Username, ex.Message);
+                SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_LogType.SYSTEM_ERROR, "REPORT - Lỗi xuất báo cáo nhật ký hệ thống", Globalvariable.CurrentUser.Username, ex.Message);
                 LogQueue.Enqueue(systemLogs);
                 this.ShowErrorTip($"Lỗi xuất báo cáo: {ex.Message}", 2000);
             }
@@ -243,7 +242,7 @@ namespace QR_MASAN_01.Views.Scada
             catch (Exception ex)
             {
                 // Ghi nhận log lỗi khi xuất báo cáo
-                SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_LogType.ERROR, "CSV - Lỗi xuất báo cáo nhật ký hệ thống", Globalvariable.CurrentUser.Username, ex.Message);
+                SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_LogType.SYSTEM_ERROR, "CSV - Lỗi xuất báo cáo nhật ký hệ thống", Globalvariable.CurrentUser.Username, ex.Message);
                 LogQueue.Enqueue(systemLogs);
                 this.ShowErrorTip($"Lỗi xuất báo cáo: {ex.Message}", 2000);
             }

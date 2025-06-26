@@ -17,6 +17,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using static MFI_Service.MFI_Service_Form;
+using static QR_MASAN_01.ActiveLogs;
+using static QR_MASAN_01.SystemLogs;
 
 namespace QR_MASAN_01
 {
@@ -48,7 +50,7 @@ namespace QR_MASAN_01
             }
             catch (Exception ex)
             {
-                SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.ERROR, "Lỗi khởi tạo Dashboard", "System", ex.Message);
+                SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi khởi tạo Dashboard", "System", ex.Message);
                 SystemLogs.InsertToSQLite(systemLogs);
 
                 // Hiển thị thông báo lỗi trên giao diện
@@ -235,7 +237,7 @@ namespace QR_MASAN_01
                 catch (Exception ex)
                 {
                     LogUpdate($"Lỗi trong quá trình xử lý: {ex.Message}");
-                    SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.ERROR, "Lỗi trong quá trình xử lý MFI", "System", ex.Message);
+                    SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi trong quá trình xử lý MFI", "System", ex.Message);
                     //thêm vào Queue để ghi log
                     SystemLogs.LogQueue.Enqueue(systemLogs);
                 }
@@ -1004,19 +1006,73 @@ namespace QR_MASAN_01
 
 
                 //Kiểm tra PLC_ACTIVE_DM nếu = 1 set Globale ACTIVE = true dùng hsl
-                OperateResult<int> read = PLC.plc.ReadInt32("D100");
+                OperateResult<int> read = PLC.plc.ReadInt32(PLCAddress.Get("PLC_Bypass_DM_C1"));
                 if (read.IsSuccess)
                 {
-                    if (read.Content == 1)
+                    if (read.Content != 1)
                     {
-                        Globalvariable.ACTIVE = true;
+                        if (Globalvariable.ACTIVE_C1 == false)
+                        {
+                            //ghi log 
+                            ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Bật Camera 01", "PLC", "Nhận kích hoạt camera 01 từ PLC, nhận giá trị khác 1");
+                            //Ghi vào hàng chờ
+                            ActiveLogQueue.Enqueue(activeLogs);
+                            Globalvariable.ACTIVE_C1 = true;
+                        }
                     }
                     else
                     {
-                        Globalvariable.ACTIVE = false;
+                        if (Globalvariable.ACTIVE_C1 == true)
+                        {
+                            //ghi log
+                            ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Tắt Camera 01", "PLC", "Nhận ngừng kích hoạt camera 01 từ PLC, nhận giá trị bằng 1");
+                            //Ghi vào hàng chờ
+                            ActiveLogQueue.Enqueue(activeLogs);
+                            Globalvariable.ACTIVE_C1 = false;
+                        }
                     }
                 }
 
+                OperateResult<int> read1 = PLC.plc.ReadInt32(PLCAddress.Get("PLC_Bypass_DM_C2"));
+                if (read1.IsSuccess)
+                {
+                    if (read1.Content != 1)
+                    {
+                        if (Globalvariable.ACTIVE_C2 == false)
+                        {
+                            ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.UNACTIVE, "Bật Camera 02", "PLC", "Nhận kích hoạt camera 02 từ PLC, nhận giá trị khác 1");
+                            //Ghi vào hàng chờ
+                            ActiveLogQueue.Enqueue(activeLogs);
+                            Globalvariable.ACTIVE_C2 = true;
+                        }
+                    }
+                    else
+                    {
+                        if(Globalvariable.ACTIVE_C2 == true)
+                        {
+                            ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.UNACTIVE, "Bật Camera 02", "PLC", "Nhận kích hoạt camera 02 từ PLC, nhận giá trị bằng 1");
+                            //Ghi vào hàng chờ
+                            ActiveLogQueue.Enqueue(activeLogs);
+                            Globalvariable.ACTIVE_C2 = false;
+                        }
+                        
+                    }
+                }
+
+                if(Globalvariable.ACTIVE_C1 && Globalvariable.ACTIVE_C2)
+                {
+                    ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Kích hoạt kiểm", "PLC", "Nhận kích hoạt kiểm từ PLC");
+                    //Ghi vào hàng chờ
+                    ActiveLogQueue.Enqueue(activeLogs);
+                    Globalvariable.ACTIVE = true;
+                }
+                else
+                {
+                    ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Dừng kiểm", "PLC", "Nhận kích hoạt từ PLC");
+                    //Ghi vào hàng chờ
+                    ActiveLogQueue.Enqueue(activeLogs);
+                    Globalvariable.ACTIVE = false;
+                }
 
                 Thread.Sleep(1000);
             }
@@ -2322,6 +2378,13 @@ namespace QR_MASAN_01
         private void ipConsole_DoubleClick(object sender, EventArgs e)
         {
             this.ShowInfoDialog(ipConsole.SelectedItem as string);
+        }
+
+        public void SendUnActive()
+        {
+            OperateResult operateResult = PLC.plc.Write(PLCAddress.Get("PLC_Bypass_DM_C1"),int.Parse("1"));
+            OperateResult operateResult2 = PLC.plc.Write(PLCAddress.Get("PLC_Bypass_DM_C2"), int.Parse("1"));
+            //không cần đợi trả về làm gì
         }
     }
 }

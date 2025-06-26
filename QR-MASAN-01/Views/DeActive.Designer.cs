@@ -28,12 +28,28 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.uiPanel1 = new Sunny.UI.UIPanel();
             this.SuspendLayout();
+            // 
+            // uiPanel1
+            // 
+            this.uiPanel1.Font = new System.Drawing.Font("Tahoma", 30F, System.Drawing.FontStyle.Bold);
+            this.uiPanel1.Location = new System.Drawing.Point(13, 97);
+            this.uiPanel1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel1.Name = "uiPanel1";
+            this.uiPanel1.RectColor = System.Drawing.Color.Red;
+            this.uiPanel1.RectSize = 2;
+            this.uiPanel1.Size = new System.Drawing.Size(955, 221);
+            this.uiPanel1.TabIndex = 0;
+            this.uiPanel1.Text = "PHẦN MỀM ĐANG DỪNG KIỂM TRA MÃ 2D";
+            this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // DeActive
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(981, 616);
+            this.Controls.Add(this.uiPanel1);
             this.Name = "DeActive";
             this.Text = "Tắt kiểm";
             this.ResumeLayout(false);
@@ -41,5 +57,7 @@
         }
 
         #endregion
+
+        private Sunny.UI.UIPanel uiPanel1;
     }
 }
