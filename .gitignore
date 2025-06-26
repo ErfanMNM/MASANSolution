@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /Server_Service/dist/TempStorage-win32-x64
 /Server_Service/dist
+/Server_Service/uploads
+/Server_Service/po_data.db
