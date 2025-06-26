@@ -27,6 +27,27 @@ namespace MainClass
         public e_MFI_Status MFI_Status { get; set; } = e_MFI_Status.STARTUP;
     }
 
+    //    | Tên Trường       | Loại     | Bắt buộc | Ghi chú                         |
+    //|------------------|----------|----------|----------------------------------|
+    //| `orderNo`        | string   | ✅        | Mã đơn hàng(PO)                 |
+    //| `uniqueCode`     | string   | ✅        | Mã định danh duy nhất            |
+    //| `site`           | string   | ✅        | Khu vực                          |
+    //| `factory`        | string   | ✅        | Nhà máy                          |
+    //| `productionLine` | string   | ✅        | Dây chuyền sản xuất              |
+    //| `productionDate` | string   | ✅        | Định dạng `YYYY-MM-DD`          |
+    //| `shift`          | string   | ✅        | Ca sản xuất                      |
+    //| `czFile`         | file     | ✅        | File `.csv` chứa mã GS1          |
+    public class PO_Info
+    {
+        public string OrderNO { get; set;}
+        public string UniqueCode { get; set;}
+        public string Site { get; set;}
+        public string Factory { get; set;}
+        public string ProductionLine { get; set;}
+        public string ProductionDate { get; set;}
+        public string Shift { get; set;}
+        public string czFile { get; set;}
+    }
 
     public enum e_MFI_Status
     {

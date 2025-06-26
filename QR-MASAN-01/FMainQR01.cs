@@ -40,6 +40,7 @@ namespace QR_MASAN_01
         F1PLC _f1PLC = new F1PLC();
         LoginForm loginForm = new LoginForm();
         DeActive deActive = new DeActive();
+        FDashboard_XK FDashboard_XK = new FDashboard_XK();
 
         public static e_Render_State Render_State = e_Render_State.LOGIN;
         public static e_App_State App_State = e_App_State.LOGIN;
@@ -100,7 +101,8 @@ namespace QR_MASAN_01
         private void RenderControlForm()
         {
             uiNavMenu1.Nodes.Clear();
-            uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
+            //uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
+            uiNavMenu1.CreateNode(AddPage(FDashboard_XK, 1006));
             uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
             uiNavMenu1.CreateNode(AddPage(scanQR, 1004));
             uiNavMenu1.CreateNode(AddPage(_f1PLC, 1009));
@@ -116,7 +118,8 @@ namespace QR_MASAN_01
 
             Render_State = e_Render_State.LOGIN; //đặt trạng thái render ban đầu là LOGIN
 
-            _F1Dashboard.INIT();
+            //_F1Dashboard.INIT();
+            FDashboard_XK.INIT();
             _FMFI.FMFI_INIT();
             scanQR.INIT();
 

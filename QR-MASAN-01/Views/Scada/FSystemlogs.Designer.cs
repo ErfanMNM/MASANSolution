@@ -101,7 +101,7 @@
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Size = new System.Drawing.Size(840, 634);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "tabPage1";
+            this.tabPage1.Text = "Hệ thống";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // uiTitlePanel1
@@ -460,9 +460,9 @@
             // 
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(200, 60);
+            this.tabPage2.Size = new System.Drawing.Size(840, 634);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
+            this.tabPage2.Text = "Khác";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // FSystemlogs
