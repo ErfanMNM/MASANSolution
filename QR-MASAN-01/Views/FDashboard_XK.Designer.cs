@@ -91,7 +91,7 @@
             this.uiPanel4 = new Sunny.UI.UIPanel();
             this.uiPanel8 = new Sunny.UI.UIPanel();
             this.uiPanel11 = new Sunny.UI.UIPanel();
-            this.uiPanel1 = new Sunny.UI.UIPanel();
+            this.opUniqueCode = new Sunny.UI.UIPanel();
             this.uiPanel3 = new Sunny.UI.UIPanel();
             this.uiPanel20 = new Sunny.UI.UIPanel();
             this.uiPanel10 = new Sunny.UI.UIPanel();
@@ -1002,7 +1002,7 @@
             this.uiTableLayoutPanel1.Controls.Add(this.uiPanel13, 1, 4);
             this.uiTableLayoutPanel1.Controls.Add(this.uiPanel12, 1, 3);
             this.uiTableLayoutPanel1.Controls.Add(this.uiPanel2, 1, 2);
-            this.uiTableLayoutPanel1.Controls.Add(this.uiPanel1, 1, 1);
+            this.uiTableLayoutPanel1.Controls.Add(this.opUniqueCode, 1, 1);
             this.uiTableLayoutPanel1.Controls.Add(this.uiPanel3, 0, 6);
             this.uiTableLayoutPanel1.Controls.Add(this.uiPanel20, 0, 5);
             this.uiTableLayoutPanel1.Controls.Add(this.uiPanel10, 0, 4);
@@ -1159,18 +1159,18 @@
             this.uiPanel11.Text = "Shift";
             this.uiPanel11.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // uiPanel1
+            // opUniqueCode
             // 
-            this.uiPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel1.Location = new System.Drawing.Point(132, 45);
-            this.uiPanel1.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel1.Name = "uiPanel1";
-            this.uiPanel1.Size = new System.Drawing.Size(217, 39);
-            this.uiPanel1.TabIndex = 61;
-            this.uiPanel1.Text = "Shift";
-            this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.opUniqueCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opUniqueCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opUniqueCode.Location = new System.Drawing.Point(132, 45);
+            this.opUniqueCode.Margin = new System.Windows.Forms.Padding(2);
+            this.opUniqueCode.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opUniqueCode.Name = "opUniqueCode";
+            this.opUniqueCode.Size = new System.Drawing.Size(217, 39);
+            this.opUniqueCode.TabIndex = 61;
+            this.opUniqueCode.Text = "Shift";
+            this.opUniqueCode.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // uiPanel3
             // 
@@ -1281,6 +1281,7 @@
             this.ipOrderNO.Text = "ipOrderNO";
             this.ipOrderNO.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipOrderNO.Watermark = "";
+            this.ipOrderNO.SelectedIndexChanged += new System.EventHandler(this.ipOrderNO_SelectedIndexChanged);
             // 
             // uiTableLayoutPanel13
             // 
@@ -1872,7 +1873,7 @@
         private Sunny.UI.UIPanel uiPanel4;
         private Sunny.UI.UIPanel uiPanel8;
         private Sunny.UI.UIPanel uiPanel11;
-        private Sunny.UI.UIPanel uiPanel1;
+        private Sunny.UI.UIPanel opUniqueCode;
         private Sunny.UI.UIPanel uiPanel3;
         private Sunny.UI.UIPanel uiPanel20;
         private Sunny.UI.UIPanel uiPanel10;

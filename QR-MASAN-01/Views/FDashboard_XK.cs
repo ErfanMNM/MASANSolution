@@ -1640,10 +1640,22 @@ namespace QR_MASAN_01
         }
 
         private POService poService = new POService(@"C:\Users\DANOMT\source\repos\MASANSolution\Server_Service\dist\TempStorage-win32-x64\po_data.db");
+        PORecord pORecord = new PORecord();
 
         private void btnUpdatePO_Click(object sender, EventArgs e)
         {
             poService.LoadOrderNoToComboBox(ipOrderNO);
+        }
+
+        DataTable dataTable1 = new DataTable();
+        private void ipOrderNO_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            dataTable1 = poService.GetPOByOrderNo(ipOrderNO.Text);
+            if(dataTable1.Rows.Count > 0 )
+            {
+                opUniqueCode.Text = dataTable1.Rows[0]["uniqueCode"].ToString();
+            }
+            
         }
     }
 
