@@ -31,7 +31,9 @@ namespace QR_MASAN_01
         public static string ProductionLine { get; set; }
         public static string ProductionDate { get; set; }
         public static string Shift { get; set; }
-        public static string CzFileUrl { get; set; }
+        public static string CzFilePath { get; set; }
+        public static string CzDataFilePath { get; set; }
+
     }
 
     public class Globalvariable

@@ -103,7 +103,7 @@ namespace QR_MASAN_01
             uiNavMenu1.Nodes.Clear();
             //uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
             uiNavMenu1.CreateNode(AddPage(FDashboard_XK, 1006));
-            uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
+            //uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
             uiNavMenu1.CreateNode(AddPage(scanQR, 1004));
             uiNavMenu1.CreateNode(AddPage(_f1PLC, 1009));
             uiNavMenu1.CreateNode(AddPage(_FStatistics, 1002));
@@ -120,7 +120,7 @@ namespace QR_MASAN_01
 
             //_F1Dashboard.INIT();
             FDashboard_XK.INIT();
-            _FMFI.FMFI_INIT();
+           // _FMFI.FMFI_INIT();
             scanQR.INIT();
 
             //kiểm soát máy in
@@ -343,7 +343,8 @@ namespace QR_MASAN_01
                                     uiNavMenu1.Nodes[uiNavMenu1.Nodes.Count - 1].Remove(); // xóa trang cuối nếu đã đăng nhập
                                 }
                                 btnDeActive.Enabled = false; 
-                                uiNavMenu1.CreateNode("DM", 1998); // thêm trang DEACTIVE vào menu
+                                uiNavMenu1.CreateNode("DMA", 1998); // thêm trang DEACTIVE vào menu
+
                                 uiNavMenu1.SelectPage(1998); // chọn trang DEACTIVE
                                 uiNavMenu1.Enabled = false; //vô hiệu hóa menu
                                 uiNavMenu1.Visible = false; //ẩn menu

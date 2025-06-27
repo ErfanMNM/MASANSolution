@@ -48,8 +48,7 @@ namespace QR_MASAN_01
                 PLC.PLC_Ready_DM = PLCAddress.Get("PLC_Ready_DM");
                 PLC.InitPLC();
 
-                //lấy dòng cuối cùng của PO
-
+                //Lấy thông tin PO ban đầu
                 DataTable lastLog = ProductionLogs.GetLastLog_Datatable();
                 if (lastLog.Rows.Count > 0)
                 {
@@ -59,6 +58,10 @@ namespace QR_MASAN_01
                     GPOInfo.OrderNo = row["orderNO"].ToString();
                     //tiếp tục lấy full thông tin PO
                     ipOrderNO.SelectedItem = row["orderNO"].ToString();
+
+                    //kiểm tra xem đã có file dữ liệu PO chưa
+
+                    //Lấy thông tin cơ bản
                 }
                 else
                 {
@@ -881,6 +884,15 @@ namespace QR_MASAN_01
 
         }
 
+        public void Camera_01_Data_Process (string _strData)
+        {
+            //Kích hoạt hệ thống đo đạc
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            //kiểm tra xem mã có đúng chuẩn js 
+        }
+
         #region Quản lý PLC và gửi tín hiệu PLC
 
         public enum e_Content_Result
@@ -1687,12 +1699,23 @@ namespace QR_MASAN_01
             //kiểm tra các thông tin PO
             ConUpdate("Bắt đầu điều chỉnh PO");
             //Lấy thông tin file PO
-
+            if(!WK_LoadPO.IsBusy)
+            {
+                WK_LoadPO.RunWorkerAsync();
+            }
         }
 
         private void WK_LoadPO_DoWork(object sender, DoWorkEventArgs e)
         {
-           
+            //kiểm tra thông tin PO
+            if (GPOInfo.OrderNo != ipOrderNO.Text)
+            {
+                //kiểm tra xem file cz PO đã từng tồn tại hay chưa
+                //File CZ = orderNO_uniqueCode_tên file csv
+                GPOInfo.CzDataFilePath = $@"DataPO/{ipOrderNO.Text}_{opUniqueCode.Text}_{dataTable1.Rows[0]["CzFileUrl"]}";
+                //test lưu
+                //ProductionLogs productionLogs = new ProductionLogs()
+            }
         }
     }
 }
