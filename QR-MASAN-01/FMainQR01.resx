@@ -229,7 +229,7 @@
     <value>0</value>
   </data>
   <data name="Logo.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LogoImg" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="Logotext" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,90,Percent,50" /&gt;&lt;Rows Styles="Percent,48.3871" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LogoImg" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="Logotext" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,90,Percent,50" /&gt;&lt;Rows Styles="Percent,48,3871" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="opUser.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Right</value>
@@ -292,7 +292,7 @@
     <value>0</value>
   </data>
   <data name="header.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="Logo" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="opUser" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,23.82813,Percent,76.17188" /&gt;&lt;Rows Styles="Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="Logo" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="opUser" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,23,82813,Percent,76,17188" /&gt;&lt;Rows Styles="Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="uiTopbar.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 12pt</value>
@@ -564,6 +564,39 @@
   <data name="footer.ColumnCount" type="System.Int32, mscorlib">
     <value>5</value>
   </data>
+  <data name="uiPanel1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 12pt, style=Bold</value>
+  </data>
+  <data name="uiPanel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="uiPanel1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="uiPanel1.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1, 1</value>
+  </data>
+  <data name="uiPanel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>182, 39</value>
+  </data>
+  <data name="uiPanel1.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="uiPanel1.Text" xml:space="preserve">
+    <value>Máy có 0 lỗi</value>
+  </data>
+  <data name="&gt;&gt;uiPanel1.Name" xml:space="preserve">
+    <value>uiPanel1</value>
+  </data>
+  <data name="&gt;&gt;uiPanel1.Type" xml:space="preserve">
+    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;uiPanel1.Parent" xml:space="preserve">
+    <value>footer</value>
+  </data>
+  <data name="&gt;&gt;uiPanel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="opLaserPrinterTime.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 12pt</value>
   </data>
@@ -595,42 +628,6 @@
     <value>footer</value>
   </data>
   <data name="&gt;&gt;opLaserPrinterTime.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="uiScrollingText1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="uiScrollingText1.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 15.75pt, style=Bold</value>
-  </data>
-  <data name="uiScrollingText1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="uiScrollingText1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 2, 0</value>
-  </data>
-  <data name="uiScrollingText1.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>1, 1</value>
-  </data>
-  <data name="uiScrollingText1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>183, 39</value>
-  </data>
-  <data name="uiScrollingText1.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="uiScrollingText1.Text" xml:space="preserve">
-    <value>Phần mềm quản lý hệ thống kích hoạt mã sản phẩm cung cấp bởi Công Ty TNHH Thương Mại Dịch Vụ Sản Xuất Kỹ Thuật Cao Tân Tiến</value>
-  </data>
-  <data name="&gt;&gt;uiScrollingText1.Name" xml:space="preserve">
-    <value>uiScrollingText1</value>
-  </data>
-  <data name="&gt;&gt;uiScrollingText1.Type" xml:space="preserve">
-    <value>Sunny.UI.UIScrollingText, SunnyUI, Version=3.8.5.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
-  </data>
-  <data name="&gt;&gt;uiScrollingText1.Parent" xml:space="preserve">
-    <value>footer</value>
-  </data>
-  <data name="&gt;&gt;uiScrollingText1.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="lblClock.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
@@ -706,7 +703,7 @@
     <value>Microsoft Sans Serif, 12pt, style=Bold</value>
   </data>
   <data name="lblAllStatus.Location" type="System.Drawing.Point, System.Drawing">
-    <value>185, 0</value>
+    <value>182, 0</value>
   </data>
   <data name="lblAllStatus.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -715,7 +712,7 @@
     <value>1, 1</value>
   </data>
   <data name="lblAllStatus.Size" type="System.Drawing.Size, System.Drawing">
-    <value>333, 39</value>
+    <value>336, 39</value>
   </data>
   <data name="lblAllStatus.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -766,7 +763,7 @@
     <value>2</value>
   </data>
   <data name="footer.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="opLaserPrinterTime" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="uiScrollingText1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="lblClock" Row="0" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="lblInternet" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="lblAllStatus" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,185,Percent,100,Absolute,174,Absolute,166,Absolute,166" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="uiPanel1" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="opLaserPrinterTime" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="lblClock" Row="0" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="lblInternet" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="lblAllStatus" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,182,Percent,100,Absolute,174,Absolute,166,Absolute,166" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="mainPanelLayout.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -799,7 +796,7 @@
     <value>0</value>
   </data>
   <data name="mainPanelLayout.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="uiTopbar" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="BodyPanel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="footer" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,7.161458,Percent,87.76041,Percent,5" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="uiTopbar" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="BodyPanel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="footer" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,7,161458,Percent,87,76041,Percent,5" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="WKCheck.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>

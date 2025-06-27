@@ -308,12 +308,6 @@
     <Compile Include="Views\LoginForm.Designer.cs">
       <DependentUpon>LoginForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\MFI_Service\PO_Service.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\MFI_Service\PO_Service.Designer.cs">
-      <DependentUpon>PO_Service.cs</DependentUpon>
-    </Compile>
     <Compile Include="Views\MFI_Service\MFI_Service.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -395,9 +389,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\LoginForm.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\MFI_Service\PO_Service.resx">
-      <DependentUpon>PO_Service.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\MFI_Service\MFI_Service.resx">
       <DependentUpon>MFI_Service.cs</DependentUpon>

@@ -46,7 +46,6 @@
             this.uiTabControl1 = new Sunny.UI.UITabControl();
             this.footer = new Sunny.UI.UITableLayoutPanel();
             this.opLaserPrinterTime = new Sunny.UI.UIPanel();
-            this.uiScrollingText1 = new Sunny.UI.UIScrollingText();
             this.lblClock = new Sunny.UI.UIPanel();
             this.lblInternet = new Sunny.UI.UIPanel();
             this.lblAllStatus = new Sunny.UI.UIPanel();
@@ -54,6 +53,7 @@
             this.ClockWK = new System.ComponentModel.BackgroundWorker();
             this.Internet = new SPMS1.InternetClass(this.components);
             this.WK_LaserPrinterTime = new System.ComponentModel.BackgroundWorker();
+            this.uiPanel1 = new Sunny.UI.UIPanel();
             this.mainPanelLayout.SuspendLayout();
             this.uiTopbar.SuspendLayout();
             this.header.SuspendLayout();
@@ -232,8 +232,8 @@
             // 
             this.footer.BackColor = System.Drawing.Color.Green;
             resources.ApplyResources(this.footer, "footer");
+            this.footer.Controls.Add(this.uiPanel1, 0, 0);
             this.footer.Controls.Add(this.opLaserPrinterTime, 2, 0);
-            this.footer.Controls.Add(this.uiScrollingText1, 0, 0);
             this.footer.Controls.Add(this.lblClock, 4, 0);
             this.footer.Controls.Add(this.lblInternet, 3, 0);
             this.footer.Controls.Add(this.lblAllStatus, 1, 0);
@@ -249,14 +249,6 @@
             this.opLaserPrinterTime.RectColor = System.Drawing.Color.Blue;
             this.opLaserPrinterTime.RectSize = 2;
             this.opLaserPrinterTime.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiScrollingText1
-            // 
-            this.uiScrollingText1.Active = true;
-            resources.ApplyResources(this.uiScrollingText1, "uiScrollingText1");
-            this.uiScrollingText1.Interval = 50;
-            this.uiScrollingText1.Name = "uiScrollingText1";
-            this.uiScrollingText1.Style = Sunny.UI.UIStyle.Custom;
             // 
             // lblClock
             // 
@@ -302,6 +294,16 @@
             // 
             this.WK_LaserPrinterTime.WorkerSupportsCancellation = true;
             this.WK_LaserPrinterTime.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_LaserPrinterTime_DoWork);
+            // 
+            // uiPanel1
+            // 
+            this.uiPanel1.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            resources.ApplyResources(this.uiPanel1, "uiPanel1");
+            this.uiPanel1.ForeColor = System.Drawing.Color.White;
+            this.uiPanel1.Name = "uiPanel1";
+            this.uiPanel1.Radius = 0;
+            this.uiPanel1.RectColor = System.Drawing.Color.DodgerBlue;
+            this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // FMainQR01
             // 
@@ -350,8 +352,8 @@
         private Sunny.UI.UISymbolButton btnDeActive;
         private Sunny.UI.UISymbolLabel opUser;
         private Sunny.UI.UIPanel opLaserPrinterTime;
-        private Sunny.UI.UIScrollingText uiScrollingText1;
         private System.ComponentModel.BackgroundWorker WK_LaserPrinterTime;
+        private Sunny.UI.UIPanel uiPanel1;
     }
 }
 

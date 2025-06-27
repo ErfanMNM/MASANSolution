@@ -1434,7 +1434,7 @@
             this.tabPage3.Controls.Add(this.opHisConsole);
             this.tabPage3.Location = new System.Drawing.Point(0, 40);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(200, 60);
+            this.tabPage3.Size = new System.Drawing.Size(457, 308);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Lịch sử";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -1451,7 +1451,7 @@
             this.opHisConsole.Name = "opHisConsole";
             this.opHisConsole.Padding = new System.Windows.Forms.Padding(2);
             this.opHisConsole.ShowText = false;
-            this.opHisConsole.Size = new System.Drawing.Size(200, 60);
+            this.opHisConsole.Size = new System.Drawing.Size(457, 308);
             this.opHisConsole.TabIndex = 0;
             this.opHisConsole.Text = "uiListBox1";
             // 
@@ -1459,7 +1459,7 @@
             // 
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(200, 60);
+            this.tabPage2.Size = new System.Drawing.Size(457, 308);
             this.tabPage2.TabIndex = 3;
             this.tabPage2.Text = "Lịch sử 2";
             this.tabPage2.UseVisualStyleBackColor = true;

@@ -570,21 +570,7 @@ namespace MFI_Service
                 {
                     lblServerStatus.FillColor = Globalvariable.WB_Color;
                 }
-                //product
-                if (GServer.Client_QR01 == e_Server_Status.DISCONNECTED)
-                {
-                    opProduct_QR_Status.FillColor = Globalvariable.WB_Color;
-                }
-                //case
-                if (GServer.Client_QR02 == e_Server_Status.DISCONNECTED)
-                {
-                    opCase_QR_Status.FillColor = Globalvariable.WB_Color;
-                }
-                //pallet
-                if (GServer.Client_QR03 == e_Server_Status.DISCONNECTED)
-                {
-                    opPallet_QR_Status.FillColor = Globalvariable.WB_Color;
-                }
+               
                 Thread.Sleep(500);
             }
         }
@@ -664,8 +650,7 @@ namespace MFI_Service
                                     if (GServer.Client_QR01 == e_Server_Status.DISCONNECTED)
                                     {
                                         GServer.Client_QR01 = e_Server_Status.CONNECTED;
-                                        opProduct_QR_Status.Text = "Đang sẵn sàng";
-                                        opProduct_QR_Status.FillColor = Color.White;
+
                                     }
                                 }
                                 else
@@ -673,7 +658,7 @@ namespace MFI_Service
                                     if (GServer.Client_QR01 == e_Server_Status.CONNECTED)
                                     {
                                         GServer.Client_QR01 = e_Server_Status.DISCONNECTED;
-                                        opProduct_QR_Status.Text = "Mất kết nối";
+
                                     }
                                 }
                                 break;
@@ -683,8 +668,7 @@ namespace MFI_Service
                                     if (GServer.Client_QR03 == e_Server_Status.DISCONNECTED)
                                     {
                                         GServer.Client_QR03 = e_Server_Status.CONNECTED;
-                                        opPallet_QR_Status.Text = "Đang sẵn sàng";
-                                        opPallet_QR_Status.FillColor = Color.White;
+
                                     }
                                 }
                                 else
@@ -692,7 +676,6 @@ namespace MFI_Service
                                     if (GServer.Client_QR03 == e_Server_Status.CONNECTED)
                                     {
                                         GServer.Client_QR03 = e_Server_Status.DISCONNECTED;
-                                        opPallet_QR_Status.Text = "Mất kết nối";
                                     }
                                 }
                                 break;
@@ -894,6 +877,26 @@ namespace MFI_Service
                     
                 }
             }
+
+        }
+
+        private void uiPanel24_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void uiPanel11_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void uiPanel4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void uiPanel18_Click(object sender, EventArgs e)
+        {
 
         }
     }
