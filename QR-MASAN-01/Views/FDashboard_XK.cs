@@ -56,8 +56,7 @@ namespace QR_MASAN_01
                     poService.LoadOrderNoToComboBox(ipOrderNO);
                     
                     DataRow row = lastLog.Rows[0];
-                    GPOInfo.OrderNo = row["orderNO"].ToString();//thông tin PO đang dùng
-                    GPOInfo.UniqueCode = row["uniqueCode"].ToString();
+                    GPOInfo.OrderNo = row["orderNO"].ToString();
                     //tiếp tục lấy full thông tin PO
                     ipOrderNO.SelectedItem = row["orderNO"].ToString();
                 }
