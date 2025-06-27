@@ -303,7 +303,7 @@ namespace QR_MASAN_01
                             {
                                 btnDeActive.Enabled = true;
                                 uiNavMenu1.Nodes[uiNavMenu1.Nodes.Count - 1].Remove(); // xóa trang cuối nếu đã đăng nhập
-                                uiNavMenu1.SelectPage(1001); // chọn trang Dashboard
+                                uiNavMenu1.SelectPage(1002); // chọn trang Dashboard
                                 uiNavMenu1.Enabled = true; //bật menu
                                 uiNavMenu1.Visible = true; //hiện menu
                             }));
@@ -480,6 +480,8 @@ namespace QR_MASAN_01
                 LogQueue.Enqueue(systemLogs);
                 this.ShowInfoTip("Đã gửi sự kiện, vui lòng chờ. Nếu quá lâu có thể nhấn lại");
                 //gửi xuống PLC
+
+                FDashboard_XK.SendUnActive();
 
                 timecurrentclick = timelastclick = DateTimeOffset.Now.ToUnixTimeSeconds();
             }

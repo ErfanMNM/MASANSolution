@@ -40,7 +40,7 @@
             this.uiPanel1.Name = "uiPanel1";
             this.uiPanel1.RectColor = System.Drawing.Color.Red;
             this.uiPanel1.RectSize = 2;
-            this.uiPanel1.Size = new System.Drawing.Size(955, 221);
+            this.uiPanel1.Size = new System.Drawing.Size(955, 364);
             this.uiPanel1.TabIndex = 0;
             this.uiPanel1.Text = "PHẦN MỀM ĐANG DỪNG KIỂM TRA MÃ 2D";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;

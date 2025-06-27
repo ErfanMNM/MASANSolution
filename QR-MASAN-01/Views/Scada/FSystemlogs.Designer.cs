@@ -28,11 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
             this.WK_AutoLog = new System.ComponentModel.BackgroundWorker();
             this.WK_Getlogs = new System.ComponentModel.BackgroundWorker();
             this.uiTabControl1 = new Sunny.UI.UITabControl();
@@ -54,6 +59,22 @@
             this.uiPagination1 = new Sunny.UI.UIPagination();
             this.opTotalCount = new Sunny.UI.UIPanel();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.uiTitlePanel2 = new Sunny.UI.UITitlePanel();
+            this.uiTableLayoutPanel5 = new Sunny.UI.UITableLayoutPanel();
+            this.uiDataGridView1 = new Sunny.UI.UIDataGridView();
+            this.uiTableLayoutPanel6 = new Sunny.UI.UITableLayoutPanel();
+            this.uiTableLayoutPanel7 = new Sunny.UI.UITableLayoutPanel();
+            this.uiSymbolButton1 = new Sunny.UI.UISymbolButton();
+            this.uiDatePicker1 = new Sunny.UI.UIDatePicker();
+            this.uiSymbolButton2 = new Sunny.UI.UISymbolButton();
+            this.uiSymbolButton3 = new Sunny.UI.UISymbolButton();
+            this.uiSymbolButton4 = new Sunny.UI.UISymbolButton();
+            this.uiComboBox1 = new Sunny.UI.UIComboBox();
+            this.uiDatePicker2 = new Sunny.UI.UIDatePicker();
+            this.uiTableLayoutPanel8 = new Sunny.UI.UITableLayoutPanel();
+            this.uiComboBox2 = new Sunny.UI.UIComboBox();
+            this.uiPagination2 = new Sunny.UI.UIPagination();
+            this.uiPanel1 = new Sunny.UI.UIPanel();
             this.uiTabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.uiTitlePanel1.SuspendLayout();
@@ -62,6 +83,13 @@
             this.uiTableLayoutPanel2.SuspendLayout();
             this.uiTableLayoutPanel4.SuspendLayout();
             this.uiTableLayoutPanel3.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.uiTitlePanel2.SuspendLayout();
+            this.uiTableLayoutPanel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.uiDataGridView1)).BeginInit();
+            this.uiTableLayoutPanel6.SuspendLayout();
+            this.uiTableLayoutPanel7.SuspendLayout();
+            this.uiTableLayoutPanel8.SuspendLayout();
             this.SuspendLayout();
             // 
             // WK_AutoLog
@@ -144,46 +172,46 @@
             this.opDataG.AllowUserToOrderColumns = true;
             this.opDataG.AllowUserToResizeColumns = false;
             this.opDataG.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
-            this.opDataG.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            this.opDataG.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle11;
             this.opDataG.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.opDataG.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.opDataG.BackgroundColor = System.Drawing.Color.White;
             this.opDataG.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.opDataG.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle12.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            dataGridViewCellStyle12.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.opDataG.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle12;
             this.opDataG.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.opDataG.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle13.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle13.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            dataGridViewCellStyle13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle13.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle13.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.opDataG.DefaultCellStyle = dataGridViewCellStyle13;
             this.opDataG.EnableHeadersVisualStyles = false;
             this.opDataG.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.opDataG.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(160)))), ((int)(((byte)(255)))));
             this.opDataG.Location = new System.Drawing.Point(3, 3);
             this.opDataG.Name = "opDataG";
             this.opDataG.ReadOnly = true;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(160)))), ((int)(((byte)(255)))));
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.opDataG.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            dataGridViewCellStyle5.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opDataG.RowsDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle14.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle14.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            dataGridViewCellStyle14.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle14.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(160)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle14.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.opDataG.RowHeadersDefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle15.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle15.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opDataG.RowsDefaultCellStyle = dataGridViewCellStyle15;
             this.opDataG.ScrollMode = Sunny.UI.UIDataGridView.UIDataGridViewScrollMode.Page;
             this.opDataG.SelectedIndex = -1;
             this.opDataG.Size = new System.Drawing.Size(832, 462);
@@ -458,12 +486,358 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.uiTitlePanel2);
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Size = new System.Drawing.Size(840, 634);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Khác";
+            this.tabPage2.Text = "Sản xuất";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // uiTitlePanel2
+            // 
+            this.uiTitlePanel2.Controls.Add(this.uiTableLayoutPanel5);
+            this.uiTitlePanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTitlePanel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F);
+            this.uiTitlePanel2.Location = new System.Drawing.Point(0, 0);
+            this.uiTitlePanel2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiTitlePanel2.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiTitlePanel2.Name = "uiTitlePanel2";
+            this.uiTitlePanel2.Padding = new System.Windows.Forms.Padding(1, 50, 1, 1);
+            this.uiTitlePanel2.ShowText = false;
+            this.uiTitlePanel2.Size = new System.Drawing.Size(840, 634);
+            this.uiTitlePanel2.TabIndex = 2;
+            this.uiTitlePanel2.Text = "QUẢN LÝ LỊCH SỬ HỆ THỐNG";
+            this.uiTitlePanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.uiTitlePanel2.TitleHeight = 50;
+            // 
+            // uiTableLayoutPanel5
+            // 
+            this.uiTableLayoutPanel5.ColumnCount = 1;
+            this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel5.Controls.Add(this.uiDataGridView1, 0, 0);
+            this.uiTableLayoutPanel5.Controls.Add(this.uiTableLayoutPanel6, 0, 1);
+            this.uiTableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel5.Location = new System.Drawing.Point(1, 50);
+            this.uiTableLayoutPanel5.Name = "uiTableLayoutPanel5";
+            this.uiTableLayoutPanel5.RowCount = 2;
+            this.uiTableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 80.41734F));
+            this.uiTableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 19.58266F));
+            this.uiTableLayoutPanel5.Size = new System.Drawing.Size(838, 583);
+            this.uiTableLayoutPanel5.TabIndex = 17;
+            this.uiTableLayoutPanel5.TagString = null;
+            // 
+            // uiDataGridView1
+            // 
+            this.uiDataGridView1.AllowUserToAddRows = false;
+            this.uiDataGridView1.AllowUserToDeleteRows = false;
+            this.uiDataGridView1.AllowUserToOrderColumns = true;
+            this.uiDataGridView1.AllowUserToResizeColumns = false;
+            this.uiDataGridView1.AllowUserToResizeRows = false;
+            dataGridViewCellStyle16.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            this.uiDataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle16;
+            this.uiDataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.uiDataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.uiDataGridView1.BackgroundColor = System.Drawing.Color.White;
+            this.uiDataGridView1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle17.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            dataGridViewCellStyle17.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            dataGridViewCellStyle17.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle17.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
+            dataGridViewCellStyle17.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.uiDataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle17;
+            this.uiDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle18.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            dataGridViewCellStyle18.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle18.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle18.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.uiDataGridView1.DefaultCellStyle = dataGridViewCellStyle18;
+            this.uiDataGridView1.EnableHeadersVisualStyles = false;
+            this.uiDataGridView1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiDataGridView1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(160)))), ((int)(((byte)(255)))));
+            this.uiDataGridView1.Location = new System.Drawing.Point(3, 3);
+            this.uiDataGridView1.Name = "uiDataGridView1";
+            this.uiDataGridView1.ReadOnly = true;
+            dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle19.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle19.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            dataGridViewCellStyle19.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle19.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(160)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle19.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle19.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.uiDataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle19;
+            dataGridViewCellStyle20.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle20.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiDataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle20;
+            this.uiDataGridView1.ScrollMode = Sunny.UI.UIDataGridView.UIDataGridViewScrollMode.Page;
+            this.uiDataGridView1.SelectedIndex = -1;
+            this.uiDataGridView1.Size = new System.Drawing.Size(832, 462);
+            this.uiDataGridView1.StripeOddColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            this.uiDataGridView1.TabIndex = 0;
+            // 
+            // uiTableLayoutPanel6
+            // 
+            this.uiTableLayoutPanel6.ColumnCount = 1;
+            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel6.Controls.Add(this.uiTableLayoutPanel7, 0, 1);
+            this.uiTableLayoutPanel6.Controls.Add(this.uiTableLayoutPanel8, 0, 0);
+            this.uiTableLayoutPanel6.Location = new System.Drawing.Point(3, 471);
+            this.uiTableLayoutPanel6.Name = "uiTableLayoutPanel6";
+            this.uiTableLayoutPanel6.RowCount = 2;
+            this.uiTableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 44.82759F));
+            this.uiTableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 55.17241F));
+            this.uiTableLayoutPanel6.Size = new System.Drawing.Size(832, 109);
+            this.uiTableLayoutPanel6.TabIndex = 1;
+            this.uiTableLayoutPanel6.TagString = null;
+            // 
+            // uiTableLayoutPanel7
+            // 
+            this.uiTableLayoutPanel7.ColumnCount = 7;
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 69F));
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 69F));
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 131F));
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 248F));
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 83F));
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 101F));
+            this.uiTableLayoutPanel7.Controls.Add(this.uiSymbolButton1, 6, 0);
+            this.uiTableLayoutPanel7.Controls.Add(this.uiDatePicker1, 2, 0);
+            this.uiTableLayoutPanel7.Controls.Add(this.uiSymbolButton2, 1, 0);
+            this.uiTableLayoutPanel7.Controls.Add(this.uiSymbolButton3, 0, 0);
+            this.uiTableLayoutPanel7.Controls.Add(this.uiSymbolButton4, 5, 0);
+            this.uiTableLayoutPanel7.Controls.Add(this.uiComboBox1, 4, 0);
+            this.uiTableLayoutPanel7.Controls.Add(this.uiDatePicker2, 3, 0);
+            this.uiTableLayoutPanel7.Location = new System.Drawing.Point(3, 51);
+            this.uiTableLayoutPanel7.Name = "uiTableLayoutPanel7";
+            this.uiTableLayoutPanel7.RowCount = 1;
+            this.uiTableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel7.Size = new System.Drawing.Size(826, 55);
+            this.uiTableLayoutPanel7.TabIndex = 3;
+            this.uiTableLayoutPanel7.TagString = null;
+            // 
+            // uiSymbolButton1
+            // 
+            this.uiSymbolButton1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton1.FillColor = System.Drawing.Color.Aquamarine;
+            this.uiSymbolButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton1.Location = new System.Drawing.Point(728, 3);
+            this.uiSymbolButton1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton1.Name = "uiSymbolButton1";
+            this.uiSymbolButton1.RectColor = System.Drawing.Color.Blue;
+            this.uiSymbolButton1.RectSize = 2;
+            this.uiSymbolButton1.Size = new System.Drawing.Size(95, 49);
+            this.uiSymbolButton1.Symbol = 559775;
+            this.uiSymbolButton1.SymbolColor = System.Drawing.Color.MediumBlue;
+            this.uiSymbolButton1.SymbolSize = 30;
+            this.uiSymbolButton1.TabIndex = 12;
+            this.uiSymbolButton1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            // 
+            // uiDatePicker1
+            // 
+            this.uiDatePicker1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiDatePicker1.FillColor = System.Drawing.Color.White;
+            this.uiDatePicker1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiDatePicker1.Location = new System.Drawing.Point(140, 2);
+            this.uiDatePicker1.Margin = new System.Windows.Forms.Padding(2);
+            this.uiDatePicker1.MaxLength = 10;
+            this.uiDatePicker1.MinimumSize = new System.Drawing.Size(63, 0);
+            this.uiDatePicker1.Name = "uiDatePicker1";
+            this.uiDatePicker1.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
+            this.uiDatePicker1.RectColor = System.Drawing.Color.Blue;
+            this.uiDatePicker1.RectSize = 2;
+            this.uiDatePicker1.Size = new System.Drawing.Size(127, 51);
+            this.uiDatePicker1.SymbolDropDown = 61555;
+            this.uiDatePicker1.SymbolNormal = 61555;
+            this.uiDatePicker1.SymbolSize = 24;
+            this.uiDatePicker1.TabIndex = 11;
+            this.uiDatePicker1.Text = "2025-06-24";
+            this.uiDatePicker1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiDatePicker1.Value = new System.DateTime(2025, 6, 24, 0, 0, 0, 0);
+            this.uiDatePicker1.Watermark = "";
+            // 
+            // uiSymbolButton2
+            // 
+            this.uiSymbolButton2.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiSymbolButton2.FillColor = System.Drawing.Color.WhiteSmoke;
+            this.uiSymbolButton2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton2.Location = new System.Drawing.Point(71, 2);
+            this.uiSymbolButton2.Margin = new System.Windows.Forms.Padding(2);
+            this.uiSymbolButton2.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton2.Name = "uiSymbolButton2";
+            this.uiSymbolButton2.RectColor = System.Drawing.Color.Blue;
+            this.uiSymbolButton2.RectSize = 2;
+            this.uiSymbolButton2.Size = new System.Drawing.Size(65, 51);
+            this.uiSymbolButton2.Symbol = 363197;
+            this.uiSymbolButton2.SymbolColor = System.Drawing.Color.Green;
+            this.uiSymbolButton2.SymbolSize = 50;
+            this.uiSymbolButton2.TabIndex = 10;
+            this.uiSymbolButton2.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            // 
+            // uiSymbolButton3
+            // 
+            this.uiSymbolButton3.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiSymbolButton3.FillColor = System.Drawing.Color.WhiteSmoke;
+            this.uiSymbolButton3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton3.Location = new System.Drawing.Point(2, 2);
+            this.uiSymbolButton3.Margin = new System.Windows.Forms.Padding(2);
+            this.uiSymbolButton3.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton3.Name = "uiSymbolButton3";
+            this.uiSymbolButton3.RectColor = System.Drawing.Color.Blue;
+            this.uiSymbolButton3.RectSize = 2;
+            this.uiSymbolButton3.Size = new System.Drawing.Size(65, 51);
+            this.uiSymbolButton3.Symbol = 261889;
+            this.uiSymbolButton3.SymbolColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.uiSymbolButton3.SymbolSize = 50;
+            this.uiSymbolButton3.TabIndex = 9;
+            this.uiSymbolButton3.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            // 
+            // uiSymbolButton4
+            // 
+            this.uiSymbolButton4.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton4.FillColor = System.Drawing.Color.Aquamarine;
+            this.uiSymbolButton4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton4.Location = new System.Drawing.Point(645, 3);
+            this.uiSymbolButton4.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton4.Name = "uiSymbolButton4";
+            this.uiSymbolButton4.RectColor = System.Drawing.Color.Blue;
+            this.uiSymbolButton4.RectSize = 2;
+            this.uiSymbolButton4.Size = new System.Drawing.Size(77, 49);
+            this.uiSymbolButton4.Symbol = 61473;
+            this.uiSymbolButton4.SymbolColor = System.Drawing.Color.MediumBlue;
+            this.uiSymbolButton4.SymbolSize = 30;
+            this.uiSymbolButton4.TabIndex = 3;
+            this.uiSymbolButton4.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            // 
+            // uiComboBox1
+            // 
+            this.uiComboBox1.DataSource = null;
+            this.uiComboBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiComboBox1.DropDownStyle = Sunny.UI.UIDropDownStyle.DropDownList;
+            this.uiComboBox1.FillColor = System.Drawing.Color.White;
+            this.uiComboBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiComboBox1.ItemHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
+            this.uiComboBox1.ItemSelectForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            this.uiComboBox1.Location = new System.Drawing.Point(396, 2);
+            this.uiComboBox1.Margin = new System.Windows.Forms.Padding(2);
+            this.uiComboBox1.MaxDropDownItems = 16;
+            this.uiComboBox1.MinimumSize = new System.Drawing.Size(63, 0);
+            this.uiComboBox1.Name = "uiComboBox1";
+            this.uiComboBox1.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
+            this.uiComboBox1.RectColor = System.Drawing.Color.Blue;
+            this.uiComboBox1.RectSize = 2;
+            this.uiComboBox1.Size = new System.Drawing.Size(244, 51);
+            this.uiComboBox1.SymbolSize = 24;
+            this.uiComboBox1.TabIndex = 6;
+            this.uiComboBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiComboBox1.Watermark = "";
+            // 
+            // uiDatePicker2
+            // 
+            this.uiDatePicker2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiDatePicker2.FillColor = System.Drawing.Color.White;
+            this.uiDatePicker2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiDatePicker2.Location = new System.Drawing.Point(271, 2);
+            this.uiDatePicker2.Margin = new System.Windows.Forms.Padding(2);
+            this.uiDatePicker2.MaxLength = 10;
+            this.uiDatePicker2.MinimumSize = new System.Drawing.Size(63, 0);
+            this.uiDatePicker2.Name = "uiDatePicker2";
+            this.uiDatePicker2.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
+            this.uiDatePicker2.RectColor = System.Drawing.Color.Blue;
+            this.uiDatePicker2.RectSize = 2;
+            this.uiDatePicker2.Size = new System.Drawing.Size(121, 51);
+            this.uiDatePicker2.SymbolDropDown = 61555;
+            this.uiDatePicker2.SymbolNormal = 61555;
+            this.uiDatePicker2.SymbolSize = 24;
+            this.uiDatePicker2.TabIndex = 8;
+            this.uiDatePicker2.Text = "2025-06-24";
+            this.uiDatePicker2.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiDatePicker2.Value = new System.DateTime(2025, 6, 24, 0, 0, 0, 0);
+            this.uiDatePicker2.Watermark = "";
+            // 
+            // uiTableLayoutPanel8
+            // 
+            this.uiTableLayoutPanel8.ColumnCount = 3;
+            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 93F));
+            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 132F));
+            this.uiTableLayoutPanel8.Controls.Add(this.uiComboBox2, 1, 0);
+            this.uiTableLayoutPanel8.Controls.Add(this.uiPagination2, 0, 0);
+            this.uiTableLayoutPanel8.Controls.Add(this.uiPanel1, 2, 0);
+            this.uiTableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel8.Location = new System.Drawing.Point(3, 3);
+            this.uiTableLayoutPanel8.Name = "uiTableLayoutPanel8";
+            this.uiTableLayoutPanel8.RowCount = 1;
+            this.uiTableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel8.Size = new System.Drawing.Size(826, 42);
+            this.uiTableLayoutPanel8.TabIndex = 2;
+            this.uiTableLayoutPanel8.TagString = null;
+            // 
+            // uiComboBox2
+            // 
+            this.uiComboBox2.DataSource = null;
+            this.uiComboBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiComboBox2.DropDownStyle = Sunny.UI.UIDropDownStyle.DropDownList;
+            this.uiComboBox2.FillColor = System.Drawing.Color.White;
+            this.uiComboBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiComboBox2.ItemHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
+            this.uiComboBox2.Items.AddRange(new object[] {
+            "",
+            "5",
+            "10",
+            "50",
+            "100",
+            "500",
+            "1000"});
+            this.uiComboBox2.ItemSelectForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            this.uiComboBox2.Location = new System.Drawing.Point(605, 5);
+            this.uiComboBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiComboBox2.MinimumSize = new System.Drawing.Size(63, 0);
+            this.uiComboBox2.Name = "uiComboBox2";
+            this.uiComboBox2.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
+            this.uiComboBox2.Size = new System.Drawing.Size(85, 32);
+            this.uiComboBox2.SymbolSize = 24;
+            this.uiComboBox2.TabIndex = 7;
+            this.uiComboBox2.Text = "50";
+            this.uiComboBox2.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiComboBox2.Watermark = "";
+            // 
+            // uiPagination2
+            // 
+            this.uiPagination2.ButtonFillSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(128)))), ((int)(((byte)(204)))));
+            this.uiPagination2.ButtonStyleInherited = false;
+            this.uiPagination2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPagination2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPagination2.Location = new System.Drawing.Point(4, 5);
+            this.uiPagination2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiPagination2.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPagination2.Name = "uiPagination2";
+            this.uiPagination2.PageSize = 2;
+            this.uiPagination2.RectSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.None;
+            this.uiPagination2.ShowText = false;
+            this.uiPagination2.Size = new System.Drawing.Size(593, 32);
+            this.uiPagination2.TabIndex = 2;
+            this.uiPagination2.Text = "uiPagination2";
+            this.uiPagination2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.uiPagination2.TotalCount = 100;
+            // 
+            // uiPanel1
+            // 
+            this.uiPanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel1.Location = new System.Drawing.Point(698, 5);
+            this.uiPanel1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel1.Name = "uiPanel1";
+            this.uiPanel1.Size = new System.Drawing.Size(124, 32);
+            this.uiPanel1.TabIndex = 8;
+            this.uiPanel1.Text = "0";
+            this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // FSystemlogs
             // 
@@ -482,6 +856,13 @@
             this.uiTableLayoutPanel2.ResumeLayout(false);
             this.uiTableLayoutPanel4.ResumeLayout(false);
             this.uiTableLayoutPanel3.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
+            this.uiTitlePanel2.ResumeLayout(false);
+            this.uiTableLayoutPanel5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.uiDataGridView1)).EndInit();
+            this.uiTableLayoutPanel6.ResumeLayout(false);
+            this.uiTableLayoutPanel7.ResumeLayout(false);
+            this.uiTableLayoutPanel8.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -508,5 +889,21 @@
         private Sunny.UI.UIPagination uiPagination1;
         private Sunny.UI.UIPanel opTotalCount;
         private System.Windows.Forms.TabPage tabPage2;
+        private Sunny.UI.UITitlePanel uiTitlePanel2;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel5;
+        private Sunny.UI.UIDataGridView uiDataGridView1;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel6;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel7;
+        private Sunny.UI.UISymbolButton uiSymbolButton1;
+        private Sunny.UI.UIDatePicker uiDatePicker1;
+        private Sunny.UI.UISymbolButton uiSymbolButton2;
+        private Sunny.UI.UISymbolButton uiSymbolButton3;
+        private Sunny.UI.UISymbolButton uiSymbolButton4;
+        private Sunny.UI.UIComboBox uiComboBox1;
+        private Sunny.UI.UIDatePicker uiDatePicker2;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel8;
+        private Sunny.UI.UIComboBox uiComboBox2;
+        private Sunny.UI.UIPagination uiPagination2;
+        private Sunny.UI.UIPanel uiPanel1;
     }
 }

@@ -24,6 +24,7 @@ namespace QR_MASAN_01
 {
     public partial class FDashboard_XK : UIPage
     {
+        private POService poService = new POService(@"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\po_data.db");
         public FDashboard_XK()
         {
             InitializeComponent();
@@ -46,6 +47,26 @@ namespace QR_MASAN_01
                 PLC.PLC_PORT = Convert.ToInt32(PLCAddress.Get("PLC_PORT"));
                 PLC.PLC_Ready_DM = PLCAddress.Get("PLC_Ready_DM");
                 PLC.InitPLC();
+
+                //lấy dòng cuối cùng của PO
+
+                DataTable lastLog = ProductionLogs.GetLastLog_Datatable();
+                if (lastLog.Rows.Count > 0)
+                {
+                    poService.LoadOrderNoToComboBox(ipOrderNO);
+                    
+                    DataRow row = lastLog.Rows[0];
+                    GPOInfo.OrderNo = row["orderNO"].ToString();//thông tin PO đang dùng
+                    GPOInfo.UniqueCode = row["uniqueCode"].ToString();
+                    //tiếp tục lấy full thông tin PO
+                    ipOrderNO.SelectedItem = row["orderNO"].ToString();
+                }
+                else
+                {
+                    poService.LoadOrderNoToComboBox(ipOrderNO);
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -55,8 +76,8 @@ namespace QR_MASAN_01
                 // Hiển thị thông báo lỗi trên giao diện
                 this.ShowErrorDialog("Lỗi khởi tạo Dashboard, Vui lòng tắt máy mở lại", ex.Message);
                 //Hiện lên box
-                LogUpdate($"Lỗi khởi tạo Dashboard: {ex.Message}");
-                LogUpdate($"VUI LÒNG TẮT MÁY MỞ LẠI");
+                ConUpdate($"Lỗi khởi tạo Dashboard: {ex.Message}");
+                ConUpdate($"VUI LÒNG TẮT MÁY MỞ LẠI");
             }
 
         }
@@ -238,7 +259,7 @@ namespace QR_MASAN_01
 
         #region Các cập nhật lên màn hình
         //Gửi lên màn hình và lưu log
-        public void LogUpdate(string message)
+        public void ConUpdate(string message)
         {
             this.Invoke(new Action(() =>
             {
@@ -535,7 +556,7 @@ namespace QR_MASAN_01
                     }
                     else
                     {
-                        LogUpdate("Máy chưa sẵn sàng");
+                        ConUpdate("Máy chưa sẵn sàng");
                     }
                     
                     break;
@@ -1639,13 +1660,13 @@ namespace QR_MASAN_01
 
         }
 
-        private POService poService = new POService(@"C:\Users\DANOMT\source\repos\MASANSolution\Server_Service\dist\TempStorage-win32-x64\po_data.db");
-        PORecord pORecord = new PORecord();
+        
 
         private void btnUpdatePO_Click(object sender, EventArgs e)
         {
             poService.LoadOrderNoToComboBox(ipOrderNO);
         }
+
 
         DataTable dataTable1 = new DataTable();
         private void ipOrderNO_SelectedIndexChanged(object sender, EventArgs e)
@@ -1654,22 +1675,25 @@ namespace QR_MASAN_01
             if(dataTable1.Rows.Count > 0 )
             {
                 opUniqueCode.Text = dataTable1.Rows[0]["uniqueCode"].ToString();
+                opSite.Text = dataTable1.Rows[0]["site"].ToString();
+                opFactory.Text = dataTable1.Rows[0]["factory"].ToString();
+                opProductionLine.Text = dataTable1.Rows[0]["productionLine"].ToString();
+                opProductionDate.Text = dataTable1.Rows[0]["productionDate"].ToString();
+                opShift.Text = dataTable1.Rows[0]["shift"].ToString();
             }
-            
+        }
+
+        private void btnSavePO_Click(object sender, EventArgs e)
+        {
+            //kiểm tra các thông tin PO
+            ConUpdate("Bắt đầu điều chỉnh PO");
+            //Lấy thông tin file PO
+
+        }
+
+        private void WK_LoadPO_DoWork(object sender, DoWorkEventArgs e)
+        {
+           
         }
     }
-
-    public class PORecord
-    {
-        public int Id { get; set; }
-        public string OrderNo { get; set; }
-        public string UniqueCode { get; set; }
-        public string Site { get; set; }
-        public string Factory { get; set; }
-        public string ProductionLine { get; set; }
-        public string ProductionDate { get; set; }
-        public string Shift { get; set; }
-        public string CzFileUrl { get; set; }
-    }
-
 }

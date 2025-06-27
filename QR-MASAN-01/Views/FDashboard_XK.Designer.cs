@@ -81,16 +81,16 @@
             this.uiTitlePanel4 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel7 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
-            this.uiPanel17 = new Sunny.UI.UIPanel();
+            this.opLOTpack = new Sunny.UI.UIPanel();
             this.uiPanel16 = new Sunny.UI.UIPanel();
-            this.uiPanel15 = new Sunny.UI.UIPanel();
-            this.uiPanel14 = new Sunny.UI.UIPanel();
-            this.uiPanel13 = new Sunny.UI.UIPanel();
-            this.uiPanel12 = new Sunny.UI.UIPanel();
+            this.opShift = new Sunny.UI.UIPanel();
+            this.opProductionDate = new Sunny.UI.UIPanel();
+            this.opProductionLine = new Sunny.UI.UIPanel();
+            this.opFactory = new Sunny.UI.UIPanel();
             this.uiPanel2 = new Sunny.UI.UIPanel();
             this.uiPanel4 = new Sunny.UI.UIPanel();
             this.uiPanel8 = new Sunny.UI.UIPanel();
-            this.uiPanel11 = new Sunny.UI.UIPanel();
+            this.opSite = new Sunny.UI.UIPanel();
             this.opUniqueCode = new Sunny.UI.UIPanel();
             this.uiPanel3 = new Sunny.UI.UIPanel();
             this.uiPanel20 = new Sunny.UI.UIPanel();
@@ -912,8 +912,8 @@
             // tableLayoutPanel5
             // 
             this.tableLayoutPanel5.ColumnCount = 2;
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 81.05849F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18.9415F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 79.38718F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20.61281F));
             this.tableLayoutPanel5.Controls.Add(this.btnUpdatePO, 1, 0);
             this.tableLayoutPanel5.Controls.Add(this.btnSavePO, 0, 0);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -932,11 +932,11 @@
             this.btnUpdatePO.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.btnUpdatePO.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.btnUpdatePO.ForeColor = System.Drawing.Color.Black;
-            this.btnUpdatePO.Location = new System.Drawing.Point(294, 3);
+            this.btnUpdatePO.Location = new System.Drawing.Point(288, 3);
             this.btnUpdatePO.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnUpdatePO.Name = "btnUpdatePO";
             this.btnUpdatePO.RectColor = System.Drawing.Color.DarkGreen;
-            this.btnUpdatePO.Size = new System.Drawing.Size(62, 38);
+            this.btnUpdatePO.Size = new System.Drawing.Size(68, 38);
             this.btnUpdatePO.Symbol = 559864;
             this.btnUpdatePO.SymbolColor = System.Drawing.Color.Black;
             this.btnUpdatePO.TabIndex = 2;
@@ -951,11 +951,12 @@
             this.btnSavePO.Location = new System.Drawing.Point(3, 3);
             this.btnSavePO.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnSavePO.Name = "btnSavePO";
-            this.btnSavePO.Size = new System.Drawing.Size(285, 38);
+            this.btnSavePO.Size = new System.Drawing.Size(279, 38);
             this.btnSavePO.Symbol = 61639;
             this.btnSavePO.TabIndex = 1;
             this.btnSavePO.Text = "Lưu thông tin PO";
             this.btnSavePO.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnSavePO.Click += new System.EventHandler(this.btnSavePO_Click);
             // 
             // uiTitlePanel4
             // 
@@ -995,12 +996,12 @@
             this.uiTableLayoutPanel1.ColumnCount = 2;
             this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 37.03704F));
             this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 62.96296F));
-            this.uiTableLayoutPanel1.Controls.Add(this.uiPanel17, 1, 7);
+            this.uiTableLayoutPanel1.Controls.Add(this.opLOTpack, 1, 7);
             this.uiTableLayoutPanel1.Controls.Add(this.uiPanel16, 0, 7);
-            this.uiTableLayoutPanel1.Controls.Add(this.uiPanel15, 1, 6);
-            this.uiTableLayoutPanel1.Controls.Add(this.uiPanel14, 1, 5);
-            this.uiTableLayoutPanel1.Controls.Add(this.uiPanel13, 1, 4);
-            this.uiTableLayoutPanel1.Controls.Add(this.uiPanel12, 1, 3);
+            this.uiTableLayoutPanel1.Controls.Add(this.opShift, 1, 6);
+            this.uiTableLayoutPanel1.Controls.Add(this.opProductionDate, 1, 5);
+            this.uiTableLayoutPanel1.Controls.Add(this.opProductionLine, 1, 4);
+            this.uiTableLayoutPanel1.Controls.Add(this.opFactory, 1, 3);
             this.uiTableLayoutPanel1.Controls.Add(this.uiPanel2, 1, 2);
             this.uiTableLayoutPanel1.Controls.Add(this.opUniqueCode, 1, 1);
             this.uiTableLayoutPanel1.Controls.Add(this.uiPanel3, 0, 6);
@@ -1026,18 +1027,18 @@
             this.uiTableLayoutPanel1.TabIndex = 14;
             this.uiTableLayoutPanel1.TagString = null;
             // 
-            // uiPanel17
+            // opLOTpack
             // 
-            this.uiPanel17.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel17.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel17.Location = new System.Drawing.Point(132, 309);
-            this.uiPanel17.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel17.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel17.Name = "uiPanel17";
-            this.uiPanel17.Size = new System.Drawing.Size(217, 42);
-            this.uiPanel17.TabIndex = 68;
-            this.uiPanel17.Text = "Shift";
-            this.uiPanel17.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.opLOTpack.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opLOTpack.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opLOTpack.Location = new System.Drawing.Point(132, 309);
+            this.opLOTpack.Margin = new System.Windows.Forms.Padding(2);
+            this.opLOTpack.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opLOTpack.Name = "opLOTpack";
+            this.opLOTpack.Size = new System.Drawing.Size(217, 42);
+            this.opLOTpack.TabIndex = 68;
+            this.opLOTpack.Text = "-";
+            this.opLOTpack.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // uiPanel16
             // 
@@ -1052,57 +1053,57 @@
             this.uiPanel16.Text = "Số lượng lô";
             this.uiPanel16.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // uiPanel15
+            // opShift
             // 
-            this.uiPanel15.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel15.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel15.Location = new System.Drawing.Point(132, 265);
-            this.uiPanel15.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel15.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel15.Name = "uiPanel15";
-            this.uiPanel15.Size = new System.Drawing.Size(217, 40);
-            this.uiPanel15.TabIndex = 66;
-            this.uiPanel15.Text = "Shift";
-            this.uiPanel15.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.opShift.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opShift.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opShift.Location = new System.Drawing.Point(132, 265);
+            this.opShift.Margin = new System.Windows.Forms.Padding(2);
+            this.opShift.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opShift.Name = "opShift";
+            this.opShift.Size = new System.Drawing.Size(217, 40);
+            this.opShift.TabIndex = 66;
+            this.opShift.Text = "-";
+            this.opShift.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // uiPanel14
+            // opProductionDate
             // 
-            this.uiPanel14.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel14.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel14.Location = new System.Drawing.Point(132, 217);
-            this.uiPanel14.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel14.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel14.Name = "uiPanel14";
-            this.uiPanel14.Size = new System.Drawing.Size(217, 44);
-            this.uiPanel14.TabIndex = 65;
-            this.uiPanel14.Text = "Shift";
-            this.uiPanel14.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.opProductionDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opProductionDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opProductionDate.Location = new System.Drawing.Point(132, 217);
+            this.opProductionDate.Margin = new System.Windows.Forms.Padding(2);
+            this.opProductionDate.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opProductionDate.Name = "opProductionDate";
+            this.opProductionDate.Size = new System.Drawing.Size(217, 44);
+            this.opProductionDate.TabIndex = 65;
+            this.opProductionDate.Text = "-";
+            this.opProductionDate.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // uiPanel13
+            // opProductionLine
             // 
-            this.uiPanel13.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel13.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel13.Location = new System.Drawing.Point(132, 174);
-            this.uiPanel13.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel13.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel13.Name = "uiPanel13";
-            this.uiPanel13.Size = new System.Drawing.Size(217, 39);
-            this.uiPanel13.TabIndex = 64;
-            this.uiPanel13.Text = "Shift";
-            this.uiPanel13.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.opProductionLine.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opProductionLine.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opProductionLine.Location = new System.Drawing.Point(132, 174);
+            this.opProductionLine.Margin = new System.Windows.Forms.Padding(2);
+            this.opProductionLine.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opProductionLine.Name = "opProductionLine";
+            this.opProductionLine.Size = new System.Drawing.Size(217, 39);
+            this.opProductionLine.TabIndex = 64;
+            this.opProductionLine.Text = "-";
+            this.opProductionLine.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // uiPanel12
+            // opFactory
             // 
-            this.uiPanel12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel12.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel12.Location = new System.Drawing.Point(132, 131);
-            this.uiPanel12.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel12.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel12.Name = "uiPanel12";
-            this.uiPanel12.Size = new System.Drawing.Size(217, 39);
-            this.uiPanel12.TabIndex = 63;
-            this.uiPanel12.Text = "Shift";
-            this.uiPanel12.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.opFactory.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opFactory.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opFactory.Location = new System.Drawing.Point(132, 131);
+            this.opFactory.Margin = new System.Windows.Forms.Padding(2);
+            this.opFactory.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opFactory.Name = "opFactory";
+            this.opFactory.Size = new System.Drawing.Size(217, 39);
+            this.opFactory.TabIndex = 63;
+            this.opFactory.Text = "-";
+            this.opFactory.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // uiPanel2
             // 
@@ -1134,7 +1135,7 @@
             // 
             // uiPanel8
             // 
-            this.uiPanel8.Controls.Add(this.uiPanel11);
+            this.uiPanel8.Controls.Add(this.opSite);
             this.uiPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiPanel8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.uiPanel8.Location = new System.Drawing.Point(0, 0);
@@ -1146,18 +1147,18 @@
             this.uiPanel8.Text = "Shift";
             this.uiPanel8.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // uiPanel11
+            // opSite
             // 
-            this.uiPanel11.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel11.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel11.Location = new System.Drawing.Point(0, 0);
-            this.uiPanel11.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel11.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel11.Name = "uiPanel11";
-            this.uiPanel11.Size = new System.Drawing.Size(217, 39);
-            this.uiPanel11.TabIndex = 61;
-            this.uiPanel11.Text = "Shift";
-            this.uiPanel11.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.opSite.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opSite.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opSite.Location = new System.Drawing.Point(0, 0);
+            this.opSite.Margin = new System.Windows.Forms.Padding(2);
+            this.opSite.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opSite.Name = "opSite";
+            this.opSite.Size = new System.Drawing.Size(217, 39);
+            this.opSite.TabIndex = 61;
+            this.opSite.Text = "-";
+            this.opSite.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // opUniqueCode
             // 
@@ -1169,7 +1170,7 @@
             this.opUniqueCode.Name = "opUniqueCode";
             this.opUniqueCode.Size = new System.Drawing.Size(217, 39);
             this.opUniqueCode.TabIndex = 61;
-            this.opUniqueCode.Text = "Shift";
+            this.opUniqueCode.Text = "-";
             this.opUniqueCode.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // uiPanel3
@@ -1266,6 +1267,7 @@
             // ipOrderNO
             // 
             this.ipOrderNO.DataSource = null;
+            this.ipOrderNO.DropDownStyle = Sunny.UI.UIDropDownStyle.DropDownList;
             this.ipOrderNO.FillColor = System.Drawing.Color.White;
             this.ipOrderNO.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.ipOrderNO.ItemHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
@@ -1731,6 +1733,7 @@
             // 
             this.WK_LoadPO.WorkerReportsProgress = true;
             this.WK_LoadPO.WorkerSupportsCancellation = true;
+            this.WK_LoadPO.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_LoadPO_DoWork);
             // 
             // FDashboard_XK
             // 
@@ -1863,16 +1866,16 @@
         private Sunny.UI.UIListBox opHisConsole;
         private System.Windows.Forms.TabPage tabPage2;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel1;
-        private Sunny.UI.UIPanel uiPanel17;
+        private Sunny.UI.UIPanel opLOTpack;
         private Sunny.UI.UIPanel uiPanel16;
-        private Sunny.UI.UIPanel uiPanel15;
-        private Sunny.UI.UIPanel uiPanel14;
-        private Sunny.UI.UIPanel uiPanel13;
-        private Sunny.UI.UIPanel uiPanel12;
+        private Sunny.UI.UIPanel opShift;
+        private Sunny.UI.UIPanel opProductionDate;
+        private Sunny.UI.UIPanel opProductionLine;
+        private Sunny.UI.UIPanel opFactory;
         private Sunny.UI.UIPanel uiPanel2;
         private Sunny.UI.UIPanel uiPanel4;
         private Sunny.UI.UIPanel uiPanel8;
-        private Sunny.UI.UIPanel uiPanel11;
+        private Sunny.UI.UIPanel opSite;
         private Sunny.UI.UIPanel opUniqueCode;
         private Sunny.UI.UIPanel uiPanel3;
         private Sunny.UI.UIPanel uiPanel20;

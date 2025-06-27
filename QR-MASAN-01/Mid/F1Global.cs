@@ -21,6 +21,19 @@ namespace QR_MASAN_01
 
     }
 
+    public class GPOInfo
+    {
+        public static int Id { get; set; }
+        public static string OrderNo { get; set; }
+        public static string UniqueCode { get; set; }
+        public static string Site { get; set; }
+        public static string Factory { get; set; }
+        public static string ProductionLine { get; set; }
+        public static string ProductionDate { get; set; }
+        public static string Shift { get; set; }
+        public static string CzFileUrl { get; set; }
+    }
+
     public class Globalvariable
     {
         public static Counter_Info GCounter { get; set; } = new Counter_Info();
@@ -81,36 +94,11 @@ namespace QR_MASAN_01
         public static bool ACTIVE_C2 { get; set; } = true;
     }
 
-    public enum e_Mode
-    {
-        OLDMode,
-        NEWMode
-    }
-
     public class Alarm
     {
         public static bool Alarm1 { get; set; } = false;
         public static int Alarm1_Count { get; set; } = 0;
     }
-
-    public class Counter
-    {
-        public static int Rerun { get; set; } = 0;
-        public static int Fail { get; set; } = 0;
-        public static int Empty { get; set; } = 0;
-        public static int Diff { get; set; } = 0;
-        public static int StructERR { get; set; } = 0;
-        public static int QRCount { get; set; } = 0;
-        public static int Camera120Count { get; set; } = 0;
-        public static int Send0ToPLC_Fail { get; set; } = 0;
-        public static int Send0ToPLC_OK { get; set; } = 0;
-        public static int Send1ToPLC_Fail { get; set; } = 0;
-        public static int Send1ToPLC_OK { get; set; } = 0;
-
-        public static double PLCTimeCurrent { get; set; } = 0;
-        public static double PLCTimeMax { get; set; } = 0;
-    }
-
     public class ProductData
     {
         public int ProductID { get; set; }
