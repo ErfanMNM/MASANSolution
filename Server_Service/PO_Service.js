@@ -23,7 +23,15 @@ if (!fs.existsSync(uploadDir)) {
 // multer cấu hình lưu file
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'uploads/'),
-    filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
+    filename: (req, file, cb) => {
+        const filePath = path.join(uploadDir, file.originalname);
+        if (fs.existsSync(filePath)) {
+            // Nếu file đã tồn tại, không lưu
+            return cb(new Error('File đã tồn tại trên server, không được upload lại'), file.originalname);
+        } else {
+            cb(null, file.originalname); // Giữ nguyên tên file gốc
+        }
+    }
 });
 const upload = multer({ storage });
 
@@ -94,6 +102,10 @@ function parseGS1(line) {
 
 // ✅ API nhận PO + file
 app.post('/api/po', upload.single('czFile'), async (req, res) => {
+    if (err instanceof multer.MulterError || err) {
+        // Xử lý lỗi từ multer
+        return res.status(400).json({ error: err.message });
+    }
     const {
         orderNo,
         uniqueCode,
