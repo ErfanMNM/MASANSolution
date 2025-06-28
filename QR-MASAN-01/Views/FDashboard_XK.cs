@@ -924,14 +924,7 @@ namespace QR_MASAN_01
 
                     }
                 }
-                //Fail
-                if (codeClear.Contains("FAIL"))
-                {
-                    //sút
-                    Send_Result_Content_C1(e_Content_Result.FAIL, codeClear);
-                    return;
-                }
-                //Kiểm tra mã
+
                 if (Globalvariable.Main_Content_Dictionary.TryGetValue(codeClear, out ProductData ProductInfo))
                 {
 
@@ -943,7 +936,7 @@ namespace QR_MASAN_01
                         ProductInfo.TimeUnixActive = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                         ProductInfo.TimeUnixPrinted = Globalvariable.TimeUnixPrinter;
                         //cập nhật SQLite
-                       // Globalvariable.Update_Content_To_SQLite_Queue.Enqueue(ProductInfo);
+                        // Globalvariable.Update_Content_To_SQLite_Queue.Enqueue(ProductInfo);
                         Send_Result_Content_C1(e_Content_Result.PASS, codeClear);
                         return;
                     }
@@ -958,6 +951,13 @@ namespace QR_MASAN_01
                 else
                 {
                     //sút
+                    if (codeClear.Contains("FAIL"))
+                    {
+                        //sút
+                        Send_Result_Content_C1(e_Content_Result.FAIL, codeClear);
+                        return;
+                    }
+
                     Send_Result_Content_C1(e_Content_Result.NOT_FOUND, codeClear);
                     return;
                 }
@@ -994,28 +994,10 @@ namespace QR_MASAN_01
                         ProductInfo.TimeUnixActive = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                         ProductInfo.TimeUnixPrinted = Globalvariable.TimeUnixPrinter;
                         //cập nhật SQLite
-                        Globalvariable.Update_Content_To_SQLite_Queue.Enqueue(ProductInfo);
-                    }
-                    else
-                    {
-                        Send_Result_Content_C2(e_Content_Result.DUPLICATE, codeClear);
-                        return;
+                        //Globalvariable.Update_Content_To_SQLite_Queue.Enqueue(ProductInfo);
                     }
                 }
-                //nếu chưa tồn tại
-                else
-                {
-                    //sút
-                    Send_Result_Content_C2(e_Content_Result.NOT_FOUND, codeClear);
-                    return;
-                }
-                //không đọc được
-                if (codeClear.Contains("FAIL"))
-                {
-                    //sút
-                    Send_Result_Content_C2(e_Content_Result.FAIL, codeClear);
-                    return;
-                }
+
 
                 //Kiểm tra trong bể C2 - bể dùng check chính
                 if (Globalvariable.C2_Content_Dictionary.TryGetValue(codeClear, out ProductData C2ProductInfo))
@@ -1043,6 +1025,12 @@ namespace QR_MASAN_01
                 }
                 else
                 {
+                    if(codeClear.Contains("FAIL"))
+                    {
+                        //sút
+                        Send_Result_Content_C2(e_Content_Result.FAIL, codeClear);
+                        return;
+                    }
                     //không tồn tại
                     Send_Result_Content_C2(e_Content_Result.NOT_FOUND, codeClear);
                     return;
