@@ -67,6 +67,7 @@ namespace MainClass
         public int Format_C2 { get; set; } = 0;
 
         public int Empty_C2 { get; set; } = 0;
+        public int NotFound_C2 { get; set; } = 0;
         public int Rework_C2 { get; set; } = 0;
         public int Unknown_C2 { get; set; } = 0;
 
@@ -94,6 +95,7 @@ namespace MainClass
         public int Format_C1 { get; set; } = 0;
 
         public int Empty_C1 { get; set; } = 0;
+        public int NotFound_C1 { get; set; } = 0;
         public int Rework_C1 { get; set; } = 0;
         public int Unknown_C1 { get; set; } = 0;
 
@@ -102,7 +104,7 @@ namespace MainClass
         public int PLC_0_Fail_C1 { get; set; } = 0;
         public int PLC_0_Pass_C1 { get; set; } = 0;
         public int PLC_1_Pass_C1 { get; set; } = 0;
-        
+
         public int PLC_1_Fail_C1 { get; set; } = 0;
         public string TimeSendPLC_C1 { get; set; } = "0/0";
         public string TimeProcess_C1 { get; set; } = "0/0";
@@ -111,9 +113,60 @@ namespace MainClass
         public string WK2_TimeProcess_C1 { get; set; } = "0/0";
         public string WK3_TimeProcess_C1 { get; set; } = "0/0";
 
+        //thêm hàm để reset các giá trị về 0
+        public void Reset()
+        {
+            Total_C2 = 0;
+            Total_Pass_C2 = 0;
+            Total_Failed_C2 = 0;
 
+            Camera_Read_Fail_C2 = 0;
+            Duplicate_C2 = 0;
+            Format_C2 = 0;
+
+            Empty_C2 = 0;
+            NotFound_C2 = 0;
+            Rework_C2 = 0;
+            Unknown_C2 = 0;
+
+            PLC_0_Fail_C2 = 0;
+            PLC_0_Pass_C2 = 0;
+            PLC_1_Pass_C2 = 0;
+            PLC_1_Fail_C2 = 0;
+
+            TimeSendPLC_C2 = "0/0";
+            TimeProcess_C2 = "0/0";
+
+            WK4_TimeProcess_C2 = "0/0";
+            WK5_TimeProcess_C2 = "0/0";
+            WK6_TimeProcess_C2 = "0/0";
+
+            Total_C1 = 0;
+            Total_Pass_C1 = 0;
+            Total_Failed_C1 = 0;
+
+            Camera_Read_Fail_C1 = 0;
+            Duplicate_C1 = 0;
+            Format_C1 = 0;
+
+            Empty_C1 = 0;
+            NotFound_C1 = 0;
+            Rework_C1 = 0;
+            Unknown_C1 = 0;
+
+            PLC_0_Fail_C1 = 0;
+            PLC_0_Pass_C1 = 0;
+            PLC_1_Pass_C1 = 0;
+            PLC_1_Fail_C1 = 0;
+
+            TimeSendPLC_C1 = "0/0";
+            TimeProcess_C1 = "0/0";
+            WK1_TimeProcess_C1 = "0/0";
+            WK2_TimeProcess_C1 = "0/0";
+            WK3_TimeProcess_C1 = "0/0";
+
+        }
     }
-
     public class UI_Info
     {
         public string Curent_Content { get; set; } = "0";

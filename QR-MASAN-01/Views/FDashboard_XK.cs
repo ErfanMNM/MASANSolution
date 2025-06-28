@@ -920,7 +920,7 @@ namespace QR_MASAN_01
                         C1ProductInfo.TimeUnixPrinted = Globalvariable.TimeUnixPrinter;
 
                         //cập nhật SQLite
-                        Globalvariable.C1_Update_Content_To_SQLite_Queue.Enqueue(C1ProductInfo);
+                        //Globalvariable.C1_Update_Content_To_SQLite_Queue.Enqueue(C1ProductInfo);
 
                     }
                 }
@@ -943,7 +943,7 @@ namespace QR_MASAN_01
                         ProductInfo.TimeUnixActive = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                         ProductInfo.TimeUnixPrinted = Globalvariable.TimeUnixPrinter;
                         //cập nhật SQLite
-                        Globalvariable.Update_Content_To_SQLite_Queue.Enqueue(ProductInfo);
+                       // Globalvariable.Update_Content_To_SQLite_Queue.Enqueue(ProductInfo);
                         Send_Result_Content_C1(e_Content_Result.PASS, codeClear);
                         return;
                     }
@@ -1196,7 +1196,7 @@ namespace QR_MASAN_01
 
                 case e_Content_Result.NOT_FOUND:
 
-                    Globalvariable.GCounter.Empty_C1++;
+                    Globalvariable.GCounter.NotFound_C1++;
                     Globalvariable.GCounter.Total_Failed_C1++;
                     Globalvariable.C1_UI.Curent_Content = "Mã không tồn tại";
                     Globalvariable.C1_UI.IsPass = false;
@@ -1221,6 +1221,8 @@ namespace QR_MASAN_01
 
                     Globalvariable.C2_UI.Curent_Content = _content;
                     Globalvariable.C2_UI.IsPass = true;
+                    Globalvariable.GCounter.Total_Pass_C2++;
+
                     //gửi xuống PLC và xử lý tại đây
                     OperateResult write = PLC.plc.Write(PLCAddress.Get("PLC_C2_RejectDM"), short.Parse("1"));
                     if (write.IsSuccess)
@@ -1237,6 +1239,9 @@ namespace QR_MASAN_01
 
                     Globalvariable.C2_UI.Curent_Content = "Không đọc được";
                     Globalvariable.C2_UI.IsPass = false;
+
+                    Globalvariable.GCounter.Camera_Read_Fail_C2++;
+                    Globalvariable.GCounter.Total_Failed_C2++;
 
                     //gửi xuống PLC và xử lý tại đây
                     OperateResult write1 = PLC.plc.Write(PLCAddress.Get("PLC_C2_RejectDM"), short.Parse("0"));
@@ -1255,6 +1260,8 @@ namespace QR_MASAN_01
                 case e_Content_Result.REWORK:
                     Globalvariable.C2_UI.Curent_Content = "Thả lại:" + _content;
                     Globalvariable.C2_UI.IsPass = true;
+
+                    Globalvariable.GCounter.Rework_C2++;
                     //gửi xuống PLC và xử lý tại đây
                     OperateResult write5 = PLC.plc.Write(PLCAddress.Get("PLC_C2_RejectDM"), short.Parse("1"));
                     if (write5.IsSuccess)
@@ -1268,6 +1275,9 @@ namespace QR_MASAN_01
                     break;
 
                 case e_Content_Result.DUPLICATE:
+                    Globalvariable.GCounter.Duplicate_C2++;
+                    Globalvariable.GCounter.Total_Failed_C2++;
+
                     Globalvariable.C2_UI.Curent_Content = "Mã đã kích hoạt (trùng)";
                     Globalvariable.C2_UI.IsPass = false;
                     //gửi xuống PLC và xử lý tại đây
@@ -1285,6 +1295,8 @@ namespace QR_MASAN_01
                 case e_Content_Result.EMPTY:
                     Globalvariable.C2_UI.Curent_Content = _content;
                     Globalvariable.C2_UI.IsPass = false;
+                    Globalvariable.GCounter.Empty_C2++;
+                    Globalvariable.GCounter.Total_Failed_C2++;
                     //gửi xuống PLC và xử lý tại đây
                     OperateResult write3 = PLC.plc.Write(GlobalSettings.Get("PLC_C2_RejectDM"), short.Parse("0"));
                     if (write3.IsSuccess)
@@ -1302,6 +1314,8 @@ namespace QR_MASAN_01
                     Globalvariable.C2_UI.Curent_Content = _content;
                     Globalvariable.C2_UI.IsPass = false;
 
+                    Globalvariable.GCounter.Total_Failed_C2++;
+
                     //gửi xuống PLC và xử lý tại đây
                     OperateResult write9 = PLC.plc.Write(GlobalSettings.Get("PLC_C2_RejectDM"), short.Parse("0"));
                     if (write9.IsSuccess)
@@ -1317,6 +1331,8 @@ namespace QR_MASAN_01
 
                     Globalvariable.C2_UI.Curent_Content = "Sai cấu trúc!!!";
                     Globalvariable.C2_UI.IsPass = false;
+                    Globalvariable.GCounter.Format_C2++;
+                    Globalvariable.GCounter.Total_Failed_C2++;
 
                     //gửi xuống PLC và xử lý tại đây
                     OperateResult write2 = PLC.plc.Write(PLCAddress.Get("PLC_C2_RejectDM"), short.Parse("0"));
@@ -1334,6 +1350,9 @@ namespace QR_MASAN_01
 
                     Globalvariable.C2_UI.Curent_Content = "Mã không tồn tại";
                     Globalvariable.C2_UI.IsPass = false;
+                    Globalvariable.GCounter.NotFound_C2++;
+                    Globalvariable.GCounter.Total_Failed_C2++;
+                    //gửi xuống PLC và xử lý tại đây
                     OperateResult write8 = PLC.plc.Write(PLCAddress.Get("PLC_C2_RejectDM"), short.Parse("0"));
                     if (write8.IsSuccess)
                     {
@@ -1360,8 +1379,6 @@ namespace QR_MASAN_01
             }
         }
         #endregion
-
-
         public (bool IsOK, string Message) CheckCodeFormatV2(string code, string pattern)
         {
             // Kiểm tra định dạng mã QR
@@ -1707,7 +1724,7 @@ namespace QR_MASAN_01
             stopwatch.Start();
             string inputString = e.Argument as string;
             
-            Camera_01_Data_Recive(inputString);
+            Camera_01_Data_Process(inputString);
 
             stopwatch.Stop();
 

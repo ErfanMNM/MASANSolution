@@ -121,7 +121,7 @@
             this.opUnknowC1 = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel27 = new Sunny.UI.UITableLayoutPanel();
             this.uiPanel27 = new Sunny.UI.UIPanel();
-            this.opEmptyC1 = new Sunny.UI.UIPanel();
+            this.opNotFoundC1 = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel26 = new Sunny.UI.UITableLayoutPanel();
             this.uiPanel25 = new Sunny.UI.UIPanel();
             this.opReworkC1 = new Sunny.UI.UIPanel();
@@ -1698,7 +1698,7 @@
             this.uiTableLayoutPanel27.ColumnCount = 1;
             this.uiTableLayoutPanel27.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.uiTableLayoutPanel27.Controls.Add(this.uiPanel27, 0, 0);
-            this.uiTableLayoutPanel27.Controls.Add(this.opEmptyC1, 0, 1);
+            this.uiTableLayoutPanel27.Controls.Add(this.opNotFoundC1, 0, 1);
             this.uiTableLayoutPanel27.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTableLayoutPanel27.Location = new System.Drawing.Point(139, 196);
             this.uiTableLayoutPanel27.Margin = new System.Windows.Forms.Padding(2);
@@ -1726,19 +1726,19 @@
             this.uiPanel27.Text = "Không có";
             this.uiPanel27.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // opEmptyC1
+            // opNotFoundC1
             // 
-            this.opEmptyC1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opEmptyC1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opEmptyC1.Location = new System.Drawing.Point(2, 39);
-            this.opEmptyC1.Margin = new System.Windows.Forms.Padding(2);
-            this.opEmptyC1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opEmptyC1.Name = "opEmptyC1";
-            this.opEmptyC1.Radius = 1;
-            this.opEmptyC1.Size = new System.Drawing.Size(130, 52);
-            this.opEmptyC1.TabIndex = 2;
-            this.opEmptyC1.Text = "-";
-            this.opEmptyC1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.opNotFoundC1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opNotFoundC1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opNotFoundC1.Location = new System.Drawing.Point(2, 39);
+            this.opNotFoundC1.Margin = new System.Windows.Forms.Padding(2);
+            this.opNotFoundC1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opNotFoundC1.Name = "opNotFoundC1";
+            this.opNotFoundC1.Radius = 1;
+            this.opNotFoundC1.Size = new System.Drawing.Size(130, 52);
+            this.opNotFoundC1.TabIndex = 2;
+            this.opNotFoundC1.Text = "-";
+            this.opNotFoundC1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiTableLayoutPanel26
             // 
@@ -2185,7 +2185,7 @@
         private Sunny.UI.UIPanel opUnknowC1;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel27;
         private Sunny.UI.UIPanel uiPanel27;
-        private Sunny.UI.UIPanel opEmptyC1;
+        private Sunny.UI.UIPanel opNotFoundC1;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel26;
         private Sunny.UI.UIPanel uiPanel25;
         private Sunny.UI.UIPanel opReworkC1;
