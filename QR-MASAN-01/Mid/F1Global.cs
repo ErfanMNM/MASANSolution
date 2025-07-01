@@ -213,7 +213,7 @@ namespace QR_MASAN_01
             ServerPort = 49211;
             City = "MSI";
             Printer_name = "NONE"; // Default printer name
-            Camera_Slot = 1; // Default camera slot
+            Camera_Slot = 2; // Default camera slot
             App_Mode = "ADD_Data"; // NO_ADD
             Laser_printer_server_url = "http://127.0.0.1:9000/get-time";
             Code_Content_Pattern = @"i\.tcx\.com\.vn/.*\d{13}.*[a-zA-Z0-9]";

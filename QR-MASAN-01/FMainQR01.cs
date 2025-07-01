@@ -69,7 +69,7 @@ namespace QR_MASAN_01
                                 "1V2xjY6AA4URrtcwUorQE54Ud5KyI7Ev2hpDPMMcXVTI",
                                 "PLC!A1:C100"
                             );
-
+                //load Setting
                 Setting.Current.Load();
             }
             catch (Exception ex)
