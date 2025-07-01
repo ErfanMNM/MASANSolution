@@ -14,6 +14,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,6 +25,8 @@ namespace MFI_Service
 {
     public partial class MFI_Service_Form : UIPage
     {
+        private POService poService = new POService(@"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\po_data.db");
+
         public MFI_Info _Server_MFI { get; set; } = new MFI_Info();
         public MFI_Service_Form()
         {
@@ -50,12 +53,17 @@ namespace MFI_Service
                         _Server_MFI.MFI_Status = e_MFI_Status.SQLite_LOAD; //tải từ máy tính 
                         break;
                     case e_MFI_Status.SQLite_LOAD:
-                        //Lấy thông tin sản xuất từ máy tính
+                        //Lấy thông tin sản xuất cũ từ máy tính
                         var _gmfifl = Get_Last_MFI_From_Local();
+
+                        
+
                         if (_gmfifl.Issucces)
                         {
                             this.Invoke(new Action(() =>
                             {
+                                //lấy thông tin PO trong máy
+                                poService.LoadOrderNoToComboBox(ipOrderNO);
                                 MFI_Update_HMI();//Cập nhật lên màn hình
                                 ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: {_gmfifl.message}");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
@@ -309,7 +317,7 @@ namespace MFI_Service
                 {
                     client.DefaultRequestHeaders.Add("Accept", "application/json");
 
-                    var url = "http://localhost:3000/set";
+                    var url = $"{Setting.Current.ServerIP}:{Setting.Current.ServerPort}/set";
                     // Gộp toàn bộ object thành JSON string
                     string jsonValue = JsonConvert.SerializeObject(_Server_MFI);
 
@@ -362,7 +370,7 @@ namespace MFI_Service
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("Accept", "application/json");
-                    var response = client.PostAsync("http://localhost:3000/set", content).GetAwaiter().GetResult();
+                    var response = client.PostAsync($"{Setting.Current.ServerIP}:{Setting.Current.ServerPort}/set", content).GetAwaiter().GetResult();
                     var result = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                     return (true, $"Gửi lên máy chủ thành công: {result}");
                     //Console.WriteLine($"Bulk Response:\n{result}");
@@ -382,7 +390,7 @@ namespace MFI_Service
                 {
                     client.DefaultRequestHeaders.Add("Accept", "application/json");
 
-                    var url = "http://localhost:3000/get";
+                    var url = $"{Setting.Current.ServerIP}:{Setting.Current.ServerPort}/get";
                     // Tạo payload cho key "MFI_Data"
                     var payload = new
                     {
@@ -427,7 +435,7 @@ namespace MFI_Service
                 {
                     client.DefaultRequestHeaders.Add("Accept", "application/json");
 
-                    var url = "http://localhost:3000/get";
+                    var url = $"{Setting.Current.ServerIP}:{Setting.Current.ServerPort}/get";
                     var requestBody = new { keys = keys };
                     var json = JsonConvert.SerializeObject(requestBody);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -898,6 +906,20 @@ namespace MFI_Service
         private void uiPanel18_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void ipOrderNO_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Globalvariable.Seleted_PO = poService.GetPOByOrderNo(ipOrderNO.Text);
+            if (Globalvariable.Seleted_PO.Rows.Count > 0)
+            {
+                ipUniqueCode.Text = Globalvariable.Seleted_PO.Rows[0]["uniqueCode"].ToString();
+                ipSite.Text = Globalvariable.Seleted_PO.Rows[0]["site"].ToString();
+                ipFactory.Text = Globalvariable.Seleted_PO.Rows[0]["factory"].ToString();
+                ipProductionLine.Text = Globalvariable.Seleted_PO.Rows[0]["productionLine"].ToString();
+                ipProductionDate.Text = Globalvariable.Seleted_PO.Rows[0]["productionDate"].ToString();
+                ipShift.Text = Globalvariable.Seleted_PO.Rows[0]["shift"].ToString();
+            }
         }
     }
 }

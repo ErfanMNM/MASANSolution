@@ -108,7 +108,7 @@
             this.uiPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel1.Name = "uiPanel1";
-            this.uiPanel1.Size = new System.Drawing.Size(583, 48);
+            this.uiPanel1.Size = new System.Drawing.Size(587, 48);
             this.uiPanel1.TabIndex = 4;
             this.uiPanel1.Text = "STT-Mã QR-Trạng thái (1 là đã active, 0 là chưa) - Thời gian Active";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -245,7 +245,7 @@
             this.opScanerCOM.Margin = new System.Windows.Forms.Padding(2);
             this.opScanerCOM.MinimumSize = new System.Drawing.Size(1, 1);
             this.opScanerCOM.Name = "opScanerCOM";
-            this.opScanerCOM.Size = new System.Drawing.Size(90, 47);
+            this.opScanerCOM.Size = new System.Drawing.Size(94, 47);
             this.opScanerCOM.TabIndex = 1;
             this.opScanerCOM.Text = "COM XX";
             this.opScanerCOM.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;

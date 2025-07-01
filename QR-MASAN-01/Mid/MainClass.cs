@@ -71,6 +71,8 @@ namespace MainClass
         public int Rework_C2 { get; set; } = 0;
         public int Unknown_C2 { get; set; } = 0;
 
+        public int Error_C2 { get; set; } = 0; // Thêm biến Error_C2 để đếm lỗi chung cho C2
+
 
 
         public int PLC_0_Fail_C2 { get; set; } = 0;
@@ -99,6 +101,7 @@ namespace MainClass
         public int Rework_C1 { get; set; } = 0;
         public int Unknown_C1 { get; set; } = 0;
 
+        public int Error_C1 { get; set; } = 0; // Thêm biến Error_C1 để đếm lỗi chung cho C1
 
 
         public int PLC_0_Fail_C1 { get; set; } = 0;

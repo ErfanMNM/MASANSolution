@@ -32,7 +32,6 @@ namespace QR_MASAN_01
         F1Dashboard _F1Dashboard = new F1Dashboard();
         MFI_Service_Form _FMFI = new MFI_Service_Form();
         ScanQR scanQR = new ScanQR();
-        Settings _setings = new Settings();
         MyLanPrinter _myLanPrinter = new MyLanPrinter();
         Printer_V7 _printer_V7 = new Printer_V7();
         FStatistics _FStatistics = new FStatistics();
@@ -40,7 +39,7 @@ namespace QR_MASAN_01
         F1PLC _f1PLC = new F1PLC();
         LoginForm loginForm = new LoginForm();
         DeActive deActive = new DeActive();
-        FDashboard_XK FDashboard_XK = new FDashboard_XK();
+        //FDashboard_XK FDashboard_XK = new FDashboard_XK();
 
         public static e_Render_State Render_State = e_Render_State.LOGIN;
         public static e_App_State App_State = e_App_State.LOGIN;
@@ -65,21 +64,13 @@ namespace QR_MASAN_01
                 //set mặc định timeprinter là giờ hiện tại
                 Globalvariable.TimeUnixPrinter = DateTimeOffset.Now.ToUnixTimeSeconds();
 
-                _setings.LoadSettings("C:/Phan_Mem/Configs.xlsx");
-
-                //GoogleSheetConfigHelper.Init(
-                //                            "credentials.json",
-                //                            "1V2xjY6AA4URrtcwUorQE54Ud5KyI7Ev2hpDPMMcXVTI",
-                //                            "PLC!A1:C100"
-                //                        );
-
                 PLCAddress.Init(
                                 "credentials.json",
                                 "1V2xjY6AA4URrtcwUorQE54Ud5KyI7Ev2hpDPMMcXVTI",
                                 "PLC!A1:C100"
                             );
 
-
+                Setting.Current.Load();
             }
             catch (Exception ex)
             {
@@ -103,8 +94,8 @@ namespace QR_MASAN_01
         private void RenderControlForm()
         {
             uiNavMenu1.Nodes.Clear();
-            //uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
-            uiNavMenu1.CreateNode(AddPage(FDashboard_XK, 1006));
+            uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
+            //uiNavMenu1.CreateNode(AddPage(FDashboard_XK, 1006));
             uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
             uiNavMenu1.CreateNode(AddPage(scanQR, 1004));
             uiNavMenu1.CreateNode(AddPage(_f1PLC, 1009));
@@ -120,14 +111,14 @@ namespace QR_MASAN_01
 
             Render_State = e_Render_State.LOGIN; //đặt trạng thái render ban đầu là LOGIN
 
-            //_F1Dashboard.INIT();
-            FDashboard_XK.INIT();
+            _F1Dashboard.INIT();
+            //FDashboard_XK.INIT();
             _FMFI.FMFI_INIT();
             scanQR.INIT();
 
             //kiểm soát máy in
 
-            switch (GlobalSettings.Get("PRINTER"))
+            switch (Setting.Current.Printer_name)
             {
                 case "ML":
                     uiNavMenu1.CreateNode(AddPage(_myLanPrinter, 1011));
@@ -404,7 +395,7 @@ namespace QR_MASAN_01
                     HttpClient HttpClient = new HttpClient();
 
                     // Lấy chuỗi thời gian từ URL máy in
-                    string timeString = await HttpClient.GetStringAsync(GlobalSettings.Get("LASER_PRINTER_URL"));
+                    string timeString = await HttpClient.GetStringAsync(Setting.Current.Laser_printer_server_url);
                     timeString = timeString.Trim();
 
                     // Parse datetime từ chuỗi nhận được (giả sử đúng format)
@@ -483,7 +474,7 @@ namespace QR_MASAN_01
                 this.ShowInfoTip("Đã gửi sự kiện, vui lòng chờ. Nếu quá lâu có thể nhấn lại");
                 //gửi xuống PLC
 
-                FDashboard_XK.SendUnActive();
+                //FDashboard_XK.SendUnActive();
 
                 timecurrentclick = timelastclick = DateTimeOffset.Now.ToUnixTimeSeconds();
             }

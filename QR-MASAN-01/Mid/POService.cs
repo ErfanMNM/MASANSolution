@@ -12,7 +12,7 @@ namespace QR_MASAN_01
 {
     public class POService
     {
-        private readonly string _connectionString;
+        private string _connectionString;
 
         public POService(string dbPath)
         {
@@ -32,6 +32,19 @@ namespace QR_MASAN_01
                 comboBox.DataSource = table;
                 comboBox.DisplayMember = "orderNo";
                 comboBox.ValueMember = "orderNo";
+            }
+        }
+
+        //lấy danh sách PO trả về dataTable
+        public DataTable GetPOList()
+        {
+            using (var conn = new SQLiteConnection(_connectionString))
+            {
+                string query = "SELECT * FROM po_records ORDER BY orderNo";
+                var adapter = new SQLiteDataAdapter(query, conn);
+                var table = new DataTable();
+                adapter.Fill(table);
+                return table;
             }
         }
 

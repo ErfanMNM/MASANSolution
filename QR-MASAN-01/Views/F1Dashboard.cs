@@ -39,7 +39,7 @@ namespace QR_MASAN_01
                 WK_Update.RunWorkerAsync();
                 WK_UI_CAM_Update.RunWorkerAsync();
                 Camera.Connect();
-                if (GlobalSettings.GetInt("CAMERA_SLOT") > 1)
+                if (Setting.Current.Camera_Slot > 1)
                 {
                     Camera_c.Connect();
                 }
@@ -70,7 +70,7 @@ namespace QR_MASAN_01
 
         #region Các chương trình tạo dữ liệu MFI, đồng bộ với máy chủ
 
-        List<string> keys = new List<string> { "Case_Barcode", "Product_Barcode", "Case_LOT", "Batch_Code", "Block_Size", "Case_Size", "Pallet_Size", "SanLuong", "Operator", "Pallet_QR_Type", "MFI_ID", "QRCode_Folder", "QRCode_FileName", "MFI_Status" };
+        List<string> MFIs = new List<string> { "Case_Barcode", "Product_Barcode", "Case_LOT", "Batch_Code", "Block_Size", "Case_Size", "Pallet_Size", "SanLuong", "Operator", "Pallet_QR_Type", "MFI_ID", "QRCode_Folder", "QRCode_FileName", "MFI_Status" };
 
         //Luồng chính xử lý sự kiện đồng bộ
         private void WK_Server_check_DoWork(object sender, DoWorkEventArgs e)
@@ -102,7 +102,7 @@ namespace QR_MASAN_01
 
                             //nếu ở chế độ 2 camera thì đầy thêm 2 camera nữa
 
-                            if (GlobalSettings.GetInt("CAMERA_SLOT") > 1)
+                            if (Setting.Current.Camera_Slot > 1)
                             {
                                 LogUpdate("S2_Đẩy dữ liệu camera C1");
                                 Push_Data_To_Dic_C1();
@@ -117,7 +117,7 @@ namespace QR_MASAN_01
                         //Đẩy dữ liệu cho máy in
                         case e_Data_Status.PRINTER_PUSH:
                             //gửi thông tin qua máy in
-                            if (GlobalSettings.Get("PRINTER") != "NONE")
+                            if (Setting.Current.Printer_name != "NONE")
                             {
                                 //Gửi thông tin lên global.
                                 Globalvariable.QRCode_Folder = _clientMFI.Data_Content_Folder;
@@ -166,7 +166,7 @@ namespace QR_MASAN_01
                             // tạo mã không trùng
                             int count = 1_000_000;
                             //Nếu là chế độ tạo dữ liệu thì tạo 100 mã thôi, nếu không thì tạo 1 triệu mã
-                            if (GlobalSettings.Get("APPMODE") == "ADD_Data")
+                            if (Setting.Current.App_Mode == "ADD_Data")
                             {
                                 count = 100;
                             }
@@ -247,7 +247,7 @@ namespace QR_MASAN_01
 
         private void Process_MFI_When_Ready()
         {
-            var _gfsv = GetMultipleKeys(keys);
+            var _gfsv = GetMultipleKeys(MFIs);
             int retryCount = 0;
             if (_gfsv.IsSuccess)
             {
@@ -355,7 +355,7 @@ namespace QR_MASAN_01
 
             //Lấy MFI ID từ máy chủ, lấy all không cần quan tâm thứ tự làm gì. Sau đó kiểm tra xem file dữ liệu đã tồn tại hay chưa, nếu chưa thì tạo mới. File dữ liệu tuân thủ quy định sau: BatchCode_Barcode.printerData
 
-            var (isSuccess, message, values) = GetMultipleKeys(keys);
+            var (isSuccess, message, values) = GetMultipleKeys(MFIs);
 
             if (isSuccess)
             {
@@ -853,13 +853,13 @@ namespace QR_MASAN_01
                 else
                 {
                     printers = false;
-                    if (GlobalSettings.Get("APPMODE") == "ADD_Data")
+                    if (Setting.Current.App_Mode == "ADD_Data")
                     {
                         printers = true;
                     }
                 }
 
-                if (GlobalSettings.GetInt("CAMERA_SLOT") == 1)
+                if (Setting.Current.Camera_Slot == 1)
                 {
                     GCamera.Camera_Status_02 = e_Camera_Status.CONNECTED;
 
@@ -925,7 +925,7 @@ namespace QR_MASAN_01
                     }));
                 }
                 //máy in
-                if (GlobalSettings.Get("APPMODE") == "U_PRINTER")
+                if (Setting.Current.App_Mode == "U_PRINTER")
                 {
                     switch (GPrinter.Printer_Status)
                     {
@@ -1192,6 +1192,7 @@ namespace QR_MASAN_01
 
                                 //ghi log lỗi
                                 SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.CAMERA_ERROR, "Lỗi khi camera trả về C1", Globalvariable.CurrentUser.Username, "Không đủ luồng xử lí");
+                                Send_Result_Content_C1(e_Content_Result.ERROR, "Lỗi khi camera 02 trả về: Không đủ luồng xử lí");
                                 //thêm vào Queue để ghi log
                                 SystemLogs.LogQueue.Enqueue(systemLogs);
                             }
@@ -1322,7 +1323,7 @@ namespace QR_MASAN_01
 
 
                 //bể này chỉ lưu thông tin nhằm so sánh sơ bộ
-                if (GlobalSettings.GetInt("CAMERA_SLOT") > 1)
+                if (Setting.Current.Camera_Slot > 1)
                 {
                     //Kiểm tra mã đã kích hoạt hay chưa
                     if (Globalvariable.C1_Content_Dictionary.TryGetValue(codeClear, out ProductData C1ProductInfo))
@@ -1343,7 +1344,7 @@ namespace QR_MASAN_01
                     //chưa kích hoạt
                     else
                     {
-                        if (GlobalSettings.Get("APPMODE") == "ADD_Data")
+                        if (Setting.Current.App_Mode == "ADD_Data")
                         {
                             //nếu chưa có thì thêm mới vào C1
                             C1ProductInfo = new ProductData
@@ -1376,7 +1377,7 @@ namespace QR_MASAN_01
                     return;
                 }
                 //mã sai cấu trúc
-                if (!CheckCodeFormatV2(codeClear, GlobalSettings.Get("Code_Content_Pattern")).IsOK)
+                if (!CheckCodeFormatV2(codeClear, Setting.Current.Code_Content_Pattern).IsOK)
                 {
                     //sút
                     Send_Result_Content_C1(e_Content_Result.ERR_FORMAT, codeClear);
@@ -1417,7 +1418,7 @@ namespace QR_MASAN_01
                 else
                 {
                     //nếu khác mode thêm thì đá ra
-                    if (GlobalSettings.Get("APPMODE") != "ADD_Data")
+                    if (Setting.Current.App_Mode != "ADD_Data")
                     {
                         Send_Result_Content_C1(e_Content_Result.NOT_FOUND, codeClear);
                         return;
@@ -1480,7 +1481,7 @@ namespace QR_MASAN_01
                 //nếu chưa tồn tại
                 else
                 {
-                    if (GlobalSettings.Get("APPMODE") == "ADD_Data")
+                    if (Setting.Current.App_Mode == "ADD_Data")
                     {
                         //nếu chưa có thì thêm mới vào C1
                         ProductInfo = new ProductData
@@ -1506,7 +1507,7 @@ namespace QR_MASAN_01
                 }
 
                 //sai cấu trúc
-                if (!CheckCodeFormatV2(codeClear, GlobalSettings.Get("Code_Content_Pattern")).IsOK)
+                if (!CheckCodeFormatV2(codeClear, Setting.Current.Code_Content_Pattern).IsOK)
                 {
                     //sút
                     Send_Result_Content_C2(e_Content_Result.ERR_FORMAT, codeClear);
@@ -1552,7 +1553,7 @@ namespace QR_MASAN_01
                 //chưa có mã
                 else
                 {
-                    if (GlobalSettings.Get("APPMODE") != "ADD_Data")
+                    if (Setting.Current.App_Mode != "ADD_Data")
                     {
                         Send_Result_Content_C2(e_Content_Result.NOT_FOUND, codeClear);
                         return;
@@ -1587,6 +1588,113 @@ namespace QR_MASAN_01
 
         }
 
+        //chương trình xử lý dữ liệu camera 01 khi có dữ liệu cho trước
+        //Kiểm tra Pass/Fail.
+        //Không tồn tại => loại
+        //Đã kích hoạt => loại trừ nếu ở chế độ thả lại
+
+        public void C1_Data_Process(string _strData)
+        {
+            //Xử lý dữ liệu nhanh nhất có thể
+            //Kích hoạt hệ thống đo đạc
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            //kiểm tra chuỗi có hợp lệ hay không
+            //Kiểm tra tính hợp lệ của dữ liệu
+            if (_strData.IsNullOrEmpty())
+            {
+                //loại sản phẩm ngay lập tức
+                Send_Result_Content_C1(e_Content_Result.EMPTY, "MÃ RỖNG");
+                return;
+            }
+            if (_strData == "FAIL")
+            {
+                //loại sản phẩm ngay lập tức
+                Send_Result_Content_C1(e_Content_Result.FAIL, "Không đọc được");
+                return;
+            }
+            //kiểm tra chuỗi có tồn tại trong bể dữ liệu chính hay không
+            if (Globalvariable.C1_Content_Dictionary.TryGetValue(_strData, out ProductData C1ProductInfo))
+            {
+                //nếu chưa kích hoạt thì kích hoạt
+                if (C1ProductInfo.Active != 1)
+                {
+                    C1ProductInfo.Active = 1;
+                    C1ProductInfo.TimeStampActive = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    C1ProductInfo.TimeStampPrinted = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                    C1ProductInfo.TimeUnixActive = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                    C1ProductInfo.TimeUnixPrinted = Globalvariable.TimeUnixPrinter;
+
+                    //Gửi vào hàng chờ để cập nhật SQLite
+                    Globalvariable.C1_Update_Content_To_SQLite_Queue.Enqueue(C1ProductInfo);
+                }
+                //nếu đã kích hoạt thì đá ra
+                else
+                {
+                    //đá ra
+                    Send_Result_Content_C1(e_Content_Result.DUPLICATE, _strData);
+                    return;
+                }
+            }
+            //nếu không tồn tại thì đá ra, không cần quan tâm thêm
+            else {
+                Send_Result_Content_C1(e_Content_Result.NOT_FOUND, _strData);
+                return;
+            }
+        }
+
+        //Camera 2 tương tự camera 01
+        public void C2_Data_Process(string _strData)
+        {
+            //Xử lý dữ liệu nhanh nhất có thể
+            //Kích hoạt hệ thống đo đạc
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            //kiểm tra chuỗi có hợp lệ hay không
+            //Kiểm tra tính hợp lệ của dữ liệu
+            if (_strData.IsNullOrEmpty())
+            {
+                //loại sản phẩm ngay lập tức
+                Send_Result_Content_C2(e_Content_Result.EMPTY, "MÃ RỖNG");
+                return;
+            }
+            if (_strData == "FAIL")
+            {
+                //loại sản phẩm ngay lập tức
+                Send_Result_Content_C2(e_Content_Result.FAIL, "Không đọc được");
+                return;
+            }
+            //kiểm tra chuỗi có tồn tại trong bể dữ liệu chính hay không
+            if (Globalvariable.C2_Content_Dictionary.TryGetValue(_strData, out ProductData C2ProductInfo))
+            {
+                //nếu chưa kích hoạt thì kích hoạt
+                if (C2ProductInfo.Active != 1)
+                {
+                    C2ProductInfo.Active = 1;
+                    C2ProductInfo.TimeStampActive = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    C2ProductInfo.TimeStampPrinted = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+                    C2ProductInfo.TimeUnixActive = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                    C2ProductInfo.TimeUnixPrinted = Globalvariable.TimeUnixPrinter;
+
+                    //Gửi vào hàng chờ để cập nhật SQLite
+                    Globalvariable.C2_Update_Content_To_SQLite_Queue.Enqueue(C2ProductInfo);
+                }
+                //nếu đã kích hoạt thì đá ra
+                else
+                {
+                    //đá ra
+                    Send_Result_Content_C2(e_Content_Result.DUPLICATE, _strData);
+                    return;
+                }
+            }
+            //nếu không tồn tại thì đá ra, không cần quan tâm thêm
+            else
+            {
+                Send_Result_Content_C1(e_Content_Result.NOT_FOUND, _strData);
+                return;
+            }
+        }
+
         #region Quản lý PLC và gửi tín hiệu PLC
 
 
@@ -1597,9 +1705,9 @@ namespace QR_MASAN_01
             REWORK, //thả lại
             DUPLICATE, //trùng
             EMPTY,//không có
-            ERROR, //lỗi không xác định
             ERR_FORMAT, //lỗi định dạng
-            NOT_FOUND //không tìm thấy mã
+            NOT_FOUND, //không tìm thấy mã
+            ERROR //lỗi không xác định
         }
 
         public void Send_Result_Content_C1(e_Content_Result content_Result, string _content)
@@ -1612,7 +1720,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.Curent_Content = _content;
                     Globalvariable.C1_UI.IsPass = true;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write = PLC.plc.Write(PLCAddress.Get("PLC_C1_RejectDM"), short.Parse("1"));
+                    OperateResult write = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C1"), short.Parse("1"));
                     if (write.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_1_Pass_C1++;
@@ -1632,7 +1740,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.IsPass = false;
 
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write1 = PLC.plc.Write(PLCAddress.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                    OperateResult write1 = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C1"), short.Parse("0"));
 
                     if (write1.IsSuccess)
                     {
@@ -1652,7 +1760,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.Curent_Content = "Thả lại:" + _content;
                     Globalvariable.C1_UI.IsPass = true;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write5 = PLC.plc.Write(PLCAddress.Get("PLC_C1_RejectDM"), short.Parse("1"));
+                    OperateResult write5 = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C1"), short.Parse("1"));
                     if (write5.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_1_Pass_C1++;
@@ -1671,7 +1779,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.Curent_Content = "Mã đã kích hoạt (trùng)";
                     Globalvariable.C1_UI.IsPass = false;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write4 = PLC.plc.Write(PLCAddress.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                    OperateResult write4 = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C1"), short.Parse("0"));
                     if (write4.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C1++;
@@ -1690,7 +1798,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.Curent_Content = _content;
                     Globalvariable.C1_UI.IsPass = false;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write3 = PLC.plc.Write(PLCAddress.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                    OperateResult write3 = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C1"), short.Parse("0"));
                     if (write3.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C1++;
@@ -1701,7 +1809,6 @@ namespace QR_MASAN_01
                     }
                     break;
 
-
                 case e_Content_Result.ERR_FORMAT:
 
                     Globalvariable.GCounter.Format_C1++;
@@ -1711,7 +1818,7 @@ namespace QR_MASAN_01
                     Globalvariable.C1_UI.IsPass = false;
 
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write2 = PLC.plc.Write(PLCAddress.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                    OperateResult write2 = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C1"), short.Parse("0"));
                     if (write2.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C1++;
@@ -1728,8 +1835,24 @@ namespace QR_MASAN_01
                     Globalvariable.GCounter.Total_Failed_C1++;
                     Globalvariable.C1_UI.Curent_Content = "Mã không tồn tại";
                     Globalvariable.C1_UI.IsPass = false;
-                    OperateResult write8 = PLC.plc.Write(PLCAddress.Get("PLC_C1_RejectDM"), short.Parse("0"));
+                    OperateResult write8 = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C1"), short.Parse("0"));
                     if (write8.IsSuccess)
+                    {
+                        Globalvariable.GCounter.PLC_0_Pass_C1++;
+                    }
+                    else
+                    {
+                        Globalvariable.GCounter.PLC_0_Fail_C1++;
+                    }
+                    break;
+
+                case e_Content_Result.ERROR:
+                    Globalvariable.C1_UI.Curent_Content = "Lỗi không xác định";
+                    Globalvariable.C1_UI.IsPass = false;
+                    Globalvariable.GCounter.Error_C1++;
+                    //gửi xuống PLC và xử lý tại đây
+                    OperateResult write6 = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C1"), short.Parse("0"));
+                    if (write6.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C1++;
                     }
@@ -1746,11 +1869,11 @@ namespace QR_MASAN_01
             switch (content_Result)
             {
                 case e_Content_Result.PASS:
-
+                    Globalvariable.GCounter.Total_Pass_C2++;
                     Globalvariable.C2_UI.Curent_Content = _content;
                     Globalvariable.C2_UI.IsPass = true;
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write = PLC.plc.Write(PLCAddress.Get("PLC_C2_RejectDM"), short.Parse("1"));
+                    OperateResult write = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C2"), short.Parse("1"));
                     if (write.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_1_Pass_C2++;
@@ -1765,9 +1888,11 @@ namespace QR_MASAN_01
 
                     Globalvariable.C2_UI.Curent_Content = "Không đọc được";
                     Globalvariable.C2_UI.IsPass = false;
+                    Globalvariable.GCounter.Camera_Read_Fail_C2++;
+                    Globalvariable.GCounter.Total_Failed_C2++;
 
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write1 = PLC.plc.Write(PLCAddress.Get("PLC_C2_RejectDM"), short.Parse("0"));
+                    OperateResult write1 = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C2"), short.Parse("0"));
 
                     if (write1.IsSuccess)
                     {
@@ -1781,10 +1906,12 @@ namespace QR_MASAN_01
                     break;
 
                 case e_Content_Result.REWORK:
+
                     Globalvariable.C2_UI.Curent_Content = "Thả lại:" + _content;
                     Globalvariable.C2_UI.IsPass = true;
+                    Globalvariable.GCounter.Rework_C2++; //Cái này không cộng vào số pass nếu phát hiện trùng
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write5 = PLC.plc.Write(PLCAddress.Get("PLC_C2_RejectDM"), short.Parse("1"));
+                    OperateResult write5 = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C2"), short.Parse("1"));
                     if (write5.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_1_Pass_C2++;
@@ -1798,8 +1925,11 @@ namespace QR_MASAN_01
                 case e_Content_Result.DUPLICATE:
                     Globalvariable.C2_UI.Curent_Content = "Mã đã kích hoạt (trùng)";
                     Globalvariable.C2_UI.IsPass = false;
+                    Globalvariable.GCounter.Duplicate_C2++;
+                    Globalvariable.GCounter.Total_Failed_C2 += 1;
+
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write4 = PLC.plc.Write(GlobalSettings.Get("PLC_C2_RejectDM"), short.Parse("0"));
+                    OperateResult write4 = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C2"), short.Parse("0"));
                     if (write4.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C2++;
@@ -1813,8 +1943,11 @@ namespace QR_MASAN_01
                 case e_Content_Result.EMPTY:
                     Globalvariable.C2_UI.Curent_Content = _content;
                     Globalvariable.C2_UI.IsPass = false;
+                    Globalvariable.GCounter.Empty_C2++;
+                    Globalvariable.GCounter.Total_Failed_C2 += 1;
+
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write3 = PLC.plc.Write(GlobalSettings.Get("PLC_C2_RejectDM"), short.Parse("0"));
+                    OperateResult write3 = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C2"), short.Parse("0"));
                     if (write3.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C2++;
@@ -1825,22 +1958,6 @@ namespace QR_MASAN_01
                     }
                     break;
 
-                case e_Content_Result.ERROR:
-
-                    Globalvariable.C2_UI.Curent_Content = _content;
-                    Globalvariable.C2_UI.IsPass = false;
-
-                    //gửi xuống PLC và xử lý tại đây
-                    OperateResult write9 = PLC.plc.Write(GlobalSettings.Get("PLC_C2_RejectDM"), short.Parse("0"));
-                    if (write9.IsSuccess)
-                    {
-                        Globalvariable.GCounter.PLC_0_Pass_C2++;
-                    }
-                    else
-                    {
-                        Globalvariable.GCounter.PLC_0_Fail_C2++;
-                    }
-                    break;
                 case e_Content_Result.ERR_FORMAT:
 
                     Globalvariable.C2_UI.Curent_Content = "Sai cấu trúc!!!";
@@ -1864,6 +1981,22 @@ namespace QR_MASAN_01
                     Globalvariable.C2_UI.IsPass = false;
                     OperateResult write8 = PLC.plc.Write(PLCAddress.Get("PLC_C2_RejectDM"), short.Parse("0"));
                     if (write8.IsSuccess)
+                    {
+                        Globalvariable.GCounter.PLC_0_Pass_C2++;
+                    }
+                    else
+                    {
+                        Globalvariable.GCounter.PLC_0_Fail_C2++;
+                    }
+                    break;
+
+                case e_Content_Result.ERROR:
+                    Globalvariable.C2_UI.Curent_Content = "Lỗi không xác định";
+                    Globalvariable.C2_UI.IsPass = false;
+                    Globalvariable.GCounter.Error_C2++;
+                    //gửi xuống PLC và xử lý tại đây
+                    OperateResult write6 = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C2"), short.Parse("0"));
+                    if (write6.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C2++;
                     }
@@ -2249,8 +2382,8 @@ namespace QR_MASAN_01
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             string inputString = e.Argument as string;
-            
-            Camera_01_Data_Recive(inputString);
+
+            C1_Data_Process(inputString);
 
             stopwatch.Stop();
 
@@ -2270,7 +2403,8 @@ namespace QR_MASAN_01
             string inputString = e.Argument as string;
 
             //WhenDataRecive(inputString);
-            Camera_01_Data_Recive(inputString);
+            //Camera_01_Data_Recive(inputString);
+            C1_Data_Process(inputString);
 
             stopwatch.Stop();
 
@@ -2290,7 +2424,7 @@ namespace QR_MASAN_01
             string inputString = e.Argument as string;
 
             //WhenDataRecive(inputString);
-            Camera_01_Data_Recive(inputString);
+            C1_Data_Process(inputString);
 
             stopwatch.Stop();
 
@@ -2310,7 +2444,8 @@ namespace QR_MASAN_01
             stopwatch.Start();
             string inputString = e.Argument as string;
 
-            Camera_02_Data_Recive(inputString);
+           // Camera_02_Data_Recive(inputString);
+           C2_Data_Process(inputString);
 
             stopwatch.Stop();
 
@@ -2328,7 +2463,7 @@ namespace QR_MASAN_01
             stopwatch.Start();
             string inputString = e.Argument as string;
             
-            Camera_02_Data_Recive(inputString);
+            C2_Data_Process(inputString);
             
             stopwatch.Stop();
 
@@ -2346,7 +2481,7 @@ namespace QR_MASAN_01
             stopwatch.Start();
             string inputString = e.Argument as string;
 
-            Camera_02_Data_Recive(inputString);
+            C2_Data_Process(inputString);
 
             stopwatch.Stop();
 

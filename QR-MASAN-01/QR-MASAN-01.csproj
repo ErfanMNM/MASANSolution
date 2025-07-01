@@ -278,12 +278,6 @@
     <Compile Include="Views\DeActive.Designer.cs">
       <DependentUpon>DeActive.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\FDashboard_XK.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\FDashboard_XK.Designer.cs">
-      <DependentUpon>FDashboard_XK.cs</DependentUpon>
-    </Compile>
     <Compile Include="Views\F1Dashboard.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -374,9 +368,6 @@
     </Compile>
     <EmbeddedResource Include="Views\DeActive.resx">
       <DependentUpon>DeActive.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\FDashboard_XK.resx">
-      <DependentUpon>FDashboard_XK.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\F1Dashboard.resx">
       <DependentUpon>F1Dashboard.cs</DependentUpon>

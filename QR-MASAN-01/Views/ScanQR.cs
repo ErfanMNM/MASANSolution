@@ -118,7 +118,7 @@ namespace QR_MASAN_01
                 {
                     //ở chế độ tự động thêm
                     //Kiểm tra xem đúng mã hôm nay hay không
-                    if (GlobalSettings.Get("APPMODE") == "ADD_Data")
+                    if (Setting.Current.App_Mode == "ADD_Data")
                     {
                         //chỉ cần kiểm đúng định dạng là được
                         string pattern = @"i\.tcx\.com\.vn/.*\d{13}.*[a-zA-Z0-9]";
@@ -172,7 +172,7 @@ namespace QR_MASAN_01
                         }
 
                     }
-                    else if (GlobalSettings.Get("APPMODE") == "NO_ADD")
+                    else if (Setting.Current.App_Mode == "NO_ADD")
                     {
                         var _checkFormat = CheckCodeFormat(searchQR);
                         if (_checkFormat.IsOK)

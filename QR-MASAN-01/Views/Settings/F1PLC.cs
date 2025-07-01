@@ -37,8 +37,8 @@ namespace QR_MASAN_01.Views.Settings
             Check();
             UpdateCBB();
             //Khai báo PLC
-            omronPLC_Hsl1.PLC_IP = GlobalSettings.Get("PLC_IP");
-            omronPLC_Hsl1.PLC_PORT = GlobalSettings.GetInt("PLC_PORT");
+            omronPLC_Hsl1.PLC_IP = PLCAddress.Get("PLC_IP");
+            omronPLC_Hsl1.PLC_PORT = int.Parse(PLCAddress.Get("PLC_PORT").ToString());
             omronPLC_Hsl1.InitPLC();
             //Update_HMI();
             //if(!WK_PLC.IsBusy)

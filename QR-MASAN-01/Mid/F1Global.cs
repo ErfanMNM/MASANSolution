@@ -1,7 +1,9 @@
 ﻿using MainClass;
 using QR_MASAN_01.Auth;
+using Sunny.UI;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SQLite;
 using System.Drawing;
 using System.Linq;
@@ -76,8 +78,6 @@ namespace QR_MASAN_01
         public static bool ISRerun { get; set; } = false;
         public static string Server_Url { get; set; } = "https://sv2.th.io.vn/";
 
-        public static string Laser_Printer_Url { get; set; } = "http://127.0.0.1:9000/get-time";
-
         // Tạo một Queue để lưu trữ các chuỗi
 
         public static int MaxID_QR { get; set; } = 0;
@@ -95,6 +95,9 @@ namespace QR_MASAN_01
         public static bool ACTIVE { get; set; } = true;
         public static bool ACTIVE_C1 { get; set; } = true;
         public static bool ACTIVE_C2 { get; set; } = true;
+
+        //PO
+        public static DataTable Seleted_PO { get; set; } = new DataTable();
     }
 
     public class Alarm
@@ -177,25 +180,44 @@ namespace QR_MASAN_01
         public static bool ByPass_Ready { get; set; } = false;
     }
 
-    public static class GlobalSettings
+    [ConfigFile("MSC\\Setting.ini")]
+    public class Setting : IniConfig<Setting>
     {
-        // Dictionary lưu key-value từ Excel
-        public static Dictionary<string, string> Settings = new Dictionary<string, string>();
+        [ConfigSection("APP")]
+        public string SoftName { get; set; }
+        public string ServerIP { get; set; }
+        public int ServerPort { get; set; }
+        public string City { get; set; }
+        public string App_Mode { get; set; } // "ADD_Data", "NO_ADD", "REWORK", "REWORK_C1", "REWORK_C2"
 
-        // Hàm tiện lấy ra kiểu string
-        public static string Get(string key)
-        {
-            if (Settings.ContainsKey(key))
-                return Settings[key];
-            return string.Empty;
-        }
+        // Removed invalid attribute from the class declaration  
+        [ConfigSection("INK_PRINTER")]
+        public string Printer_name { get; set; }
 
-        // Hàm tiện lấy ra kiểu int
-        public static int GetInt(string key)
+        //cấu hình máy in laser
+        [ConfigSection("LASER_PRINTER")]
+        public string Laser_printer_server_url { get; set; }
+
+        [ConfigSection("CAMERA")]
+        public int Camera_Slot { get; set; }
+
+        [ConfigSection("DATA")]
+        public string Code_Content_Pattern { get; set; } // Regex pattern for code content
+        public string Production_Mode { get; set; } // Regex pattern for C1 code content
+
+        public override void SetDefault()
         {
-            if (Settings.ContainsKey(key) && int.TryParse(Settings[key], out int value))
-                return value;
-            return 0;
+            base.SetDefault();
+            SoftName = "MS";
+            ServerIP = "http://localhost";
+            ServerPort = 49211;
+            City = "MSI";
+            Printer_name = "NONE"; // Default printer name
+            Camera_Slot = 1; // Default camera slot
+            App_Mode = "ADD_Data"; // NO_ADD
+            Laser_printer_server_url = "http://127.0.0.1:9000/get-time";
+            Code_Content_Pattern = @"i\.tcx\.com\.vn/.*\d{13}.*[a-zA-Z0-9]";
+            Production_Mode = @"MFI"; // chạy dạng MFI , không chạy dạng PO
         }
     }
 
