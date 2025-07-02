@@ -25,7 +25,7 @@ namespace MFI_Service
 {
     public partial class MFI_Service_Form : UIPage
     {
-        private POService poService = new POService(@"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\po_data.db");
+        private POService poService = new POService(@"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\po.db");
 
         public MFI_Info _Server_MFI { get; set; } = new MFI_Info();
         public MFI_Service_Form()

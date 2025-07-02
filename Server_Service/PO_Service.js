@@ -1,224 +1,358 @@
 ﻿const express = require('express');
-const multer = require('multer');
+const bodyParser = require('body-parser');
 const cors = require('cors');
-const path = require('path');
 const fs = require('fs');
-const db = require('./db');
-const readline = require('readline');
-const crypto = require('crypto');
+const sqlite3 = require('sqlite3').verbose();
+const poDB = require('./db_po');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
 
 const app = express();
 const PORT = 49212;
 
 app.use(cors());
-app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(bodyParser.json());
 
-// Đảm bảo thư mục uploads tồn tại
-const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
+// Swagger setup
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'PO Management API',
+            version: '1.0.0',
+            description: 'API quản lý PO, uniqueCode và lịch sử phục vụ hệ thống sản xuất'
+        },
+        servers: [{ url: `http://localhost:${PORT}` }]
+    },
+    apis: [__filename]
+};
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Tạo thư mục codes nếu chưa có
+if (!fs.existsSync('./codes')) {
+    fs.mkdirSync('./codes');
 }
 
-// multer cấu hình lưu file
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, 'uploads/'),
-    filename: (req, file, cb) => {
-        const filePath = path.join(uploadDir, file.originalname);
-        if (fs.existsSync(filePath)) {
-            // Nếu file đã tồn tại, không lưu
-            return cb(new Error('File đã tồn tại trên server, không được upload lại'), file.originalname);
-        } else {
-            cb(null, file.originalname); // Giữ nguyên tên file gốc
-        }
-    }
-});
-const upload = multer({ storage });
-
-// Hàm ghi log vào DB
-function logToDB(status, orderNo, uniqueCode, czFile, message) {
-    const query = `INSERT INTO po_logs (status, orderNo, uniqueCode, czFile, message) VALUES (?, ?, ?, ?, ?)`;
-    db.run(query, [status, orderNo, uniqueCode, czFile, message]);
-}
-
-// Đọc dòng đầu tiên của file
-function readFirstLine(filePath) {
-    return new Promise((resolve, reject) => {
-        const rl = readline.createInterface({
-            input: fs.createReadStream(filePath),
-            crlfDelay: Infinity
-        });
-        rl.on('line', (line) => {
-            rl.close();
-            resolve(line.trim());
-        });
-        rl.on('error', reject);
+// Mở DB riêng theo PO
+function getCodeDB(orderNo) {
+    const safeOrderNo = orderNo.replace(/[^a-zA-Z0-9_\-]/g, '_');
+    const dbPath = `./codes/${safeOrderNo}.db`;
+    const codeDB = new sqlite3.Database(dbPath);
+    codeDB.serialize(() => {
+        codeDB.run(`
+            CREATE TABLE IF NOT EXISTS UniqueCodes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                code TEXT,
+                createdAt TEXT
+            )
+        `);
     });
+    return codeDB;
 }
 
-// Hàm tính hash SHA256 của file
-function getFileHash(filePath) {
-    return new Promise((resolve, reject) => {
-        const hash = crypto.createHash('sha256');
-        const stream = fs.createReadStream(filePath);
-        stream.on('data', chunk => hash.update(chunk));
-        stream.on('end', () => resolve(hash.digest('hex')));
-        stream.on('error', reject);
-    });
-}
-
-// Hàm phân tích mã GS1
-function parseGS1(line) {
-    const data = {};
-    let i = 0;
-
-    while (i < line.length) {
-        if (line.startsWith('01', i)) {
-            data.gtin = line.substr(i + 2, 14);
-            i += 16;
-        } else if (line.startsWith('21', i)) {
-            i += 2;
-            let serial = '';
-            while (i < line.length && line.charCodeAt(i) !== 29) {
-                serial += line[i++];
-            }
-            data.serial = serial;
-            if (line.charCodeAt(i) === 29) i++;
-        } else if (line.startsWith('93', i)) {
-            i += 2;
-            let internal = '';
-            while (i < line.length && line.charCodeAt(i) !== 29) {
-                internal += line[i++];
-            }
-            data.internal = internal;
-            if (line.charCodeAt(i) === 29) i++;
-        } else {
-            i++;
-        }
-    }
-
-    return data;
-}
-
-// ✅ API nhận PO + file
-app.post('/api/po', upload.single('czFile'), async (req, res) => {
-    if (err instanceof multer.MulterError || err) {
-        // Xử lý lỗi từ multer
-        return res.status(400).json({ error: err.message });
-    }
+/**
+ * @swagger
+ * /api/orders:
+ *   post:
+ *     summary: Tạo hoặc cập nhật PO, lưu mã uniqueCode chống trùng
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - orderNo
+ *               - uniqueCode
+ *               - site
+ *               - factory
+ *               - productionLine
+ *               - productionDate
+ *               - shift
+ *               - orderQty
+ *               - lotNumber
+ *               - productCode
+ *               - productName
+ *               - GTIN
+ *               - customerOrderNo
+ *             properties:
+ *               orderNo:
+ *                 type: string
+ *                 example: "PO_001"
+ *               uniqueCode:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["CODE001", "CODE002", "CODE003"]
+ *               site:
+ *                 type: string
+ *                 example: "SITE_X"
+ *               factory:
+ *                 type: string
+ *                 example: "FACTORY_Y"
+ *               productionLine:
+ *                 type: string
+ *                 example: "LINE_1"
+ *               productionDate:
+ *                 type: string
+ *                 example: "2025-07-02"
+ *               shift:
+ *                 type: string
+ *                 example: "A"
+ *               orderQty:
+ *                 type: number
+ *                 example: 1000
+ *               lotNumber:
+ *                 type: string
+ *                 example: "LOT_123"
+ *               productCode:
+ *                 type: string
+ *                 example: "PROD_XYZ"
+ *               productName:
+ *                 type: string
+ *                 example: "Sản phẩm A"
+ *               GTIN:
+ *                 type: string
+ *                 example: "8931234567890"
+ *               customerOrderNo:
+ *                 type: string
+ *                 example: "CUST_PO_999"
+ *     responses:
+ *       200:
+ *         description: Thành công
+ *       400:
+ *         description: Thiếu dữ liệu
+ */
+app.post('/api/orders', (req, res) => {
     const {
-        orderNo,
-        uniqueCode,
-        site,
-        factory,
-        productionLine,
-        productionDate,
-        shift
+        orderNo, uniqueCode, site, factory, productionLine,
+        productionDate, shift, orderQty, lotNumber,
+        productCode, productName, GTIN, customerOrderNo
     } = req.body;
 
-    const czFileName = req.file?.originalname || '';
-    const czFilePath = req.file?.path;
-    const fileUrl = req.file ? `${req.file.filename}` : null;
+    const requiredFields = {
+        orderNo, uniqueCode, site, factory, productionLine,
+        productionDate, shift, orderQty, lotNumber,
+        productCode, productName, GTIN, customerOrderNo
+    };
 
-    if (!czFilePath) {
-        return res.status(400).json({ error: 'Không có file đính kèm' });
+    for (const [key, value] of Object.entries(requiredFields)) {
+        if (
+            value === undefined ||
+            value === null ||
+            (typeof value === 'string' && value.trim() === '') ||
+            (key === 'uniqueCode' && (!Array.isArray(value) || value.length === 0))
+        ) {
+            return res.status(400).json({
+                message: `Trường '${key}' đang thiếu hoặc không hợp lệ.`
+            });
+        }
     }
 
-    // Kiểm tra file đã tồn tại (theo tên)
-    const checkFileQuery = `SELECT COUNT(*) AS count FROM po_records WHERE czFileUrl LIKE ?`;
-    db.get(checkFileQuery, [`%${czFileName}%`], async (err, row) => {
-        if (err) {
-            logToDB('ERROR', orderNo, uniqueCode, czFileName, 'Lỗi kiểm tra file: ' + err.message);
-            return res.status(500).json({ error: 'Lỗi kiểm tra file tồn tại' });
-        }
-
-        if (row.count > 0) {
-            logToDB('DUPLICATE_FILE', orderNo, uniqueCode, czFileName, 'File đã được upload trước');
-            return res.status(400).json({ error: 'File đã tồn tại trong hệ thống' });
-        }
-
-        // Đọc dòng đầu tiên
-        let firstLine = '';
-        try {
-            firstLine = await readFirstLine(czFilePath);
-        } catch (err) {
-            logToDB('ERROR', orderNo, uniqueCode, czFileName, 'Lỗi đọc file: ' + err.message);
-            return res.status(500).json({ error: 'Không thể đọc file đính kèm' });
-        }
-
-        // Tính hash
-        let fileHash = '';
-        try {
-            fileHash = await getFileHash(czFilePath);
-        } catch (err) {
-            logToDB('ERROR', orderNo, uniqueCode, czFileName, 'Lỗi tính hash file: ' + err.message);
-            return res.status(500).json({ error: 'Không thể tính hash của file' });
-        }
-
-        // Kiểm tra định dạng GS1
-        if (!firstLine.match(/01\d{14}/)) {
-            logToDB('INVALID_FORMAT', orderNo, uniqueCode, czFileName, 'Không có mã GS1 hợp lệ');
-            return res.status(400).json({ error: 'Dòng đầu không hợp lệ (không có mã GTIN bắt đầu bằng 01)' });
-        }
-
-        const gs1 = parseGS1(firstLine);
-
-        // Kiểm tra trùng PO
-        const checkQuery = `SELECT COUNT(*) AS count FROM po_records WHERE orderNo = ? AND uniqueCode = ?`;
-        db.get(checkQuery, [orderNo, uniqueCode], (err, row) => {
-            if (err) {
-                logToDB('ERROR', orderNo, uniqueCode, czFileName, 'Lỗi kiểm tra trùng: ' + err.message);
-                return res.status(500).json({ error: 'Lỗi kiểm tra trùng mã PO' });
+    if (Array.isArray(requiredFields.uniqueCode)) {
+        for (let i = 0; i < requiredFields.uniqueCode.length; i++) {
+            const code = requiredFields.uniqueCode[i];
+            if (typeof code !== 'string' || code.trim() === '') {
+                return res.status(400).json({
+                    message: `Phần tử uniqueCode tại vị trí ${i} không hợp lệ (cần string không rỗng).`
+                });
             }
+        }
+    }
 
-            if (row.count > 0) {
-                logToDB('DUPLICATE', orderNo, uniqueCode, czFileName, 'PO đã tồn tại');
-                return res.status(400).json({ message: 'PO đã tồn tại (trùng orderNo + uniqueCode)' });
-            }
+    const now = new Date().toISOString();
 
-            // Lưu PO vào DB
-            const insertQuery = `
-                INSERT INTO po_records (orderNo, uniqueCode, site, factory, productionLine, productionDate, shift, czFileUrl)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            `;
-            db.run(insertQuery, [orderNo, uniqueCode, site, factory, productionLine, productionDate, shift, fileUrl], function (err) {
+    poDB.get(`SELECT id FROM POInfo WHERE orderNo = ?`, [orderNo], (err, row) => {
+        if (err) return res.status(500).json({ message: 'Lỗi DB.' });
+
+        const data = [site, factory, productionLine, productionDate, shift,
+            orderQty, lotNumber, productCode, productName, GTIN,
+            customerOrderNo, now, orderNo];
+
+        function insertLog(action) {
+            const logData = {
+                orderNo, site, factory, productionLine,
+                productionDate, shift, orderQty, lotNumber,
+                productCode, productName, GTIN, customerOrderNo,
+                codeCount: uniqueCode.length
+            };
+            poDB.run(
+                `INSERT INTO POLogs (orderNo, action, detail, createdAt) VALUES (?, ?, ?, ?)`,
+                [orderNo, action, JSON.stringify(logData), now]
+            );
+        }
+
+        function insertCodes() {
+            const codeDB = getCodeDB(orderNo);
+            codeDB.all(`SELECT code FROM UniqueCodes`, [], (err, rows) => {
                 if (err) {
-                    logToDB('ERROR', orderNo, uniqueCode, czFileName, 'Lỗi insert DB: ' + err.message);
-                    return res.status(500).json({ error: 'Lỗi khi lưu PO vào DB' });
+                    codeDB.close();
+                    return res.status(500).json({ message: 'Lỗi đọc mã từ DB.' });
                 }
-
-                logToDB('SUCCESS', orderNo, uniqueCode, czFileName, `PO ID=${this.lastID} đã lưu`);
-                res.json({
-                    message: 'Đã nhận PO và lưu vào SQLite thành công!',
-                    data: {
-                        id: this.lastID,
-                        orderNo,
-                        uniqueCode,
-                        site,
-                        factory,
-                        productionLine,
-                        productionDate,
-                        shift,
-                        czFileUrl: fileUrl,
-                        hash: fileHash,
-                        gs1
-                    }
+                const existingCodesSet = new Set(rows.map(r => r.code));
+                const newCodes = uniqueCode.filter(code => !existingCodesSet.has(code));
+                const duplicateCount = uniqueCode.length - newCodes.length;
+                const stmt = codeDB.prepare(`INSERT INTO UniqueCodes (code, createdAt) VALUES (?, ?)`);
+                newCodes.forEach(code => stmt.run([code, now]));
+                stmt.finalize(() => {
+                    codeDB.get(`SELECT COUNT(*) AS count FROM UniqueCodes`, [], (err, row) => {
+                        const existingCount = row ? row.count : 0;
+                        codeDB.close();
+                        res.json({
+                            orderNo, site, factory, productionLine,
+                            productionDate, shift, orderQty, lotNumber,
+                            productCode, productName, GTIN, customerOrderNo,
+                            uniqueCode: {
+                                insertedCount: newCodes.length,
+                                duplicateCount,
+                                existingCount
+                            },
+                            httpStatus: 200,
+                            message: `Đã xử lý PO ${orderNo} thành công.`
+                        });
+                    });
                 });
             });
-        });
-    });
-});
-
-// ✅ API xem log
-app.get('/api/po/logs', (req, res) => {
-    db.all(`SELECT * FROM po_logs ORDER BY id DESC`, (err, rows) => {
-        if (err) {
-            return res.status(500).json({ error: 'Lỗi khi truy vấn log' });
         }
-        res.json(rows);
+
+        if (row) {
+            poDB.run(`
+                UPDATE POInfo SET site=?, factory=?, productionLine=?, productionDate=?, shift=?,
+                orderQty=?, lotNumber=?, productCode=?, productName=?, GTIN=?,
+                customerOrderNo=?, lastUpdated=? WHERE orderNo=?
+            `, data, err => {
+                if (err) return res.status(500).json({ message: 'Lỗi update PO.' });
+                insertLog('update');
+                insertCodes();
+            });
+        } else {
+            poDB.run(`
+                INSERT INTO POInfo (site, factory, productionLine, productionDate, shift,
+                orderQty, lotNumber, productCode, productName, GTIN,
+                customerOrderNo, lastUpdated, orderNo)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `, [site, factory, productionLine, productionDate, shift,
+                orderQty, lotNumber, productCode, productName, GTIN,
+                customerOrderNo, now, orderNo], err => {
+                    if (err) return res.status(500).json({ message: 'Lỗi insert PO.' });
+                    insertLog('insert');
+                    insertCodes();
+                });
+        }
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
+/**
+ * @swagger
+ * /api/orders:
+ *   get:
+ *     summary: Lấy danh sách PO mới nhất
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+app.get('/api/orders', (req, res) => {
+    poDB.all(`SELECT * FROM POInfo ORDER BY lastUpdated DESC LIMIT 100`, [], (err, rows) => {
+        if (err) return res.status(500).json({ message: 'Lỗi đọc PO.' });
+        res.json({ count: rows.length, data: rows });
+    });
 });
+
+/**
+ * @swagger
+ * /api/orders/logs:
+ *   get:
+ *     summary: Lấy log lịch sử PO với filter
+ *     parameters:
+ *       - in: query
+ *         name: filters
+ *         schema: { type: string }
+ *         description: JSON filter, ví dụ {"orderNo":"PO_001"}
+ *       - in: query
+ *         name: numberlog
+ *         schema: { type: integer }
+ *         description: Số lượng log muốn lấy (default 100)
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+app.get('/api/orders/logs', (req, res) => {
+    const { filters, numberlog } = req.query;
+    let query = `SELECT id, orderNo, action, createdAt, detail FROM POLogs`;
+    let conditions = [];
+    let params = [];
+
+    if (filters) {
+        try {
+            const parsedFilters = JSON.parse(filters);
+            for (const key in parsedFilters) {
+                if ([
+                    'orderNo', 'site', 'factory', 'productionLine',
+                    'productionDate', 'shift', 'lotNumber',
+                    'productCode', 'productName', 'GTIN', 'customerOrderNo'
+                ].includes(key)) {
+                    conditions.push(`json_extract(detail, '$.${key}') = ?`);
+                    params.push(parsedFilters[key]);
+                }
+            }
+        } catch {
+            return res.status(400).json({ message: 'Lỗi filters, cần dạng JSON.' });
+        }
+    }
+
+    if (conditions.length > 0) {
+        query += ` WHERE ` + conditions.join(' AND ');
+    }
+    query += ` ORDER BY createdAt DESC LIMIT ?`;
+    params.push(parseInt(numberlog) || 100);
+
+    poDB.all(query, params, (err, rows) => {
+        if (err) return res.status(500).json({ message: 'Lỗi đọc log.' });
+        const data = rows.map(r => ({
+            id: r.id,
+            orderNo: r.orderNo,
+            action: r.action,
+            createdAt: r.createdAt,
+            detail: JSON.parse(r.detail)
+        }));
+        res.json({ count: data.length, data });
+    });
+});
+
+/**
+ * @swagger
+ * /api/orders/{orderNo}/codes:
+ *   get:
+ *     summary: Lấy danh sách uniqueCode của PO
+ *     parameters:
+ *       - in: path
+ *         name: orderNo
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: Thành công
+ */
+app.get('/api/orders/:orderNo/codes', (req, res) => {
+    const { orderNo } = req.params;
+    const safeOrderNo = orderNo.replace(/[^a-zA-Z0-9_\-]/g, '_');
+    const dbPath = `./codes/${safeOrderNo}.db`;
+
+    if (!fs.existsSync(dbPath)) {
+        return res.status(404).json({ message: 'Không tìm thấy DB của PO này.' });
+    }
+
+    const codeDB = new sqlite3.Database(dbPath);
+    codeDB.all(`SELECT * FROM UniqueCodes ORDER BY createdAt ASC`, [], (err, rows) => {
+        codeDB.close();
+        if (err) return res.status(500).json({ message: 'Lỗi đọc mã.' });
+        res.json({ count: rows.length, data: rows });
+    });
+});
+
+const server = app.listen(PORT, () => {
+    console.log(`🚀 Server chạy tại http://localhost:${PORT}`);
+    console.log(`🛠️ Swagger UI: http://localhost:${PORT}/api-docs`);
+});
+server.setTimeout(10 * 60 * 1000);

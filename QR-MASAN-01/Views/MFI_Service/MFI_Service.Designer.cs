@@ -152,9 +152,9 @@
             this.uiPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel1.Name = "uiPanel1";
-            this.uiPanel1.Size = new System.Drawing.Size(832, 38);
+            this.uiPanel1.Size = new System.Drawing.Size(832, 37);
             this.uiPanel1.TabIndex = 36;
-            this.uiPanel1.Text = "Bảng thông tin thông báo, lưu ý đây là bảng cho máy chủ không phải phần mềm";
+            this.uiPanel1.Text = "-";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ipConsole
@@ -162,7 +162,7 @@
             this.ipConsole.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ipConsole.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
             this.ipConsole.ItemSelectForeColor = System.Drawing.Color.White;
-            this.ipConsole.Location = new System.Drawing.Point(2, 44);
+            this.ipConsole.Location = new System.Drawing.Point(2, 43);
             this.ipConsole.Margin = new System.Windows.Forms.Padding(2);
             this.ipConsole.MinimumSize = new System.Drawing.Size(1, 1);
             this.ipConsole.Name = "ipConsole";
@@ -983,7 +983,7 @@
             this.uiPanel5.RectColor = System.Drawing.Color.MediumBlue;
             this.uiPanel5.Size = new System.Drawing.Size(141, 39);
             this.uiPanel5.TabIndex = 31;
-            this.uiPanel5.Text = "Barcode chai";
+            this.uiPanel5.Text = "Mã vạch";
             this.uiPanel5.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiTableLayoutPanel8

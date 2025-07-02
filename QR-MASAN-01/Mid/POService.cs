@@ -23,7 +23,7 @@ namespace QR_MASAN_01
         {
             using (var conn = new SQLiteConnection(_connectionString))
             {
-                string query = "SELECT DISTINCT orderNo FROM po_records ORDER BY orderNo";
+                string query = "SELECT DISTINCT orderNo FROM POInfo ORDER BY orderNo";
                 var adapter = new SQLiteDataAdapter(query, conn);
                 var table = new DataTable();
 
