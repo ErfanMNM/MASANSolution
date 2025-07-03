@@ -22,10 +22,10 @@ const swaggerOptions = {
         openapi: '3.0.0',
         info: {
             title: 'PO Management API',
-            version: '1.0.0',
-            description: 'API quản lý PO, uniqueCode, blockNo và lịch sử phục vụ hệ thống sản xuất'
+            version: '1.0.1',
+            description: 'API nhận thông tin PO cho máy kích hoạt mã 2D'
         },
-        servers: [{ url: `http://localhost:${PORT}` }]
+        servers: [{ url: `http://<IP>:${PORT}` }]
     },
     apis: [__filename]
 };
@@ -59,7 +59,9 @@ function getCodeDB(orderNo) {
  * @swagger
  * /api/orders:
  *   post:
- *     summary: Tạo hoặc cập nhật PO, lưu uniqueCode theo blockNo chống trùng
+ *     summary: Tạo hoặc cập nhật PO, khóa chính là orderNO.
+ *              Lưu uniqueCode theo blockNo trùng sẽ tự động không lưu.
+ *              Trả về số lượng mã mới, trùng và tổng số mã hiện có.    
  *     requestBody:
  *       required: true
  *       content:
@@ -186,7 +188,7 @@ app.post('/api/orders', (req, res) => {
                 newCodes.forEach(code => {
                     //chuyển {GS} về ký tự GS (ASCII 29)
                     //const restored = code.replace(/\<GS\>/g, String.fromCharCode(29));
-                    stmt.run([restored, now, blockNo]);
+                    stmt.run([code, now, blockNo]);
                 });
 
                 stmt.finalize(() => {

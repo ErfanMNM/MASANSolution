@@ -97,7 +97,8 @@ namespace QR_MASAN_01
         public static bool ACTIVE_C2 { get; set; } = true;
 
         //PO
-        public static DataTable Seleted_PO { get; set; } = new DataTable();
+        public static DataTable Seleted_PO_Data { get; set; } = new DataTable();
+
     }
 
     public class Alarm

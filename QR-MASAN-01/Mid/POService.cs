@@ -52,7 +52,7 @@ namespace QR_MASAN_01
         {
             using (var conn = new SQLiteConnection(_connectionString))
             {
-                string query = "SELECT * FROM po_records WHERE orderNo = @orderNo";
+                string query = "SELECT * FROM POInfo WHERE orderNo = @orderNo";
                 var adapter = new SQLiteDataAdapter(query, conn);
 
                 adapter.SelectCommand.Parameters.AddWithValue("@orderNo", orderNo);

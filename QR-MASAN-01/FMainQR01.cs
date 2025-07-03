@@ -2,6 +2,7 @@
 using QR_MASAN_01.Auth;
 using QR_MASAN_01.Mid;
 using QR_MASAN_01.Views;
+using QR_MASAN_01.Views.MFI_Service;
 using QR_MASAN_01.Views.Printers;
 using QR_MASAN_01.Views.Scada;
 using QR_MASAN_01.Views.Settings;
@@ -40,7 +41,9 @@ namespace QR_MASAN_01
         F1PLC _f1PLC = new F1PLC();
         LoginForm loginForm = new LoginForm();
         DeActive deActive = new DeActive();
+        FPI_Service fPI_Service = new FPI_Service();
         //FDashboard_XK FDashboard_XK = new FDashboard_XK();
+        FormTest fTest = new FormTest();
 
         public static e_Render_State Render_State = e_Render_State.LOGIN;
         public static e_App_State App_State = e_App_State.LOGIN;
@@ -76,13 +79,13 @@ namespace QR_MASAN_01
                 //đọc file sqlite đưa vào datatable
 
 
-                using (var conn = new SQLiteConnection($@"Data Source=C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\codes\PO_003.db;Version=3;"))
-                {
-                    string query = $@"SELECT ""_rowid_"",* FROM ""main"".""UniqueCodes""";
-                    var adapter = new SQLiteDataAdapter(query, conn);
-                    var table = new DataTable();
-                    adapter.Fill(table);
-                }
+                //using (var conn = new SQLiteConnection($@"Data Source=C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\codes\PO_003.db;Version=3;"))
+                //{
+                //    string query = $@"SELECT ""_rowid_"",* FROM ""main"".""UniqueCodes""";
+                //    var adapter = new SQLiteDataAdapter(query, conn);
+                //    var table = new DataTable();
+                //    adapter.Fill(table);
+                //}
 
             }
             catch (Exception ex)
@@ -107,9 +110,12 @@ namespace QR_MASAN_01
         private void RenderControlForm()
         {
             uiNavMenu1.Nodes.Clear();
+            // Thêm các trang vào menu điều hướng
             uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
             //uiNavMenu1.CreateNode(AddPage(FDashboard_XK, 1006));
-            uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
+            //uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
+            uiNavMenu1.CreateNode(AddPage(fTest, 1007)); // Thêm trang Test
+            uiNavMenu1.CreateNode(AddPage(fPI_Service, 1003));
             uiNavMenu1.CreateNode(AddPage(scanQR, 1004));
             uiNavMenu1.CreateNode(AddPage(_f1PLC, 1009));
             uiNavMenu1.CreateNode(AddPage(_FStatistics, 1002));
@@ -126,8 +132,9 @@ namespace QR_MASAN_01
 
             _F1Dashboard.INIT();
             //FDashboard_XK.INIT();
-            _FMFI.FMFI_INIT();
+            //_FMFI.FMFI_INIT();
             scanQR.INIT();
+            fPI_Service.INIT();
 
             //kiểm soát máy in
 

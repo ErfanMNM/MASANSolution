@@ -29,13 +29,16 @@
         private void InitializeComponent()
         {
             this.uiTitlePanel1 = new Sunny.UI.UITitlePanel();
-            this.uiListBox1 = new Sunny.UI.UIListBox();
+            this.uiSymbolButton1 = new Sunny.UI.UISymbolButton();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.uiTitlePanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // uiTitlePanel1
             // 
-            this.uiTitlePanel1.Controls.Add(this.uiListBox1);
+            this.uiTitlePanel1.Controls.Add(this.pictureBox1);
+            this.uiTitlePanel1.Controls.Add(this.uiSymbolButton1);
             this.uiTitlePanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTitlePanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.uiTitlePanel1.Location = new System.Drawing.Point(0, 0);
@@ -50,20 +53,26 @@
             this.uiTitlePanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             this.uiTitlePanel1.TitleHeight = 45;
             // 
-            // uiListBox1
+            // uiSymbolButton1
             // 
-            this.uiListBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiListBox1.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
-            this.uiListBox1.ItemSelectForeColor = System.Drawing.Color.White;
-            this.uiListBox1.Location = new System.Drawing.Point(5, 50);
-            this.uiListBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.uiListBox1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiListBox1.Name = "uiListBox1";
-            this.uiListBox1.Padding = new System.Windows.Forms.Padding(2);
-            this.uiListBox1.ShowText = false;
-            this.uiListBox1.Size = new System.Drawing.Size(858, 274);
-            this.uiListBox1.TabIndex = 0;
-            this.uiListBox1.Text = "uiListBox1";
+            this.uiSymbolButton1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton1.Location = new System.Drawing.Point(370, 48);
+            this.uiSymbolButton1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton1.Name = "uiSymbolButton1";
+            this.uiSymbolButton1.Size = new System.Drawing.Size(139, 76);
+            this.uiSymbolButton1.TabIndex = 1;
+            this.uiSymbolButton1.Text = "Sinh mã 2FA";
+            this.uiSymbolButton1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.uiSymbolButton1.Click += new System.EventHandler(this.uiSymbolButton1_Click);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(4, 48);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(360, 270);
+            this.pictureBox1.TabIndex = 2;
+            this.pictureBox1.TabStop = false;
             // 
             // FormTest
             // 
@@ -74,6 +83,7 @@
             this.Text = "FormTest";
             this.Load += new System.EventHandler(this.FormTest_Load);
             this.uiTitlePanel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -81,6 +91,7 @@
         #endregion
 
         private Sunny.UI.UITitlePanel uiTitlePanel1;
-        private Sunny.UI.UIListBox uiListBox1;
+        private Sunny.UI.UISymbolButton uiSymbolButton1;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

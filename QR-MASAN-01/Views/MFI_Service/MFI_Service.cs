@@ -910,16 +910,16 @@ namespace MFI_Service
 
         private void ipOrderNO_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Globalvariable.Seleted_PO = poService.GetPOByOrderNo(ipOrderNO.Text);
-            if (Globalvariable.Seleted_PO.Rows.Count > 0)
-            {
-                ipUniqueCode.Text = Globalvariable.Seleted_PO.Rows[0]["uniqueCode"].ToString();
-                ipSite.Text = Globalvariable.Seleted_PO.Rows[0]["site"].ToString();
-                ipFactory.Text = Globalvariable.Seleted_PO.Rows[0]["factory"].ToString();
-                ipProductionLine.Text = Globalvariable.Seleted_PO.Rows[0]["productionLine"].ToString();
-                ipProductionDate.Text = Globalvariable.Seleted_PO.Rows[0]["productionDate"].ToString();
-                ipShift.Text = Globalvariable.Seleted_PO.Rows[0]["shift"].ToString();
-            }
+            //Globalvariable.Seleted_PO = poService.GetPOByOrderNo(ipOrderNO.Text);
+            //if (Globalvariable.Seleted_PO.Rows.Count > 0)
+            //{
+            //    ipUniqueCode.Text = Globalvariable.Seleted_PO.Rows[0]["uniqueCode"].ToString();
+            //    ipSite.Text = Globalvariable.Seleted_PO.Rows[0]["site"].ToString();
+            //    ipFactory.Text = Globalvariable.Seleted_PO.Rows[0]["factory"].ToString();
+            //    ipProductionLine.Text = Globalvariable.Seleted_PO.Rows[0]["productionLine"].ToString();
+            //    ipProductionDate.Text = Globalvariable.Seleted_PO.Rows[0]["productionDate"].ToString();
+            //    ipShift.Text = Globalvariable.Seleted_PO.Rows[0]["shift"].ToString();
+            //}
         }
     }
 }
