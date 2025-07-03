@@ -18,6 +18,7 @@ db.serialize(() => {
             productName TEXT,
             GTIN TEXT,
             customerOrderNo TEXT,
+            uom TEXT,
             lastUpdated TEXT
         )
     `);

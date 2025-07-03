@@ -33,6 +33,7 @@
             this.btnSend = new System.Windows.Forms.Button();
             this.lblCount = new System.Windows.Forms.Label();
             this.btnDung = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // opConsole
@@ -82,17 +83,28 @@
             this.btnDung.UseVisualStyleBackColor = true;
             this.btnDung.Click += new System.EventHandler(this.btnDung_Click);
             // 
-            // Form1
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(528, 264);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(105, 43);
+            this.button1.TabIndex = 5;
+            this.button1.Text = "F2";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // FMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(804, 570);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.btnDung);
             this.Controls.Add(this.lblCount);
             this.Controls.Add(this.btnSend);
             this.Controls.Add(this.btnOpen);
             this.Controls.Add(this.opConsole);
-            this.Name = "Form1";
+            this.Name = "FMain";
             this.Text = "Form1";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -106,6 +118,7 @@
         private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.Label lblCount;
         private System.Windows.Forms.Button btnDung;
+        private System.Windows.Forms.Button button1;
     }
 }
 

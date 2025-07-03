@@ -11,17 +11,18 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SQLite;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Security.Policy;
 using System.Text;
 using System.Threading;
-using static QR_MASAN_01.SystemLogs;
-using static QR_MASAN_01.ActiveLogs;
 using System.Windows.Forms;
-using System.Net.Http;
-using System.Globalization;
+using static QR_MASAN_01.ActiveLogs;
+using static QR_MASAN_01.SystemLogs;
 
 
 
@@ -71,6 +72,18 @@ namespace QR_MASAN_01
                             );
                 //load Setting
                 Setting.Current.Load();
+
+                //đọc file sqlite đưa vào datatable
+
+
+                using (var conn = new SQLiteConnection($@"Data Source=C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\codes\PO_003.db;Version=3;"))
+                {
+                    string query = $@"SELECT ""_rowid_"",* FROM ""main"".""UniqueCodes""";
+                    var adapter = new SQLiteDataAdapter(query, conn);
+                    var table = new DataTable();
+                    adapter.Fill(table);
+                }
+
             }
             catch (Exception ex)
             {

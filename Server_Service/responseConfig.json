@@ -1,0 +1,18 @@
+﻿{
+  "200": {
+    "statusCode": 200,
+    "defaultMessage": "Thành công"
+  },
+  "400": {
+    "statusCode": 400,
+    "defaultMessage": "Yêu cầu không hợp lệ"
+  },
+  "404": {
+    "statusCode": 404,
+    "defaultMessage": "Không tìm thấy dữ liệu"
+  },
+  "500": {
+    "statusCode": 500,
+    "defaultMessage": "Lỗi server"
+  }
+}

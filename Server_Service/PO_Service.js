@@ -6,12 +6,15 @@ const sqlite3 = require('sqlite3').verbose();
 const poDB = require('./db_po');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
+const sanitizeBodyMiddleware = require('./Mid/sanitizeBodyMiddleware');
 
 const app = express();
 const PORT = 49212;
 
 app.use(cors());
-app.use(bodyParser.json());
+//app.use(bodyParser.json());
+
+app.use(sanitizeBodyMiddleware);
 
 // Swagger setup
 const swaggerOptions = {
@@ -20,7 +23,7 @@ const swaggerOptions = {
         info: {
             title: 'PO Management API',
             version: '1.0.0',
-            description: 'API quản lý PO, uniqueCode và lịch sử phục vụ hệ thống sản xuất'
+            description: 'API quản lý PO, uniqueCode, blockNo và lịch sử phục vụ hệ thống sản xuất'
         },
         servers: [{ url: `http://localhost:${PORT}` }]
     },
@@ -44,7 +47,8 @@ function getCodeDB(orderNo) {
             CREATE TABLE IF NOT EXISTS UniqueCodes (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 code TEXT,
-                createdAt TEXT
+                createdAt TEXT,
+                blockNo TEXT
             )
         `);
     });
@@ -55,7 +59,7 @@ function getCodeDB(orderNo) {
  * @swagger
  * /api/orders:
  *   post:
- *     summary: Tạo hoặc cập nhật PO, lưu mã uniqueCode chống trùng
+ *     summary: Tạo hoặc cập nhật PO, lưu uniqueCode theo blockNo chống trùng
  *     requestBody:
  *       required: true
  *       content:
@@ -65,6 +69,7 @@ function getCodeDB(orderNo) {
  *             required:
  *               - orderNo
  *               - uniqueCode
+ *               - blockNo
  *               - site
  *               - factory
  *               - productionLine
@@ -76,86 +81,59 @@ function getCodeDB(orderNo) {
  *               - productName
  *               - GTIN
  *               - customerOrderNo
+ *               - uom
  *             properties:
- *               orderNo:
- *                 type: string
- *                 example: "PO_001"
- *               uniqueCode:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["CODE001", "CODE002", "CODE003"]
- *               site:
- *                 type: string
- *                 example: "SITE_X"
- *               factory:
- *                 type: string
- *                 example: "FACTORY_Y"
- *               productionLine:
- *                 type: string
- *                 example: "LINE_1"
- *               productionDate:
- *                 type: string
- *                 example: "2025-07-02"
- *               shift:
- *                 type: string
- *                 example: "A"
- *               orderQty:
- *                 type: number
- *                 example: 1000
- *               lotNumber:
- *                 type: string
- *                 example: "LOT_123"
- *               productCode:
- *                 type: string
- *                 example: "PROD_XYZ"
- *               productName:
- *                 type: string
- *                 example: "Sản phẩm A"
- *               GTIN:
- *                 type: string
- *                 example: "8931234567890"
- *               customerOrderNo:
- *                 type: string
- *                 example: "CUST_PO_999"
+ *               orderNo: { type: string, example: "PO_001" }
+ *               uniqueCode: { type: array, items: { type: string }, example: ["CODE001","CODE002"] }
+ *               blockNo: { type: string, example: "BLOCK_001" }
+ *               site: { type: string, example: "SITE_X" }
+ *               factory: { type: string, example: "FACTORY_Y" }
+ *               productionLine: { type: string, example: "LINE_1" }
+ *               productionDate: { type: string, example: "2025-07-02" }
+ *               shift: { type: string, example: "A" }
+ *               orderQty: { type: number, example: 1000 }
+ *               lotNumber: { type: string, example: "LOT_123" }
+ *               productCode: { type: string, example: "PROD_XYZ" }
+ *               productName: { type: string, example: "Sản phẩm A" }
+ *               GTIN: { type: string, example: "8931234567890" }
+ *               customerOrderNo: { type: string, example: "CUST_PO_999" }
+ *               uom: { type: string, example: "PCS" }
  *     responses:
- *       200:
- *         description: Thành công
- *       400:
- *         description: Thiếu dữ liệu
+ *       200: { description: Thành công }
+ *       400: { description: Thiếu dữ liệu }
  */
 app.post('/api/orders', (req, res) => {
     const {
-        orderNo, uniqueCode, site, factory, productionLine,
+        orderNo, uniqueCode, blockNo, site, factory, productionLine,
         productionDate, shift, orderQty, lotNumber,
-        productCode, productName, GTIN, customerOrderNo
+        productCode, productName, GTIN, customerOrderNo, uom
     } = req.body;
 
     const requiredFields = {
-        orderNo, uniqueCode, site, factory, productionLine,
+        orderNo, uniqueCode, blockNo, site, factory, productionLine,
         productionDate, shift, orderQty, lotNumber,
-        productCode, productName, GTIN, customerOrderNo
+        productCode, productName, GTIN, customerOrderNo, uom
     };
 
     for (const [key, value] of Object.entries(requiredFields)) {
         if (
-            value === undefined ||
-            value === null ||
+            value === undefined || value === null ||
             (typeof value === 'string' && value.trim() === '') ||
             (key === 'uniqueCode' && (!Array.isArray(value) || value.length === 0))
         ) {
             return res.status(400).json({
-                message: `Trường '${key}' đang thiếu hoặc không hợp lệ.`
+                message: `Trường '${key}' đang thiếu hoặc không hợp lệ.`,
+                at: new Date().toISOString()
             });
         }
     }
-
-    if (Array.isArray(requiredFields.uniqueCode)) {
-        for (let i = 0; i < requiredFields.uniqueCode.length; i++) {
-            const code = requiredFields.uniqueCode[i];
+    if (Array.isArray(uniqueCode)) {
+        for (let i = 0; i < uniqueCode.length; i++) {
+            const code = uniqueCode[i];
             if (typeof code !== 'string' || code.trim() === '') {
                 return res.status(400).json({
-                    message: `Phần tử uniqueCode tại vị trí ${i} không hợp lệ (cần string không rỗng).`
+                    message: `Phần tử uniqueCode tại vị trí ${i} không hợp lệ (cần string không rỗng).`,
+                    at: new Date().toISOString()
                 });
             }
         }
@@ -164,18 +142,23 @@ app.post('/api/orders', (req, res) => {
     const now = new Date().toISOString();
 
     poDB.get(`SELECT id FROM POInfo WHERE orderNo = ?`, [orderNo], (err, row) => {
-        if (err) return res.status(500).json({ message: 'Lỗi DB.' });
+        if (err) return res.status(500).json({
+            message: 'Lỗi DB.',
+            at: now
+        });
 
-        const data = [site, factory, productionLine, productionDate, shift,
+        const data = [
+            site, factory, productionLine, productionDate, shift,
             orderQty, lotNumber, productCode, productName, GTIN,
-            customerOrderNo, now, orderNo];
+            customerOrderNo, uom, now, orderNo
+        ];
 
         function insertLog(action) {
             const logData = {
                 orderNo, site, factory, productionLine,
                 productionDate, shift, orderQty, lotNumber,
-                productCode, productName, GTIN, customerOrderNo,
-                codeCount: uniqueCode.length
+                productCode, productName, GTIN, customerOrderNo, uom,
+                blockNo, codeCount: uniqueCode.length
             };
             poDB.run(
                 `INSERT INTO POLogs (orderNo, action, detail, createdAt) VALUES (?, ?, ?, ?)`,
@@ -190,11 +173,22 @@ app.post('/api/orders', (req, res) => {
                     codeDB.close();
                     return res.status(500).json({ message: 'Lỗi đọc mã từ DB.' });
                 }
+                // Trước khi check trùng, replace {GS} thành ký tự GS (ASCII 29)
+                const processedCodes = uniqueCode.map(code => code.replace(/\<GS\>/g, String.fromCharCode(29)));
+
                 const existingCodesSet = new Set(rows.map(r => r.code));
-                const newCodes = uniqueCode.filter(code => !existingCodesSet.has(code));
-                const duplicateCount = uniqueCode.length - newCodes.length;
-                const stmt = codeDB.prepare(`INSERT INTO UniqueCodes (code, createdAt) VALUES (?, ?)`);
-                newCodes.forEach(code => stmt.run([code, now]));
+                const newCodes = processedCodes.filter(code => !existingCodesSet.has(code));
+                const duplicateCount = processedCodes.length - newCodes.length;
+
+                const stmt = codeDB.prepare(`INSERT INTO UniqueCodes (code, createdAt, blockNo) VALUES (?, ?, ?)`);
+                //.forEach(code => stmt.run([code, now, blockNo]));
+
+                newCodes.forEach(code => {
+                    //chuyển {GS} về ký tự GS (ASCII 29)
+                    //const restored = code.replace(/\<GS\>/g, String.fromCharCode(29));
+                    stmt.run([restored, now, blockNo]);
+                });
+
                 stmt.finalize(() => {
                     codeDB.get(`SELECT COUNT(*) AS count FROM UniqueCodes`, [], (err, row) => {
                         const existingCount = row ? row.count : 0;
@@ -202,14 +196,17 @@ app.post('/api/orders', (req, res) => {
                         res.json({
                             orderNo, site, factory, productionLine,
                             productionDate, shift, orderQty, lotNumber,
-                            productCode, productName, GTIN, customerOrderNo,
+                            productCode, productName, GTIN, customerOrderNo, uom,
+                            blockNo,
                             uniqueCode: {
                                 insertedCount: newCodes.length,
                                 duplicateCount,
                                 existingCount
                             },
-                            httpStatus: 200,
-                            message: `Đã xử lý PO ${orderNo} thành công.`
+                            
+                            message: `Đã xử lý PO ${orderNo} thành công.`,
+                            //"at": "2025-07-03T10:31:06.785+07:00"
+                            at: now
                         });
                     });
                 });
@@ -220,7 +217,7 @@ app.post('/api/orders', (req, res) => {
             poDB.run(`
                 UPDATE POInfo SET site=?, factory=?, productionLine=?, productionDate=?, shift=?,
                 orderQty=?, lotNumber=?, productCode=?, productName=?, GTIN=?,
-                customerOrderNo=?, lastUpdated=? WHERE orderNo=?
+                customerOrderNo=?, uom=?, lastUpdated=? WHERE orderNo=?
             `, data, err => {
                 if (err) return res.status(500).json({ message: 'Lỗi update PO.' });
                 insertLog('update');
@@ -230,15 +227,13 @@ app.post('/api/orders', (req, res) => {
             poDB.run(`
                 INSERT INTO POInfo (site, factory, productionLine, productionDate, shift,
                 orderQty, lotNumber, productCode, productName, GTIN,
-                customerOrderNo, lastUpdated, orderNo)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            `, [site, factory, productionLine, productionDate, shift,
-                orderQty, lotNumber, productCode, productName, GTIN,
-                customerOrderNo, now, orderNo], err => {
-                    if (err) return res.status(500).json({ message: 'Lỗi insert PO.' });
-                    insertLog('insert');
-                    insertCodes();
-                });
+                customerOrderNo, uom, lastUpdated, orderNo)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `, data, err => {
+                if (err) return res.status(500).json({ message: 'Lỗi insert PO.' });
+                insertLog('insert');
+                insertCodes();
+            });
         }
     });
 });
@@ -249,8 +244,7 @@ app.post('/api/orders', (req, res) => {
  *   get:
  *     summary: Lấy danh sách PO mới nhất
  *     responses:
- *       200:
- *         description: Thành công
+ *       200: { description: Thành công }
  */
 app.get('/api/orders', (req, res) => {
     poDB.all(`SELECT * FROM POInfo ORDER BY lastUpdated DESC LIMIT 100`, [], (err, rows) => {
@@ -274,8 +268,7 @@ app.get('/api/orders', (req, res) => {
  *         schema: { type: integer }
  *         description: Số lượng log muốn lấy (default 100)
  *     responses:
- *       200:
- *         description: Thành công
+ *       200: { description: Thành công }
  */
 app.get('/api/orders/logs', (req, res) => {
     const { filters, numberlog } = req.query;
@@ -331,8 +324,7 @@ app.get('/api/orders/logs', (req, res) => {
  *         required: true
  *         schema: { type: string }
  *     responses:
- *       200:
- *         description: Thành công
+ *       200: { description: Thành công }
  */
 app.get('/api/orders/:orderNo/codes', (req, res) => {
     const { orderNo } = req.params;

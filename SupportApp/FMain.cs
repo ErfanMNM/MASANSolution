@@ -134,5 +134,11 @@ namespace SupportApp
                 opConsole.Items.Add("Stop requested.");
             }
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            FSQLite fSQLite = new FSQLite();
+            fSQLite.ShowDialog();
+        }
     }
 }

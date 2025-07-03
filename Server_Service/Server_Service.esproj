@@ -3,4 +3,7 @@
     <BuildCommand>npm run package </BuildCommand>
     <BuildOutputFolder>dist/TempStorage/</BuildOutputFolder>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Mid\" />
+  </ItemGroup>
 </Project>
