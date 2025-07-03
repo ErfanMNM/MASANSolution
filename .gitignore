@@ -365,3 +365,7 @@ FodyWeavers.xsd
 /Server_Service/dist
 /Server_Service/uploads
 /Server_Service/po_data.db
+/Server_Service/codes/ORD001.db
+/Server_Service/codes/PO_002.db
+/Server_Service/codes/PO_003.db
+/Server_Service/codes/PO_TEST_001.db
