@@ -1,20 +1,22 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
+﻿using Diaglogs;
+using QR_MASAN_01;
+using QR_MASAN_01.Auth;
+using SpT;
 using Sunny.UI;
+using Sunny.UI.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SQLite;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using QR_MASAN_01;
-using Diaglogs;
-using System.Data.SQLite;
-using System.IO;
-using Sunny.UI.Win32;
-using System.Security.Cryptography;
 using static System.Net.WebRequestMethods;
 
 namespace QR_MASAN_01.Views
@@ -25,6 +27,8 @@ namespace QR_MASAN_01.Views
         {
             InitializeComponent();
         }
+
+
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
@@ -48,12 +52,24 @@ namespace QR_MASAN_01.Views
                     return;
                 }
 
-                // Giả sử bạn có một phương thức ValidateCredentials để kiểm tra thông tin đăng nhập
+                //kiểm tra thông tin đăng nhập trong sqlite abcc.bcaa
                 if (ValidateCredentials(username, password))
                 {
-                  Auth.UserData dbUser = GetUserByUsername(username);
-                  Globalvariable.CurrentUser = dbUser; // Lưu thông tin người dùng vào GlobalSettings
+                    //kiểm tra 2FA nếu cài đặt có yêu cầu 2FA
+                    UserData dbUser = UserData.GetUserByUsername(username);
 
+                    if (Setting.Current.TwoFA_Enabled)
+                    {
+                        bool isValid = TwoFAHelper.VerifyOTP(dbUser.Key2FA, ipOTP.Text, digits: 6);
+                        if (!isValid)
+                        {
+                            this.ShowErrorTip("Mã OTP không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.");
+                            SystemLogs systemLogs1 = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.LOGIN, "Người dùng đăng nhập thất bại", "LoginForm", $"Người dùng nhập mã OTP không hợp lệ cho username : {username}");
+                            SystemLogs.LogQueue.Enqueue(systemLogs1);
+                            return;
+                        }
+                    }
+                    Globalvariable.CurrentUser = dbUser; // Lưu thông tin người dùng vào GlobalSettings
                     this.ShowSuccessTip("Đăng nhập thành công, vui lòng chờ.");
                     SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.LOGIN, "Người dùng đăng nhập thành công", "LoginForm", $"Người dùng đăng nhập với username : {username}");
                     SystemLogs.LogQueue.Enqueue(systemLogs);
@@ -123,21 +139,6 @@ namespace QR_MASAN_01.Views
             }
         }
 
-
-        private void ipUserName_DoubleClick(object sender, EventArgs e)
-        {
-            using(Entertext enterText = new Entertext())
-            {
-                enterText.TileText = "Nhập tên đăng nhập";
-                enterText.TextValue = ipUserName.Text;
-                enterText.EnterClicked += (s, args) =>
-                {
-                    ipUserName.Text = enterText.TextValue;
-                };
-                enterText.ShowDialog();
-            }
-        }
-
         private void ipPassword_DoubleClick(object sender, EventArgs e)
         {
             using (Entertext enterText = new Entertext())
@@ -153,47 +154,49 @@ namespace QR_MASAN_01.Views
             }
         }
 
-        // Hàm GetUserByUsername để lấy thông tin người dùng từ SQLite
-        private Auth.UserData GetUserByUsername(string username)
+        private void ipUserName_DoubleClick_1(object sender, EventArgs e)
         {
-            Auth.UserData user = null;
-
-            using (var conn = new SQLiteConnection($"Data Source=abcc.bcaa;Version=3;"))
+            using (Entertext enterText = new Entertext())
             {
-                conn.Open();
-
-                string sql = @"SELECT ID, Username, Password, Salt, Role, Key2FA 
-                       FROM users WHERE Username = @username LIMIT 1";
-
-                using (var cmd = new SQLiteCommand(sql, conn))
+                enterText.TileText = "Nhập tên đăng nhập";
+                enterText.TextValue = ipUserName.Text;
+                enterText.EnterClicked += (s, args) =>
                 {
-                    cmd.Parameters.AddWithValue("@username", username);
+                    ipUserName.Text = enterText.TextValue;
+                };
+                enterText.ShowDialog();
+            }
+        }
 
-                    using (var adapter = new SQLiteDataAdapter(cmd))
-                    {
-                        var dt = new System.Data.DataTable();
-                        adapter.Fill(dt);
+        DataTable UsersList = new DataTable();
+        private void LoginForm_Initialize(object sender, EventArgs e)
+        {
+            // Tạo DataTable để lưu danh sách người dùng
+            UsersList = UserData.GetUserListFromDB();
 
-                        if (dt.Rows.Count > 0)
-                        {
-                            var row = dt.Rows[0];
-                            user = new Auth.UserData
-                            {
-                                Username = row["Username"].ToString(),
-                                Password = row["Password"].ToString(),
-                                Salt = row["Salt"].ToString(),
-                                Role = row["Role"].ToString(),
-                                Key2FA = row["Key2FA"].ToString()
-                            };
-                        }
-                    }
+            //thêm vào cbbox ipUserName
+            ipUserName.Items.Clear();
+            foreach (DataRow row in UsersList.Rows)
+            {
+                string username = row["Username"].ToString();
+                if (!string.IsNullOrEmpty(username))
+                {
+                    ipUserName.Items.Add(username);
                 }
-
-                conn.Close();
             }
 
-            return user;
+            if (ipUserName.Items.Count > 0)
+            {
+                // Chọn mục đầu tiên nếu có
+                ipUserName.SelectedIndex = 0;
+            }
+            else
+            {
+                // Hiển thị thông báo nếu không có người dùng nào
+                this.ShowErrorNotifier("Không có người dùng nào trong hệ thống.");
+            }
         }
+
 
         #region tạo user
 
@@ -270,5 +273,7 @@ namespace QR_MASAN_01.Views
         //}
 
         #endregion
+
+
     }
 }

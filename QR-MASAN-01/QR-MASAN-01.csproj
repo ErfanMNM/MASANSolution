@@ -255,6 +255,12 @@
     <Compile Include="Dialogs\Entertext.Designer.cs">
       <DependentUpon>Entertext.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\POM.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\POM.Designer.cs">
+      <DependentUpon>POM.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Scaner.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -365,6 +371,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\Entertext.resx">
       <DependentUpon>Entertext.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\POM.resx">
+      <DependentUpon>POM.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\Scaner.resx">
       <DependentUpon>Scaner.cs</DependentUpon>
