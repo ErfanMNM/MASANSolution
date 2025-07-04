@@ -179,7 +179,8 @@ namespace QR_MASAN_01
     public enum e_PI_Status
     {
         NOPO,
-        EDIT
+        EDITING,
+        READY
     }
 
     public class APP

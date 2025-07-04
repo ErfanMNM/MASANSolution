@@ -70,19 +70,54 @@ namespace QR_MASAN_01.Views.MFI_Service
 
         private void btnPO_Click(object sender, EventArgs e)
         {
-            //bật diaglog hỏi chỉnh sửa PO, bắt nhập mk 
-            using (var dialog = new Pom_dialog())
+            if (Globalvariable.PI_Status != e_PI_Status.EDITING)
             {
-                if (dialog.ShowDialog() == DialogResult.OK)
+                using (var dialog = new Pom_dialog())
                 {
-                    btnPO.Text = "Lưu thông tin";
-                    btnPO.Symbol = 61468; // Thay đổi biểu tượng của nút btnPO
-                }
-                else
-                {
-                    this.ShowErrorTip("Bạn đã hủy thao tác chỉnh sửa PO.");
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        btnPO.Text = "Lưu thông tin";
+                        btnPO.Symbol = 61468; // Thay đổi biểu tượng của nút btnPO
+                        Globalvariable.PI_Status = e_PI_Status.EDITING; // Đặt trạng thái là đang chỉnh sửa
+                                                                        //load lại dữ liệu PO
+                        poService.LoadOrderNoToComboBox(ipOrderNO);
+                        ipOrderNO.SelectedIndex = 0; // Chọn dòng đầu tiên (dòng rỗng)
+                        ipOrderNO.ReadOnly = false; //cho phép chỉnh sửa
+                        ipProductionDate.ReadOnly = false; //cho phép chỉnh sửa
+                    }
+                    else
+                    {
+
+                        if (!string.IsNullOrEmpty(dialog.Message))
+                        {
+                            opNotiBoard.Items.Add(dialog.Message);
+                        }
+                        else
+                        {
+                            // Nếu người dùng không nhấn OK, không làm gì cả
+                            //this.ShowErrorTip("Bạn đã hủy thao tác chỉnh sửa PO.");
+                            return;
+                        }
+
+                    }
                 }
             }
+            else
+            {
+
+                // Cập nhật dữ liệu PO
+                poService.UpdatePO(Globalvariable.Seleted_PO_Data, ipOrderNO.Text, ipProductionDate.Text);
+
+                // Hiển thị thông báo thành công
+                this.ShowSuccessTip("Thông tin PO đã được lưu thành công.");
+
+                // Đặt lại trạng thái
+                Globalvariable.PI_Status = e_PI_Status.NOPO; // Trạng thái không có PO hoặc đang chỉnh sửa
+                btnPO.Text = "Chỉnh thông tin";
+                btnPO.Symbol = 61508; // Thay đổi biểu tượng của nút btnPO
+            }
+            
+            
         }
     }
 }

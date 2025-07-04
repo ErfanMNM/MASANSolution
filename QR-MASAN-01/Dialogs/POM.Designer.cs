@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.uiTitlePanel1 = new Sunny.UI.UITitlePanel();
+            this.uiRichTextBox1 = new Sunny.UI.UIRichTextBox();
+            this.uiNumPadTextBox1 = new Sunny.UI.UINumPadTextBox();
             this.btnOK = new Sunny.UI.UISymbolButton();
             this.btnCancel = new Sunny.UI.UISymbolButton();
             this.pnConnect = new Sunny.UI.UIPanel();
-            this.uiNumPadTextBox1 = new Sunny.UI.UINumPadTextBox();
-            this.uiRichTextBox1 = new Sunny.UI.UIRichTextBox();
             this.uiTitlePanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,12 +51,52 @@
             this.uiTitlePanel1.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiTitlePanel1.Name = "uiTitlePanel1";
             this.uiTitlePanel1.Padding = new System.Windows.Forms.Padding(1, 50, 1, 1);
+            this.uiTitlePanel1.RectColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.uiTitlePanel1.RectSize = 2;
             this.uiTitlePanel1.ShowText = false;
             this.uiTitlePanel1.Size = new System.Drawing.Size(606, 320);
             this.uiTitlePanel1.TabIndex = 0;
             this.uiTitlePanel1.Text = "THÔNG BÁO";
             this.uiTitlePanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             this.uiTitlePanel1.TitleHeight = 50;
+            // 
+            // uiRichTextBox1
+            // 
+            this.uiRichTextBox1.FillColor = System.Drawing.Color.White;
+            this.uiRichTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uiRichTextBox1.Location = new System.Drawing.Point(5, 55);
+            this.uiRichTextBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiRichTextBox1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiRichTextBox1.Name = "uiRichTextBox1";
+            this.uiRichTextBox1.Padding = new System.Windows.Forms.Padding(2);
+            this.uiRichTextBox1.ReadOnly = true;
+            this.uiRichTextBox1.ShowText = false;
+            this.uiRichTextBox1.Size = new System.Drawing.Size(596, 200);
+            this.uiRichTextBox1.TabIndex = 4;
+            this.uiRichTextBox1.Text = "Bạn có chắc chắn thay đổi thông tin PO?  \nHệ thống sẽ dừng khi đang chỉnh thông t" +
+    "in!\nVui lòng nhập mã xác thực và nhấn Đồng Ý.";
+            this.uiRichTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiNumPadTextBox1
+            // 
+            this.uiNumPadTextBox1.DecimalPlaces = 0;
+            this.uiNumPadTextBox1.FillColor = System.Drawing.Color.White;
+            this.uiNumPadTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiNumPadTextBox1.Location = new System.Drawing.Point(118, 265);
+            this.uiNumPadTextBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiNumPadTextBox1.Maximum = 999999D;
+            this.uiNumPadTextBox1.Minimum = 0D;
+            this.uiNumPadTextBox1.MinimumSize = new System.Drawing.Size(63, 0);
+            this.uiNumPadTextBox1.Name = "uiNumPadTextBox1";
+            this.uiNumPadTextBox1.NumPadType = Sunny.UI.NumPadType.Integer;
+            this.uiNumPadTextBox1.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
+            this.uiNumPadTextBox1.Size = new System.Drawing.Size(266, 49);
+            this.uiNumPadTextBox1.SymbolDropDown = 557532;
+            this.uiNumPadTextBox1.SymbolNormal = 557532;
+            this.uiNumPadTextBox1.SymbolSize = 24;
+            this.uiNumPadTextBox1.TabIndex = 3;
+            this.uiNumPadTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiNumPadTextBox1.Watermark = "";
             // 
             // btnOK
             // 
@@ -98,45 +138,6 @@
             this.pnConnect.TabIndex = 0;
             this.pnConnect.Text = "Mã xác thực";
             this.pnConnect.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiNumPadTextBox1
-            // 
-            this.uiNumPadTextBox1.DecimalPlaces = 0;
-            this.uiNumPadTextBox1.FillColor = System.Drawing.Color.White;
-            this.uiNumPadTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiNumPadTextBox1.Location = new System.Drawing.Point(118, 265);
-            this.uiNumPadTextBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.uiNumPadTextBox1.Maximum = 999999D;
-            this.uiNumPadTextBox1.MaxLength = 6;
-            this.uiNumPadTextBox1.Minimum = 0D;
-            this.uiNumPadTextBox1.MinimumSize = new System.Drawing.Size(63, 0);
-            this.uiNumPadTextBox1.Name = "uiNumPadTextBox1";
-            this.uiNumPadTextBox1.NumPadType = Sunny.UI.NumPadType.Integer;
-            this.uiNumPadTextBox1.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
-            this.uiNumPadTextBox1.Size = new System.Drawing.Size(266, 49);
-            this.uiNumPadTextBox1.SymbolDropDown = 557532;
-            this.uiNumPadTextBox1.SymbolNormal = 557532;
-            this.uiNumPadTextBox1.SymbolSize = 24;
-            this.uiNumPadTextBox1.TabIndex = 3;
-            this.uiNumPadTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.uiNumPadTextBox1.Watermark = "";
-            // 
-            // uiRichTextBox1
-            // 
-            this.uiRichTextBox1.FillColor = System.Drawing.Color.White;
-            this.uiRichTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uiRichTextBox1.Location = new System.Drawing.Point(5, 55);
-            this.uiRichTextBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.uiRichTextBox1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiRichTextBox1.Name = "uiRichTextBox1";
-            this.uiRichTextBox1.Padding = new System.Windows.Forms.Padding(2);
-            this.uiRichTextBox1.ReadOnly = true;
-            this.uiRichTextBox1.ShowText = false;
-            this.uiRichTextBox1.Size = new System.Drawing.Size(596, 200);
-            this.uiRichTextBox1.TabIndex = 4;
-            this.uiRichTextBox1.Text = "Bạn có chắc chắn thay đổi thông tin PO?  \nHệ thống sẽ tạm dừng khi đang chỉnh sửa" +
-    "\nNếu chắc chắn vui lòng nhập mã xác thực và nhấn Đồng Ý";
-            this.uiRichTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Pom_dialog
             // 

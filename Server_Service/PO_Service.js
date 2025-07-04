@@ -25,7 +25,7 @@ const swaggerOptions = {
             version: '1.0.1',
             description: 'API nhận thông tin PO cho máy kích hoạt mã 2D'
         },
-        servers: [{ url: `http://<IP>:${PORT}` }]
+        servers: [{ url: `http://localhost:${PORT}` }]
     },
     apis: [__filename]
 };
@@ -101,6 +101,7 @@ function getCodeDB(orderNo) {
  *               customerOrderNo: { type: string, example: "CUST_PO_999" }
  *               uom: { type: string, example: "PCS" }
  *     responses:
+ *       500: { description: Lỗi máy chủ hoặc DB }
  *       200: { description: Thành công }
  *       400: { description: Thiếu dữ liệu }
  */
@@ -192,25 +193,29 @@ app.post('/api/orders', (req, res) => {
                 });
 
                 stmt.finalize(() => {
-                    codeDB.get(`SELECT COUNT(*) AS count FROM UniqueCodes`, [], (err, row) => {
-                        const existingCount = row ? row.count : 0;
-                        codeDB.close();
-                        res.json({
-                            orderNo, site, factory, productionLine,
-                            productionDate, shift, orderQty, lotNumber,
-                            productCode, productName, GTIN, customerOrderNo, uom,
-                            blockNo,
-                            uniqueCode: {
-                                insertedCount: newCodes.length,
-                                duplicateCount,
-                                existingCount
-                            },
-                            
-                            message: `Đã xử lý PO ${orderNo} thành công.`,
-                            //"at": "2025-07-03T10:31:06.785+07:00"
-                            at: now
+                    codeDB.get(`SELECT COUNT(*) AS count FROM UniqueCodes WHERE blockNo = ?`, [blockNo], (err, blockRow) => {
+                        const receiveQty = blockRow ? blockRow.count : 0;
+                        codeDB.get(`SELECT COUNT(*) AS count FROM UniqueCodes`, [], (err, row) => {
+                            const totalExistingCount = row ? row.count : 0;
+                            codeDB.close();
+
+                            res.json({
+                                orderNo, site, factory, productionLine,
+                                productionDate, shift, orderQty, lotNumber,
+                                productCode, productName, GTIN, customerOrderNo, uom,
+                                uniqueCode: {
+                                    insertedCount: newCodes.length,
+                                    duplicateCount,
+                                    totalExistingCount // ✅ rename
+                                },
+                                blockNo,
+                                receiveQty, // ✅ tách ra ngoài như KH yêu cầu
+                                httpStatus: 200,
+                                message: `Đã xử lý PO ${orderNo} thành công.`
+                            });
                         });
                     });
+
                 });
             });
         }

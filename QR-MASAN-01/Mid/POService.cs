@@ -106,6 +106,38 @@ namespace QR_MASAN_01
 
         }
 
+        //tạo PO cho sản xuất gồm bảng lưu thông tin các PO đã dùng sản xuất và lịch sử chốt sổ (tách lô) và lịch sử đổi date
+        //kiểm tra PO db đã tồn tại hay chưa, nếu chưa tạo mới
+        public void CreatePO(string orderNo)
+        {
+            string poPath = "Databases/PO.tlog";
+
+            if (!System.IO.File.Exists(poPath))
+            {
+                using (var conn = new SQLiteConnection($"Data Source={poPath};Version=3;"))
+                {
+                    conn.Open();
+                    string createTableQuery = @"
+                        CREATE TABLE    ""PO"" (
+	                                    ""ID""	INTEGER NOT NULL UNIQUE,
+	                                    ""orderNO""	TEXT NOT NULL,
+	                                    ""productionDate""	TEXT NOT NULL,
+	                                    ""Action""	TEXT NOT NULL,
+	                                    ""UserName""	TEXT NOT NULL,
+	                                    ""Counter""	JSON NOT NULL,
+	                                    ""Timestamp""	TEXT NOT NULL,
+	                                    ""Timeunix""	INTEGER NOT NULL,
+	                                    PRIMARY KEY(""ID"" AUTOINCREMENT)
+                                    );";
+                    var command = new SQLiteCommand(createTableQuery, conn);
+                    command.ExecuteNonQuery();
+                }
+            }
+
+            //kiểm tra PO db đã tồn tại hay chưa, nếu chưa tạo mới SELECT 
+
+        }
+
     }
 
 }

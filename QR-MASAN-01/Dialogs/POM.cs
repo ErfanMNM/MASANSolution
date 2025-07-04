@@ -13,7 +13,9 @@ namespace Dialogs
     public partial class Pom_dialog : Form
     {
 
-        public event EventHandler OkClicked;
+        //public event EventHandler OkClicked;
+        //public event EventHandler CancelClicked;
+        public string Message { get; set; } = string.Empty;
         public string STT { get; set; } = string.Empty;
         public Pom_dialog()
         {
@@ -32,8 +34,9 @@ namespace Dialogs
             if (uiNumPadTextBox1.Text == string.Empty)
             {
                 Invoke(new Action(() => { this.ShowErrorTip("Vui lòng nhập mã xác thực"); }));
+                Message = "Vui lòng nhập mã xác thực";
                 // Kích hoạt sự kiện OkClicked
-                OkClicked?.Invoke(this, EventArgs.Empty);
+                //OkClicked?.Invoke(this, EventArgs.Empty);
                 // Đóng form với kết quả OK
                 DialogResult = DialogResult.Cancel;
                 return;
@@ -44,15 +47,16 @@ namespace Dialogs
                 if (!isValid)
                 {
                     Invoke(new Action(() => { this.ShowErrorTip("Mã xác thực không đúng"); }));
+                    Message = "Mã xác thực không đúng";
                     // Kích hoạt sự kiện OkClicked
-                    OkClicked?.Invoke(this, EventArgs.Empty);
+                    // OkClicked?.Invoke(this, EventArgs.Empty);
                     // Đóng form với kết quả OK
                     DialogResult = DialogResult.Cancel;
                     return;
                 }
             }
             // Kích hoạt sự kiện OkClicked
-            OkClicked?.Invoke(this, EventArgs.Empty);
+           // OkClicked?.Invoke(this, EventArgs.Empty);
             // Đóng form với kết quả OK
             DialogResult = DialogResult.OK;
 

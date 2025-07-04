@@ -122,7 +122,7 @@
     <value>1</value>
   </data>
   <data name="header.ColumnCount" type="System.Int32, mscorlib">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="Logo.ColumnCount" type="System.Int32, mscorlib">
     <value>2</value>
@@ -181,7 +181,7 @@
     <value>1, 1</value>
   </data>
   <data name="Logotext.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 49</value>
+    <value>142, 49</value>
   </data>
   <data name="Logotext.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -211,7 +211,7 @@
     <value>1</value>
   </data>
   <data name="Logo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>238, 49</value>
+    <value>232, 49</value>
   </data>
   <data name="Logo.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -229,28 +229,28 @@
     <value>0</value>
   </data>
   <data name="Logo.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LogoImg" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="Logotext" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,90,Percent,50" /&gt;&lt;Rows Styles="Percent,48,3871" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LogoImg" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="Logotext" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,90,Percent,50" /&gt;&lt;Rows Styles="Percent,48.3871" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="opUser.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Right</value>
   </data>
   <data name="opUser.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 12pt</value>
+    <value>Microsoft Sans Serif, 9.75pt, style=Bold</value>
   </data>
   <data name="opUser.Location" type="System.Drawing.Point, System.Drawing">
-    <value>843, 3</value>
+    <value>835, 3</value>
   </data>
   <data name="opUser.MinimumSize" type="System.Drawing.Size, System.Drawing">
     <value>1, 1</value>
   </data>
   <data name="opUser.Size" type="System.Drawing.Size, System.Drawing">
-    <value>178, 49</value>
+    <value>186, 49</value>
   </data>
   <data name="opUser.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
   <data name="opUser.Text" xml:space="preserve">
-    <value>Operator</value>
+    <value>-</value>
   </data>
   <data name="&gt;&gt;opUser.Name" xml:space="preserve">
     <value>opUser</value>
@@ -292,7 +292,7 @@
     <value>0</value>
   </data>
   <data name="header.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="Logo" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="opUser" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,23,82813,Percent,76,17188" /&gt;&lt;Rows Styles="Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="Logo" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="opUser" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,238,Absolute,594,Percent,100" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="uiTopbar.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 12pt</value>
@@ -796,7 +796,7 @@
     <value>0</value>
   </data>
   <data name="mainPanelLayout.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="uiTopbar" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="BodyPanel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="footer" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,7,161458,Percent,87,76041,Percent,5" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="uiTopbar" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="BodyPanel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="footer" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,7.161458,Percent,87.76041,Percent,5" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="WKCheck.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>

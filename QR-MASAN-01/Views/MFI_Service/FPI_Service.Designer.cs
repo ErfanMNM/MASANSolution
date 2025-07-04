@@ -661,6 +661,7 @@
             this.ipProductionDate.Name = "ipProductionDate";
             this.ipProductionDate.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
             this.ipProductionDate.Radius = 1;
+            this.ipProductionDate.ReadOnly = true;
             this.ipProductionDate.Size = new System.Drawing.Size(255, 39);
             this.ipProductionDate.SymbolDropDown = 61555;
             this.ipProductionDate.SymbolNormal = 61555;

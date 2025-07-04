@@ -287,7 +287,32 @@ namespace QR_MASAN_01
                         //kiểm tra xem đã đăng nhập chưa
                         if (Globalvariable.CurrentUser.Username != string.Empty)
                         {
+                            //hiện thị thông tin user 
+                            this.Invoke(new Action(() =>
+                            {
+                                
+                                switch(Globalvariable.CurrentUser.Role)
+                                {
+                                    case "ADMIN":
+                                        opUser.Text = $"[ADMIN] {Globalvariable.CurrentUser.Username}";
+                                        opUser.ForeColor = Color.Red;
+                                        break;
+                                    case "OPERATOR":
+                                        //màu vàng cho vận hành
+                                        opUser.Text = $"[OPERATOR] {Globalvariable.CurrentUser.Username}";
+                                        opUser.ForeColor = Color.Yellow;
 
+                                        break;
+                                    case "WORKER":
+                                        //màu xanh
+                                        opUser.Text = $"[WORKER] {Globalvariable.CurrentUser.Username}";
+                                        opUser.ForeColor = Color.Green;
+                                        break;
+                                    default:
+                                        opUser.Text = "Không xác định";
+                                        break;
+                                }
+                            }));
                             if (Globalvariable.ACTIVE)
                             {
                                 //nếu đã đăng nhập và ACTIVE thì chuyển sang trạng thái ACTIVE
