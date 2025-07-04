@@ -106,7 +106,7 @@ namespace QR_MASAN_01.Views.MFI_Service
             {
 
                 // Cập nhật dữ liệu PO
-                poService.UpdatePO(Globalvariable.Seleted_PO_Data, ipOrderNO.Text, ipProductionDate.Text);
+                poService.CreatePO(ipOrderNO.Text);
 
                 // Hiển thị thông báo thành công
                 this.ShowSuccessTip("Thông tin PO đã được lưu thành công.");
