@@ -877,36 +877,32 @@ namespace QR_MASAN_01
                     }
                 }
                 //Ready
-                if (GCamera.Camera_Status == e_Camera_Status.CONNECTED && GCamera.Camera_Status_02 == e_Camera_Status.CONNECTED && Globalvariable.Data_Status == e_Data_Status.READY && Globalvariable.PLCConnect && Globalvariable.setReady)
+                if(Globalvariable.All_Ready)
                 {
-                    if (Globalvariable.AllReady)
+                    if (PLC.Ready != 1)
                     {
-                        if (PLC.Ready != 1)
-                        {
-                            PLC.Ready = 1;
-                        }
-
-                    }
-                    else
-                    {
-                        Globalvariable.AllReady = true;
-                        if (PLC.Ready != 0)
-                        {
-                            PLC.Ready = 0;
-                        }
-
+                        PLC.Ready = 1;
                     }
                 }
                 else
                 {
-
-                    if (!Globalvariable.AllReady)
+                    if (PLC.Ready != 0)
                     {
-
+                        PLC.Ready = 0;
                     }
-                    else
+                }
+                if (GCamera.Camera_Status == e_Camera_Status.CONNECTED && GCamera.Camera_Status_02 == e_Camera_Status.CONNECTED && Globalvariable.Data_Status == e_Data_Status.READY && Globalvariable.PLCConnect && Globalvariable.setReady)
+                {
+                    if (!Globalvariable.FDashBoard_Ready)
                     {
-                        Globalvariable.AllReady = false;
+                        Globalvariable.FDashBoard_Ready = true;
+                    }
+                }
+                else
+                {
+                    if (Globalvariable.FDashBoard_Ready)
+                    {
+                        Globalvariable.FDashBoard_Ready = false;
                     }
                 }
 

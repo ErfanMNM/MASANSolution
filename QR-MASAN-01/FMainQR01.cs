@@ -196,8 +196,8 @@ namespace QR_MASAN_01
                 Thread.Sleep(1000);
                 //internet
 
-                    InternetConnection = Internet.IsOK();
-                    InternetSpeed = Internet.GetInternetSpeed();
+                InternetConnection = Internet.IsOK();
+                InternetSpeed = Internet.GetInternetSpeed();
 
                 if (InternetConnection)
                 {
@@ -219,13 +219,40 @@ namespace QR_MASAN_01
 
                 }
 
+                if (Globalvariable.PI_Status == e_PI_Status.READY && Globalvariable.FDashBoard_Ready)
+                {
+                    Globalvariable.All_Ready = true; //đặt trạng thái sẵn sàng của hệ thống là true
+                }
 
-                if(Globalvariable.AllReady)
+                else
+                {
+                    Globalvariable.All_Ready = false; //đặt trạng thái sẵn sàng của hệ thống là false
+                }
+
+                if (Globalvariable.All_Ready && Globalvariable.PI_Status == e_PI_Status.READY)
                 {
 
                     lblAllStatus.Text = "Hệ thống sẵn sàng";
                     lblAllStatus.FillColor = Color.Green;
                     lblAllStatus.ForeColor = Color.White;
+                }
+                else if (Globalvariable.All_Ready && Globalvariable.PI_Status == e_PI_Status.EDITING)
+                {
+                    lblAllStatus.Text = "Đang chỉnh PO";
+                    lblAllStatus.FillColor = Color.Yellow;
+                    lblAllStatus.ForeColor = Color.Black;
+                }
+                else if (Globalvariable.All_Ready && Globalvariable.PI_Status == e_PI_Status.NOPO)
+                {
+                    lblAllStatus.Text = "Chưa chọn PO";
+                    lblAllStatus.FillColor = Color.Orange;
+                    lblAllStatus.ForeColor = Color.Black;
+                }
+                else if (GCamera.Camera_Status != e_Camera_Status.CONNECTED && GCamera.Camera_Status_02 != e_Camera_Status.CONNECTED && !Globalvariable.PLCConnect)
+                {
+                    lblAllStatus.Text = "Thiết bị đang lỗi";
+                    lblAllStatus.FillColor = Color.Red;
+                    lblAllStatus.ForeColor = Color.Black;
                 }
                 else
                 {

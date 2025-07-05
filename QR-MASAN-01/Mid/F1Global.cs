@@ -70,7 +70,8 @@ namespace QR_MASAN_01
         public static int MaxID_Content { get; set; } = 0;
 
         public static e_Server_Status Server_Status { get; set; } = e_Server_Status.DISCONNECTED;
-        public static bool AllReady { get; set; } = false;
+        public static bool FDashBoard_Ready { get; set; } = false;
+        public static bool All_Ready { get; set; } = false;
         public static bool setReady { get; set; } = true;
         public static bool PLCConnect { get; set; } = false;
         public static e_Data_Status Data_Status { get; set; } = e_Data_Status.STARTUP;
