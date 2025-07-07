@@ -32,7 +32,6 @@ namespace QR_MASAN_01.Views
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            
             try
             {
                 //lưu lại thông tin đăng nhập vào hàng đợi log

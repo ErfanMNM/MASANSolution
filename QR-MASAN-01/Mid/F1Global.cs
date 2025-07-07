@@ -100,6 +100,7 @@ namespace QR_MASAN_01
         //PO
         public static DataTable Seleted_PO_Data { get; set; } = new DataTable();
         public static e_PI_Status PI_Status { get; set; } = e_PI_Status.NOPO; // Trạng thái của PO (không có PO hoặc đang chỉnh sửa)
+        public static int Product_Active_Count { get; set; } = 0; // Số lượng sản phẩm đã kích hoạt
 
     }
 
@@ -116,6 +117,11 @@ namespace QR_MASAN_01
         public long TimeUnixActive { get; set; }
         public string TimeStampPrinted { get; set; }
         public long TimeUnixPrinted { get; set; }
+    }
+
+    public class ProductResult
+    {
+
     }
 
     public enum e_Server_Status
@@ -219,6 +225,7 @@ namespace QR_MASAN_01
 
         public bool TwoFA_Enabled { get; set; } // Enable or disable 2FA
         public string PO_Edit_AMode { get; set; } // chế độ xác thực khi chỉnh PO NONE = ai cũng được chỉnh, Admin = chỉ admin mới chỉnh, 2FA = chỉ admin mới chỉnh và phải nhập mã 2FA, OTP = chỉ cần nhập mã 2FA của admin là được chỉnh
+        public bool TwoFA_Enabled_PO { get; set; } // Enable or disable 2FA for PO editing
 
         public override void SetDefault()
         {
@@ -235,6 +242,7 @@ namespace QR_MASAN_01
             Production_Mode = @"MFI"; // chạy dạng MFI , không chạy dạng PO
             TwoFA_Enabled = false; // Enable 2FA by default
             PO_Edit_AMode = "NONE"; // Default mode for editing PO
+            TwoFA_Enabled_PO = false; // Enable 2FA for PO editing by default
         }
     }
 

@@ -7,6 +7,7 @@ const typer = require('media-typer');
  * Middleware này sẽ:
  * - Đọc body dạng raw
  * - Loại bỏ các control character không hợp lệ (ASCII 0-31 trừ \t, \n, \r)
+ * - Thay thế 0x1D (GS) thành <GS>
  * - Parse JSON thủ công
  * - Gán vào req.body để tránh lỗi crash do JSON invalid
  */
@@ -24,10 +25,15 @@ module.exports = async function sanitizeBodyMiddleware(req, res, next) {
                     'utf-8',
             });
 
-            // Loại bỏ control characters không mong muốn:
-            // Thay thế: ASCII từ 0x00 đến 0x08, 0x0B, 0x0C, 0x0E đến 0x1F sang dạng {tên ký tự}
-            // Thay thế GS (Group Separator) 0x1D sang {GS} để tránh lỗi parse JSON
-            const cleaned = raw.replace(/\u001D/g, '<GS>');
+            // Thay thế các control character không mong muốn thành <CTRL_xx>
+            const cleaned = raw
+                // Thay GS (0x1D) trước để tách barcode
+                .replace(/\u001D/g, '<GS>')
+                // Thay toàn bộ ASCII 0-31 trừ \t(0x09), \n(0x0A), \r(0x0D)
+                .replace(/[\x00-\x08\x0B\x0C\x0E-\x1C\x1E\x1F]/g, (c) => {
+                    const code = c.charCodeAt(0).toString(16).padStart(2, '0').toUpperCase();
+                    return `<CTRL_${code}>`;
+                });
 
             // Parse JSON
             req.body = JSON.parse(cleaned);

@@ -34,7 +34,7 @@ namespace QR_MASAN_01
                 adapter.Fill(table);
                 // Thêm một dòng rỗng vào đầu danh sách
                 DataRow emptyRow = table.NewRow();
-                emptyRow["orderNo"] = "Select Order No"; // Hoặc để trống
+                emptyRow["orderNo"] = "Chọn orderNO"; // Hoặc để trống
                 table.Rows.InsertAt(emptyRow, 0);
                 // Thiết lập DataSource cho ComboBox
                 comboBox.DataSource = table;
@@ -111,7 +111,36 @@ namespace QR_MASAN_01
         {
             try
             {
-                string czRunPath = $"C:/.ABC/{DateTime.Now.ToString("MM-yy")}/{orderNo}.db";
+                //tạo thư mục nếu chưa tồn tại
+                string czRunPath = $"C:/.ABC/{orderNo}.db";
+                //kiểm xem folder C:/.ABC/MM-yy đã tồn tại chưa, nếu chưa thì tạo mới
+                string folderPath = $"C:/.ABC";
+                if (!System.IO.Directory.Exists(folderPath))
+                {
+                    System.IO.Directory.CreateDirectory(folderPath);
+                }
+                //kiểm tra xem file db đã tồn tại chưa, nếu chưa thì tạo mới
+                if (!System.IO.File.Exists(czRunPath))
+                {
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string createTableQuery = @"
+                        CREATE TABLE    ""UniqueCodes"" (
+	                                    ""ID""	INTEGER NOT NULL UNIQUE,
+	                                    ""Code""	TEXT NOT NULL UNIQUE,
+	                                    ""Status""	INTEGER NOT NULL DEFAULT 0,
+	                                    ""ActivateDate""	TEXT NOT NULL DEFAULT 0,
+	                                    ""ActivateUser""	TEXT NOT NULL DEFAULT 0,
+	                                    ""Timestamp""	TEXT NOT NULL DEFAULT 0,
+	                                    ""Timeunix""	INTEGER NOT NULL DEFAULT 0,
+	                                    PRIMARY KEY(""ID"" AUTOINCREMENT)
+                                    );";
+                        var command = new SQLiteCommand(createTableQuery, conn);
+                        command.ExecuteNonQuery();
+                    }
+                }
+
                 using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                 {
                     string query = "SELECT COUNT(*) FROM UniqueCodes";
@@ -127,7 +156,59 @@ namespace QR_MASAN_01
             }
         }
 
-        //lấy mã CZ đưa vào datatable
+        public DataTable GetUniqueCodesRun(string orderNo)
+        {
+            //tạo thư mục nếu chưa tồn tại
+            string czRunPath = $"C:/.ABC/{orderNo}.db";
+            //kiểm xem folder C:/.ABC/MM-yy đã tồn tại chưa, nếu chưa thì tạo mới
+            string folderPath = $"C:/.ABC";
+            if (!System.IO.Directory.Exists(folderPath))
+            {
+                System.IO.Directory.CreateDirectory(folderPath);
+            }
+            //kiểm tra xem file db đã tồn tại chưa, nếu chưa thì tạo mới
+            if (!System.IO.File.Exists(czRunPath))
+            {
+                using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                {
+                    conn.Open();
+                    string createTableQuery = @"
+                        CREATE TABLE    ""UniqueCodes"" (
+	                                    ""ID""	INTEGER NOT NULL UNIQUE,
+	                                    ""Code""	TEXT NOT NULL UNIQUE,
+	                                    ""Status""	INTEGER NOT NULL DEFAULT 0,
+	                                    ""ActivateDate""	TEXT NOT NULL DEFAULT 0,
+	                                    ""ActivateUser""	TEXT NOT NULL DEFAULT 0,
+	                                    ""Timestamp""	TEXT NOT NULL DEFAULT 0,
+	                                    ""Timeunix""	INTEGER NOT NULL DEFAULT 0,
+	                                    PRIMARY KEY(""ID"" AUTOINCREMENT)
+                                    );";
+                    var command = new SQLiteCommand(createTableQuery, conn);
+                    command.ExecuteNonQuery();
+                }
+
+                using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                {
+                    string query = "SELECT * FROM UniqueCodes";
+                    var adapter = new SQLiteDataAdapter(query, conn);
+                    var table = new DataTable();
+                    adapter.Fill(table);
+                    return table;
+                }
+            }
+            else
+            {
+                using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                {
+                    string query = "SELECT * FROM UniqueCodes";
+                    var adapter = new SQLiteDataAdapter(query, conn);
+                    var table = new DataTable();
+                    adapter.Fill(table);
+                    return table;
+                }
+            }
+        }
+
         public DataTable GetUniqueCodes(string orderNo)
         {
             string czpath = _codesPath + "/" + orderNo + ".db";
@@ -212,14 +293,33 @@ namespace QR_MASAN_01
                         command.ExecuteNonQuery();
                     }
                 }
+
+                //kiểm tra xem productionDate có khác với PO dùng lần cuối không, nếu khác thì cập nhật lại productionDate INSERT thêm dòng với action = UPDATE chứ không update
+                if (lastUsedPO["productionDate"].ToString() != productionDate)
+                {
+                    using (var conn = new SQLiteConnection($"Data Source={poPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string insertQuery = @"
+                            INSERT INTO PO (orderNO, productionDate, Action, UserName, Counter, Timestamp, Timeunix)
+                            VALUES (@orderNo, @productionDate, 'UPDATE', @UserName, '{}', @Timestamp, @Timeunix)";
+                        var command = new SQLiteCommand(insertQuery, conn);
+                        command.Parameters.AddWithValue("@orderNo", orderNo);
+                        command.Parameters.AddWithValue("@productionDate", productionDate);
+                        command.Parameters.AddWithValue("@UserName", Environment.UserName);
+                        command.Parameters.AddWithValue("@Timestamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"));
+                        command.Parameters.AddWithValue("@Timeunix", ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds());
+                        command.ExecuteNonQuery();
+                    }
+                }
             }
 
             //kiểm tra xem file db của mã CZ đã tồn tại hay chưa, nếu chưa thì tạo mới ở C:/.ABC/MM-yy/<orderNO>.db
             //Các thông tin bao gồm ID, orderNO, production_date (mặc định để null), uniqueCode, status (0 = chưa dùng, 1=Pass, -1 =Fail), activate_date (mặc định để null), activate_user (mặc định để null), timestamp, timeunix
             //tạo thư mục nếu chưa tồn tại
-            string czRunPath = $"C:/.ABC/{DateTime.Now.ToString("MM-yy")}/{orderNo}.db";
+            string czRunPath = $"C:/.ABC/{orderNo}.db";
             //kiểm xem folder C:/.ABC/MM-yy đã tồn tại chưa, nếu chưa thì tạo mới
-            string folderPath = $"C:/.ABC/{DateTime.Now.ToString("MM-yy")}";
+            string folderPath = $"C:/.ABC";
             if (!System.IO.Directory.Exists(folderPath))
             {
                 System.IO.Directory.CreateDirectory(folderPath);
@@ -235,8 +335,8 @@ namespace QR_MASAN_01
 	                                    ""ID""	INTEGER NOT NULL UNIQUE,
 	                                    ""Code""	TEXT NOT NULL UNIQUE,
 	                                    ""Status""	INTEGER NOT NULL DEFAULT 0,
-	                                    ""ActivateDate""	TEXT NOT NULL DEFAULT NULL,
-	                                    ""ActivateUser""	TEXT NOT NULL DEFAULT NULL,
+	                                    ""ActivateDate""	TEXT NOT NULL DEFAULT 0,
+	                                    ""ActivateUser""	TEXT NOT NULL DEFAULT 0,
 	                                    ""Timestamp""	TEXT NOT NULL DEFAULT 0,
 	                                    ""Timeunix""	INTEGER NOT NULL DEFAULT 0,
 	                                    PRIMARY KEY(""ID"" AUTOINCREMENT)
@@ -268,7 +368,7 @@ namespace QR_MASAN_01
 
             //so sánh 2 bảng UniqueCodes trong PO db và CZ run db, nếu có mã nào trong PO db mà không có trong CZ run db thì thêm vào CZ run db
             DataTable poUniqueCodes = GetUniqueCodes(orderNo);
-            DataTable czRunUniqueCodes = GetUniqueCodes(orderNo);
+            DataTable czRunUniqueCodes = GetUniqueCodesRun(orderNo);
             List<string> poCodes = poUniqueCodes.AsEnumerable().Select(row => row.Field<string>("Code")).ToList();
             List<string> czRunCodes = czRunUniqueCodes.AsEnumerable().Select(row => row.Field<string>("Code")).ToList();
             List<string> codesToAdd = poCodes.Except(czRunCodes).ToList();
@@ -289,7 +389,7 @@ namespace QR_MASAN_01
             }
 
             //Kiểm tra xem bảng ghi history tất cả các result của PO đã tồn tại hay chưa, nếu chưa thì tạo mới nếu chưa thì tạo mới ở C:/.ABC/MM-yy/Record_<orderNO>.db
-            string recordPath = $"C:/.ABC/{DateTime.Now.ToString("MM-yy")}/Record_{orderNo}.db";
+            string recordPath = $"C:/.ABC/Record_{orderNo}.db";
             if (!System.IO.File.Exists(recordPath))
             {
                 using (var conn = new SQLiteConnection($"Data Source={recordPath};Version=3;"))
@@ -300,8 +400,8 @@ namespace QR_MASAN_01
                             ID INTEGER PRIMARY KEY AUTOINCREMENT,
                             Code TEXT NOT NULL UNIQUE,
                             Status INTEGER DEFAULT 0,
-                            ActivateDate TEXT DEFAULT NULL,
-                            ActivateUser TEXT DEFAULT NULL,
+                            ActivateDate TEXT DEFAULT 0,
+                            ActivateUser TEXT DEFAULT 0,
                             Timestamp TEXT NOT NULL,
                             Timeunix INTEGER NOT NULL
                         );";

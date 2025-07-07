@@ -30,33 +30,37 @@ namespace Dialogs
         private void btnOK_Click(object sender, EventArgs e)
         {
             //xác thực mã 2FA
-
-            if (uiNumPadTextBox1.Text == string.Empty)
+            if (Setting.Current.TwoFA_Enabled_PO)
             {
-                Invoke(new Action(() => { this.ShowErrorTip("Vui lòng nhập mã xác thực"); }));
-                Message = "Vui lòng nhập mã xác thực";
-                // Kích hoạt sự kiện OkClicked
-                //OkClicked?.Invoke(this, EventArgs.Empty);
-                // Đóng form với kết quả OK
-                DialogResult = DialogResult.Cancel;
-                return;
-            }
-            else
-            {
-                bool isValid = TwoFAHelper.VerifyOTP(Globalvariable.CurrentUser.Key2FA, uiNumPadTextBox1.Text, digits: 6);
-                if (!isValid)
+                if (uiNumPadTextBox1.Text == string.Empty)
                 {
-                    Invoke(new Action(() => { this.ShowErrorTip("Mã xác thực không đúng"); }));
-                    Message = "Mã xác thực không đúng";
+                    Invoke(new Action(() => { this.ShowErrorTip("Vui lòng nhập mã xác thực"); }));
+                    Message = "Vui lòng nhập mã xác thực";
                     // Kích hoạt sự kiện OkClicked
-                    // OkClicked?.Invoke(this, EventArgs.Empty);
+                    //OkClicked?.Invoke(this, EventArgs.Empty);
                     // Đóng form với kết quả OK
                     DialogResult = DialogResult.Cancel;
                     return;
                 }
+                else
+                {
+
+                    bool isValid = TwoFAHelper.VerifyOTP(Globalvariable.CurrentUser.Key2FA, uiNumPadTextBox1.Text, digits: 6);
+                    if (!isValid)
+                    {
+                        Invoke(new Action(() => { this.ShowErrorTip("Mã xác thực không đúng"); }));
+                        Message = "Mã xác thực không đúng";
+                        // Kích hoạt sự kiện OkClicked
+                        // OkClicked?.Invoke(this, EventArgs.Empty);
+                        // Đóng form với kết quả OK
+                        DialogResult = DialogResult.Cancel;
+                        return;
+                    }
+                }
+
             }
             // Kích hoạt sự kiện OkClicked
-           // OkClicked?.Invoke(this, EventArgs.Empty);
+            // OkClicked?.Invoke(this, EventArgs.Empty);
             // Đóng form với kết quả OK
             DialogResult = DialogResult.OK;
 

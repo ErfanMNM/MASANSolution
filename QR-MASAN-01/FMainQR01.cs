@@ -79,7 +79,7 @@ namespace QR_MASAN_01
                 //đọc file sqlite đưa vào datatable
 
 
-                //using (var conn = new SQLiteConnection($@"Data Source=C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\codes\PO_003.db;Version=3;"))
+                //using (var conn = new SQLiteConnection($@"Data Source=C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\codes\08936086140878010725BMIP01.db;Version=3;"))
                 //{
                 //    string query = $@"SELECT ""_rowid_"",* FROM ""main"".""UniqueCodes""";
                 //    var adapter = new SQLiteDataAdapter(query, conn);

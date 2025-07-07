@@ -29,14 +29,22 @@
         private void InitializeComponent()
         {
             this.uiTitlePanel1 = new Sunny.UI.UITitlePanel();
-            this.uiSymbolButton1 = new Sunny.UI.UISymbolButton();
+            this.uiSymbolButton4 = new Sunny.UI.UISymbolButton();
+            this.uiSymbolButton3 = new Sunny.UI.UISymbolButton();
+            this.uiSymbolButton2 = new Sunny.UI.UISymbolButton();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.uiSymbolButton1 = new Sunny.UI.UISymbolButton();
+            this.uiListBox1 = new Sunny.UI.UIListBox();
             this.uiTitlePanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // uiTitlePanel1
             // 
+            this.uiTitlePanel1.Controls.Add(this.uiListBox1);
+            this.uiTitlePanel1.Controls.Add(this.uiSymbolButton4);
+            this.uiTitlePanel1.Controls.Add(this.uiSymbolButton3);
+            this.uiTitlePanel1.Controls.Add(this.uiSymbolButton2);
             this.uiTitlePanel1.Controls.Add(this.pictureBox1);
             this.uiTitlePanel1.Controls.Add(this.uiSymbolButton1);
             this.uiTitlePanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -53,26 +61,78 @@
             this.uiTitlePanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             this.uiTitlePanel1.TitleHeight = 45;
             // 
-            // uiSymbolButton1
+            // uiSymbolButton4
             // 
-            this.uiSymbolButton1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uiSymbolButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiSymbolButton1.Location = new System.Drawing.Point(370, 48);
-            this.uiSymbolButton1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiSymbolButton1.Name = "uiSymbolButton1";
-            this.uiSymbolButton1.Size = new System.Drawing.Size(139, 76);
-            this.uiSymbolButton1.TabIndex = 1;
-            this.uiSymbolButton1.Text = "Sinh mã 2FA";
-            this.uiSymbolButton1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.uiSymbolButton1.Click += new System.EventHandler(this.uiSymbolButton1_Click);
+            this.uiSymbolButton4.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton4.Location = new System.Drawing.Point(570, 103);
+            this.uiSymbolButton4.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton4.Name = "uiSymbolButton4";
+            this.uiSymbolButton4.Size = new System.Drawing.Size(162, 49);
+            this.uiSymbolButton4.TabIndex = 5;
+            this.uiSymbolButton4.Text = "MQTT Pub";
+            this.uiSymbolButton4.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            // 
+            // uiSymbolButton3
+            // 
+            this.uiSymbolButton3.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton3.Location = new System.Drawing.Point(570, 48);
+            this.uiSymbolButton3.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton3.Name = "uiSymbolButton3";
+            this.uiSymbolButton3.Size = new System.Drawing.Size(162, 49);
+            this.uiSymbolButton3.TabIndex = 4;
+            this.uiSymbolButton3.Text = "MQTT Sub";
+            this.uiSymbolButton3.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.uiSymbolButton3.Click += new System.EventHandler(this.uiSymbolButton3_Click);
+            // 
+            // uiSymbolButton2
+            // 
+            this.uiSymbolButton2.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton2.Location = new System.Drawing.Point(402, 48);
+            this.uiSymbolButton2.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton2.Name = "uiSymbolButton2";
+            this.uiSymbolButton2.Size = new System.Drawing.Size(162, 49);
+            this.uiSymbolButton2.TabIndex = 3;
+            this.uiSymbolButton2.Text = "MQTT Connect";
+            this.uiSymbolButton2.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             // 
             // pictureBox1
             // 
             this.pictureBox1.Location = new System.Drawing.Point(4, 48);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(360, 270);
+            this.pictureBox1.Size = new System.Drawing.Size(257, 244);
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
+            // 
+            // uiSymbolButton1
+            // 
+            this.uiSymbolButton1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton1.Location = new System.Drawing.Point(267, 48);
+            this.uiSymbolButton1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton1.Name = "uiSymbolButton1";
+            this.uiSymbolButton1.Size = new System.Drawing.Size(129, 49);
+            this.uiSymbolButton1.TabIndex = 1;
+            this.uiSymbolButton1.Text = "Sinh mã 2FA";
+            this.uiSymbolButton1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.uiSymbolButton1.Click += new System.EventHandler(this.uiSymbolButton1_Click);
+            // 
+            // uiListBox1
+            // 
+            this.uiListBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiListBox1.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
+            this.uiListBox1.ItemSelectForeColor = System.Drawing.Color.White;
+            this.uiListBox1.Location = new System.Drawing.Point(5, 300);
+            this.uiListBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiListBox1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiListBox1.Name = "uiListBox1";
+            this.uiListBox1.Padding = new System.Windows.Forms.Padding(2);
+            this.uiListBox1.ShowText = false;
+            this.uiListBox1.Size = new System.Drawing.Size(858, 343);
+            this.uiListBox1.TabIndex = 6;
+            this.uiListBox1.Text = "uiListBox1";
             // 
             // FormTest
             // 
@@ -93,5 +153,9 @@
         private Sunny.UI.UITitlePanel uiTitlePanel1;
         private Sunny.UI.UISymbolButton uiSymbolButton1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private Sunny.UI.UISymbolButton uiSymbolButton4;
+        private Sunny.UI.UISymbolButton uiSymbolButton3;
+        private Sunny.UI.UISymbolButton uiSymbolButton2;
+        private Sunny.UI.UIListBox uiListBox1;
     }
 }

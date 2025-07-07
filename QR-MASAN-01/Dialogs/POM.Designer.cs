@@ -71,7 +71,7 @@
             this.uiRichTextBox1.Padding = new System.Windows.Forms.Padding(2);
             this.uiRichTextBox1.ReadOnly = true;
             this.uiRichTextBox1.ShowText = false;
-            this.uiRichTextBox1.Size = new System.Drawing.Size(596, 200);
+            this.uiRichTextBox1.Size = new System.Drawing.Size(596, 202);
             this.uiRichTextBox1.TabIndex = 4;
             this.uiRichTextBox1.Text = "Bạn có chắc chắn thay đổi thông tin PO?  \nHệ thống sẽ dừng khi đang chỉnh thông t" +
     "in!\nVui lòng nhập mã xác thực và nhấn Đồng Ý.";
@@ -90,7 +90,7 @@
             this.uiNumPadTextBox1.Name = "uiNumPadTextBox1";
             this.uiNumPadTextBox1.NumPadType = Sunny.UI.NumPadType.Integer;
             this.uiNumPadTextBox1.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
-            this.uiNumPadTextBox1.Size = new System.Drawing.Size(266, 49);
+            this.uiNumPadTextBox1.Size = new System.Drawing.Size(206, 49);
             this.uiNumPadTextBox1.SymbolDropDown = 557532;
             this.uiNumPadTextBox1.SymbolNormal = 557532;
             this.uiNumPadTextBox1.SymbolSize = 24;
@@ -102,10 +102,10 @@
             // 
             this.btnOK.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnOK.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnOK.Location = new System.Drawing.Point(492, 265);
+            this.btnOK.Location = new System.Drawing.Point(431, 265);
             this.btnOK.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(110, 51);
+            this.btnOK.Size = new System.Drawing.Size(170, 51);
             this.btnOK.Symbol = 61452;
             this.btnOK.TabIndex = 2;
             this.btnOK.Text = "Đồng Ý";
@@ -117,10 +117,10 @@
             this.btnCancel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnCancel.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnCancel.Location = new System.Drawing.Point(391, 265);
+            this.btnCancel.Location = new System.Drawing.Point(331, 265);
             this.btnCancel.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(95, 51);
+            this.btnCancel.Size = new System.Drawing.Size(94, 51);
             this.btnCancel.Symbol = 61453;
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Thoát";

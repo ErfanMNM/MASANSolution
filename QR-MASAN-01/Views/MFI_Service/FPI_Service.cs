@@ -20,19 +20,25 @@ namespace QR_MASAN_01.Views.MFI_Service
         }
 
         public POService poService = new POService("C:/Users/THUC/source/repos/ErfanMNM/MASANSolution/Server_Service/po.db");
-        
+
         public void INIT()
         {
             poService.CheckPOLog();
             poService.LoadOrderNoToComboBox(ipOrderNO);
-            
+
             //lấy PO dùng trước đó
             DataRow lastPO = poService.GetLastUsedPO();
             string lastPOs = lastPO["orderNO"].ToString();
             if (lastPO != null)
             {
+                //bool found = ipOrderNO.Items.Cast<object>().Any(item => item.ToString() == lastPOs);
+                bool found = ipOrderNO.Items.Cast<DataRowView>().Any(item =>
+    item["orderNO"].ToString() == lastPOs);
+
                 //nếu không có trong cbb thì chọn dòng 1
-                if (!ipOrderNO.Items.Contains(lastPO["orderNO"].ToString()))
+                //kiểm tra ipOrderNO có chứa giá trị của lastPOs hay không
+
+                if (!found)
                 {
                     ipOrderNO.SelectedIndex = 0; // Chọn dòng đầu tiên (dòng rỗng)
                 }
@@ -41,13 +47,13 @@ namespace QR_MASAN_01.Views.MFI_Service
                     ipOrderNO.SelectedValue = lastPO["orderNO"].ToString();
                     ipProductionDate.Text = lastPO["productionDate"].ToString();
                 }
-                
+
             }
             else
             {
                 ipOrderNO.SelectedIndex = 0; // Chọn dòng đầu tiên (dòng rỗng) 
             }
-            
+
             //61508
             btnPO.Text = "Chỉnh thông tin";
             btnPO.Symbol = 61508; // Thay đổi biểu tượng của nút btnPO
@@ -60,6 +66,8 @@ namespace QR_MASAN_01.Views.MFI_Service
                 Globalvariable.Seleted_PO_Data = poService.GetPOByOrderNo(ipOrderNO.SelectedText);
                 if (Globalvariable.Seleted_PO_Data.Rows.Count > 0)
                 {
+                    //opCZCodeActiveCount.Text = poService.GetCZRunCount(Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString()).ToString();
+                    opCZCodeActiveCount.Text = Globalvariable.Product_Active_Count.ToString(); // Sử dụng biến toàn cục Product_Active_Count
                     opProductionLine.Text = Globalvariable.Seleted_PO_Data.Rows[0]["productionLine"].ToString();
                     opOrderQty.Text = Globalvariable.Seleted_PO_Data.Rows[0]["orderQty"].ToString();
                     opCustomerOrderNO.Text = Globalvariable.Seleted_PO_Data.Rows[0]["customerOrderNo"].ToString();
@@ -72,7 +80,6 @@ namespace QR_MASAN_01.Views.MFI_Service
                     opSite.Text = Globalvariable.Seleted_PO_Data.Rows[0]["site"].ToString();
                     opCZCodeCount.Text = Globalvariable.Seleted_PO_Data.Rows[0]["UniqueCodeCount"].ToString();
                 }
-                //
                 else
                 {
                     opProductionLine.Text = string.Empty;
@@ -100,14 +107,26 @@ namespace QR_MASAN_01.Views.MFI_Service
                 {
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
+                        //if()
                         btnPO.Text = "Lưu thông tin";
                         btnPO.Symbol = 61468; // Thay đổi biểu tượng của nút btnPO
                         Globalvariable.PI_Status = e_PI_Status.EDITING; // Đặt trạng thái là đang chỉnh sửa
-                                                                        //load lại dữ liệu PO
-                        poService.LoadOrderNoToComboBox(ipOrderNO);
-                        ipOrderNO.SelectedIndex = 0; // Chọn dòng đầu tiên (dòng rỗng)
-                        ipOrderNO.ReadOnly = false; //cho phép chỉnh sửa
-                        ipProductionDate.ReadOnly = false; //cho phép chỉnh sửa
+                        if(Globalvariable.Product_Active_Count < Globalvariable.Seleted_PO_Data.Rows[0]["orderQty"].ToString().ToInt())
+                        {
+                            //this.ShowErrorTip("Số lượng sản phẩm đã kích hoạt không đủ để chỉnh sửa PO.");
+                            //poService.LoadOrderNoToComboBox(ipOrderNO);
+                            //ipOrderNO.SelectedIndex = 0; // Chọn dòng đầu tiên (dòng rỗng)
+                            //ipOrderNO.ReadOnly = true; //cho phép chỉnh sửa
+                            ipProductionDate.ReadOnly = false; //cho phép chỉnh sửa
+                        }
+                        else
+                        {
+                            poService.LoadOrderNoToComboBox(ipOrderNO);
+                            ipOrderNO.SelectedIndex = 0; // Chọn dòng đầu tiên (dòng rỗng)
+                            ipOrderNO.ReadOnly = true; //cho phép chỉnh sửa
+                            ipProductionDate.ReadOnly = false; //cho phép chỉnh sửa
+                        }
+                        
                     }
                     else
                     {
@@ -127,6 +146,11 @@ namespace QR_MASAN_01.Views.MFI_Service
             }
             else
             {
+                if (ipOrderNO.Text == string.Empty || ipProductionDate.Text == string.Empty || ipOrderNO.Text == "Chọn orderNO")
+                {
+                    this.ShowErrorTip("Vui lòng nhập đầy đủ thông tin Order No và Production Date.");
+                    return;
+                }
 
                 // Cập nhật dữ liệu PO
                 poService.CreateRunPO(ipOrderNO.Text, ipProductionDate.Text);
@@ -144,8 +168,13 @@ namespace QR_MASAN_01.Views.MFI_Service
                 btnPO.Text = "Chỉnh thông tin";
                 btnPO.Symbol = 61508; // Thay đổi biểu tượng của nút btnPO
             }
-            
-            
+
+
+        }
+
+        private void uiSymbolButton1_Click(object sender, EventArgs e)
+        {
+            //opCZCodeActiveCount.Text = poService.GetCZRunCount(Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString()).ToString();
         }
     }
 }

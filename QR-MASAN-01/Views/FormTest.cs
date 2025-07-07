@@ -56,5 +56,10 @@ namespace QR_MASAN_01.Views
             };
             return writer.Write(text);
         }
+
+        private void uiSymbolButton3_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
