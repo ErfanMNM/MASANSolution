@@ -477,4 +477,78 @@ namespace QR_MASAN_01
 
     }
 
+    public class MES_PO
+    {
+        private string mesdbpath;
+        private string _codesPath;
+
+        public MES_PO(string dbPath = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\po.db", string CodesPath = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\codes")
+        {
+            mesdbpath = dbPath;
+            _codesPath = CodesPath;
+        }
+
+        //lấy danh sách tất cả PO mà mes đã gửi
+        public DataTable Get_MES_PO_List()
+        {
+            using (var conn = new SQLiteConnection($"Data Source={mesdbpath};Version=3;"))
+            {
+                string query = "SELECT * FROM po_records ORDER BY orderNo";
+                var adapter = new SQLiteDataAdapter(query, conn);
+                var table = new DataTable();
+                adapter.Fill(table);
+                return table;
+            }
+        }
+
+        //lấy số lượng mã CZ trong PO
+        public int Get_UniqueCode_MES_Count(string orderNo)
+        {
+            try
+            {
+                string czpath = _codesPath + "/" + orderNo + ".db";
+                using (var conn = new SQLiteConnection($"Data Source={czpath};Version=3;"))
+                {
+                    string query = "SELECT COUNT(*) FROM UniqueCodes";
+                    var command = new SQLiteCommand(query, conn);
+                    command.Parameters.AddWithValue("@orderNo", orderNo);
+                    conn.Open();
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    return count;
+                }
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
+        //lấy danh sách mã CZ trong PO trả về datatable
+        public DataTable Get_UniqueCodes_MES(string orderNo)
+        {
+            string czpath = _codesPath + "/" + orderNo + ".db";
+            using (var conn = new SQLiteConnection($"Data Source={czpath};Version=3;"))
+            {
+                string query = "SELECT * FROM UniqueCodes";
+                var adapter = new SQLiteDataAdapter(query, conn);
+                var table = new DataTable();
+                adapter.Fill(table);
+                return table;
+            }
+        }
+
+        //lấy thông tin PO theo orderNo
+        public DataTable Get_MES_PO_Info(string orderNo)
+        {
+            using (var conn = new SQLiteConnection($"Data Source={mesdbpath};Version=3;"))
+            {
+                string query = "SELECT * FROM POInfo WHERE orderNo = @orderNo";
+                var adapter = new SQLiteDataAdapter(query, conn);
+                adapter.SelectCommand.Parameters.AddWithValue("@orderNo", orderNo);
+                var table = new DataTable();
+                adapter.Fill(table);
+                return table;
+            }
+        }
+    }
 }
