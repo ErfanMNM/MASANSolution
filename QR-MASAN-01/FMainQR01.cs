@@ -44,13 +44,14 @@ namespace QR_MASAN_01
         FPI_Service fPI_Service = new FPI_Service();
         //FDashboard_XK FDashboard_XK = new FDashboard_XK();
         FormTest fTest = new FormTest();
+        FAppSetting fAppSetting = new FAppSetting();
 
         public static e_Render_State Render_State = e_Render_State.LOGIN;
         public static e_App_State App_State = e_App_State.LOGIN;
         public FMainQR01()
         {
             //khởi động phần mềm
-            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_EVENT, "Phần mềm khởi động", "System", "Bắt đầu khởi động");
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_EVENT, "Phần mềm khởi động", "System", "Bắt đầu khởi động");
             SystemLogs.LogQueue.Enqueue(systemLogs);
 
             try
@@ -75,7 +76,7 @@ namespace QR_MASAN_01
                             );
                 //load Setting
                 Setting.Current.Load();
-
+                //Setting.Current.Save();
                 //đọc file sqlite đưa vào datatable
 
 
@@ -91,7 +92,7 @@ namespace QR_MASAN_01
             catch (Exception ex)
             {
                 // Ghi log lỗi vào hàng đợi
-                SystemLogs.LogQueue.Enqueue(new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi khởi động phần mềm", "System", ex.Message));
+                SystemLogs.LogQueue.Enqueue(new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi khởi động phần mềm", "System", ex.Message));
                 // Hiển thị thông báo lỗi cho người dùng
                 this.ShowErrorDialog("Lỗi khởi động phần mềm", ex.Message, UIStyle.Red);
             }
@@ -101,7 +102,7 @@ namespace QR_MASAN_01
         private void btnAppClose_Click(object sender, EventArgs e)
         {
             // Ghi log sự kiện đóng ứng dụng
-            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_EVENT, "Đóng ứng dụng", "System", "Người dùng đã đóng ứng dụng");
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_EVENT, "Đóng ứng dụng", "System", "Người dùng đã đóng ứng dụng");
             SystemLogs.LogQueue.Enqueue(systemLogs);
             ClockWK.CancelAsync();
             
@@ -120,8 +121,10 @@ namespace QR_MASAN_01
             uiNavMenu1.CreateNode(AddPage(_f1PLC, 1009));
             uiNavMenu1.CreateNode(AddPage(_FStatistics, 1002));
             uiNavMenu1.CreateNode(AddPage(FSystemlogs, 1005));
+            uiNavMenu1.CreateNode(AddPage(fAppSetting, 1008)); // Thêm trang Cài đặt ứng dụng
             uiNavMenu1.CreateNode(AddPage(loginForm, 1999));
             uiNavMenu1.CreateNode(AddPage(deActive, 1998));
+
             uiNavMenu1.SelectPage(1999); //chọn trang Dashboard mặc định
             uiNavMenu1.Nodes[uiNavMenu1.Nodes.Count - 1].Remove();
 
@@ -135,6 +138,7 @@ namespace QR_MASAN_01
             //_FMFI.FMFI_INIT();
             scanQR.INIT();
             fPI_Service.INIT();
+            fAppSetting.FAppSetting_Load();
 
             //kiểm soát máy in
 
@@ -210,7 +214,7 @@ namespace QR_MASAN_01
                     if (demso > 10)
                     {
                         //ghi log lỗi
-                        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi kết nối Internet", "System", "Không thể kết nối Internet trong 10 giây");
+                        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi kết nối Internet", "System", "Không thể kết nối Internet trong 10 giây");
                         SystemLogs.LogQueue.Enqueue(systemLogs);
                         demso = 0;
                         lblInternet.Text = "Internet: Lỗi";
@@ -507,7 +511,7 @@ namespace QR_MASAN_01
                     {
                         logs = 0;
                         //ghi log lỗi
-                        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi kết nối máy in laser", "System", ex.Message);
+                        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi kết nối máy in laser", "System", ex.Message);
                         SystemLogs.LogQueue.Enqueue(systemLogs);
                     }
                     
@@ -541,7 +545,7 @@ namespace QR_MASAN_01
             {
 
                 //ghi nhận log người dùng nhấn nút dừng kiểm
-                SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_LogType.USER_ACTION, "Người dùng nhấn nút Dừng Kiểm", Globalvariable.CurrentUser.Username, "Người dùng nhấn nút Dừng Kiểm");
+                SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_LogType.USER_ACTION, "Người dùng nhấn nút Dừng Kiểm", Globalvariable.CurrentUser.Username, "Người dùng nhấn nút Dừng Kiểm");
                 LogQueue.Enqueue(systemLogs);
                 this.ShowInfoTip("Đã gửi sự kiện, vui lòng chờ. Nếu quá lâu có thể nhấn lại");
                 //gửi xuống PLC

@@ -34,7 +34,9 @@
             this.btnOK = new Sunny.UI.UISymbolButton();
             this.btnCancel = new Sunny.UI.UISymbolButton();
             this.pnConnect = new Sunny.UI.UIPanel();
+            this.uiSymbolLabel1 = new Sunny.UI.UISymbolLabel();
             this.uiTitlePanel1.SuspendLayout();
+            this.pnConnect.SuspendLayout();
             this.SuspendLayout();
             // 
             // uiTitlePanel1
@@ -82,7 +84,7 @@
             this.uiNumPadTextBox1.DecimalPlaces = 0;
             this.uiNumPadTextBox1.FillColor = System.Drawing.Color.White;
             this.uiNumPadTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiNumPadTextBox1.Location = new System.Drawing.Point(118, 265);
+            this.uiNumPadTextBox1.Location = new System.Drawing.Point(148, 265);
             this.uiNumPadTextBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.uiNumPadTextBox1.Maximum = 999999D;
             this.uiNumPadTextBox1.Minimum = 0D;
@@ -90,7 +92,7 @@
             this.uiNumPadTextBox1.Name = "uiNumPadTextBox1";
             this.uiNumPadTextBox1.NumPadType = Sunny.UI.NumPadType.Integer;
             this.uiNumPadTextBox1.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
-            this.uiNumPadTextBox1.Size = new System.Drawing.Size(206, 49);
+            this.uiNumPadTextBox1.Size = new System.Drawing.Size(176, 49);
             this.uiNumPadTextBox1.SymbolDropDown = 557532;
             this.uiNumPadTextBox1.SymbolNormal = 557532;
             this.uiNumPadTextBox1.SymbolSize = 24;
@@ -101,6 +103,7 @@
             // btnOK
             // 
             this.btnOK.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnOK.FillColor = System.Drawing.Color.Green;
             this.btnOK.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.btnOK.Location = new System.Drawing.Point(431, 265);
             this.btnOK.MinimumSize = new System.Drawing.Size(1, 1);
@@ -129,15 +132,29 @@
             // 
             // pnConnect
             // 
+            this.pnConnect.Controls.Add(this.uiSymbolLabel1);
             this.pnConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.pnConnect.Location = new System.Drawing.Point(5, 265);
             this.pnConnect.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pnConnect.MinimumSize = new System.Drawing.Size(1, 1);
             this.pnConnect.Name = "pnConnect";
-            this.pnConnect.Size = new System.Drawing.Size(105, 49);
+            this.pnConnect.Size = new System.Drawing.Size(144, 49);
             this.pnConnect.TabIndex = 0;
-            this.pnConnect.Text = "Mã xác thực";
             this.pnConnect.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiSymbolLabel1
+            // 
+            this.uiSymbolLabel1.BackColor = System.Drawing.Color.Transparent;
+            this.uiSymbolLabel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiSymbolLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolLabel1.Location = new System.Drawing.Point(0, 0);
+            this.uiSymbolLabel1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolLabel1.Name = "uiSymbolLabel1";
+            this.uiSymbolLabel1.Size = new System.Drawing.Size(144, 49);
+            this.uiSymbolLabel1.Symbol = 57454;
+            this.uiSymbolLabel1.SymbolSize = 30;
+            this.uiSymbolLabel1.TabIndex = 0;
+            this.uiSymbolLabel1.Text = "Mã xác thực";
             // 
             // Pom_dialog
             // 
@@ -146,8 +163,10 @@
             this.Controls.Add(this.uiTitlePanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Pom_dialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "THÔNG BÁO";
             this.uiTitlePanel1.ResumeLayout(false);
+            this.pnConnect.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -160,5 +179,6 @@
         private Sunny.UI.UISymbolButton btnCancel;
         private Sunny.UI.UIRichTextBox uiRichTextBox1;
         private Sunny.UI.UINumPadTextBox uiNumPadTextBox1;
+        private Sunny.UI.UISymbolLabel uiSymbolLabel1;
     }
 }

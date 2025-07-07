@@ -21,7 +21,7 @@ namespace QR_MASAN_01
             LOGIN,
             SYSTEM_EVENT,
             SAVE_LOG_EXPORT,
-            MFI,
+            PO,
             CAMERA_ERROR,
             PLC_ERROR,
             SERVER,
@@ -391,20 +391,22 @@ namespace QR_MASAN_01
         }
     }
 
+    //production logs
+    //sử dụng để ghi lại các sự kiện liên quan đến sản xuất, như số lượng sản phẩm đã sản xuất, thời gian sản xuất, v.v.
 
     public class ProductionLogs
     {
         public string TimeStampSelected { get; set; } // Thời gian xảy ra sự kiện, định dạng ISO 8601
         public long TimeUnixSelected { get; set; } // Thời gian Unix (số giây kể từ 01/01/1970)
-        public string orderNO { get; set; }
-        public string uniqueCode { get; set; }
-        public string factory { get; set; }
-        public string site { get; set; }
-        public string productionLine { get; set; }
-        public string productionDate { get; set; }
-        public string shift { get; set; }
-        public int productionOutput { get; set; }
-        public int expectedOutput { get; set; }
+        public string orderNO { get; set; } // Số đơn hàng sản xuất
+        public string uniqueCode { get; set; } // Mã duy nhất của sản phẩm hoặc lô hàng
+        public string factory { get; set; } // Nhà máy sản xuất
+        public string site { get; set; } // Địa điểm sản xuất (có thể là nhà máy hoặc khu vực cụ thể)
+        public string productionLine { get; set; } // Dây chuyền sản xuất cụ thể
+        public string productionDate { get; set; }// Ngày sản xuất (có thể là ngày bắt đầu hoặc ngày kết thúc của quá trình sản xuất)
+        public string shift { get; set; }// Ca làm việc liên quan đến sản xuất (ví dụ: ca sáng, ca chiều, ca đêm)
+        public int productionOutput { get; set; }// Số lượng sản phẩm đã sản xuất trong ca làm việc hoặc trong khoảng thời gian cụ thể
+        public int orderQty { get; set; } // Số lượng sản phẩm dự kiến sẽ được sản xuất trong ca làm việc hoặc trong khoảng thời gian cụ thể
         public string User { get; set; } // Người dùng thực hiện hành động, nếu có
         public string Details { get; set; } // Thông tin chi tiết về sự kiện hoặc lỗi
 
@@ -431,7 +433,7 @@ namespace QR_MASAN_01
             this.productionLine = productionLine;
             this.productionDate = productionDate;
             this.productionOutput = productionOutput;
-            this.expectedOutput = expectedOutput;
+            this.orderQty = expectedOutput;
             User = user;
             Details = details;
         }
@@ -500,7 +502,7 @@ namespace QR_MASAN_01
                     command.Parameters.AddWithValue("@productionDate", log.productionDate);
                     command.Parameters.AddWithValue("@shift", log.shift);
                     command.Parameters.AddWithValue("@productionOutput", log.productionOutput);
-                    command.Parameters.AddWithValue("@expectedOutput", log.expectedOutput);
+                    command.Parameters.AddWithValue("@expectedOutput", log.orderQty);
                     command.Parameters.AddWithValue("@User", log.User ?? (object)DBNull.Value);
                     command.Parameters.AddWithValue("@Details", log.Details ?? (object)DBNull.Value);
                     command.ExecuteNonQuery();

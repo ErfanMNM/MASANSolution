@@ -1,6 +1,4 @@
-﻿using DocumentFormat.OpenXml.Bibliography;
-using DocumentFormat.OpenXml.Spreadsheet;
-using Sunny.UI;
+﻿using Sunny.UI;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -14,18 +12,19 @@ namespace QR_MASAN_01
 {
     public class POService
     {
-        private string _connectionString;
-        private string _codesPath;
+        private string _connectionString_PO_MES;
+        private string _codes_Path_CZ_DB_MES;
 
-        public POService(string dbPath = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\po.db", string CodesPath = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\codes")
+        public POService(string dbPath_PO_MES = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\po.db", string codes_Path_CZ_DB_MES = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\codes")
         {
-            _connectionString = $"Data Source={dbPath};Version=3;";
-            _codesPath = CodesPath;
+            _connectionString_PO_MES = $"Data Source={dbPath_PO_MES};Version=3;";
+            _codes_Path_CZ_DB_MES = codes_Path_CZ_DB_MES;
         }
 
-        public void LoadOrderNoToComboBox(UIComboBox comboBox)
+        //Đẩy danh sách orderNo từ POInfo của MES vào ComboBox
+        public void MES_Load_OrderNo_ToComboBox(UIComboBox comboBox)
         {
-            using (var conn = new SQLiteConnection(_connectionString))
+            using (var conn = new SQLiteConnection(_connectionString_PO_MES))
             {
                 string query = "SELECT DISTINCT orderNo FROM POInfo ORDER BY orderNo";
                 var adapter = new SQLiteDataAdapter(query, conn);
@@ -43,10 +42,10 @@ namespace QR_MASAN_01
             }
         }
 
-        //lấy danh sách PO trả về dataTable
-        public DataTable GetPOList()
+        //lấy danh sách PO MES trả về dataTable
+        public DataTable MES_Get_PO_List()
         {
-            using (var conn = new SQLiteConnection(_connectionString))
+            using (var conn = new SQLiteConnection(_connectionString_PO_MES))
             {
                 string query = "SELECT * FROM po_records ORDER BY orderNo";
                 var adapter = new SQLiteDataAdapter(query, conn);
@@ -56,9 +55,10 @@ namespace QR_MASAN_01
             }
         }
 
-        public DataTable GetPOByOrderNo(string orderNo)
+        //lấy thông tin PO theo orderNo từ MES trả về dataTable
+        public DataTable Get_PO_Info_By_OrderNo(string orderNo)
         {
-            using (var conn = new SQLiteConnection(_connectionString))
+            using (var conn = new SQLiteConnection(_connectionString_PO_MES))
             {
                 string query = "SELECT * FROM POInfo WHERE orderNo = @orderNo";
                 var adapter = new SQLiteDataAdapter(query, conn);
@@ -72,7 +72,7 @@ namespace QR_MASAN_01
 
                 table.Columns.Add("UniqueCodeCount", typeof(int));
                 //lấy số mã CZ trong thư mục _codesPath/<orderNo>.db
-                int uniqueCodeCount = GetUniqueCodeCount(orderNo);
+                int uniqueCodeCount = Get_Unique_Code_MES_Count(orderNo);
                 //cập nhật số mã CZ vào cột UniqueCodeCount
                 foreach (DataRow row in table.Rows)
                 {
@@ -84,11 +84,11 @@ namespace QR_MASAN_01
         }
 
         //lấy số count mã CZ nằm trong thư mục _codesPath/<orderNo>.db SELECT COUNT(*) FROM `UniqueCodes`;
-        public int GetUniqueCodeCount(string orderNo)
+        public int Get_Unique_Code_MES_Count(string orderNo)
         {
             try
             {
-                string czpath = _codesPath + "/" + orderNo + ".db";
+                string czpath = _codes_Path_CZ_DB_MES + "/" + orderNo + ".db";
                 using (var conn = new SQLiteConnection($"Data Source={czpath};Version=3;"))
                 {
                     string query = "SELECT COUNT(*) FROM UniqueCodes";
@@ -107,86 +107,27 @@ namespace QR_MASAN_01
         }
 
         //lấy số count mã czRun nằm trong thư mục C:/.ABC/MM-yy/<orderNo>.db SELECT COUNT(*) FROM `UniqueCodes`;
-        public int GetCZRunCount(string orderNo)
+        public int Get_CZRun_Count(string orderNo)
         {
-            try
-            {
-                //tạo thư mục nếu chưa tồn tại
-                string czRunPath = $"C:/.ABC/{orderNo}.db";
-                //kiểm xem folder C:/.ABC/MM-yy đã tồn tại chưa, nếu chưa thì tạo mới
-                string folderPath = $"C:/.ABC";
-                if (!System.IO.Directory.Exists(folderPath))
-                {
-                    System.IO.Directory.CreateDirectory(folderPath);
-                }
-                //kiểm tra xem file db đã tồn tại chưa, nếu chưa thì tạo mới
-                if (!System.IO.File.Exists(czRunPath))
-                {
-                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
-                    {
-                        conn.Open();
-                        string createTableQuery = @"
-                        CREATE TABLE    ""UniqueCodes"" (
-	                                    ""ID""	INTEGER NOT NULL UNIQUE,
-	                                    ""Code""	TEXT NOT NULL UNIQUE,
-	                                    ""Status""	INTEGER NOT NULL DEFAULT 0,
-	                                    ""ActivateDate""	TEXT NOT NULL DEFAULT 0,
-	                                    ""ActivateUser""	TEXT NOT NULL DEFAULT 0,
-	                                    ""Timestamp""	TEXT NOT NULL DEFAULT 0,
-	                                    ""Timeunix""	INTEGER NOT NULL DEFAULT 0,
-	                                    PRIMARY KEY(""ID"" AUTOINCREMENT)
-                                    );";
-                        var command = new SQLiteCommand(createTableQuery, conn);
-                        command.ExecuteNonQuery();
-                    }
-                }
 
-                using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
-                {
-                    string query = "SELECT COUNT(*) FROM UniqueCodes";
-                    var command = new SQLiteCommand(query, conn);
-                    conn.Open();
-                    int count = Convert.ToInt32(command.ExecuteScalar());
-                    return count;
-                }
-            }
-            catch
+            //tạo thư mục nếu chưa tồn tại
+            string czRunPath = $"C:/.ABC/{orderNo}.db";
+            using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
             {
-                return 0;
+                string query = "SELECT COUNT(*) FROM UniqueCodes";
+                var command = new SQLiteCommand(query, conn);
+                conn.Open();
+                int count = Convert.ToInt32(command.ExecuteScalar());
+                return count;
             }
+
         }
 
-        public DataTable GetUniqueCodesRun(string orderNo)
+        public DataTable Get_Unique_Codes_Run(string orderNo)
         {
             //tạo thư mục nếu chưa tồn tại
             string czRunPath = $"C:/.ABC/{orderNo}.db";
-            //kiểm xem folder C:/.ABC/MM-yy đã tồn tại chưa, nếu chưa thì tạo mới
-            string folderPath = $"C:/.ABC";
-            if (!System.IO.Directory.Exists(folderPath))
-            {
-                System.IO.Directory.CreateDirectory(folderPath);
-            }
-            //kiểm tra xem file db đã tồn tại chưa, nếu chưa thì tạo mới
-            if (!System.IO.File.Exists(czRunPath))
-            {
-                using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
-                {
-                    conn.Open();
-                    string createTableQuery = @"
-                        CREATE TABLE    ""UniqueCodes"" (
-	                                    ""ID""	INTEGER NOT NULL UNIQUE,
-	                                    ""Code""	TEXT NOT NULL UNIQUE,
-	                                    ""Status""	INTEGER NOT NULL DEFAULT 0,
-	                                    ""ActivateDate""	TEXT NOT NULL DEFAULT 0,
-	                                    ""ActivateUser""	TEXT NOT NULL DEFAULT 0,
-	                                    ""Timestamp""	TEXT NOT NULL DEFAULT 0,
-	                                    ""Timeunix""	INTEGER NOT NULL DEFAULT 0,
-	                                    PRIMARY KEY(""ID"" AUTOINCREMENT)
-                                    );";
-                    var command = new SQLiteCommand(createTableQuery, conn);
-                    command.ExecuteNonQuery();
-                }
-
+           
                 using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                 {
                     string query = "SELECT * FROM UniqueCodes";
@@ -195,23 +136,11 @@ namespace QR_MASAN_01
                     adapter.Fill(table);
                     return table;
                 }
-            }
-            else
-            {
-                using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
-                {
-                    string query = "SELECT * FROM UniqueCodes";
-                    var adapter = new SQLiteDataAdapter(query, conn);
-                    var table = new DataTable();
-                    adapter.Fill(table);
-                    return table;
-                }
-            }
         }
 
-        public DataTable GetUniqueCodes(string orderNo)
+        public DataTable Get_Unique_Codes_MES(string orderNo)
         {
-            string czpath = _codesPath + "/" + orderNo + ".db";
+            string czpath = _codes_Path_CZ_DB_MES + "/" + orderNo + ".db";
             using (var conn = new SQLiteConnection($"Data Source={czpath};Version=3;"))
             {
                 string query = "SELECT * FROM UniqueCodes";
@@ -224,10 +153,147 @@ namespace QR_MASAN_01
 
         //tạo PO cho sản xuất gồm bảng lưu thông tin các PO đã dùng sản xuất và lịch sử chốt sổ (tách lô) và lịch sử đổi date
         //kiểm tra PO db đã tồn tại hay chưa, nếu chưa tạo mới
-        public void CreateRunPO(string orderNo, string productionDate)
+        public void RunPO(string orderNo, string productionDate)
         {
             string poPath = "Databases/PO.tlog";
+            Check_PO_Log_File();
+            
+            Check_Run_File(orderNo); //kiểm tra xem file run đã tồn tại chưa, nếu chưa thì tạo mới
 
+            //lịch sử các po
+            DataTable POHis_list = new DataTable();
+            POHis_list = Get_PO_Run_History_Info_By_OrderNo(orderNo);
+
+            //nếu chưa từng tồn tại thì tạo mới
+            if(POHis_list.Rows.Count == 0)
+            {
+                using (var conn = new SQLiteConnection($"Data Source={poPath};Version=3;"))
+                {
+                    conn.Open();
+                    string insertQuery = @"
+                        INSERT INTO PO (orderNO, productionDate, Action, UserName, Counter, Timestamp, Timeunix)
+                        VALUES (@orderNo, @productionDate, 'CREATE', @UserName, '{}', @Timestamp, @Timeunix)";
+                    var command = new SQLiteCommand(insertQuery, conn);
+                    command.Parameters.AddWithValue("@orderNo", orderNo);
+                    command.Parameters.AddWithValue("@productionDate", productionDate);
+                    command.Parameters.AddWithValue("@UserName", Globalvariable.CurrentUser.Username);
+                    command.Parameters.AddWithValue("@Timestamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"));
+                    command.Parameters.AddWithValue("@Timeunix", ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds());
+                    command.ExecuteNonQuery();
+                }
+            }
+
+            //kiểm tra xem PO dùng lần cuối có trùng với PO đang tạo hay không, nếu trùng không làm gì cả, nếu không trùng thì cập nhật lại PO dùng lần cuối
+            DataRow last_Used_PO = Get_Last_Used_PO();
+
+            if (last_Used_PO != null)
+            {
+
+                //kiểm tra xem đang chọn order khác hay tạo mới, nếu khác thì cập nhật lại PO dùng lần cuối INSERT thêm dòng update chứ không update trực tiếp
+                if (last_Used_PO["orderNO"].ToString() != orderNo)
+                {
+                    using (var conn = new SQLiteConnection($"Data Source={poPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string insertQuery = @"
+                            INSERT INTO PO (orderNO, productionDate, Action, UserName, Counter, Timestamp, Timeunix)
+                            VALUES (@orderNo, @productionDate, 'UPDATE', @UserName, '{}', @Timestamp, @Timeunix)";
+                        var command = new SQLiteCommand(insertQuery, conn);
+                        command.Parameters.AddWithValue("@orderNo", orderNo);
+                        command.Parameters.AddWithValue("@productionDate", productionDate);
+                        command.Parameters.AddWithValue("@UserName", Globalvariable.CurrentUser.Username);
+                        command.Parameters.AddWithValue("@Timestamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"));
+                        command.Parameters.AddWithValue("@Timeunix", ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds());
+                        command.ExecuteNonQuery();
+                    }
+                }
+
+                //kiểm tra xem productionDate có khác với PO dùng lần cuối không, nếu khác thì cập nhật lại productionDate INSERT thêm dòng với action = UPDATE chứ không update
+                if (last_Used_PO["productionDate"].ToString() != productionDate)
+                {
+                    using (var conn = new SQLiteConnection($"Data Source={poPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string insertQuery = @"
+                            INSERT INTO PO (orderNO, productionDate, Action, UserName, Counter, Timestamp, Timeunix)
+                            VALUES (@orderNo, @productionDate, 'UPDATE', @UserName, '{}', @Timestamp, @Timeunix)";
+                        var command = new SQLiteCommand(insertQuery, conn);
+                        command.Parameters.AddWithValue("@orderNo", orderNo);
+                        command.Parameters.AddWithValue("@productionDate", productionDate);
+                        command.Parameters.AddWithValue("@UserName", Globalvariable.CurrentUser.Username);
+                        command.Parameters.AddWithValue("@Timestamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"));
+                        command.Parameters.AddWithValue("@Timeunix", ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds());
+                        command.ExecuteNonQuery();
+                    }
+                }
+
+            }
+
+
+            //so sánh 2 bảng UniqueCodes trong PO db và CZ run db, nếu có mã nào trong PO db mà không có trong CZ run db thì thêm vào CZ run db
+            DataTable poUniqueCodes = Get_Unique_Codes_MES(orderNo);
+            DataTable czRunUniqueCodes = Get_Unique_Codes_Run(orderNo);
+            List<string> poCodes = poUniqueCodes.AsEnumerable().Select(row => row.Field<string>("Code")).ToList();
+            List<string> czRunCodes = czRunUniqueCodes.AsEnumerable().Select(row => row.Field<string>("Code")).ToList();
+            List<string> codesToAdd = poCodes.Except(czRunCodes).ToList();
+
+            if (codesToAdd.Count > 0)
+            {
+                //tạo thư mục nếu chưa tồn tại
+                string czRunPath = $"C:/.ABC/{orderNo}.db";
+                using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                {
+                    conn.Open();
+                    foreach (string code in codesToAdd)
+                    {
+                        string insertQuery = "INSERT INTO UniqueCodes (Code) VALUES (@Code)";
+                        var command = new SQLiteCommand(insertQuery, conn);
+                        command.Parameters.AddWithValue("@Code", code);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+        //lấy PO his từ theo orderNo
+        public DataTable Get_PO_Run_History_Info_By_OrderNo(string orderNo)
+        {
+            using (var conn = new SQLiteConnection($"Data Source=Databases/PO.tlog;Version=3;"))
+            {
+                string query = "SELECT * FROM PO WHERE orderNO = @orderNo ORDER BY Timestamp DESC";
+                var adapter = new SQLiteDataAdapter(query, conn);
+                adapter.SelectCommand.Parameters.AddWithValue("@orderNo", orderNo);
+                var table = new DataTable();
+                adapter.Fill(table);
+                return table;
+            }
+        }
+
+        //lấy PO dùng lần cuối
+        public DataRow Get_Last_Used_PO()
+        {
+            using (var conn = new SQLiteConnection($"Data Source=Databases/PO.tlog;Version=3;"))
+            {
+                string query = "SELECT * FROM PO ORDER BY Timestamp DESC LIMIT 1";
+                var command = new SQLiteCommand(query, conn);
+                var adapter = new SQLiteDataAdapter(command);
+                var table = new DataTable();
+                adapter.Fill(table);
+                if (table.Rows.Count > 0)
+                {
+                    return table.Rows[0];
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        //check PO log
+        public void Check_PO_Log_File()
+        {
+            string poPath = "Databases/PO.tlog";
             if (!System.IO.File.Exists(poPath))
             {
                 using (var conn = new SQLiteConnection($"Data Source=Databases/PO.tlog;Version=3;"))
@@ -249,77 +315,15 @@ namespace QR_MASAN_01
                     command.ExecuteNonQuery();
                 }
             }
+        }
 
-            //kiểm tra PO db đã tồn tại hay chưa, nếu chưa tạo mới Action = CREATE, timestamp dạng 2025-06-18T11:12:55.678+07:00, 
-            DataTable POHis = new DataTable();
-            POHis = GetPOHistoryByOrderNo(orderNo);
-
-            if(POHis.Rows.Count == 0)
-            {
-                using (var conn = new SQLiteConnection($"Data Source={poPath};Version=3;"))
-                {
-                    conn.Open();
-                    string insertQuery = @"
-                        INSERT INTO PO (orderNO, productionDate, Action, UserName, Counter, Timestamp, Timeunix)
-                        VALUES (@orderNo, @productionDate, 'CREATE', @UserName, '{}', @Timestamp, @Timeunix)";
-                    var command = new SQLiteCommand(insertQuery, conn);
-                    command.Parameters.AddWithValue("@orderNo", orderNo);
-                    command.Parameters.AddWithValue("@productionDate", productionDate);
-                    command.Parameters.AddWithValue("@UserName", Environment.UserName);
-                    command.Parameters.AddWithValue("@Timestamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"));
-                    command.Parameters.AddWithValue("@Timeunix", ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds());
-                    command.ExecuteNonQuery();
-                }
-            }
-
-            //kiểm tra xem PO dùng lần cuối có trùng với PO đang tạo hay không, nếu trùng không làm gì cả, nếu không trùng thì cập nhật lại PO dùng lần cuối
-            DataRow lastUsedPO = GetLastUsedPO();
-
-            if (lastUsedPO != null)
-            {
-                if (lastUsedPO["orderNO"].ToString() != orderNo)
-                {
-                    using (var conn = new SQLiteConnection($"Data Source={poPath};Version=3;"))
-                    {
-                        conn.Open();
-                        string updateQuery = @"
-                            UPDATE PO 
-                            SET Action = 'UPDATE', Timestamp = @Timestamp, Timeunix = @Timeunix 
-                            WHERE orderNO = @orderNo";
-                        var command = new SQLiteCommand(updateQuery, conn);
-                        command.Parameters.AddWithValue("@orderNo", orderNo);
-                        command.Parameters.AddWithValue("@Timestamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"));
-                        command.Parameters.AddWithValue("@Timeunix", ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds());
-                        command.ExecuteNonQuery();
-                    }
-                }
-
-                //kiểm tra xem productionDate có khác với PO dùng lần cuối không, nếu khác thì cập nhật lại productionDate INSERT thêm dòng với action = UPDATE chứ không update
-                if (lastUsedPO["productionDate"].ToString() != productionDate)
-                {
-                    using (var conn = new SQLiteConnection($"Data Source={poPath};Version=3;"))
-                    {
-                        conn.Open();
-                        string insertQuery = @"
-                            INSERT INTO PO (orderNO, productionDate, Action, UserName, Counter, Timestamp, Timeunix)
-                            VALUES (@orderNo, @productionDate, 'UPDATE', @UserName, '{}', @Timestamp, @Timeunix)";
-                        var command = new SQLiteCommand(insertQuery, conn);
-                        command.Parameters.AddWithValue("@orderNo", orderNo);
-                        command.Parameters.AddWithValue("@productionDate", productionDate);
-                        command.Parameters.AddWithValue("@UserName", Environment.UserName);
-                        command.Parameters.AddWithValue("@Timestamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"));
-                        command.Parameters.AddWithValue("@Timeunix", ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds());
-                        command.ExecuteNonQuery();
-                    }
-                }
-            }
-
-            //kiểm tra xem file db của mã CZ đã tồn tại hay chưa, nếu chưa thì tạo mới ở C:/.ABC/MM-yy/<orderNO>.db
-            //Các thông tin bao gồm ID, orderNO, production_date (mặc định để null), uniqueCode, status (0 = chưa dùng, 1=Pass, -1 =Fail), activate_date (mặc định để null), activate_user (mặc định để null), timestamp, timeunix
+        public void Check_Run_File(string orderNo)
+        {
             //tạo thư mục nếu chưa tồn tại
             string czRunPath = $"C:/.ABC/{orderNo}.db";
             //kiểm xem folder C:/.ABC/MM-yy đã tồn tại chưa, nếu chưa thì tạo mới
             string folderPath = $"C:/.ABC";
+
             if (!System.IO.Directory.Exists(folderPath))
             {
                 System.IO.Directory.CreateDirectory(folderPath);
@@ -337,6 +341,9 @@ namespace QR_MASAN_01
 	                                    ""Status""	INTEGER NOT NULL DEFAULT 0,
 	                                    ""ActivateDate""	TEXT NOT NULL DEFAULT 0,
 	                                    ""ActivateUser""	TEXT NOT NULL DEFAULT 0,
+                                        ""Send_Status""	    TEXT NOT NULL DEFAULT ""pending"",
+                                        ""Recive_Status""	TEXT NOT NULL DEFAULT ""waiting"",
+                                        ""Send_Recive_Logs"" JSON,
 	                                    ""Timestamp""	TEXT NOT NULL DEFAULT 0,
 	                                    ""Timeunix""	INTEGER NOT NULL DEFAULT 0,
 	                                    PRIMARY KEY(""ID"" AUTOINCREMENT)
@@ -347,7 +354,7 @@ namespace QR_MASAN_01
 
                 //insert từ bảng CZ nhận từ MES vào bảng CZ run này
 
-                DataTable czCodes = GetUniqueCodes(orderNo);
+                DataTable czCodes = Get_Unique_Codes_MES(orderNo);
 
                 if (czCodes.Rows.Count > 0)
                 {
@@ -363,30 +370,9 @@ namespace QR_MASAN_01
                         }
                     }
                 }
-                
+
             }
 
-            //so sánh 2 bảng UniqueCodes trong PO db và CZ run db, nếu có mã nào trong PO db mà không có trong CZ run db thì thêm vào CZ run db
-            DataTable poUniqueCodes = GetUniqueCodes(orderNo);
-            DataTable czRunUniqueCodes = GetUniqueCodesRun(orderNo);
-            List<string> poCodes = poUniqueCodes.AsEnumerable().Select(row => row.Field<string>("Code")).ToList();
-            List<string> czRunCodes = czRunUniqueCodes.AsEnumerable().Select(row => row.Field<string>("Code")).ToList();
-            List<string> codesToAdd = poCodes.Except(czRunCodes).ToList();
-
-            if (codesToAdd.Count > 0)
-            {
-                using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
-                {
-                    conn.Open();
-                    foreach (string code in codesToAdd)
-                    {
-                        string insertQuery = "INSERT INTO UniqueCodes (Code) VALUES (@Code)";
-                        var command = new SQLiteCommand(insertQuery, conn);
-                        command.Parameters.AddWithValue("@Code", code);
-                        command.ExecuteNonQuery();
-                    }
-                }
-            }
 
             //Kiểm tra xem bảng ghi history tất cả các result của PO đã tồn tại hay chưa, nếu chưa thì tạo mới nếu chưa thì tạo mới ở C:/.ABC/MM-yy/Record_<orderNO>.db
             string recordPath = $"C:/.ABC/Record_{orderNo}.db";
@@ -411,144 +397,27 @@ namespace QR_MASAN_01
             }
 
 
-        }
-
-        //lấy PO his từ theo orderNo
-        public DataTable GetPOHistoryByOrderNo(string orderNo)
-        {
-            using (var conn = new SQLiteConnection($"Data Source=Databases/PO.tlog;Version=3;"))
+            string recordPath_PLC = $"C:/.ABC/Record_{orderNo}_PLC.db";
+            if (!System.IO.File.Exists(recordPath_PLC))
             {
-                string query = "SELECT * FROM PO WHERE orderNO = @orderNo ORDER BY Timestamp DESC";
-                var adapter = new SQLiteDataAdapter(query, conn);
-                adapter.SelectCommand.Parameters.AddWithValue("@orderNo", orderNo);
-                var table = new DataTable();
-                adapter.Fill(table);
-                return table;
-            }
-        }
-
-        //lấy PO dùng lần cuối
-        public DataRow GetLastUsedPO()
-        {
-            using (var conn = new SQLiteConnection($"Data Source=Databases/PO.tlog;Version=3;"))
-            {
-                string query = "SELECT * FROM PO ORDER BY Timestamp DESC LIMIT 1";
-                var command = new SQLiteCommand(query, conn);
-                var adapter = new SQLiteDataAdapter(command);
-                var table = new DataTable();
-                adapter.Fill(table);
-                if (table.Rows.Count > 0)
-                {
-                    return table.Rows[0];
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
-
-        //check PO log
-        public void CheckPOLog()
-        {
-            string poPath = "Databases/PO.tlog";
-            if (!System.IO.File.Exists(poPath))
-            {
-                using (var conn = new SQLiteConnection($"Data Source=Databases/PO.tlog;Version=3;"))
+                using (var conn = new SQLiteConnection($"Data Source={recordPath_PLC};Version=3;"))
                 {
                     conn.Open();
                     string createTableQuery = @"
-                        CREATE TABLE    ""PO"" (
-	                                    ""ID""	INTEGER NOT NULL UNIQUE,
-	                                    ""orderNO""	TEXT NOT NULL,
-	                                    ""productionDate""	TEXT NOT NULL,
-	                                    ""Action""	TEXT NOT NULL,
-	                                    ""UserName""	TEXT NOT NULL,
-	                                    ""Counter""	JSON NOT NULL,
-	                                    ""Timestamp""	TEXT NOT NULL,
-	                                    ""Timeunix""	INTEGER NOT NULL,
-	                                    PRIMARY KEY(""ID"" AUTOINCREMENT)
-                                    );";
+                        CREATE TABLE Records (
+                            ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                            codeID INTEGER NOT NULL UNIQUE,
+                            Status INTEGER DEFAULT 0
+                        );";
                     var command = new SQLiteCommand(createTableQuery, conn);
                     command.ExecuteNonQuery();
                 }
             }
+
+
         }
 
     }
 
-    public class MES_PO
-    {
-        private string mesdbpath;
-        private string _codesPath;
-
-        public MES_PO(string dbPath = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\po.db", string CodesPath = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\codes")
-        {
-            mesdbpath = dbPath;
-            _codesPath = CodesPath;
-        }
-
-        //lấy danh sách tất cả PO mà mes đã gửi
-        public DataTable Get_MES_PO_List()
-        {
-            using (var conn = new SQLiteConnection($"Data Source={mesdbpath};Version=3;"))
-            {
-                string query = "SELECT * FROM po_records ORDER BY orderNo";
-                var adapter = new SQLiteDataAdapter(query, conn);
-                var table = new DataTable();
-                adapter.Fill(table);
-                return table;
-            }
-        }
-
-        //lấy số lượng mã CZ trong PO
-        public int Get_UniqueCode_MES_Count(string orderNo)
-        {
-            try
-            {
-                string czpath = _codesPath + "/" + orderNo + ".db";
-                using (var conn = new SQLiteConnection($"Data Source={czpath};Version=3;"))
-                {
-                    string query = "SELECT COUNT(*) FROM UniqueCodes";
-                    var command = new SQLiteCommand(query, conn);
-                    command.Parameters.AddWithValue("@orderNo", orderNo);
-                    conn.Open();
-                    int count = Convert.ToInt32(command.ExecuteScalar());
-                    return count;
-                }
-            }
-            catch
-            {
-                return 0;
-            }
-        }
-
-        //lấy danh sách mã CZ trong PO trả về datatable
-        public DataTable Get_UniqueCodes_MES(string orderNo)
-        {
-            string czpath = _codesPath + "/" + orderNo + ".db";
-            using (var conn = new SQLiteConnection($"Data Source={czpath};Version=3;"))
-            {
-                string query = "SELECT * FROM UniqueCodes";
-                var adapter = new SQLiteDataAdapter(query, conn);
-                var table = new DataTable();
-                adapter.Fill(table);
-                return table;
-            }
-        }
-
-        //lấy thông tin PO theo orderNo
-        public DataTable Get_MES_PO_Info(string orderNo)
-        {
-            using (var conn = new SQLiteConnection($"Data Source={mesdbpath};Version=3;"))
-            {
-                string query = "SELECT * FROM POInfo WHERE orderNo = @orderNo";
-                var adapter = new SQLiteDataAdapter(query, conn);
-                adapter.SelectCommand.Parameters.AddWithValue("@orderNo", orderNo);
-                var table = new DataTable();
-                adapter.Fill(table);
-                return table;
-            }
-        }
-    }
+   
 }

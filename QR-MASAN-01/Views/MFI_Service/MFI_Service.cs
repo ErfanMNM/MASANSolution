@@ -63,7 +63,7 @@ namespace MFI_Service
                             this.Invoke(new Action(() =>
                             {
                                 //lấy thông tin PO trong máy
-                                poService.LoadOrderNoToComboBox(ipOrderNO);
+                                poService.MES_Load_OrderNo_ToComboBox(ipOrderNO);
                                 MFI_Update_HMI();//Cập nhật lên màn hình
                                 ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: {_gmfifl.message}");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;

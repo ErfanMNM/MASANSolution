@@ -317,7 +317,7 @@ namespace QR_MASAN_01
         private void Process_MFI_When_New()
         {
             //ghi nhận full MFI mới vào log
-            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.MFI, "MFI mới được tạo", Globalvariable.CurrentUser.Username, JsonConvert.SerializeObject(_clientMFI));
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "MFI mới được tạo", Globalvariable.CurrentUser.Username, JsonConvert.SerializeObject(_clientMFI));
             //thêm vào Queue để ghi log
             SystemLogs.LogQueue.Enqueue(systemLogs);
 
