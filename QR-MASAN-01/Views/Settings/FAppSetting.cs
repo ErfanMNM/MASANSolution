@@ -1,8 +1,10 @@
-﻿using SpT.Setting;
+﻿using Org.BouncyCastle.Tls;
+using SpT.Setting;
 using Sunny.UI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Composition.Primitives;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -96,28 +98,8 @@ namespace QR_MASAN_01.Views.Settings
             if (e.Node.Tag is PropertyInfo prop)
             {
                 object oldValue = prop.GetValue(Setting.Current);
-                // Hiển thị InputBox để người dùng nhập giá trị mới
-                string input = Microsoft.VisualBasic.Interaction.InputBox(
-                    $"Nhập giá trị mới cho {prop.Name} (kiểu {prop.PropertyType.Name}):",
-                    "Chỉnh Config",
-                    oldValue?.ToString() ?? "");
-
-                if (!string.IsNullOrWhiteSpace(input))
-                {
-                    try
-                    {
-                        object convertedValue = Convert.ChangeType(input, prop.PropertyType);
-                        prop.SetValue(Setting.Current, convertedValue);
-                        e.Node.Text = $"{prop.Name} = {convertedValue}";
-                        MessageBox.Show($"Đã cập nhật {prop.Name} = {convertedValue} thành công 😎");
-                    }
-                    catch
-                    {
-                        MessageBox.Show($"Giá trị không hợp lệ cho {prop.PropertyType.Name}");
-                    }
-                }
+                object key = prop.Name;
             }
-
 
         }
     }

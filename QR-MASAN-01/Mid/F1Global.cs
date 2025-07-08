@@ -229,7 +229,6 @@ namespace QR_MASAN_01
 
         public override void SetDefault()
         {
-            base.SetDefault();
             SoftName = "MS";
             ServerIP = "http://localhost";
             ServerPort = 49211;
@@ -239,10 +238,11 @@ namespace QR_MASAN_01
             App_Mode = "ADD_Data"; // NO_ADD
             Laser_printer_server_url = "http://127.0.0.1:9000/get-time";
             Code_Content_Pattern = @"i\.tcx\.com\.vn/.*\d{13}.*[a-zA-Z0-9]";
-            Production_Mode = @"MFI"; // chạy dạng MFI , không chạy dạng PO
+            Production_Mode = "MFI"; // chạy dạng MFI , không chạy dạng PO
             TwoFA_Enabled = false; // Enable 2FA by default
             PO_Edit_AMode = "NONE"; // Default mode for editing PO
             TwoFA_Enabled_PO = false; // Enable 2FA for PO editing by default
+            base.SetDefault();
         }
     }
 

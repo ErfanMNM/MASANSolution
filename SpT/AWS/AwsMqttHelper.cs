@@ -1,77 +1,166 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Timers;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-using HslCommunication.MQTT;
-using Newtonsoft.Json;
+using uPLibrary.Networking.M2Mqtt;
+using uPLibrary.Networking.M2Mqtt.Messages;
 
-public static class AwsMqttHelper
+public class AwsIotClientHelper
 {
-    private static MqttClient mqttClient;
+    private MqttClient client;
+    private string clientId;
+    private string host;
+    private string topic;
+    private X509Certificate caCert;
+    private X509Certificate2 clientCert;
+    private Timer healthCheckTimer;
 
-    //public static async Task PublishAsync(object payloadObj, string topic)
-    //{
-    //    // Nếu payloadObj là object, tự serialize sang JSON
-    //    string jsonPayload = payloadObj is string str ? str : JsonConvert.SerializeObject(payloadObj);
+    public Action<string> OnStatusChanged;
+    public Action<string> OnMessageReceived;
 
-    //    var factory = new MqttFactory();
-    //    using (var mqttClient = factory.CreateMqttClient())
-    //    {
-    //        var options = new MqttClientOptionsBuilder()
-    //            .WithClientId("GenZPublisher_" + Guid.NewGuid().ToString("N"))
-    //            .WithTcpServer("your-endpoint-ats.iot.ap-southeast-1.amazonaws.com", 8883)
-    //            .WithTls(new MqttClientOptionsBuilderTlsParameters
-    //            {
-    //                UseTls = true,
-    //                Certificates = new List<X509Certificate>
-    //                {
-    //                    new X509Certificate2(@"C:\AWS\device-certificate.pem.crt"),
-    //                    new X509Certificate2(@"C:\AWS\private.pem.key"),
-    //                    new X509Certificate2(@"C:\AWS\AmazonRootCA1.pem")
-    //                },
-    //                AllowUntrustedCertificates = false,
-    //                IgnoreCertificateChainErrors = false,
-    //                IgnoreCertificateRevocationErrors = false
-    //            })
-    //            .Build();
-
-    //        mqttClient.ConnectedAsync += (s, e) => Console.WriteLine("✅ AWS MQTT Connected");
-    //        mqttClient.Disconnected += (s, e) => Console.WriteLine("❌ AWS MQTT Disconnected");
-
-
-    //        try
-    //        {
-    //            await mqttClient.ConnectAsync(options);
-    //            Console.WriteLine("⏳ Đang publish JSON...");
-
-    //            var message = new MqttApplicationMessageBuilder()
-    //                .WithTopic(topic)
-    //                .WithPayload(jsonPayload)
-    //                .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
-    //                .Build();
-
-    //            await mqttClient.PublishAsync(message);
-    //            Console.WriteLine("✅ JSON đã publish lên AWS IoT Core");
-
-    //            await mqttClient.DisconnectAsync();
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            Console.WriteLine("❌ Lỗi khi publish AWS MQTT: " + ex.Message);
-    //        }
-    //    }
-    //}
-
-    public static async Task PulishAsync(string payloadObj, string topic)
+    public AwsIotClientHelper(
+        string host,
+        string clientId,
+        string rootCAPath,
+        string clientCertPathOrEmpty,
+        string pfxPath,
+        string pfxPassword,
+        string topic = ""
+    )
     {
-        // Nếu payloadObj là object, tự serialize sang JSON
-        string jsonPayload = payloadObj is string str ? str : JsonConvert.SerializeObject(payloadObj);
+        this.clientId = clientId;
+        this.host = host;
+        this.topic = topic;
 
-        mqttClient = new MqttClient(new MqttConnectionOptions()
+        caCert = X509Certificate.CreateFromCertFile(rootCAPath);
+        clientCert = new X509Certificate2(pfxPath, pfxPassword);
+
+        healthCheckTimer = new Timer(5000);
+        healthCheckTimer.Elapsed += HealthCheckTimer_Elapsed;
+        healthCheckTimer.AutoReset = true;
+    }
+
+    public void Connect()
+    {
+        try
         {
-            ClientId = "ABC",
-            IpAddress = "127.0.0.1",
-            Credentials = new MqttCredential("admin", "123456"),   // 设置了用户名和密码
-        });
+            if (client != null && client.IsConnected)
+            {
+                OnStatusChanged?.Invoke($"⚠️ [{Now()}] Đã kết nối, bỏ qua connect.");
+                return;
+            }
+
+            client = new MqttClient(
+                host,
+                8883,
+                true,
+                caCert,
+                clientCert,
+                MqttSslProtocols.TLSv1_2
+            );
+
+            client.MqttMsgPublishReceived += Client_MqttMsgPublishReceived;
+            client.ConnectionClosed += Client_ConnectionClosed;
+
+            client.Connect(clientId);
+
+            if (client.IsConnected)
+            {
+                OnStatusChanged?.Invoke($"✅ [{Now()}] Kết nối AWS IoT Core thành công.");
+                if (!string.IsNullOrEmpty(topic))
+                {
+                    client.Subscribe(new[] { topic }, new[] { MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE });
+                    OnStatusChanged?.Invoke($"✅ [{Now()}] Đã subscribe topic: {topic}");
+                }
+                healthCheckTimer.Start();
+            }
+            else
+            {
+                OnStatusChanged?.Invoke($"❌ [{Now()}] Kết nối thất bại, kiểm tra cert/host/network.");
+            }
+        }
+        catch (Exception ex)
+        {
+            OnStatusChanged?.Invoke($"❌ [{Now()}] Lỗi kết nối: {ex.Message}");
+        }
+    }
+
+    public void Subscribe(string topic, byte qos = MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE)
+    {
+        this.topic = topic;
+        if (client != null && client.IsConnected)
+        {
+            client.Subscribe(new[] { topic }, new[] { qos });
+            OnStatusChanged?.Invoke($"✅ [{Now()}] Đã subscribe topic: {topic}");
+        }
+        else
+        {
+            OnStatusChanged?.Invoke($"⚠️ [{Now()}] Không thể subscribe, chưa kết nối.");
+        }
+    }
+
+    public void Publish(string topic, string payload, byte qos = MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, bool retained = false)
+    {
+        if (client != null && client.IsConnected)
+        {
+            client.Publish(topic, System.Text.Encoding.UTF8.GetBytes(payload), qos, retained);
+            OnStatusChanged?.Invoke($"📤 [{Now()}] Published to {topic}: {payload}");
+        }
+        else
+        {
+            OnStatusChanged?.Invoke($"⚠️ [{Now()}] Không thể publish, chưa kết nối.");
+        }
+    }
+
+    public void Disconnect()
+    {
+        if (client != null && client.IsConnected)
+        {
+            client.Disconnect();
+            OnStatusChanged?.Invoke($"⚠️ [{Now()}] Đã ngắt kết nối AWS IoT Core.");
+        }
+        healthCheckTimer.Stop();
+    }
+
+    private void Client_ConnectionClosed(object sender, EventArgs e)
+    {
+        OnStatusChanged?.Invoke($"❌ [{Now()}] Mất kết nối, sẽ thử reconnect sau 5s...");
+    }
+
+    private void Client_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
+    {
+        string payload = System.Text.Encoding.UTF8.GetString(e.Message);
+        string msg = $"📩 [{Now()}] Topic: {e.Topic}, Payload: {payload}";
+        OnMessageReceived?.Invoke(msg);
+    }
+
+    private void HealthCheckTimer_Elapsed(object sender, ElapsedEventArgs e)
+    {
+        if (client == null || !client.IsConnected)
+        {
+            OnStatusChanged?.Invoke($"⚠️ [{Now()}] Mất kết nối, đang reconnect...");
+            Connect();
+        }
+    }
+
+    public void SubscribeMultiple(string[] topics, byte qos = MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE)
+    {
+        if (client != null && client.IsConnected)
+        {
+            byte[] qosLevels = new byte[topics.Length];
+            for (int i = 0; i < qosLevels.Length; i++) qosLevels[i] = qos;
+
+            client.Subscribe(topics, qosLevels);
+            OnStatusChanged?.Invoke($"✅ [{Now()}] Đã subscribe các topic: {string.Join(", ", topics)}");
+        }
+        else
+        {
+            OnStatusChanged?.Invoke($"⚠️ [{Now()}] Không thể subscribe, chưa kết nối.");
+        }
+    }
+
+
+    private string Now()
+    {
+        return DateTime.Now.ToString("HH:mm:ss");
     }
 }

@@ -249,6 +249,12 @@
     <Compile Include="Dialogs\CreateRecipe.Designer.cs">
       <DependentUpon>CreateRecipe.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\EnterSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\EnterSetting.Designer.cs">
+      <DependentUpon>EnterSetting.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Entertext.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -368,6 +374,9 @@
     </Compile>
     <EmbeddedResource Include="Dialogs\CreateRecipe.resx">
       <DependentUpon>CreateRecipe.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\EnterSetting.resx">
+      <DependentUpon>EnterSetting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\Entertext.resx">
       <DependentUpon>Entertext.cs</DependentUpon>

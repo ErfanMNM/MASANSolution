@@ -29,18 +29,20 @@
         private void InitializeComponent()
         {
             this.uiTitlePanel1 = new Sunny.UI.UITitlePanel();
+            this.uiListBox1 = new Sunny.UI.UIListBox();
             this.uiSymbolButton4 = new Sunny.UI.UISymbolButton();
             this.uiSymbolButton3 = new Sunny.UI.UISymbolButton();
             this.uiSymbolButton2 = new Sunny.UI.UISymbolButton();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.uiSymbolButton1 = new Sunny.UI.UISymbolButton();
-            this.uiListBox1 = new Sunny.UI.UIListBox();
+            this.uiSymbolButton5 = new Sunny.UI.UISymbolButton();
             this.uiTitlePanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // uiTitlePanel1
             // 
+            this.uiTitlePanel1.Controls.Add(this.uiSymbolButton5);
             this.uiTitlePanel1.Controls.Add(this.uiListBox1);
             this.uiTitlePanel1.Controls.Add(this.uiSymbolButton4);
             this.uiTitlePanel1.Controls.Add(this.uiSymbolButton3);
@@ -61,6 +63,21 @@
             this.uiTitlePanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             this.uiTitlePanel1.TitleHeight = 45;
             // 
+            // uiListBox1
+            // 
+            this.uiListBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiListBox1.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
+            this.uiListBox1.ItemSelectForeColor = System.Drawing.Color.White;
+            this.uiListBox1.Location = new System.Drawing.Point(5, 300);
+            this.uiListBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiListBox1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiListBox1.Name = "uiListBox1";
+            this.uiListBox1.Padding = new System.Windows.Forms.Padding(2);
+            this.uiListBox1.ShowText = false;
+            this.uiListBox1.Size = new System.Drawing.Size(858, 343);
+            this.uiListBox1.TabIndex = 6;
+            this.uiListBox1.Text = "uiListBox1";
+            // 
             // uiSymbolButton4
             // 
             this.uiSymbolButton4.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -70,8 +87,9 @@
             this.uiSymbolButton4.Name = "uiSymbolButton4";
             this.uiSymbolButton4.Size = new System.Drawing.Size(162, 49);
             this.uiSymbolButton4.TabIndex = 5;
-            this.uiSymbolButton4.Text = "MQTT Pub";
+            this.uiSymbolButton4.Text = "MQTT sub";
             this.uiSymbolButton4.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.uiSymbolButton4.Click += new System.EventHandler(this.uiSymbolButton4_Click);
             // 
             // uiSymbolButton3
             // 
@@ -82,7 +100,7 @@
             this.uiSymbolButton3.Name = "uiSymbolButton3";
             this.uiSymbolButton3.Size = new System.Drawing.Size(162, 49);
             this.uiSymbolButton3.TabIndex = 4;
-            this.uiSymbolButton3.Text = "MQTT Sub";
+            this.uiSymbolButton3.Text = "MQTT Send";
             this.uiSymbolButton3.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.uiSymbolButton3.Click += new System.EventHandler(this.uiSymbolButton3_Click);
             // 
@@ -97,6 +115,7 @@
             this.uiSymbolButton2.TabIndex = 3;
             this.uiSymbolButton2.Text = "MQTT Connect";
             this.uiSymbolButton2.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.uiSymbolButton2.Click += new System.EventHandler(this.uiSymbolButton2_Click);
             // 
             // pictureBox1
             // 
@@ -119,20 +138,18 @@
             this.uiSymbolButton1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.uiSymbolButton1.Click += new System.EventHandler(this.uiSymbolButton1_Click);
             // 
-            // uiListBox1
+            // uiSymbolButton5
             // 
-            this.uiListBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiListBox1.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
-            this.uiListBox1.ItemSelectForeColor = System.Drawing.Color.White;
-            this.uiListBox1.Location = new System.Drawing.Point(5, 300);
-            this.uiListBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.uiListBox1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiListBox1.Name = "uiListBox1";
-            this.uiListBox1.Padding = new System.Windows.Forms.Padding(2);
-            this.uiListBox1.ShowText = false;
-            this.uiListBox1.Size = new System.Drawing.Size(858, 343);
-            this.uiListBox1.TabIndex = 6;
-            this.uiListBox1.Text = "uiListBox1";
+            this.uiSymbolButton5.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton5.Location = new System.Drawing.Point(402, 108);
+            this.uiSymbolButton5.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton5.Name = "uiSymbolButton5";
+            this.uiSymbolButton5.Size = new System.Drawing.Size(162, 44);
+            this.uiSymbolButton5.TabIndex = 7;
+            this.uiSymbolButton5.Text = "MQTT DisConnect";
+            this.uiSymbolButton5.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.uiSymbolButton5.Click += new System.EventHandler(this.uiSymbolButton5_Click);
             // 
             // FormTest
             // 
@@ -157,5 +174,6 @@
         private Sunny.UI.UISymbolButton uiSymbolButton3;
         private Sunny.UI.UISymbolButton uiSymbolButton2;
         private Sunny.UI.UIListBox uiListBox1;
+        private Sunny.UI.UISymbolButton uiSymbolButton5;
     }
 }
