@@ -31,8 +31,8 @@ namespace QR_MASAN_01
 {
     public partial class FMainQR01 : UIForm2
     {
-        F1Dashboard _F1Dashboard = new F1Dashboard();
         MFI_Service_Form _FMFI = new MFI_Service_Form();
+        FDashboard _FDashboard = new FDashboard();
         ScanQR scanQR = new ScanQR();
         MyLanPrinter _myLanPrinter = new MyLanPrinter();
         Printer_V7 _printer_V7 = new Printer_V7();
@@ -112,7 +112,7 @@ namespace QR_MASAN_01
         {
             uiNavMenu1.Nodes.Clear();
             // Thêm các trang vào menu điều hướng
-            uiNavMenu1.CreateNode(AddPage(_F1Dashboard, 1001));
+            uiNavMenu1.CreateNode(AddPage(_FDashboard, 1001));
             //uiNavMenu1.CreateNode(AddPage(FDashboard_XK, 1006));
             //uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
             uiNavMenu1.CreateNode(AddPage(fTest, 1007)); // Thêm trang Test
@@ -133,7 +133,7 @@ namespace QR_MASAN_01
 
             Render_State = e_Render_State.LOGIN; //đặt trạng thái render ban đầu là LOGIN
 
-            _F1Dashboard.INIT();
+            _FDashboard.INIT();
             //FDashboard_XK.INIT();
             //_FMFI.FMFI_INIT();
             scanQR.INIT();
@@ -223,7 +223,9 @@ namespace QR_MASAN_01
 
                 }
 
-                if (Globalvariable.PI_Status == e_PI_Status.READY && Globalvariable.FDashBoard_Ready)
+                    lblStatus.Text = $"{Globalvariable.All_Ready}|{GV.Production_Status.ToString()}";
+
+                if ((GV.Production_Status == e_Production_Status.READY || GV.Production_Status == e_Production_Status.RUNNING) && Globalvariable.FDashBoard_Ready)
                 {
                     Globalvariable.All_Ready = true; //đặt trạng thái sẵn sàng của hệ thống là true
                 }
@@ -233,20 +235,26 @@ namespace QR_MASAN_01
                     Globalvariable.All_Ready = false; //đặt trạng thái sẵn sàng của hệ thống là false
                 }
 
-                if (Globalvariable.All_Ready && Globalvariable.PI_Status == e_PI_Status.READY)
+                if (Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.READY)
                 {
 
-                    lblAllStatus.Text = "Hệ thống sẵn sàng";
+                    lblAllStatus.Text = "Đang dừng sản xuất";
+                    lblAllStatus.FillColor = Color.Yellow;
+                    lblAllStatus.ForeColor = Color.White;
+                }
+                else if (Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.RUNNING)
+                {
+                    lblAllStatus.Text = "Đang sản xuất";
                     lblAllStatus.FillColor = Color.Green;
                     lblAllStatus.ForeColor = Color.White;
                 }
-                else if (Globalvariable.All_Ready && Globalvariable.PI_Status == e_PI_Status.EDITING)
+                else if (!Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.EDITING)
                 {
                     lblAllStatus.Text = "Đang chỉnh PO";
-                    lblAllStatus.FillColor = Color.Yellow;
+                    lblAllStatus.FillColor = Color.Blue;
                     lblAllStatus.ForeColor = Color.Black;
                 }
-                else if (Globalvariable.All_Ready && Globalvariable.PI_Status == e_PI_Status.NOPO)
+                else if (Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.UNKNOWN)
                 {
                     lblAllStatus.Text = "Chưa chọn PO";
                     lblAllStatus.FillColor = Color.Orange;
@@ -466,56 +474,56 @@ namespace QR_MASAN_01
         {
             while(!WK_LaserPrinterTime.CancellationPending)
             {
-                try
-                {
-                    HttpClient HttpClient = new HttpClient();
+                //try
+                //{
+                //    HttpClient HttpClient = new HttpClient();
 
-                    // Lấy chuỗi thời gian từ URL máy in
-                    string timeString = await HttpClient.GetStringAsync(Setting.Current.Laser_printer_server_url);
-                    timeString = timeString.Trim();
+                //    // Lấy chuỗi thời gian từ URL máy in
+                //    string timeString = await HttpClient.GetStringAsync(Setting.Current.Laser_printer_server_url);
+                //    timeString = timeString.Trim();
 
-                    // Parse datetime từ chuỗi nhận được (giả sử đúng format)
-                   if( DateTime.TryParse(timeString, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime dateTime))
-                    {
-                        Globalvariable.TimeUnixPrinter = ((DateTimeOffset)dateTime).ToUnixTimeSeconds();
+                //    // Parse datetime từ chuỗi nhận được (giả sử đúng format)
+                //   if( DateTime.TryParse(timeString, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime dateTime))
+                //    {
+                //        Globalvariable.TimeUnixPrinter = ((DateTimeOffset)dateTime).ToUnixTimeSeconds();
 
-                        this.Invoke(new Action(() =>
-                        {
-                            opLaserPrinterTime.Text = $"{dateTime.ToString("dd-MM-yyyy HH:mm:ss")}";
-                            opLaserPrinterTime.ForeColor = Color.Green;
-                        }));
-                    }
-                    else
-                    {
-                        Globalvariable.TimeUnixPrinter++;
-                        this.Invoke(new Action(() =>
-                        {
-                            //chuyển số giây Unix sang định dạng ngày giờ hiện lên texbox
-                            timeString = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).ToString("dd-MM-yyyy HH:mm:ss", new CultureInfo("en-US"));
-                            opLaserPrinterTime.Text = $"{timeString}";
-                            opLaserPrinterTime.ForeColor = Color.Red;
+                //        this.Invoke(new Action(() =>
+                //        {
+                //            opLaserPrinterTime.Text = $"{dateTime.ToString("dd-MM-yyyy HH:mm:ss")}";
+                //            opLaserPrinterTime.ForeColor = Color.Green;
+                //        }));
+                //    }
+                //    else
+                //    {
+                //        Globalvariable.TimeUnixPrinter++;
+                //        this.Invoke(new Action(() =>
+                //        {
+                //            //chuyển số giây Unix sang định dạng ngày giờ hiện lên texbox
+                //            timeString = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).ToString("dd-MM-yyyy HH:mm:ss", new CultureInfo("en-US"));
+                //            opLaserPrinterTime.Text = $"{timeString}";
+                //            opLaserPrinterTime.ForeColor = Color.Red;
 
-                        }));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Globalvariable.TimeUnixPrinter++;
-                    this.Invoke(new Action(() =>
-                    {
-                        opLaserPrinterTime.Text = $"{DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).ToString("dd-MM-yyyy HH:mm:ss", new CultureInfo("en-US"))}";
-                        opLaserPrinterTime.ForeColor = Color.Red;
-                    }));
-                    logs++;
-                    if (logs > 10)
-                    {
-                        logs = 0;
-                        //ghi log lỗi
-                        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi kết nối máy in laser", "System", ex.Message);
-                        SystemLogs.LogQueue.Enqueue(systemLogs);
-                    }
+                //        }));
+                //    }
+                //}
+                //catch (Exception ex)
+                //{
+                //    Globalvariable.TimeUnixPrinter++;
+                //    this.Invoke(new Action(() =>
+                //    {
+                //        opLaserPrinterTime.Text = $"{DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).ToString("dd-MM-yyyy HH:mm:ss", new CultureInfo("en-US"))}";
+                //        opLaserPrinterTime.ForeColor = Color.Red;
+                //    }));
+                //    logs++;
+                //    if (logs > 10)
+                //    {
+                //        logs = 0;
+                //        //ghi log lỗi
+                //        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi kết nối máy in laser", "System", ex.Message);
+                //        SystemLogs.LogQueue.Enqueue(systemLogs);
+                //    }
                     
-                }
+                //}
 
                 Thread.Sleep(1000);
             }

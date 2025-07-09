@@ -1,4 +1,5 @@
-﻿using MainClass;
+﻿
+using MainClass;
 using QR_MASAN_01.Auth;
 using Sunny.UI;
 using System;
@@ -102,6 +103,24 @@ namespace QR_MASAN_01
         public static e_PI_Status PI_Status { get; set; } = e_PI_Status.NOPO; // Trạng thái của PO (không có PO hoặc đang chỉnh sửa)
         public static int Product_Active_Count { get; set; } = 0; // Số lượng sản phẩm đã kích hoạt
 
+        //V2
+        
+
+    }
+
+    public class GV
+    {
+        //bể dữ liệu chính của C2
+        public static Dictionary<string, CodeData> C2_CodeData_Dictionary = new Dictionary<string, CodeData>();
+        public static Dictionary<string, CodeData> C1_CodeData_Dictionary = new Dictionary<string, CodeData>();
+
+        public static Queue<CodeData> C1_Update_Content_To_SQLite_Queue = new Queue<CodeData>();
+        public static Queue<CodeData> C2_Update_Content_To_SQLite_Queue = new Queue<CodeData>();
+
+        public static Queue<DataResultSave> C2_Save_Result_To_SQLite_Queue = new Queue<DataResultSave>();
+        public static int ID { get; set; } = 0; // ID của sản phẩm hiện tại
+
+        public static e_Production_Status Production_Status { get; set; } = e_Production_Status.STOPPED;
     }
 
     public class Alarm
@@ -109,6 +128,7 @@ namespace QR_MASAN_01
         public static bool Alarm1 { get; set; } = false;
         public static int Alarm1_Count { get; set; } = 0;
     }
+
     public class ProductData
     {
         public int ProductID { get; set; }
@@ -119,15 +139,41 @@ namespace QR_MASAN_01
         public long TimeUnixPrinted { get; set; }
     }
 
-    public class ProductResult
+    public class CodeData
     {
+        public int ID { get; set; }
+        public string orderNo { get; set; } // Số đơn hàng
+        public string Status { get; set; } // 0: Chưa kích hoạt,Active là 1, reject là -1
+        public string Activate_Datetime { get; set; } // Thời gian kích hoạt
+        public string Production_Datetime { get; set; } // Thời gian sản xuất
+    }
 
+    public class DataResultSave
+    {
+        public int ID { get; set; }
+        public string Code { get; set; } // Mã code
+        public string orderNo { get; set; } // Số đơn hàng
+        public string Status { get; set; } //PASS, FAIL, TIMEOUT, REJECT, ACTIVE, INACTIVE
+        public string PLC_Send_Status { get; set; } // Trạng thái gửi PLC (0: Chưa gửi, 1: Đã gửi, -1: Lỗi gửi)
+        public string Activate_Datetime { get; set; } // Thời gian kích hoạt
+        public string Production_Datetime { get; set; } // Thời gian sản xuất
     }
 
     public enum e_Server_Status
     {
         CONNECTED,
         DISCONNECTED
+    }
+
+    public enum e_Production_Status
+    {
+        EDITING, // Đang chỉnh sửa
+        PUSHING, // Đang đẩy dữ liệu lên server
+        STOPPED, // Dừng sản xuất
+        RUNNING, // Đang sản xuất
+        PAUSED, // Tạm dừng sản xuất
+        READY, // Sẵn sàng sản xuất
+        UNKNOWN // Trạng thái không xác định
     }
 
     public class GCamera
@@ -143,6 +189,8 @@ namespace QR_MASAN_01
         public static e_Server_Status Client_QR01 { get; set; } = e_Server_Status.DISCONNECTED;
         public static e_Server_Status Client_QR02 { get; set; } = e_Server_Status.DISCONNECTED;
         public static e_Server_Status Client_QR03 { get; set; } = e_Server_Status.DISCONNECTED;
+
+
     }
 
     public enum e_PRINTER_Status
@@ -187,7 +235,9 @@ namespace QR_MASAN_01
     {
         NOPO,
         EDITING,
-        READY
+        READY,
+        PUSHOK,
+        PUSH
     }
 
     public class APP

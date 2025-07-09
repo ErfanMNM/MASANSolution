@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.uiTitlePanel1 = new Sunny.UI.UITitlePanel();
+            this.uiSymbolButton5 = new Sunny.UI.UISymbolButton();
             this.uiListBox1 = new Sunny.UI.UIListBox();
             this.uiSymbolButton4 = new Sunny.UI.UISymbolButton();
             this.uiSymbolButton3 = new Sunny.UI.UISymbolButton();
             this.uiSymbolButton2 = new Sunny.UI.UISymbolButton();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.uiSymbolButton1 = new Sunny.UI.UISymbolButton();
-            this.uiSymbolButton5 = new Sunny.UI.UISymbolButton();
             this.uiTitlePanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -63,9 +63,22 @@
             this.uiTitlePanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             this.uiTitlePanel1.TitleHeight = 45;
             // 
+            // uiSymbolButton5
+            // 
+            this.uiSymbolButton5.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton5.Location = new System.Drawing.Point(402, 108);
+            this.uiSymbolButton5.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton5.Name = "uiSymbolButton5";
+            this.uiSymbolButton5.Size = new System.Drawing.Size(162, 44);
+            this.uiSymbolButton5.TabIndex = 7;
+            this.uiSymbolButton5.Text = "MQTT DisConnect";
+            this.uiSymbolButton5.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.uiSymbolButton5.Click += new System.EventHandler(this.uiSymbolButton5_Click);
+            // 
             // uiListBox1
             // 
-            this.uiListBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiListBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.uiListBox1.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
             this.uiListBox1.ItemSelectForeColor = System.Drawing.Color.White;
             this.uiListBox1.Location = new System.Drawing.Point(5, 300);
@@ -77,6 +90,7 @@
             this.uiListBox1.Size = new System.Drawing.Size(858, 343);
             this.uiListBox1.TabIndex = 6;
             this.uiListBox1.Text = "uiListBox1";
+            this.uiListBox1.DoubleClick += new System.EventHandler(this.uiListBox1_DoubleClick);
             // 
             // uiSymbolButton4
             // 
@@ -137,19 +151,6 @@
             this.uiSymbolButton1.Text = "Sinh mã 2FA";
             this.uiSymbolButton1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.uiSymbolButton1.Click += new System.EventHandler(this.uiSymbolButton1_Click);
-            // 
-            // uiSymbolButton5
-            // 
-            this.uiSymbolButton5.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uiSymbolButton5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiSymbolButton5.Location = new System.Drawing.Point(402, 108);
-            this.uiSymbolButton5.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiSymbolButton5.Name = "uiSymbolButton5";
-            this.uiSymbolButton5.Size = new System.Drawing.Size(162, 44);
-            this.uiSymbolButton5.TabIndex = 7;
-            this.uiSymbolButton5.Text = "MQTT DisConnect";
-            this.uiSymbolButton5.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.uiSymbolButton5.Click += new System.EventHandler(this.uiSymbolButton5_Click);
             // 
             // FormTest
             // 

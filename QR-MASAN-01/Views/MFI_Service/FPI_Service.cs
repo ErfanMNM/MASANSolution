@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SQLite;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -41,6 +42,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                 if (!found)
                 {
                     ipOrderNO.SelectedIndex = 0; // Chọn dòng đầu tiên (dòng rỗng)
+                    GV.Production_Status = e_Production_Status.UNKNOWN; // Đặt trạng thái sản xuất là UNKNOWN
                 }
                 else
                 {
@@ -50,18 +52,19 @@ namespace QR_MASAN_01.Views.MFI_Service
 
                     //ghi logs 
                     //khởi động phần mềm
-                    SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Khởi động PO", "PO", $"Bắt đầu khởi động {lastPO_Row["orderNO"]}");
+                    SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Khởi động PO", "PO", $"Bắt đầu khởi động {lastPO_Row["orderNO"]}");
 
                     //ghi logs vào hàng đợi
                     SystemLogs.LogQueue.Enqueue(systemLogs);
-
-                    Globalvariable.PI_Status = e_PI_Status.READY; // Trạng thái không có PO hoặc đang chỉnh sửa
+                    GV.Production_Status = e_Production_Status.READY; // Đặt trạng thái sản xuất là READY
+                    //Globalvariable.PI_Status = e_PI_Status.READY; // Trạng thái không có PO hoặc đang chỉnh sửa
                 }
 
             }
             else
             {
                 ipOrderNO.SelectedIndex = 0; // Chọn dòng đầu tiên (dòng rỗng) 
+                GV.Production_Status = e_Production_Status.UNKNOWN; // Đặt trạng thái sản xuất là UNKNOWN
             }
 
             //61508
@@ -110,11 +113,9 @@ namespace QR_MASAN_01.Views.MFI_Service
         private void btnPO_Click(object sender, EventArgs e)
         {
             //ghi logs người dùng nhấn nút
-            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Nhấn nút chỉnh sửa PO", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút chỉnh sửa PO");
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Nhấn nút chỉnh sửa PO", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút chỉnh sửa PO");
             //ghi logs vào hàng đợi
-
-
-            if (Globalvariable.PI_Status != e_PI_Status.EDITING)
+            if (GV.Production_Status != e_Production_Status.EDITING)
             {
                 using (var dialog = new Pom_dialog())
                 {
@@ -122,7 +123,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                     {
                         btnPO.Text = "Lưu thông tin";
                         btnPO.Symbol = 61468; // Thay đổi biểu tượng của nút btnPO
-                        Globalvariable.PI_Status = e_PI_Status.EDITING; // Đặt trạng thái là đang chỉnh sửa
+                        GV.Production_Status = e_Production_Status.EDITING; // Đặt trạng thái là đang chỉnh sửa
                         if(Globalvariable.Product_Active_Count < Globalvariable.Seleted_PO_Data.Rows[0]["orderQty"].ToString().ToInt() && Globalvariable.Product_Active_Count > 0)
                         {
                             ipProductionDate.ReadOnly = false; //cho phép chỉnh sửa date
@@ -130,7 +131,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                             ipProductionDate.ForeColor = Color.Black; // Đổi màu chữ của ô nhập ngày sản xuất
 
                             //ghi logs chỉ chỉnh được ngày sản xuất
-                            SystemLogs systemLogsEdit = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Chỉnh ProductionDate", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} chỉ chỉnh sửa ngày sản xuất của PO: {ipOrderNO.Text}");
+                            SystemLogs systemLogsEdit = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Chỉnh ProductionDate", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} chỉ chỉnh sửa ngày sản xuất của PO: {ipOrderNO.Text}");
                             //ghi logs vào hàng đợi
                             SystemLogs.LogQueue.Enqueue(systemLogsEdit);
 
@@ -151,7 +152,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                             ipOrderNO.ForeColor = Color.Black; // Đổi màu chữ của ô nhập Order No
 
                             //ghi logs cho chỉnh hết
-                            SystemLogs systemLogsEdit = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Chỉnh sửa PO", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} người dùng bắt đầu chỉnh: {ipOrderNO.Text}");
+                            SystemLogs systemLogsEdit = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Chỉnh sửa PO", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} người dùng bắt đầu chỉnh: {ipOrderNO.Text}");
 
                         }
 
@@ -174,8 +175,12 @@ namespace QR_MASAN_01.Views.MFI_Service
 
                 poService.RunPO(ipOrderNO.Text, ipProductionDate.Text);
 
+                //đổi màu lại
+                ipOrderNO.FillColor = Color.CornflowerBlue; // Đổi màu nền của ô nhập Order No về màu CornflowerBlue
+                ipProductionDate.FillColor = Color.CornflowerBlue; // Đổi màu nền của ô nhập Production Date về màu CornflowerBlue
+
                 //ghi logs đổi PO thành công
-                SystemLogs systemLogsSuccess = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Đổi PO thành công", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} đã đổi PO thành công: {ipOrderNO.Text}");
+                SystemLogs systemLogsSuccess = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Đổi PO thành công", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} đã đổi PO thành công: {ipOrderNO.Text}");
                 //ghi logs vào hàng đợi
                 SystemLogs.LogQueue.Enqueue(systemLogsSuccess);
 
@@ -187,8 +192,8 @@ namespace QR_MASAN_01.Views.MFI_Service
                 // Đặt lại trạng thái
                 ipOrderNO.ReadOnly = true; // Không cho phép chỉnh sửa Order No
                 ipProductionDate.ReadOnly = true; // Không cho phép chỉnh sửa Production Date
-
-                Globalvariable.PI_Status = e_PI_Status.READY; // Trạng thái không có PO hoặc đang chỉnh sửa
+                GV.Production_Status = e_Production_Status.READY; // Trạng thái không có PO hoặc đang chỉnh sửa
+                
                 btnPO.Text = "Chỉnh thông tin";
                 btnPO.Symbol = 61508; // Thay đổi biểu tượng của nút btnPO
             }
@@ -210,21 +215,50 @@ namespace QR_MASAN_01.Views.MFI_Service
         {
             while(!WK_Update.CancellationPending)
             {
-                if(Globalvariable.PI_Status == e_PI_Status.READY)
+                switch (GV.Production_Status)
                 {
-                    this.Invoke(new Action(() =>
-                    {
-                        // Cập nhật số lượng mã vạch đã chạy
-                        opCZRunCount.Text = Globalvariable.Product_Active_Count.ToString();
-                    }));
-                }
-                else
-                {
-                    this.Invoke(new Action(() =>
-                    {
-                        // Cập nhật số lượng mã vạch đã chạy
-                        opCZRunCount.Text = "-";
-                    }));
+                    case e_Production_Status.EDITING:
+                        //tắt nút chạy, đang editing
+                        this.Invoke(new Action(() =>
+                        {
+                            btnRUN.Text = "BẮT ĐẦU SẢN XUẤT";
+                            btnRUN.Symbol = 61475; // Thay đổi biểu tượng của nút btnRUN
+                            btnRUN.FillColor = Color.Green; // Đổi màu nền của nút btnRUN
+                            btnRUN.Enabled =false;
+                        }));
+                        break;
+                    case e_Production_Status.PUSHING:
+                        break;
+                    case e_Production_Status.STOPPED:
+
+                        break;
+                    case e_Production_Status.RUNNING:
+                        this.Invoke(new Action(() =>
+                        {
+                            btnRUN.Text = "DỪNG SẢN XUẤT";
+                            btnRUN.Symbol = 61475; // Thay đổi biểu tượng của nút btnRUN
+                            btnRUN.FillColor = Color.Red; // Đổi màu nền của nút btnRUN
+
+                            //nút chỉnh 
+                            btnPO.Enabled = false; // Tắt nút chỉnh thông tin PO khi đang chạy sản xuất
+
+                        }));
+                        break;
+                    case e_Production_Status.PAUSED:
+                        break;
+                    case e_Production_Status.UNKNOWN:
+                        break;
+                    case e_Production_Status.READY:
+
+                        this.Invoke(new Action(() =>
+                        {
+                            btnRUN.Text = "BẮT ĐẦU SẢN XUẤT";
+                            btnRUN.Symbol = 61475; // Thay đổi biểu tượng của nút btnRUN
+                            btnRUN.FillColor = Color.Green; // Đổi màu nền của nút btnRUN
+                            btnRUN.Enabled = true; // Bật nút chạy khi ở trạng thái READY
+                            btnPO.Enabled = true; // Bật nút chỉnh thông tin PO khi ở trạng thái READY
+                        }));
+                        break;
                 }
                 Thread.Sleep(100); // Đợi 0.1 giây trước khi kiểm tra lại
             }
@@ -232,13 +266,94 @@ namespace QR_MASAN_01.Views.MFI_Service
 
         private void btnStopPO_Click(object sender, EventArgs e)
         {
+            //ghi logs người dùng nhấn nút dừng sản xuất
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Người dùng nhấn nút Sản Xuất", GV.Production_Status.ToString(), $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút sản xuất");
 
+            switch (GV.Production_Status)
+            {
+                case e_Production_Status.EDITING:
+                    break;
+                case e_Production_Status.PUSHING:
+                    break;
+                case e_Production_Status.STOPPED:
+                    break;
+                case e_Production_Status.RUNNING:
+                    //dừng sản xuất
+                    GV.Production_Status = e_Production_Status.READY;
+                    break;
+                case e_Production_Status.PAUSED:
+                    break;
+                case e_Production_Status.READY:
+                    //khởi động chạy
+                    //đẩy dữ liệu vào Dic
+                    Push_Data_To_Dic();
+                    //chuyển lên trạng thái runnung
+                    GV.Production_Status = e_Production_Status.RUNNING;
+                    break;
+                case e_Production_Status.UNKNOWN:
+                    break;
+            }
         }
+
+        public void Push_Data_To_Dic()
+        {
+            DataTable dataTable = new DataTable();
+            // Dictionary để lưu dữ liệu với CaseQR làm key
+            // Dictionary<string, ProductData> ProductQR_Dictionary = new Dictionary<string, ProductData>();
+            //Đẩy vào dic chính
+            string connectionString = $@"Data Source=C:/.ABC/{Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"]}.db;Version=3;";
+
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                // Câu lệnh SQL để đọc một cột (ví dụ: cột 'Name')
+                string query = $"SELECT * FROM `UniqueCodes`;";
+
+                // Sử dụng SQLiteDataAdapter để đổ dữ liệu vào DataTable
+                using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(query, connection))
+                {
+                    adapter.Fill(dataTable);
+                }
+                // Duyệt qua các hàng trong DataTable và thêm vào List<string>
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    // Đọc dữ liệu từ SQL Server
+                    int ID = Convert.ToInt32(row["ID"]); // CaseID
+                    string Code = row["Code"].ToString(); // CaseQR
+                    string Status = row["Status"].ToString(); // Active
+                    string ActivateDate = row["ActivateDate"].ToString();
+                    string ProductionDate = row["ProductionDate"].ToString();
+
+
+                    // Thêm dữ liệu vào Dictionary với CaseQR làm key
+                    GV.C2_CodeData_Dictionary[Code] = new CodeData
+                    {
+                        ID = ID,
+                        Status = Status,
+                        Activate_Datetime = ActivateDate,
+                        Production_Datetime = ProductionDate,
+                        orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                    };
+
+                }
+
+                this.Invoke(new Action(() =>
+                {
+                    // Cập nhật giao diện người dùng hoặc thực hiện các hành động khác nếu cần
+                    opNoti.Items.Add($"📥 [{DateTime.Now:HH:mm:ss}] Đã nhận {dataTable.Rows.Count} mã từ PO: {Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"]}.");
+                    opNoti.Items.Add($"📥 [{DateTime.Now:HH:mm:ss}] Tổng số mã trong hệ thống: {GV.C2_CodeData_Dictionary.Count} mã.");
+                    opNoti.SelectedItem = opNoti.Items[opNoti.Items.Count - 1]; // Tự động cuộn xuống cuối danh sách
+                }));
+                connection.Close();
+            }
+        }
+
 
         private void FPI_Service_Initialize(object sender, EventArgs e)
         {
             //ghi logs người dùng khởi động trang FPI_Service
-            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Khởi động trang FPI_Service", "FPI_Service", $"Người dùng {Globalvariable.CurrentUser.Username} đã khởi động trang FPI_Service");
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Khởi động trang FPI_Service", "FPI_Service", $"Người dùng {Globalvariable.CurrentUser.Username} đã khởi động trang FPI_Service");
             //ghi logs vào hàng đợi
             SystemLogs.LogQueue.Enqueue(systemLogs);
         }

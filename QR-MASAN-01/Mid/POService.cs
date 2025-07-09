@@ -1,4 +1,5 @@
-﻿using Sunny.UI;
+﻿
+using Sunny.UI;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -417,6 +418,26 @@ namespace QR_MASAN_01
 
         }
 
+        public int Get_ID_RUN(string orderNO)
+        {
+            string czRunPath = $"C:/.ABC/Record_{orderNO}.db";
+            using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+            {
+                string query = "SELECT * FROM PO ORDER BY Timestamp ASC LIMIT 1";
+                var command = new SQLiteCommand(query, conn);
+                var adapter = new SQLiteDataAdapter(command);
+                var table = new DataTable();
+                adapter.Fill(table);
+                if (table.Rows.Count > 0)
+                {
+                    return int.Parse(table.Rows[0]["ID"].ToString());
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
     }
 
    
