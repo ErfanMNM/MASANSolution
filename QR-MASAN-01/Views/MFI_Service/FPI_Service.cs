@@ -56,7 +56,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                     opPassCount.Text = GV.Pass_Product_Count.ToString();
                     //ghi logs 
                     //khởi động phần mềm
-                    SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Khởi động PO", "PO", $"Bắt đầu khởi động {lastPO_Row["orderNO"]}");
+                    SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Khởi động PO", "PO", $"Bắt đầu khởi động {lastPO_Row["orderNO"]}");
 
                     //ghi logs vào hàng đợi
                     SystemLogs.LogQueue.Enqueue(systemLogs);
@@ -119,7 +119,7 @@ namespace QR_MASAN_01.Views.MFI_Service
         private void btnPO_Click(object sender, EventArgs e)
         {
             //ghi logs người dùng nhấn nút
-            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Nhấn nút chỉnh sửa PO", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút chỉnh sửa PO");
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Nhấn nút chỉnh sửa PO", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút chỉnh sửa PO");
             //ghi logs vào hàng đợi
             if (GV.Production_Status != e_Production_Status.EDITING)
             {
@@ -137,7 +137,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                             ipProductionDate.ForeColor = Color.Black; // Đổi màu chữ của ô nhập ngày sản xuất
 
                             //ghi logs chỉ chỉnh được ngày sản xuất
-                            SystemLogs systemLogsEdit = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Chỉnh ProductionDate", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} chỉ chỉnh sửa ngày sản xuất của PO: {ipOrderNO.Text}");
+                            SystemLogs systemLogsEdit = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, $"Chỉnh ProductionDate = {ipProductionDate.Text}", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} chỉ chỉnh sửa ngày sản xuất của PO: {ipOrderNO.Text}");
                             //ghi logs vào hàng đợi
                             SystemLogs.LogQueue.Enqueue(systemLogsEdit);
 
@@ -158,7 +158,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                             ipOrderNO.ForeColor = Color.Black; // Đổi màu chữ của ô nhập Order No
 
                             //ghi logs cho chỉnh hết
-                            SystemLogs systemLogsEdit = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Chỉnh sửa PO", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} người dùng bắt đầu chỉnh: {ipOrderNO.Text}");
+                            SystemLogs systemLogsEdit = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Chỉnh sửa PO", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} người dùng bắt đầu chỉnh: {ipOrderNO.Text}");
 
                         }
 
@@ -186,7 +186,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                 ipProductionDate.FillColor = Color.CornflowerBlue; // Đổi màu nền của ô nhập Production Date về màu CornflowerBlue
 
                 //ghi logs đổi PO thành công
-                SystemLogs systemLogsSuccess = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Đổi PO thành công", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} đã đổi PO thành công: {ipOrderNO.Text}");
+                SystemLogs systemLogsSuccess = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Đổi PO thành công", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} đã đổi PO thành công: {ipOrderNO.Text}");
                 //ghi logs vào hàng đợi
                 SystemLogs.LogQueue.Enqueue(systemLogsSuccess);
 
@@ -273,7 +273,7 @@ namespace QR_MASAN_01.Views.MFI_Service
         private void btnStopPO_Click(object sender, EventArgs e)
         {
             //ghi logs người dùng nhấn nút dừng sản xuất
-            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Người dùng nhấn nút Sản Xuất", GV.Production_Status.ToString(), $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút sản xuất");
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Người dùng nhấn nút Sản Xuất", GV.Production_Status.ToString(), $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút sản xuất");
 
             switch (GV.Production_Status)
             {
@@ -292,6 +292,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                 case e_Production_Status.READY:
                     //khởi động chạy
                     //đẩy dữ liệu vào Dic
+
                     Push_Data_To_Dic();
                     //chuyển lên trạng thái runnung
                     GV.Production_Status = e_Production_Status.RUNNING;
@@ -359,7 +360,7 @@ namespace QR_MASAN_01.Views.MFI_Service
         private void FPI_Service_Initialize(object sender, EventArgs e)
         {
             //ghi logs người dùng khởi động trang FPI_Service
-            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Khởi động trang FPI_Service", "FPI_Service", $"Người dùng {Globalvariable.CurrentUser.Username} đã khởi động trang FPI_Service");
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Khởi động trang FPI_Service", "FPI_Service", $"Người dùng {Globalvariable.CurrentUser.Username} đã khởi động trang FPI_Service");
             //ghi logs vào hàng đợi
             SystemLogs.LogQueue.Enqueue(systemLogs);
         }
