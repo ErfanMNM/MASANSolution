@@ -21,11 +21,12 @@ namespace QR_MASAN_01.Views.MFI_Service
             InitializeComponent();
         }
 
-        public POService poService = new POService("C:/Users/THUC/source/repos/ErfanMNM/MASANSolution/Server_Service/po.db");
+        public POService poService;
 
         //hàm khởi động Page
         public void INIT()
         {
+            poService = new POService();
             WK_Update.RunWorkerAsync(); // Bắt đầu chạy worker để cập nhật số lượng mã vạch đã chạy
             poService.Check_PO_Log_File();//Kiểm tra xem file PG log có tồn tại hay không, nếu không thì tạo mới
             poService.MES_Load_OrderNo_ToComboBox(ipOrderNO);
@@ -43,6 +44,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                 {
                     ipOrderNO.SelectedIndex = 0; // Chọn dòng đầu tiên (dòng rỗng)
                     GV.Production_Status = e_Production_Status.UNKNOWN; // Đặt trạng thái sản xuất là UNKNOWN
+                     // Cập nhật số lượng sản phẩm đã qua kiểm tra từ dịch vụ PO
                 }
                 else
                 {
@@ -50,6 +52,8 @@ namespace QR_MASAN_01.Views.MFI_Service
                     ipOrderNO.SelectedValue = lastPO_Row["orderNO"].ToString();
                     ipProductionDate.Text = lastPO_Row["productionDate"].ToString();
 
+                    GV.Pass_Product_Count = poService.Get_Pass_Product_Count(lastPO_Row["orderNO"].ToString());
+                    opPassCount.Text = GV.Pass_Product_Count.ToString();
                     //ghi logs 
                     //khởi động phần mềm
                     SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Khởi động PO", "PO", $"Bắt đầu khởi động {lastPO_Row["orderNO"]}");
@@ -91,6 +95,8 @@ namespace QR_MASAN_01.Views.MFI_Service
                     opFactory.Text = Globalvariable.Seleted_PO_Data.Rows[0]["factory"].ToString();
                     opSite.Text = Globalvariable.Seleted_PO_Data.Rows[0]["site"].ToString();
                     opCZCodeCount.Text = Globalvariable.Seleted_PO_Data.Rows[0]["UniqueCodeCount"].ToString();
+                    opCZRunCount.Text = poService.Get_ID_RUN(Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString()).ToString();
+                    GV.ID = opCZRunCount.Text.ToInt(); // Cập nhật ID từ opCZRunCount
                 }
                 else
                 {
@@ -124,7 +130,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                         btnPO.Text = "Lưu thông tin";
                         btnPO.Symbol = 61468; // Thay đổi biểu tượng của nút btnPO
                         GV.Production_Status = e_Production_Status.EDITING; // Đặt trạng thái là đang chỉnh sửa
-                        if(Globalvariable.Product_Active_Count < Globalvariable.Seleted_PO_Data.Rows[0]["orderQty"].ToString().ToInt() && Globalvariable.Product_Active_Count > 0)
+                        if(GV.Pass_Product_Count < Globalvariable.Seleted_PO_Data.Rows[0]["orderQty"].ToString().ToInt())
                         {
                             ipProductionDate.ReadOnly = false; //cho phép chỉnh sửa date
                             ipProductionDate.FillColor = Color.Yellow; // Đổi màu nền của ô nhập ngày sản xuất
@@ -203,7 +209,7 @@ namespace QR_MASAN_01.Views.MFI_Service
 
         private void uiSymbolButton1_Click(object sender, EventArgs e)
         {
-            //opCZCodeActiveCount.Text = poService.GetCZRunCount(Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString()).ToString();
+            
         }
 
         private void uiTableLayoutPanel1_Paint(object sender, PaintEventArgs e)

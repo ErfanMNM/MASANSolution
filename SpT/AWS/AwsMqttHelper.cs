@@ -186,6 +186,29 @@ public class AwsIotClientHelper : IDisposable
         }
     }
 
+    public (string msg,bool Issuccess) Publish_V2(string topic, string payload, byte qos = MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, bool retained = false)
+    {
+        var rt = (string.Empty, false);
+        if (client != null && client.IsConnected)
+        {
+
+            try
+            {
+                client.Publish(topic, Encoding.UTF8.GetBytes(payload), qos, retained);
+                rt = ($"✅ [{Now()}] Đã publish thành công topic: {topic}", true);
+            }
+            catch (Exception ex)
+            {
+                rt = ($"⚠️ [{Now()}] Lỗi publish: {ex.Message}", false);
+            }
+        }
+        else
+        {
+            rt = ($"⚠️ [{Now()}] Không thể publish, chưa kết nối.", false);
+        }
+        return rt;
+    }
+
     private void Client_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
     {
         string payload = Encoding.UTF8.GetString(e.Message);

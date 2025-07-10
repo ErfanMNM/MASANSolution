@@ -63,17 +63,17 @@
             this.opMESSendCount = new Sunny.UI.UIPanel();
             this.uiPanel9 = new Sunny.UI.UIPanel();
             this.uiPanel1 = new Sunny.UI.UIPanel();
-            this.opID = new Sunny.UI.UIPanel();
+            this.opPassCount = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel5 = new Sunny.UI.UITableLayoutPanel();
             this.uiSymbolButton1 = new Sunny.UI.UISymbolButton();
             this.btnPO = new Sunny.UI.UISymbolButton();
             this.btnRUN = new Sunny.UI.UISymbolButton();
+            this.opNoti = new Sunny.UI.UIListBox();
             this.uiTableLayoutPanel6 = new Sunny.UI.UITableLayoutPanel();
             this.opCZRunCount = new Sunny.UI.UIPanel();
             this.uiPanel3 = new Sunny.UI.UIPanel();
             this.opProductName = new Sunny.UI.UIPanel();
             this.WK_Update = new System.ComponentModel.BackgroundWorker();
-            this.opNoti = new Sunny.UI.UIListBox();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel2.SuspendLayout();
@@ -670,13 +670,13 @@
             // 
             this.uiTableLayoutPanel7.ColumnCount = 4;
             this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 279F));
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 221F));
             this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 149F));
             this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 249F));
             this.uiTableLayoutPanel7.Controls.Add(this.opMESSendCount, 3, 0);
             this.uiTableLayoutPanel7.Controls.Add(this.uiPanel9, 2, 0);
             this.uiTableLayoutPanel7.Controls.Add(this.uiPanel1, 0, 0);
-            this.uiTableLayoutPanel7.Controls.Add(this.opID, 1, 0);
+            this.uiTableLayoutPanel7.Controls.Add(this.opPassCount, 1, 0);
             this.uiTableLayoutPanel7.Location = new System.Drawing.Point(3, 3);
             this.uiTableLayoutPanel7.Name = "uiTableLayoutPanel7";
             this.uiTableLayoutPanel7.RowCount = 1;
@@ -726,24 +726,24 @@
             this.uiPanel1.Name = "uiPanel1";
             this.uiPanel1.Radius = 1;
             this.uiPanel1.RectColor = System.Drawing.Color.MediumBlue;
-            this.uiPanel1.Size = new System.Drawing.Size(145, 46);
+            this.uiPanel1.Size = new System.Drawing.Size(203, 46);
             this.uiPanel1.TabIndex = 81;
-            this.uiPanel1.Text = "Sản lượng đã chạy";
+            this.uiPanel1.Text = "Sản lượng tốt đã chạy";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // opID
+            // opPassCount
             // 
-            this.opID.FillColor = System.Drawing.Color.White;
-            this.opID.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.opID.Location = new System.Drawing.Point(151, 2);
-            this.opID.Margin = new System.Windows.Forms.Padding(2);
-            this.opID.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opID.Name = "opID";
-            this.opID.Radius = 1;
-            this.opID.Size = new System.Drawing.Size(275, 46);
-            this.opID.TabIndex = 80;
-            this.opID.Text = "-";
-            this.opID.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.opPassCount.FillColor = System.Drawing.Color.White;
+            this.opPassCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.opPassCount.Location = new System.Drawing.Point(209, 2);
+            this.opPassCount.Margin = new System.Windows.Forms.Padding(2);
+            this.opPassCount.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opPassCount.Name = "opPassCount";
+            this.opPassCount.Radius = 1;
+            this.opPassCount.Size = new System.Drawing.Size(217, 46);
+            this.opPassCount.TabIndex = 80;
+            this.opPassCount.Text = "-";
+            this.opPassCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiTableLayoutPanel5
             // 
@@ -809,12 +809,27 @@
             this.btnRUN.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnRUN.Click += new System.EventHandler(this.btnStopPO_Click);
             // 
+            // opNoti
+            // 
+            this.opNoti.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opNoti.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
+            this.opNoti.ItemSelectForeColor = System.Drawing.Color.White;
+            this.opNoti.Location = new System.Drawing.Point(4, 61);
+            this.opNoti.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.opNoti.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opNoti.Name = "opNoti";
+            this.opNoti.Padding = new System.Windows.Forms.Padding(2);
+            this.opNoti.ShowText = false;
+            this.opNoti.Size = new System.Drawing.Size(824, 186);
+            this.opNoti.TabIndex = 13;
+            this.opNoti.Text = "uiListBox1";
+            // 
             // uiTableLayoutPanel6
             // 
             this.uiTableLayoutPanel6.ColumnCount = 3;
-            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28.96552F));
-            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 71.03448F));
-            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 106F));
+            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30.70175F));
+            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 69.29825F));
+            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 147F));
             this.uiTableLayoutPanel6.Controls.Add(this.opCZRunCount, 2, 0);
             this.uiTableLayoutPanel6.Controls.Add(this.uiPanel3, 0, 0);
             this.uiTableLayoutPanel6.Controls.Add(this.opProductName, 1, 0);
@@ -830,12 +845,12 @@
             // 
             this.opCZRunCount.FillColor = System.Drawing.Color.White;
             this.opCZRunCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.opCZRunCount.Location = new System.Drawing.Point(727, 2);
+            this.opCZRunCount.Location = new System.Drawing.Point(686, 2);
             this.opCZRunCount.Margin = new System.Windows.Forms.Padding(2);
             this.opCZRunCount.MinimumSize = new System.Drawing.Size(1, 1);
             this.opCZRunCount.Name = "opCZRunCount";
             this.opCZRunCount.Radius = 1;
-            this.opCZRunCount.Size = new System.Drawing.Size(103, 39);
+            this.opCZRunCount.Size = new System.Drawing.Size(144, 39);
             this.opCZRunCount.TabIndex = 85;
             this.opCZRunCount.Text = "-";
             this.opCZRunCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -866,7 +881,7 @@
             this.opProductName.MinimumSize = new System.Drawing.Size(1, 1);
             this.opProductName.Name = "opProductName";
             this.opProductName.Radius = 1;
-            this.opProductName.Size = new System.Drawing.Size(511, 39);
+            this.opProductName.Size = new System.Drawing.Size(470, 39);
             this.opProductName.TabIndex = 80;
             this.opProductName.Text = "-";
             this.opProductName.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -876,21 +891,6 @@
             this.WK_Update.WorkerReportsProgress = true;
             this.WK_Update.WorkerSupportsCancellation = true;
             this.WK_Update.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Update_DoWork);
-            // 
-            // opNoti
-            // 
-            this.opNoti.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opNoti.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
-            this.opNoti.ItemSelectForeColor = System.Drawing.Color.White;
-            this.opNoti.Location = new System.Drawing.Point(4, 61);
-            this.opNoti.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.opNoti.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opNoti.Name = "opNoti";
-            this.opNoti.Padding = new System.Windows.Forms.Padding(2);
-            this.opNoti.ShowText = false;
-            this.opNoti.Size = new System.Drawing.Size(824, 186);
-            this.opNoti.TabIndex = 13;
-            this.opNoti.Text = "uiListBox1";
             // 
             // FPI_Service
             // 
@@ -958,7 +958,7 @@
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel7;
         private Sunny.UI.UIPanel uiPanel9;
         private Sunny.UI.UIPanel uiPanel1;
-        private Sunny.UI.UIPanel opID;
+        private Sunny.UI.UIPanel opPassCount;
         private Sunny.UI.UIPanel opMESSendCount;
         private Sunny.UI.UIPanel opCZRunCount;
         private System.ComponentModel.BackgroundWorker WK_Update;

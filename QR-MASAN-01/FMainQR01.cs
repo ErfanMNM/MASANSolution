@@ -22,8 +22,8 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using static QR_MASAN_01.ActiveLogs;
 using static QR_MASAN_01.SystemLogs;
+using static QR_MASAN_01.AWSLogs;
 
 
 
@@ -60,6 +60,9 @@ namespace QR_MASAN_01
                 UIStyles.CultureInfo = CultureInfos.en_US;
                 UIStyles.GlobalFont = true;
                 UIStyles.GlobalFontName = "Tahoma";
+                //load Setting
+                Setting.Current.Load();
+                Setting.Current.SetDefault(); //đặt giá trị mặc định nếu chưa có trong file cấu hình
 
                 this.MainTabControl = uiTabControl1;
                 uiNavMenu1.TabControl = uiTabControl1;
@@ -74,8 +77,7 @@ namespace QR_MASAN_01
                                 "1V2xjY6AA4URrtcwUorQE54Ud5KyI7Ev2hpDPMMcXVTI",
                                 "PLC!A1:C100"
                             );
-                //load Setting
-                Setting.Current.Load();
+                
                 //Setting.Current.Save();
                 //đọc file sqlite đưa vào datatable
 
@@ -293,9 +295,9 @@ namespace QR_MASAN_01
                         InsertToSQLite(LogQueue.Dequeue());
                     }
 
-                    if(ActiveLogQueue.Count > 0)
+                    if(AWSLogsQueue.Count > 0)
                     {
-                        ActiveInsertToSQLite(ActiveLogQueue.Dequeue());
+                        AWSInsertToSQLite(AWSLogsQueue.Dequeue());
                     }
 
                 }

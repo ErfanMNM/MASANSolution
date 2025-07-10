@@ -1,7 +1,9 @@
-﻿using HslCommunication;
+﻿using DocumentFormat.OpenXml.ExtendedProperties;
+using HslCommunication;
 using MainClass;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using QR_MASAN_01.Auth;
 using SpT;
 using Sunny.UI;
 using System;
@@ -18,12 +20,14 @@ using System.Text;
 using System.Threading;
 using static MFI_Service.MFI_Service_Form;
 using static QR_MASAN_01.ActiveLogs;
+using static QR_MASAN_01.AWSLogs;
 using static QR_MASAN_01.SystemLogs;
 
 namespace QR_MASAN_01
 {
     public partial class FDashboard : UIPage
     {
+        public AwsIotClientHelper awsClient;
         public FDashboard()
         {
             InitializeComponent();
@@ -46,6 +50,29 @@ namespace QR_MASAN_01
                 PLC.PLC_PORT = Convert.ToInt32(PLCAddress.Get("PLC_PORT"));
                 PLC.PLC_Ready_DM = PLCAddress.Get("PLC_Ready_DM");
                 PLC.InitPLC();
+
+                //kết nối MQTT
+
+                string host = "a22qv9bgjnbsae-ats.iot.ap-southeast-1.amazonaws.com";
+                string clientId = "MIPWP501";
+
+                string rootCAPath = @"C:\Users\THUC\Downloads\Compressed\Archive\MIPWP501\AmazonRootCA1.pem";
+                string pfxPath = @"C:\Users\THUC\Downloads\Compressed\Archive\MIPWP501\client-certificate.pfx";
+                string pfxPassword = "thuc";
+
+                awsClient = new AwsIotClientHelper(
+                    host,
+                    clientId,
+                    rootCAPath,
+                    "",
+                    pfxPath,
+                    pfxPassword
+
+                );
+                awsClient.AWSStatus_OnChange += AWS_Status_Onchange;
+                awsClient.AWSStatus_OnReceive += AWS_Status_OnReceive;
+
+                awsClient.ConnectAsync();
             }
             catch (Exception ex)
             {
@@ -61,25 +88,146 @@ namespace QR_MASAN_01
 
         }
 
-        MFI_Info _clientMFI = new MFI_Info();
-        bool ClearPLC = false;
+        void SafeInvoke(Action action)
+        {
+            if (InvokeRequired)
+                BeginInvoke(action);
+            else
+                action();
+        }
+
+        private void AWS_Status_OnReceive(object sender, AwsIotClientHelper.AWSStatusReceiveEventArgs e)
+        {
+            JObject jsonObject = JObject.Parse(e.Payload);
+            // Lấy giá trị của trường "status" từ JSON
+            string status = jsonObject["status"]?.ToString();
+            //lấy giá trị của trường "message_id" từ JSON
+            string messageId = jsonObject["message_id"]?.ToString();
+            // Lấy giá trị của trường "error_message" từ JSON
+            string errorMessage = jsonObject["error_message"]?.ToString();
+            //thêm vào queue
+            GV.AWS_Response_Queue.Enqueue(new AWS_Response
+            {
+                status = status,
+                message_id = messageId,
+                error_message = errorMessage
+            });
+
+        }
+
+        private void AWS_Status_Onchange(object sender, AwsIotClientHelper.AWSStatusEventArgs e)
+        {
+            switch (e.Status)
+            {
+                case AwsIotClientHelper.e_awsIot_status.Connected:
+                    // ghi log
+                    SafeInvoke(() =>
+                    {
+                        AWSLogs aWSLogs = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.CONNECT, "Connected", Globalvariable.CurrentUser.Username, "Kết nối thành công với AWS IoT Core");
+                        //thêm vào Queue để ghi log
+                        AWSLogsQueue.Enqueue(aWSLogs);
+
+                        //cập nhật trạng thái kết nối
+                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Kết nối thành công với AWS IoT Core.");
+                    });
+
+                    string[] topicsToSub = new[]
+                                      {
+                                            "CZ/MIPWP501/response"
+                                        };
+
+                    awsClient.SubscribeMultiple(topicsToSub);
+
+                    break;
+                case AwsIotClientHelper.e_awsIot_status.Disconnected:
+                    SafeInvoke(() =>
+                    {
+                        //ghi log
+                        AWSLogs aWSLogs1 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.DISCONNECT, "Disconnect", Globalvariable.CurrentUser.Username, "Mất kết nối với AWS IoT Core");
+                        //thêm vào Queue để ghi log
+                        AWSLogsQueue.Enqueue(aWSLogs1);
+                        //cập nhật trạng thái kết nối
+                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Mất kết nối với AWS IoT Core.");
+                    });
+                    break;
+                case AwsIotClientHelper.e_awsIot_status.Connecting:
+                    SafeInvoke(() =>
+                    {
+                        //ghi log
+                        AWSLogs aWSLogs2 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.CONNECT, "Connecting", Globalvariable.CurrentUser.Username, "Đang kết nối với AWS IoT Core");
+                        //thêm vào Queue để ghi log
+                        AWSLogsQueue.Enqueue(aWSLogs2);
+                        //cập nhật trạng thái kết nối
+                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Đang kết nối với AWS IoT Core...");
+                    });
+                    break;
+                case AwsIotClientHelper.e_awsIot_status.Error:
+                    SafeInvoke(() =>
+                    {
+                        //ghi log
+                        AWSLogs aWSLogs3 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.ERROR, "Error", Globalvariable.CurrentUser.Username, $"Lỗi: {e.Message}");
+                        //thêm vào Queue để ghi log
+                        AWSLogsQueue.Enqueue(aWSLogs3);
+                        //cập nhật trạng thái kết nối
+                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi: {e.Message}");
+                    });
+                    break;
+                case AwsIotClientHelper.e_awsIot_status.Subscribed:
+                    SafeInvoke(() =>
+                    {
+                        //ghi log
+                        AWSLogs aWSLogs4 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.SUBSCRIBE, "Subscribed", Globalvariable.CurrentUser.Username, $"Đã đăng ký topic: {e.Message}");
+                        //thêm vào Queue để ghi log
+                        AWSLogsQueue.Enqueue(aWSLogs4);
+                        //cập nhật trạng thái kết nối
+                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Đã đăng ký topic: {e.Message}");
+                    });
+                    break;
+                case AwsIotClientHelper.e_awsIot_status.Unsubscribed:
+                    SafeInvoke(() =>
+                    {
+                        //ghi log
+                        AWSLogs aWSLogs5 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.SUBSCRIBE, "Unsubscribed", Globalvariable.CurrentUser.Username, "Đã hủy đăng ký các topic.");
+                        //thêm vào Queue để ghi log
+                        AWSLogsQueue.Enqueue(aWSLogs5);
+                        //cập nhật trạng thái kết nối
+                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Đã hủy đăng ký các topic.");
+                    });
+                    break;
+                case AwsIotClientHelper.e_awsIot_status.Published:
+                    
+                    break;
+                case AwsIotClientHelper.e_awsIot_status.Unpublished:
+                    SafeInvoke(() =>
+                    {
+                        //ghi log
+                        AWSLogs aWSLogs7 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.PUBLISH, "Unpublished", Globalvariable.CurrentUser.Username, $"Không thể publish: {e.Message}");
+                        //thêm vào Queue để ghi log
+                        AWSLogsQueue.Enqueue(aWSLogs7);
+                    });
+                    break;
+            }
+
+            bool ClearPLC = false;
+        }
 
         public string dataBase_FileName = "";
-        //lấy xem có thông tin phiên tạo mới hay không
-        int SystemLogsCount = 1;
-        int SystemLogsCount_2 = 1;
-
 
         public void Update_HMI()
         {
-            // Cập nhật các trường thông tin MFI trên giao diện
-            this.Invoke(new Action(() =>
+            if(GV.Production_Status == e_Production_Status.RUNNING)
             {
-                oporderNO.Text = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString();
-                opproductionDate.Text = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString();
-                opGTIN.Text = Globalvariable.Seleted_PO_Data.Rows[0]["GTIN"].ToString();
-                oporderQty.Text = Globalvariable.Seleted_PO_Data.Rows[0]["orderQty"].ToString();
-            }));
+                // Cập nhật trạng thái của các thành phần
+                this.Invoke(new Action(() =>
+                {
+                    oporderNO.Text = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString();
+                    opproductionDate.Text = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString();
+                    opGTIN.Text = Globalvariable.Seleted_PO_Data.Rows[0]["GTIN"].ToString();
+                    oporderQty.Text = Globalvariable.Seleted_PO_Data.Rows[0]["orderQty"].ToString();
+                }));
+            }
+            // Cập nhật các trường thông tin MFI trên giao diện
+           
         }
 
         #region Các cập nhật lên màn hình
@@ -191,15 +339,15 @@ namespace QR_MASAN_01
                     PLC.Ready = 1;
                 }
                 
-                if (ClearPLC)
-                {
-                    this.Invoke(new Action(() =>
-                    {
-                        btnClearPLC.Enabled = true;
-                        btnClearPLC.Text = "Xóa lỗi PLC";
-                        ClearPLC = false;
-                    }));
-                }
+                //if (ClearPLC)
+                //{
+                //    this.Invoke(new Action(() =>
+                //    {
+                //        btnClearPLC.Enabled = true;
+                //        btnClearPLC.Text = "Xóa lỗi PLC";
+                //        ClearPLC = false;
+                //    }));
+                //}
                 //Kiểm tra PLC_ACTIVE_DM nếu = 1 set Globale ACTIVE = true dùng hsl
                 OperateResult<int> read = PLC.plc.ReadInt32(PLCAddress.Get("PLC_Bypass_DM_C1"));
                 if (read.IsSuccess)
@@ -208,10 +356,10 @@ namespace QR_MASAN_01
                     {
                         if (Globalvariable.ACTIVE_C1 == false)
                         {
-                            //ghi log 
-                            ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Bật Camera 01", "PLC", "Nhận kích hoạt camera 01 từ PLC, nhận giá trị khác 1");
-                            //Ghi vào hàng chờ
-                            ActiveLogQueue.Enqueue(activeLogs);
+                            ////ghi log 
+                            //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Bật Camera 01", "PLC", "Nhận kích hoạt camera 01 từ PLC, nhận giá trị khác 1");
+                            ////Ghi vào hàng chờ
+                            //ActiveLogQueue.Enqueue(activeLogs);
                             Globalvariable.ACTIVE_C1 = true;
                         }
                     }
@@ -219,10 +367,10 @@ namespace QR_MASAN_01
                     {
                         if (Globalvariable.ACTIVE_C1 == true)
                         {
-                            //ghi log
-                            ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Tắt Camera 01", "PLC", "Nhận ngừng kích hoạt camera 01 từ PLC, nhận giá trị bằng 1");
-                            //Ghi vào hàng chờ
-                            ActiveLogQueue.Enqueue(activeLogs);
+                            ////ghi log
+                            //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Tắt Camera 01", "PLC", "Nhận ngừng kích hoạt camera 01 từ PLC, nhận giá trị bằng 1");
+                            ////Ghi vào hàng chờ
+                            //ActiveLogQueue.Enqueue(activeLogs);
                             Globalvariable.ACTIVE_C1 = false;
                         }
                     }
@@ -235,9 +383,9 @@ namespace QR_MASAN_01
                     {
                         if (Globalvariable.ACTIVE_C2 == false)
                         {
-                            ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.UNACTIVE, "Bật Camera 02", "PLC", "Nhận kích hoạt camera 02 từ PLC, nhận giá trị khác 1");
-                            //Ghi vào hàng chờ
-                            ActiveLogQueue.Enqueue(activeLogs);
+                            //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.UNACTIVE, "Bật Camera 02", "PLC", "Nhận kích hoạt camera 02 từ PLC, nhận giá trị khác 1");
+                            ////Ghi vào hàng chờ
+                            //ActiveLogQueue.Enqueue(activeLogs);
                             Globalvariable.ACTIVE_C2 = true;
                         }
                     }
@@ -245,9 +393,9 @@ namespace QR_MASAN_01
                     {
                         if(Globalvariable.ACTIVE_C2 == true)
                         {
-                            ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.UNACTIVE, "Bật Camera 02", "PLC", "Nhận kích hoạt camera 02 từ PLC, nhận giá trị bằng 1");
-                            //Ghi vào hàng chờ
-                            ActiveLogQueue.Enqueue(activeLogs);
+                            //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.UNACTIVE, "Bật Camera 02", "PLC", "Nhận kích hoạt camera 02 từ PLC, nhận giá trị bằng 1");
+                            ////Ghi vào hàng chờ
+                            //ActiveLogQueue.Enqueue(activeLogs);
                             Globalvariable.ACTIVE_C2 = false;
                         }
                         
@@ -256,16 +404,16 @@ namespace QR_MASAN_01
 
                 if(Globalvariable.ACTIVE_C1 && Globalvariable.ACTIVE_C2)
                 {
-                    ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Kích hoạt kiểm", "PLC", "Nhận kích hoạt kiểm từ PLC");
-                    //Ghi vào hàng chờ
-                    ActiveLogQueue.Enqueue(activeLogs);
+                    //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Kích hoạt kiểm", "PLC", "Nhận kích hoạt kiểm từ PLC");
+                    ////Ghi vào hàng chờ
+                    //ActiveLogQueue.Enqueue(activeLogs);
                     Globalvariable.ACTIVE = true;
                 }
                 else
                 {
-                    ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Dừng kiểm", "PLC", "Nhận kích hoạt từ PLC");
-                    //Ghi vào hàng chờ
-                    ActiveLogQueue.Enqueue(activeLogs);
+                    //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Dừng kiểm", "PLC", "Nhận kích hoạt từ PLC");
+                    ////Ghi vào hàng chờ
+                    //ActiveLogQueue.Enqueue(activeLogs);
                     Globalvariable.ACTIVE = false;
                 }
 
@@ -313,7 +461,7 @@ namespace QR_MASAN_01
                         lblAlarm.FillColor = Globalvariable.NG_Color;
                     }
                 }));
-                Thread.Sleep(100);
+                Thread.Sleep(50);
             }
         }
 
@@ -576,6 +724,7 @@ namespace QR_MASAN_01
             //Kích hoạt hệ thống đo đạc
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
+            GV.ID++;
             //kiểm tra chuỗi có hợp lệ hay không
             //Kiểm tra tính hợp lệ của dữ liệu
             if (_strData.IsNullOrEmpty())
@@ -599,14 +748,36 @@ namespace QR_MASAN_01
                 if (C2CodeData.Status == "0")
                 {
                     //xác nhận PLC là pas
+                    //gửi xuống PLC pass và xử lý tại đây
+                    OperateResult write = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C2"), short.Parse("1"));
+                    //Ghi log
+                    if (write.IsSuccess)
+                    {
+                        Globalvariable.GCounter.PLC_1_Pass_C2++;
+                        C2CodeData.Status = "1";
+                        //giờ kích hoạt theo ISO
+                        C2CodeData.Activate_Datetime = DateTime.Now.ToString("o");
+                        C2CodeData.Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString();
+                        //Gửi vào hàng chờ để cập nhật SQLite
+                        GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
+                        //Ghi thành công
+                        Send_Result_Content_C2(e_Content_Result.PASS, _strData);
+                    }
+                    else
+                    {
+                        Globalvariable.GCounter.PLC_1_Fail_C2++;
+                        //Gửi xuống PLC fail được tính là fail trong csdl luôn
+                        C2CodeData.Status = "-1";
+                        //giờ kích hoạt theo ISO
+                        C2CodeData.Activate_Datetime = DateTime.Now.ToString("o");
+                        C2CodeData.Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString();
+                        //Gửi vào hàng chờ để cập nhật SQLite
+                        GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
+                        //Ghi thất bại
+                        Send_Result_Content_C2(e_Content_Result.ERROR,_strData);
+                    }
 
-
-                    C2CodeData.Status = "1";
-                    //giờ kích hoạt theo ISO
-                    C2CodeData.Activate_Datetime = DateTime.Now.ToString("o");
-                    C2CodeData.Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString();
-                    //Gửi vào hàng chờ để cập nhật SQLite
-                    GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData); ;
+                    
                 }
                 //nếu đã kích hoạt thì đá ra
                 else
@@ -794,39 +965,30 @@ namespace QR_MASAN_01
 
         public void Send_Result_Content_C2(e_Content_Result content_Result, string _content)
         {
+            DataResultSave dataResultSave = new DataResultSave();
             switch (content_Result)
             {
+                
                 case e_Content_Result.PASS:
 
                     Globalvariable.GCounter.Total_Pass_C2++;
                     Globalvariable.C2_UI.Curent_Content = _content;
                     Globalvariable.C2_UI.IsPass = true;
-                    //gửi xuống PLC và xử lý tại đây
-                    OperateResult write = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C2"), short.Parse("1"));
 
-                    if (write.IsSuccess)
-                    {
-                        Globalvariable.GCounter.PLC_1_Pass_C2++;
-                    }
-                    else
-                    {
-                        Globalvariable.GCounter.PLC_1_Fail_C2++;
-                    }
-                   
-                    DataResultSave dataResultSave = new DataResultSave
-                    {
-                        ID = , // Fix: Change the property type in DataResultSave class to string instead of int.  
-                        Code = _content,
-                        orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
-                        Status = "1",
-                        PLC_Send_Status = "0",
-                        Activate_Datetime = DateTime.Now.ToString("o"),
-                        Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
-                    };
+                        //gửi vào chỗ lưu
+                        dataResultSave = new DataResultSave
+                        {
+                            ID = GV.ID, // Fix: Change the property type in DataResultSave class to string instead of int.  
+                            Code = _content,
+                            orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                            Status = content_Result.ToString(),
+                            PLC_Send_Status = "true",
+                            Activate_Datetime = DateTime.Now.ToString("O"),
+                            Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
+                        };
                     GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
-                    break;
-                    //thêm hàng chờ lưu DB
 
+                    break;
 
                 case e_Content_Result.FAIL:
 
@@ -847,6 +1009,17 @@ namespace QR_MASAN_01
                         Globalvariable.GCounter.PLC_0_Fail_C2++;
                     }
 
+                    dataResultSave = new DataResultSave
+                    {
+                        ID = GV.ID, // Fix: Change the property type in DataResultSave class to string instead of int.  
+                        Code = _content,
+                        orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                        Status = content_Result.ToString(),
+                        PLC_Send_Status = write1.IsSuccess.ToString(),
+                        Activate_Datetime = DateTime.Now.ToString("O"),
+                        Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
+                    };
+                    GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
                     break;
 
                 case e_Content_Result.REWORK:
@@ -864,6 +1037,18 @@ namespace QR_MASAN_01
                     {
                         Globalvariable.GCounter.PLC_1_Fail_C2++;
                     }
+                    //gửi vào chỗ lưu
+                    dataResultSave = new DataResultSave
+                    {
+                        ID = GV.ID, // Fix: Change the property type in DataResultSave class to string instead of int.  
+                        Code = _content,
+                        orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                        Status = content_Result.ToString(),
+                        PLC_Send_Status = write5.IsSuccess.ToString(),
+                        Activate_Datetime = DateTime.Now.ToString("O"),
+                        Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
+                    };
+                    GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
                     break;
 
                 case e_Content_Result.DUPLICATE:
@@ -882,6 +1067,18 @@ namespace QR_MASAN_01
                     {
                         Globalvariable.GCounter.PLC_0_Fail_C2++;
                     }
+
+                    dataResultSave = new DataResultSave
+                    {
+                        ID = GV.ID, // Fix: Change the property type in DataResultSave class to string instead of int.  
+                        Code = _content,
+                        orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                        Status = content_Result.ToString(),
+                        PLC_Send_Status = write4.IsSuccess.ToString(),
+                        Activate_Datetime = DateTime.Now.ToString("O"),
+                        Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
+                    };
+                    GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
                     break;
 
                 case e_Content_Result.EMPTY:
@@ -900,6 +1097,18 @@ namespace QR_MASAN_01
                     {
                         Globalvariable.GCounter.PLC_0_Fail_C2++;
                     }
+
+                    dataResultSave = new DataResultSave
+                    {
+                        ID = GV.ID, // Fix: Change the property type in DataResultSave class to string instead of int.  
+                        Code = _content,
+                        orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                        Status = content_Result.ToString(),
+                        PLC_Send_Status = write3.IsSuccess.ToString(),
+                        Activate_Datetime = DateTime.Now.ToString("O"),
+                        Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
+                    };
+                    GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
                     break;
 
                 case e_Content_Result.ERR_FORMAT:
@@ -908,7 +1117,7 @@ namespace QR_MASAN_01
                     Globalvariable.C2_UI.IsPass = false;
 
                     //gửi xuống PLC và xử lý tại đây
-                    OperateResult write2 = PLC.plc.Write(PLCAddress.Get("PLC_C2_RejectDM"), short.Parse("0"));
+                    OperateResult write2 = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C2"), short.Parse("0"));
                     if (write2.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C2++;
@@ -917,13 +1126,25 @@ namespace QR_MASAN_01
                     {
                         Globalvariable.GCounter.PLC_0_Fail_C2++;
                     }
+
+                    dataResultSave = new DataResultSave
+                    {
+                        ID = GV.ID, // Fix: Change the property type in DataResultSave class to string instead of int.  
+                        Code = _content,
+                        orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                        Status = content_Result.ToString(),
+                        PLC_Send_Status = write2.IsSuccess.ToString(),
+                        Activate_Datetime = DateTime.Now.ToString("O"),
+                        Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
+                    };
+                    GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
                     break;
 
                 case e_Content_Result.NOT_FOUND:
 
                     Globalvariable.C2_UI.Curent_Content = "Mã không tồn tại";
                     Globalvariable.C2_UI.IsPass = false;
-                    OperateResult write8 = PLC.plc.Write(PLCAddress.Get("PLC_C2_RejectDM"), short.Parse("0"));
+                    OperateResult write8 = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C2"), short.Parse("0"));
                     if (write8.IsSuccess)
                     {
                         Globalvariable.GCounter.PLC_0_Pass_C2++;
@@ -932,22 +1153,36 @@ namespace QR_MASAN_01
                     {
                         Globalvariable.GCounter.PLC_0_Fail_C2++;
                     }
+                    dataResultSave = new DataResultSave
+                    {
+                        ID = GV.ID, // Fix: Change the property type in DataResultSave class to string instead of int.  
+                        Code = _content,
+                        orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                        Status = content_Result.ToString(),
+                        PLC_Send_Status = write8.IsSuccess.ToString(),
+                        Activate_Datetime = DateTime.Now.ToString("O"),
+                        Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
+                    };
+                    GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
                     break;
 
                 case e_Content_Result.ERROR:
                     Globalvariable.C2_UI.Curent_Content = "Lỗi không xác định";
                     Globalvariable.C2_UI.IsPass = false;
                     Globalvariable.GCounter.Error_C2++;
-                    //gửi xuống PLC và xử lý tại đây
-                    OperateResult write6 = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C2"), short.Parse("0"));
-                    if (write6.IsSuccess)
+
+                    dataResultSave = new DataResultSave
                     {
-                        Globalvariable.GCounter.PLC_0_Pass_C2++;
-                    }
-                    else
-                    {
-                        Globalvariable.GCounter.PLC_0_Fail_C2++;
-                    }
+                        ID = GV.ID, // Fix: Change the property type in DataResultSave class to string instead of int.  
+                        Code = _content,
+                        orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                        Status = content_Result.ToString(),
+                        PLC_Send_Status = "FAIL-1",
+                        Activate_Datetime = DateTime.Now.ToString("O"),
+                        Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
+                    };
+
+                    GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
                     break;
             }
         }
@@ -994,6 +1229,66 @@ namespace QR_MASAN_01
                     command.Parameters.AddWithValue("@activateDate", _CodeItem.Activate_Datetime);
                     command.Parameters.AddWithValue("@productionDate", _CodeItem.Production_Datetime);
                     command.Parameters.AddWithValue("@UserName", Globalvariable.CurrentUser.Username);
+                    int rowsAffected = command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void Update_Send_Status(int ID, string Status)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/{Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString()}.db;Version=3;"))
+            {
+                connection.Open();
+                string query = "UPDATE `UniqueCodes` SET " +
+                               "`Send_Status` = @send_status " +
+                               "WHERE `_rowid_` = @RowId";
+
+                using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@RowId", ID);
+                    command.Parameters.AddWithValue("@send_status", Status);
+                    int rowsAffected = command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void Update_Recive_Status(int ID, string Recive_Status)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/{Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString()}.db;Version=3;"))
+            {
+                connection.Open();
+                string query = "UPDATE `UniqueCodes` SET " +
+                               "`Recive_Status` = @recive_status " +
+                               "WHERE `_rowid_` = @RowId";
+
+                using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@RowId", ID);
+                    command.Parameters.AddWithValue("@recive_status", Recive_Status);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void Add_Content_To_SQLite( DataResultSave _Queue)
+        {
+            using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/Record_{Globalvariable.Seleted_PO_Data.Rows[0]["orderNo"].ToString()}.db;Version=3;"))
+            {
+                connection.Open();
+                string query = "INSERT INTO `Records` " +
+                            "(ID, Code, Status, PLC_Status, ActivateDate, ActivateUser, ProductionDate) " +
+                    "VALUES (@ID,@code,@status,@plc_status,@activatedate, @activateuser,@productiondate);";
+
+                using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ID", _Queue.ID);
+                    command.Parameters.AddWithValue("@code", _Queue.Code);
+                    command.Parameters.AddWithValue("@status", _Queue.Status);
+                    command.Parameters.AddWithValue("@plc_status", _Queue.PLC_Send_Status);
+                    command.Parameters.AddWithValue("@activatedate", _Queue.Activate_Datetime);
+                    command.Parameters.AddWithValue("@activateuser", Globalvariable.CurrentUser.Username);
+                    command.Parameters.AddWithValue("@productiondate", _Queue.Production_Datetime);
+
                     int rowsAffected = command.ExecuteNonQuery();
                 }
             }
@@ -1047,21 +1342,211 @@ namespace QR_MASAN_01
 
         private void WK_Process_SQLite_DoWork(object sender, DoWorkEventArgs e)
         {
-            while(!WK_UI_CAM_Update.CancellationPending)
+            while (!WK_UI_CAM_Update.CancellationPending)
             {
-                //kiểm tra các queue cập nhật dữ liệu SQLite trước
-                if (GV.C2_Update_Content_To_SQLite_Queue.Count > 0)
+                if (GV.Production_Status == e_Production_Status.RUNNING)
                 {
-                    //lấy ra dữ liệu
-                    CodeData queueItem = GV.C2_Update_Content_To_SQLite_Queue.Dequeue();
-                    //cập nhật vào SQLite
-                    Update_Active_Status(queueItem);
+                    //kiểm tra các queue cập nhật dữ liệu SQLite trước
+                    if (GV.C2_Update_Content_To_SQLite_Queue.Count > 0)
+                    {
+                        //lấy ra dữ liệu
+                        CodeData queueItem = GV.C2_Update_Content_To_SQLite_Queue.Dequeue();
+                        //cập nhật vào SQLite
+                        Update_Active_Status(queueItem);
+                    }
+                    //lưu lịch sử kiểm
+                    if (GV.C2_Save_Result_To_SQLite_Queue.Count > 0)
+                    {
+                        //lấy ra dữ liệu
+                        DataResultSave queueItem = GV.C2_Save_Result_To_SQLite_Queue.Dequeue();
+                        //cập nhật vào SQLite
+                        Add_Content_To_SQLite(queueItem);
+                    }
+                    //kiểm tra các queue cập nhật trạng thái gửi đi
+                    //lấy tất cả các mã đã acvtivate và gửi đi
+                    DataTable dataTable = new DataTable();
+                    dataTable = Get_Unique_Codes_Run_Send_Pending(Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString());
+                    if (dataTable.Rows.Count > 0)
+                    {
+                        //lấy ra mã và gửi đi
+                        for (int i = 0; i < dataTable.Rows.Count; i++)
+                        {
+                            string orderNO = Globalvariable.Seleted_PO_Data.Rows[0]["orderNo"].ToString();
+                            string ID = dataTable.Rows[i]["ID"].ToString();
+                            string code = dataTable.Rows[i]["Code"].ToString();
+                            string Status = dataTable.Rows[i]["Status"].ToString();
+                            string activateDate = dataTable.Rows[i]["ActivateDate"].ToString();
+                            string productionDate = dataTable.Rows[i]["ProductionDate"].ToString();
+                            var payload = new
+                            {
+                                message_id = $"{ID}-{orderNO}",
+                                orderNo = orderNO,
+                                uniqueCode = code,
+                                status = Status,
+                                activate_datetime = activateDate,
+                                production_date = productionDate,
+                                thing_name = "MIPWP501"
+                            };
+                            string json = JsonConvert.SerializeObject(payload);
+                            var rs = awsClient.Publish_V2("CZ/data", json);
+
+                            if (rs.Issuccess)
+                            {
+                                //cập nhật trạng thái đã gửi
+                                Update_Send_Status(ID.ToInt32(), "Sent");
+                            }
+                            else
+                            {
+                                //ghi log lỗi không gửi được
+                                Update_Send_Status(ID.ToInt32(), "Failed");
+                            }
+
+
+                        }
+                    }
+
+                    //kiểm tra danh sách các mã đã gửi đi
+                    if (GV.AWS_Response_Queue.Count > 0)
+                    {
+                        //lấy ra dữ liệu
+                        var responseItem = GV.AWS_Response_Queue.Dequeue();
+                        string ID = responseItem.message_id.Split('-')[0];
+                        //cập nhật trạng thái đã gửi
+                        try {
+                            Update_Recive_Status(ID.ToInt32(), responseItem.status);
+                        }
+                        catch (Exception ex)
+                        {
+                            //ghi log
+                            AWSLogs aWSLogs = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.ERROR, "Lỗi khi nhận tin nhắn trả về", Globalvariable.CurrentUser.Username, ex.Message);
+                            //thêm vào Queue để ghi log
+                            AWSLogsQueue.Enqueue(aWSLogs);
+                        }
+                        
+                    }
+
+                    //cập nhật số lượng đã gửi
+                    GV.Sent_Count = Get_Unique_Codes_Run_Send_Count(Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString());
+                    //cập nhật số lượng đã nhận
+                    GV.Received_Count = Get_Unique_Codes_Run_Recive_Count(Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString());
+
+                    if ((GV.Sent_Count - GV.Received_Count) > 20)
+                    {
+                        //sub lại
+                        string[] topicsToSub = new[]
+                                          {
+                                            "CZ/MIPWP501/response"
+                                        };
+
+                        awsClient.SubscribeMultiple(topicsToSub);
+
+                    }
+
+                    //gửi lại các mã Fail
+                    DataTable dataTableFailed = new DataTable();
+                    dataTableFailed = Get_Unique_Codes_Run_Send_Failed(Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString());
+                    if (dataTableFailed.Rows.Count > 0)
+                    {
+                        //lấy ra mã và gửi đi
+                        for (int i = 0; i < dataTableFailed.Rows.Count; i++)
+                        {
+                            string orderNO = Globalvariable.Seleted_PO_Data.Rows[0]["orderNo"].ToString();
+                            string ID = dataTableFailed.Rows[i]["ID"].ToString();
+                            string code = dataTableFailed.Rows[i]["Code"].ToString();
+                            string Status = dataTableFailed.Rows[i]["Status"].ToString();
+                            string activateDate = dataTableFailed.Rows[i]["ActivateDate"].ToString();
+                            string productionDate = dataTableFailed.Rows[i]["ProductionDate"].ToString();
+                            var payload = new
+                            {
+                                message_id = $"{ID}-{orderNO}",
+                                orderNo = orderNO,
+                                uniqueCode = code,
+                                status = Status,
+                                activate_datetime = activateDate,
+                                production_date = productionDate,
+                                thing_name = "MIPWP501"
+                            };
+                            string json = JsonConvert.SerializeObject(payload);
+                            var rs = awsClient.Publish_V2("CZ/data", json);
+                            if (rs.Issuccess)
+                            {
+                                //cập nhật trạng thái đã gửi
+                                Update_Send_Status(ID.ToInt32(), "Sent");
+                            }
+                            else
+                            {
+                                //ghi log lỗi không gửi được
+                                Update_Send_Status(ID.ToInt32(), "Failed");
+                            }
+                        }
+                    }
                 }
-                //kiểm tra các queue cập nhật trạng thái gửi đi
 
                 Thread.Sleep(100);
             }
         }
+
+
+        public DataTable Get_Unique_Codes_Run_Send_Pending(string orderNo)
+        {
+            //tạo thư mục nếu chưa tồn tại
+            string czRunPath = $"C:/.ABC/{orderNo}.db";
+
+            using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+            {
+                string query = "SELECT \"_rowid_\",* FROM \"main\".\"UniqueCodes\" WHERE \"Send_Status\" = 'pending'  AND \"Status\" != '0' ";
+                var adapter = new SQLiteDataAdapter(query, conn);
+                var table = new DataTable();
+                adapter.Fill(table);
+                return table;
+            }
+        }
+
+        public DataTable Get_Unique_Codes_Run_Send_Failed(string orderNo)
+        {
+            //tạo thư mục nếu chưa tồn tại
+            string czRunPath = $"C:/.ABC/{orderNo}.db";
+
+            using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+            {
+                string query = "SELECT \"_rowid_\",* FROM \"main\".\"UniqueCodes\" WHERE \"Send_Status\" = 'Failed'  AND \"Status\" != '0' ";
+                var adapter = new SQLiteDataAdapter(query, conn);
+                var table = new DataTable();
+                adapter.Fill(table);
+                return table;
+            }
+        }
+
+        //lấy số lượng Count có Send_Status = 'Sent'
+        public int Get_Unique_Codes_Run_Send_Count(string orderNo)
+        {
+            //tạo thư mục nếu chưa tồn tại
+            string czRunPath = $"C:/.ABC/{orderNo}.db";
+            using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+            {
+                string query = "SELECT COUNT(*) FROM \"main\".\"UniqueCodes\" WHERE \"Send_Status\" = 'Sent'  AND \"Status\" != '0' ";
+                var command = new SQLiteCommand(query, conn);
+                conn.Open();
+                int count = Convert.ToInt32(command.ExecuteScalar());
+                return count;
+            }
+        }
+
+        //lấy số lượng Count có Recive_Status != 'waiting'
+        public int Get_Unique_Codes_Run_Recive_Count(string orderNo)
+        {
+            //tạo thư mục nếu chưa tồn tại
+            string czRunPath = $"C:/.ABC/{orderNo}.db";
+            using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+            {
+                string query = "SELECT COUNT(*) FROM \"main\".\"UniqueCodes\" WHERE \"Recive_Status\" != 'waiting'  AND \"Status\" != '0' ";
+                var command = new SQLiteCommand(query, conn);
+                conn.Open();
+                int count = Convert.ToInt32(command.ExecuteScalar());
+                return count;
+            }
+        }
+
 
         #region Các luồng xử lý dữ liệu khi có tín hiệu
         private double maxTimeT1 = 0;

@@ -129,9 +129,6 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NorwixV2">
-      <HintPath>..\PRINTER\NorwixV2\obj\Debug\NorwixV2.dll</HintPath>
-    </Reference>
     <Reference Include="RBush, Version=4.0.0.0, Culture=neutral, PublicKeyToken=c77e27b81f4d0187, processorArchitecture=MSIL">
       <HintPath>..\packages\RBush.Signed.4.0.0\lib\net47\RBush.dll</HintPath>
     </Reference>
@@ -466,6 +463,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PRINTER\NorwixV2\NorwixV2.csproj">
+      <Project>{98f832b6-660a-4b00-b201-0b5a0479edf2}</Project>
+      <Name>NorwixV2</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PRINTER\Printer\Printer.csproj">
       <Project>{ef9c2d80-3d32-4d94-ad6e-73b9441db6c5}</Project>
       <Name>Printer</Name>

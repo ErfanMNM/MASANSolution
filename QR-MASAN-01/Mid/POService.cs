@@ -16,10 +16,10 @@ namespace QR_MASAN_01
         private string _connectionString_PO_MES;
         private string _codes_Path_CZ_DB_MES;
 
-        public POService(string dbPath_PO_MES = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\po.db", string codes_Path_CZ_DB_MES = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\codes")
+        public POService()
         {
-            _connectionString_PO_MES = $"Data Source={dbPath_PO_MES};Version=3;";
-            _codes_Path_CZ_DB_MES = codes_Path_CZ_DB_MES;
+            _connectionString_PO_MES = $@"Data Source={Setting.Current.PO_Data_path}po.db;Version=3;";
+            _codes_Path_CZ_DB_MES = Setting.Current.PO_Data_path + "codes" ;
         }
 
         //Đẩy danh sách orderNo từ POInfo của MES vào ComboBox
@@ -100,13 +100,33 @@ namespace QR_MASAN_01
                     return count;
                 }
             }
-            catch 
+            catch
+            {
+                return 0;
+            }
+        }
+
+        public int Get_Pass_Product_Count(string orderNo)
+        {
+            try
+            {
+                string czpath = "C:/.ABC" + "/Record_" + orderNo + ".db";
+                using (var conn = new SQLiteConnection($"Data Source={czpath};Version=3;"))
+                {
+                    string query = "SELECT COUNT(*) FROM Records WHERE Status = 'PASS'";
+                    var command = new SQLiteCommand(query, conn);
+                    command.Parameters.AddWithValue("@orderNo", orderNo);
+                    conn.Open();
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    return count;
+                }
+            }
+            catch
             {
                 return 0;
             }
 
         }
-
         //lấy số count mã czRun nằm trong thư mục C:/.ABC/MM-yy/<orderNo>.db SELECT COUNT(*) FROM `UniqueCodes`;
         public int Get_CZRun_Count(string orderNo)
         {
@@ -138,6 +158,22 @@ namespace QR_MASAN_01
                     return table;
                 }
         }
+
+        public DataTable Get_Unique_Codes_Run_Send_Pending(string orderNo)
+        {
+            //tạo thư mục nếu chưa tồn tại
+            string czRunPath = $"C:/.ABC/{orderNo}.db";
+
+            using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+            {
+                string query = "SELECT \"_rowid_\",* FROM \"main\".\"UniqueCodes\" WHERE \"Send_Status\" = 'pending'  AND \"Status\" != '0' ";
+                var adapter = new SQLiteDataAdapter(query, conn);
+                var table = new DataTable();
+                adapter.Fill(table);
+                return table;
+            }
+        }
+
 
         public DataTable Get_Unique_Codes_MES(string orderNo)
         {
@@ -335,20 +371,19 @@ namespace QR_MASAN_01
                 using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                 {
                     conn.Open();
-                    string createTableQuery = @"
-                        CREATE TABLE    ""UniqueCodes"" (
-	                                    ""ID""	INTEGER NOT NULL UNIQUE,
-	                                    ""Code""	TEXT NOT NULL UNIQUE,
-	                                    ""Status""	INTEGER NOT NULL DEFAULT 0,
-	                                    ""ActivateDate""	TEXT NOT NULL DEFAULT 0,
-	                                    ""ActivateUser""	TEXT NOT NULL DEFAULT 0,
-                                        ""Send_Status""	    TEXT NOT NULL DEFAULT ""pending"",
-                                        ""Recive_Status""	TEXT NOT NULL DEFAULT ""waiting"",
-                                        ""Send_Recive_Logs"" JSON,
-	                                    ""Timestamp""	TEXT NOT NULL DEFAULT 0,
-	                                    ""Timeunix""	INTEGER NOT NULL DEFAULT 0,
-	                                    PRIMARY KEY(""ID"" AUTOINCREMENT)
-                                    );";
+                    string createTableQuery = @"CREATE TABLE ""UniqueCodes"" (
+	                                        ""ID""	INTEGER NOT NULL UNIQUE,
+	                                        ""Code""	TEXT NOT NULL UNIQUE,
+	                                        ""Status""	INTEGER NOT NULL DEFAULT 0,
+	                                        ""ActivateDate""	TEXT NOT NULL DEFAULT 0,
+	                                        ""ProductionDate""	TEXT NOT NULL DEFAULT 0,
+	                                        ""ActivateUser""	TEXT NOT NULL DEFAULT 0,
+	                                        ""Send_Status""	TEXT NOT NULL DEFAULT pending,
+	                                        ""Recive_Status""	TEXT NOT NULL DEFAULT waiting,
+	                                        ""Send_Recive_Logs""	JSON,
+	                                        ""Duplicate""	JSON,
+	                                        PRIMARY KEY(""ID"" AUTOINCREMENT)
+                                        );";
                     var command = new SQLiteCommand(createTableQuery, conn);
                     command.ExecuteNonQuery();
                 }
@@ -382,16 +417,16 @@ namespace QR_MASAN_01
                 using (var conn = new SQLiteConnection($"Data Source={recordPath};Version=3;"))
                 {
                     conn.Open();
-                    string createTableQuery = @"
-                        CREATE TABLE Records (
-                            ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                            Code TEXT NOT NULL UNIQUE,
-                            Status INTEGER DEFAULT 0,
-                            ActivateDate TEXT DEFAULT 0,
-                            ActivateUser TEXT DEFAULT 0,
-                            Timestamp TEXT NOT NULL,
-                            Timeunix INTEGER NOT NULL
-                        );";
+                    string createTableQuery = @"CREATE TABLE ""Records"" (
+	                                            ""ID""	INTEGER NOT NULL UNIQUE,
+	                                            ""Code""	TEXT NOT NULL UNIQUE,
+	                                            ""Status""	INTEGER NOT NULL DEFAULT 0,
+	                                            ""PLC_Status""	TEXT NOT NULL DEFAULT 'FAIL',
+	                                            ""ActivateDate""	TEXT NOT NULL DEFAULT 0,
+	                                            ""ActivateUser""	TEXT NOT NULL DEFAULT 0,
+	                                            ""ProductionDate""	TEXT NOT NULL DEFAULT 0,
+	                                            PRIMARY KEY(""ID"" AUTOINCREMENT)
+                                            );";
                     var command = new SQLiteCommand(createTableQuery, conn);
                     command.ExecuteNonQuery();
                 }
@@ -416,6 +451,49 @@ namespace QR_MASAN_01
             }
 
 
+            string recordAWS = $"C:/.ABC/Record_{orderNo}_Send_AWS.db";
+            if (!System.IO.File.Exists(recordAWS))
+            {
+                using (var conn = new SQLiteConnection($"Data Source={recordAWS};Version=3;"))
+                {
+                    conn.Open();
+                    string createTableQuery = @"CREATE TABLE ""Records"" (
+	                                            ""ID""	INTEGER NOT NULL UNIQUE,
+	                                            ""message_id""	TEXT NOT NULL UNIQUE,
+	                                            ""orderNo""	TEXT NOT NULL DEFAULT 0,
+	                                            ""uniqueCode""	TEXT NOT NULL DEFAULT 'FAIL',
+	                                            ""status""	TEXT NOT NULL DEFAULT 0,
+	                                            ""activate_datetime""	TEXT NOT NULL DEFAULT 0,
+                                                ""production_date""	TEXT NOT NULL DEFAULT 0,
+                                                ""thing_name""	TEXT NOT NULL DEFAULT 0, 
+                                                ""send_datetime""	TEXT NOT NULL DEFAULT 0,
+	                                            PRIMARY KEY(""ID"" AUTOINCREMENT)
+                                            );";
+                    var command = new SQLiteCommand(createTableQuery, conn);
+                    command.ExecuteNonQuery();
+                }
+            }
+
+            string recive_AWS = $"C:/.ABC/Record_{orderNo}_Recive_AWS.db";
+            if (!System.IO.File.Exists(recive_AWS))
+            {
+                using (var conn = new SQLiteConnection($"Data Source={recive_AWS};Version=3;"))
+                {
+                    conn.Open();
+                    string createTableQuery = @"CREATE TABLE ""Records"" (
+	                                            ""ID""	INTEGER NOT NULL UNIQUE,
+	                                            ""message_id""	TEXT NOT NULL UNIQUE,
+	                                            ""status""	TEXT NOT NULL DEFAULT 0,
+	                                            ""error_message""	TEXT NOT NULL DEFAULT '0',
+	                                            ""recive_datetime""	TEXT NOT NULL DEFAULT 0,
+	                                            PRIMARY KEY(""ID"" AUTOINCREMENT)
+                                            );";
+                    var command = new SQLiteCommand(createTableQuery, conn);
+                    command.ExecuteNonQuery();
+                }
+            }
+
+
         }
 
         public int Get_ID_RUN(string orderNO)
@@ -423,7 +501,7 @@ namespace QR_MASAN_01
             string czRunPath = $"C:/.ABC/Record_{orderNO}.db";
             using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
             {
-                string query = "SELECT * FROM PO ORDER BY Timestamp ASC LIMIT 1";
+                string query = "SELECT * FROM Records ORDER BY ID DESC LIMIT 1";
                 var command = new SQLiteCommand(query, conn);
                 var adapter = new SQLiteDataAdapter(command);
                 var table = new DataTable();
@@ -438,7 +516,49 @@ namespace QR_MASAN_01
                 }
             }
         }
+
+        //hàm inser vào bảng Records của CZ run db AWS
+        public void Insert_Record_AWS(string orderNo, string message_id, string uniqueCode, string status, string activate_datetime, string production_date, string thing_name, string send_datetime)
+        {
+            string czRunPath = $"C:/.ABC/Record_{orderNo}.db";
+            using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+            {
+                conn.Open();
+                string insertQuery = @"
+                    INSERT INTO Records (message_id, orderNo, uniqueCode, status, activate_datetime, production_date, thing_name, send_datetime)
+                    VALUES (@message_id, @orderNo, @uniqueCode, @status, @activate_datetime, @production_date, @thing_name, @send_datetime)";
+                var command = new SQLiteCommand(insertQuery, conn);
+                command.Parameters.AddWithValue("@message_id", message_id);
+                command.Parameters.AddWithValue("@orderNo", orderNo);
+                command.Parameters.AddWithValue("@uniqueCode", uniqueCode);
+                command.Parameters.AddWithValue("@status", status);
+                command.Parameters.AddWithValue("@activate_datetime", activate_datetime);
+                command.Parameters.AddWithValue("@production_date", production_date);
+                command.Parameters.AddWithValue("@thing_name", thing_name);
+                command.Parameters.AddWithValue("@send_datetime", send_datetime);
+                command.ExecuteNonQuery();
+            }
+        }
+
+        //hàm inser vào bảng Records của CZ run db Recive AWS
+        public void Insert_Record_Recive_AWS(string orderNo, string message_id, string status, string error_message, string recive_datetime)
+        {
+            string czRunPath = $"C:/.ABC/Record_{orderNo}.db";
+            using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+            {
+                conn.Open();
+                string insertQuery = @"
+                    INSERT INTO Records (message_id, status, error_message, recive_datetime)
+                    VALUES (@message_id, @status, @error_message, @recive_datetime)";
+                var command = new SQLiteCommand(insertQuery, conn);
+                command.Parameters.AddWithValue("@message_id", message_id);
+                command.Parameters.AddWithValue("@status", status);
+                command.Parameters.AddWithValue("@error_message", error_message);
+                command.Parameters.AddWithValue("@recive_datetime", recive_datetime);
+                command.ExecuteNonQuery();
+            }
+        }
     }
 
-   
+
 }

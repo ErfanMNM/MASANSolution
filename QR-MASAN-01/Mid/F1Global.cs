@@ -118,9 +118,17 @@ namespace QR_MASAN_01
         public static Queue<CodeData> C2_Update_Content_To_SQLite_Queue = new Queue<CodeData>();
 
         public static Queue<DataResultSave> C2_Save_Result_To_SQLite_Queue = new Queue<DataResultSave>();
+        public static Queue<AWS_Response> AWS_Response_Queue = new Queue<AWS_Response>();
         public static int ID { get; set; } = 0; // ID của sản phẩm hiện tại
 
         public static e_Production_Status Production_Status { get; set; } = e_Production_Status.STOPPED;
+
+        public static int Pass_Product_Count { get; set; } = 0;
+
+        //số lượng mã send
+        public static int Sent_Count { get; set; } = 0;
+        //số lượng mã đã nhận response từ AWS
+        public static int Received_Count { get; set; } = 0;
     }
 
     public class Alarm
@@ -157,6 +165,13 @@ namespace QR_MASAN_01
         public string PLC_Send_Status { get; set; } // Trạng thái gửi PLC (0: Chưa gửi, 1: Đã gửi, -1: Lỗi gửi)
         public string Activate_Datetime { get; set; } // Thời gian kích hoạt
         public string Production_Datetime { get; set; } // Thời gian sản xuất
+    }
+
+    public class AWS_Response
+    {
+        public string status { get; set; } // Trạng thái trả về từ AWS
+        public string message_id { get; set; } // Thông điệp trả về từ AWS
+        public string error_message { get; set; } // Dữ liệu trả về từ AWS
     }
 
     public enum e_Server_Status
@@ -270,6 +285,7 @@ namespace QR_MASAN_01
         [ConfigSection("DATA")]
         public string Code_Content_Pattern { get; set; } // Regex pattern for code content
         public string Production_Mode { get; set; } // Regex pattern for C1 code content
+        public string PO_Data_path { get; set; } // Path to PO data file
 
         [ConfigSection("AUTH")]
 
@@ -279,6 +295,7 @@ namespace QR_MASAN_01
 
         public override void SetDefault()
         {
+            base.SetDefault();
             SoftName = "MS";
             ServerIP = "http://localhost";
             ServerPort = 49211;
@@ -292,6 +309,7 @@ namespace QR_MASAN_01
             TwoFA_Enabled = false; // Enable 2FA by default
             PO_Edit_AMode = "NONE"; // Default mode for editing PO
             TwoFA_Enabled_PO = false; // Enable 2FA for PO editing by default
+            PO_Data_path = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\"; 
             base.SetDefault();
         }
     }

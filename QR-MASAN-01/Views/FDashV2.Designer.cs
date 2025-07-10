@@ -81,6 +81,8 @@
             this.uiTitlePanel4 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel7 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel15 = new Sunny.UI.UITableLayoutPanel();
+            this.opCodeCount = new Sunny.UI.UIPanel();
+            this.uiPanel1 = new Sunny.UI.UIPanel();
             this.opGTIN = new Sunny.UI.UIPanel();
             this.uiPanel7 = new Sunny.UI.UIPanel();
             this.oporderNO = new Sunny.UI.UIPanel();
@@ -135,8 +137,6 @@
             this.Camera = new SPMS1.TCPClient(this.components);
             this.PLC = new SPMS1.OmronPLC_Hsl(this.components);
             this.Camera_c = new SPMS1.TCPClient(this.components);
-            this.uiPanel1 = new Sunny.UI.UIPanel();
-            this.opCodeCount = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTitlePanel5.SuspendLayout();
             this.uiTabControl2.SuspendLayout();
@@ -1024,6 +1024,32 @@
             this.uiTableLayoutPanel15.TabIndex = 8;
             this.uiTableLayoutPanel15.TagString = null;
             // 
+            // opCodeCount
+            // 
+            this.opCodeCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opCodeCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opCodeCount.Location = new System.Drawing.Point(135, 182);
+            this.opCodeCount.Margin = new System.Windows.Forms.Padding(2);
+            this.opCodeCount.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opCodeCount.Name = "opCodeCount";
+            this.opCodeCount.Size = new System.Drawing.Size(218, 42);
+            this.opCodeCount.TabIndex = 31;
+            this.opCodeCount.Text = "...";
+            this.opCodeCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiPanel1
+            // 
+            this.uiPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel1.Location = new System.Drawing.Point(2, 182);
+            this.uiPanel1.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel1.Name = "uiPanel1";
+            this.uiPanel1.Size = new System.Drawing.Size(129, 42);
+            this.uiPanel1.TabIndex = 30;
+            this.uiPanel1.Text = "CodeCount";
+            this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // opGTIN
             // 
             this.opGTIN.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1518,8 +1544,8 @@
             // 
             // uiTabControl3
             // 
-            this.uiTabControl3.Controls.Add(this.cam01);
             this.uiTabControl3.Controls.Add(this.cam02);
+            this.uiTabControl3.Controls.Add(this.cam01);
             this.uiTabControl3.Cursor = System.Windows.Forms.Cursors.Default;
             this.uiTabControl3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTabControl3.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
@@ -1592,11 +1618,11 @@
             // cam02
             // 
             this.cam02.Controls.Add(this.uiTableLayoutPanel37);
-            this.cam02.Location = new System.Drawing.Point(0, 40);
+            this.cam02.Location = new System.Drawing.Point(0, 30);
             this.cam02.Name = "cam02";
-            this.cam02.Size = new System.Drawing.Size(200, 60);
+            this.cam02.Size = new System.Drawing.Size(463, 96);
             this.cam02.TabIndex = 1;
-            this.cam02.Text = "CAMERA 02";
+            this.cam02.Text = "CAMERA MAIN";
             this.cam02.UseVisualStyleBackColor = true;
             // 
             // uiTableLayoutPanel37
@@ -1611,7 +1637,7 @@
             this.uiTableLayoutPanel37.Name = "uiTableLayoutPanel37";
             this.uiTableLayoutPanel37.RowCount = 1;
             this.uiTableLayoutPanel37.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel37.Size = new System.Drawing.Size(200, 60);
+            this.uiTableLayoutPanel37.Size = new System.Drawing.Size(463, 96);
             this.uiTableLayoutPanel37.TabIndex = 10;
             this.uiTableLayoutPanel37.TagString = null;
             // 
@@ -1619,11 +1645,11 @@
             // 
             this.opContentC2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opContentC2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opContentC2.Location = new System.Drawing.Point(55, 2);
+            this.opContentC2.Location = new System.Drawing.Point(126, 2);
             this.opContentC2.Margin = new System.Windows.Forms.Padding(2);
             this.opContentC2.MinimumSize = new System.Drawing.Size(1, 1);
             this.opContentC2.Name = "opContentC2";
-            this.opContentC2.Size = new System.Drawing.Size(143, 56);
+            this.opContentC2.Size = new System.Drawing.Size(335, 92);
             this.opContentC2.TabIndex = 5;
             this.opContentC2.Text = "Không dùng";
             this.opContentC2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1638,7 +1664,7 @@
             this.opResultPassFailC2.Margin = new System.Windows.Forms.Padding(2);
             this.opResultPassFailC2.MinimumSize = new System.Drawing.Size(1, 1);
             this.opResultPassFailC2.Name = "opResultPassFailC2";
-            this.opResultPassFailC2.Size = new System.Drawing.Size(49, 56);
+            this.opResultPassFailC2.Size = new System.Drawing.Size(120, 92);
             this.opResultPassFailC2.TabIndex = 4;
             this.opResultPassFailC2.Text = "Tắt";
             this.opResultPassFailC2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1718,32 +1744,6 @@
             this.Camera_c.IP = "127.0.0.1";
             this.Camera_c.Port = 6968;
             this.Camera_c.ClientCallBack += new SPMS1.TCPClient.EventForClient(this.Camera_c_ClientCallBack);
-            // 
-            // uiPanel1
-            // 
-            this.uiPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel1.Location = new System.Drawing.Point(2, 182);
-            this.uiPanel1.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel1.Name = "uiPanel1";
-            this.uiPanel1.Size = new System.Drawing.Size(129, 42);
-            this.uiPanel1.TabIndex = 30;
-            this.uiPanel1.Text = "CodeCount";
-            this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opCodeCount
-            // 
-            this.opCodeCount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opCodeCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opCodeCount.Location = new System.Drawing.Point(135, 182);
-            this.opCodeCount.Margin = new System.Windows.Forms.Padding(2);
-            this.opCodeCount.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opCodeCount.Name = "opCodeCount";
-            this.opCodeCount.Size = new System.Drawing.Size(218, 42);
-            this.opCodeCount.TabIndex = 31;
-            this.opCodeCount.Text = "...";
-            this.opCodeCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // FDashboard
             // 
