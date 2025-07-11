@@ -117,14 +117,14 @@
             this.panelinfoCode = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel16 = new Sunny.UI.UITableLayoutPanel();
             this.uiTabControl3 = new Sunny.UI.UITabControl();
-            this.cam01 = new System.Windows.Forms.TabPage();
-            this.uiTableLayoutPanel18 = new Sunny.UI.UITableLayoutPanel();
-            this.opContentC1 = new Sunny.UI.UIPanel();
-            this.opResultPassFailC1 = new Sunny.UI.UIPanel();
             this.cam02 = new System.Windows.Forms.TabPage();
             this.uiTableLayoutPanel37 = new Sunny.UI.UITableLayoutPanel();
             this.opContentC2 = new Sunny.UI.UIPanel();
             this.opResultPassFailC2 = new Sunny.UI.UIPanel();
+            this.cam01 = new System.Windows.Forms.TabPage();
+            this.uiTableLayoutPanel18 = new Sunny.UI.UITableLayoutPanel();
+            this.opContentC1 = new Sunny.UI.UIPanel();
+            this.opResultPassFailC1 = new Sunny.UI.UIPanel();
             this.WK_Update = new System.ComponentModel.BackgroundWorker();
             this.WK_UI_CAM_Update = new System.ComponentModel.BackgroundWorker();
             this.WK_CMR1 = new System.ComponentModel.BackgroundWorker();
@@ -167,10 +167,10 @@
             this.panelinfoCode.SuspendLayout();
             this.uiTableLayoutPanel16.SuspendLayout();
             this.uiTabControl3.SuspendLayout();
-            this.cam01.SuspendLayout();
-            this.uiTableLayoutPanel18.SuspendLayout();
             this.cam02.SuspendLayout();
             this.uiTableLayoutPanel37.SuspendLayout();
+            this.cam01.SuspendLayout();
+            this.uiTableLayoutPanel18.SuspendLayout();
             this.SuspendLayout();
             // 
             // uiTableLayoutPanel3
@@ -1079,7 +1079,7 @@
             // oporderNO
             // 
             this.oporderNO.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.oporderNO.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.oporderNO.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.oporderNO.Location = new System.Drawing.Point(135, 2);
             this.oporderNO.Margin = new System.Windows.Forms.Padding(2);
             this.oporderNO.MinimumSize = new System.Drawing.Size(1, 1);
@@ -1120,7 +1120,7 @@
             // oporderQty
             // 
             this.oporderQty.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.oporderQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.oporderQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.oporderQty.Location = new System.Drawing.Point(135, 92);
             this.oporderQty.Margin = new System.Windows.Forms.Padding(2);
             this.oporderQty.MinimumSize = new System.Drawing.Size(1, 1);
@@ -1192,7 +1192,7 @@
             // 
             this.uiTableLayoutPanel9.ColumnCount = 3;
             this.uiTableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 125F));
+            this.uiTableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 120F));
             this.uiTableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.uiTableLayoutPanel9.Controls.Add(this.uiTableLayoutPanel12, 1, 0);
             this.uiTableLayoutPanel9.Controls.Add(this.uiTableLayoutPanel8, 0, 0);
@@ -1215,13 +1215,13 @@
             this.uiTableLayoutPanel12.Controls.Add(this.opCMR02Stt, 0, 1);
             this.uiTableLayoutPanel12.Controls.Add(this.uiPanel18, 0, 0);
             this.uiTableLayoutPanel12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel12.Location = new System.Drawing.Point(117, 2);
+            this.uiTableLayoutPanel12.Location = new System.Drawing.Point(119, 2);
             this.uiTableLayoutPanel12.Margin = new System.Windows.Forms.Padding(2);
             this.uiTableLayoutPanel12.Name = "uiTableLayoutPanel12";
             this.uiTableLayoutPanel12.RowCount = 2;
             this.uiTableLayoutPanel12.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.uiTableLayoutPanel12.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
-            this.uiTableLayoutPanel12.Size = new System.Drawing.Size(121, 80);
+            this.uiTableLayoutPanel12.Size = new System.Drawing.Size(116, 80);
             this.uiTableLayoutPanel12.TabIndex = 18;
             this.uiTableLayoutPanel12.TagString = null;
             // 
@@ -1235,7 +1235,7 @@
             this.opCMR02Stt.MinimumSize = new System.Drawing.Size(1, 1);
             this.opCMR02Stt.Name = "opCMR02Stt";
             this.opCMR02Stt.Radius = 3;
-            this.opCMR02Stt.Size = new System.Drawing.Size(117, 44);
+            this.opCMR02Stt.Size = new System.Drawing.Size(112, 44);
             this.opCMR02Stt.TabIndex = 3;
             this.opCMR02Stt.Text = "-";
             this.opCMR02Stt.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1251,7 +1251,7 @@
             this.uiPanel18.Name = "uiPanel18";
             this.uiPanel18.Radius = 1;
             this.uiPanel18.RectColor = System.Drawing.Color.Teal;
-            this.uiPanel18.Size = new System.Drawing.Size(117, 28);
+            this.uiPanel18.Size = new System.Drawing.Size(112, 28);
             this.uiPanel18.TabIndex = 1;
             this.uiPanel18.Text = "Camera 02";
             this.uiPanel18.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1270,7 +1270,7 @@
             this.uiTableLayoutPanel8.RowCount = 2;
             this.uiTableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.uiTableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
-            this.uiTableLayoutPanel8.Size = new System.Drawing.Size(111, 80);
+            this.uiTableLayoutPanel8.Size = new System.Drawing.Size(113, 80);
             this.uiTableLayoutPanel8.TabIndex = 17;
             this.uiTableLayoutPanel8.TagString = null;
             // 
@@ -1285,7 +1285,7 @@
             this.uiPanel8.Name = "uiPanel8";
             this.uiPanel8.Radius = 1;
             this.uiPanel8.RectColor = System.Drawing.Color.Teal;
-            this.uiPanel8.Size = new System.Drawing.Size(107, 28);
+            this.uiPanel8.Size = new System.Drawing.Size(109, 28);
             this.uiPanel8.TabIndex = 1;
             this.uiPanel8.Text = "Camera 01";
             this.uiPanel8.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1300,7 +1300,7 @@
             this.opCamera.MinimumSize = new System.Drawing.Size(1, 1);
             this.opCamera.Name = "opCamera";
             this.opCamera.Radius = 3;
-            this.opCamera.Size = new System.Drawing.Size(107, 44);
+            this.opCamera.Size = new System.Drawing.Size(109, 44);
             this.opCamera.TabIndex = 2;
             this.opCamera.Text = "-";
             this.opCamera.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1313,13 +1313,13 @@
             this.uiTableLayoutPanel6.Controls.Add(this.uiPanel12, 0, 0);
             this.uiTableLayoutPanel6.Controls.Add(this.opPLCStatus, 0, 1);
             this.uiTableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel6.Location = new System.Drawing.Point(242, 2);
+            this.uiTableLayoutPanel6.Location = new System.Drawing.Point(239, 2);
             this.uiTableLayoutPanel6.Margin = new System.Windows.Forms.Padding(2);
             this.uiTableLayoutPanel6.Name = "uiTableLayoutPanel6";
             this.uiTableLayoutPanel6.RowCount = 2;
             this.uiTableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.uiTableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
-            this.uiTableLayoutPanel6.Size = new System.Drawing.Size(111, 80);
+            this.uiTableLayoutPanel6.Size = new System.Drawing.Size(114, 80);
             this.uiTableLayoutPanel6.TabIndex = 13;
             this.uiTableLayoutPanel6.TagString = null;
             // 
@@ -1334,7 +1334,7 @@
             this.uiPanel12.Name = "uiPanel12";
             this.uiPanel12.Radius = 1;
             this.uiPanel12.RectColor = System.Drawing.Color.Teal;
-            this.uiPanel12.Size = new System.Drawing.Size(107, 28);
+            this.uiPanel12.Size = new System.Drawing.Size(110, 28);
             this.uiPanel12.TabIndex = 1;
             this.uiPanel12.Text = "PLC";
             this.uiPanel12.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1348,7 +1348,7 @@
             this.opPLCStatus.MinimumSize = new System.Drawing.Size(1, 1);
             this.opPLCStatus.Name = "opPLCStatus";
             this.opPLCStatus.Radius = 3;
-            this.opPLCStatus.Size = new System.Drawing.Size(107, 44);
+            this.opPLCStatus.Size = new System.Drawing.Size(110, 44);
             this.opPLCStatus.TabIndex = 2;
             this.opPLCStatus.Text = "-";
             this.opPLCStatus.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1561,60 +1561,6 @@
             this.uiTabControl3.TabIndex = 4;
             this.uiTabControl3.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             // 
-            // cam01
-            // 
-            this.cam01.Controls.Add(this.uiTableLayoutPanel18);
-            this.cam01.Location = new System.Drawing.Point(0, 30);
-            this.cam01.Name = "cam01";
-            this.cam01.Size = new System.Drawing.Size(463, 96);
-            this.cam01.TabIndex = 2;
-            this.cam01.Text = "CAMERA 01";
-            this.cam01.UseVisualStyleBackColor = true;
-            // 
-            // uiTableLayoutPanel18
-            // 
-            this.uiTableLayoutPanel18.ColumnCount = 2;
-            this.uiTableLayoutPanel18.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 26.81319F));
-            this.uiTableLayoutPanel18.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 73.18681F));
-            this.uiTableLayoutPanel18.Controls.Add(this.opContentC1, 1, 0);
-            this.uiTableLayoutPanel18.Controls.Add(this.opResultPassFailC1, 0, 0);
-            this.uiTableLayoutPanel18.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel18.Location = new System.Drawing.Point(0, 0);
-            this.uiTableLayoutPanel18.Name = "uiTableLayoutPanel18";
-            this.uiTableLayoutPanel18.RowCount = 1;
-            this.uiTableLayoutPanel18.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel18.Size = new System.Drawing.Size(463, 96);
-            this.uiTableLayoutPanel18.TabIndex = 9;
-            this.uiTableLayoutPanel18.TagString = null;
-            // 
-            // opContentC1
-            // 
-            this.opContentC1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opContentC1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opContentC1.Location = new System.Drawing.Point(126, 2);
-            this.opContentC1.Margin = new System.Windows.Forms.Padding(2);
-            this.opContentC1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opContentC1.Name = "opContentC1";
-            this.opContentC1.Size = new System.Drawing.Size(335, 92);
-            this.opContentC1.TabIndex = 5;
-            this.opContentC1.Text = "i.tcx.com.vn/189312345678900A50918124aLYmSaM6";
-            this.opContentC1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opResultPassFailC1
-            // 
-            this.opResultPassFailC1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opResultPassFailC1.FillColor = System.Drawing.Color.Green;
-            this.opResultPassFailC1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opResultPassFailC1.ForeColor = System.Drawing.Color.White;
-            this.opResultPassFailC1.Location = new System.Drawing.Point(2, 2);
-            this.opResultPassFailC1.Margin = new System.Windows.Forms.Padding(2);
-            this.opResultPassFailC1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opResultPassFailC1.Name = "opResultPassFailC1";
-            this.opResultPassFailC1.Size = new System.Drawing.Size(120, 92);
-            this.opResultPassFailC1.TabIndex = 4;
-            this.opResultPassFailC1.Text = "TỐT";
-            this.opResultPassFailC1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // cam02
             // 
             this.cam02.Controls.Add(this.uiTableLayoutPanel37);
@@ -1668,6 +1614,60 @@
             this.opResultPassFailC2.TabIndex = 4;
             this.opResultPassFailC2.Text = "Tắt";
             this.opResultPassFailC2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // cam01
+            // 
+            this.cam01.Controls.Add(this.uiTableLayoutPanel18);
+            this.cam01.Location = new System.Drawing.Point(0, 40);
+            this.cam01.Name = "cam01";
+            this.cam01.Size = new System.Drawing.Size(200, 60);
+            this.cam01.TabIndex = 2;
+            this.cam01.Text = "CAMERA 01";
+            this.cam01.UseVisualStyleBackColor = true;
+            // 
+            // uiTableLayoutPanel18
+            // 
+            this.uiTableLayoutPanel18.ColumnCount = 2;
+            this.uiTableLayoutPanel18.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 26.81319F));
+            this.uiTableLayoutPanel18.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 73.18681F));
+            this.uiTableLayoutPanel18.Controls.Add(this.opContentC1, 1, 0);
+            this.uiTableLayoutPanel18.Controls.Add(this.opResultPassFailC1, 0, 0);
+            this.uiTableLayoutPanel18.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel18.Location = new System.Drawing.Point(0, 0);
+            this.uiTableLayoutPanel18.Name = "uiTableLayoutPanel18";
+            this.uiTableLayoutPanel18.RowCount = 1;
+            this.uiTableLayoutPanel18.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel18.Size = new System.Drawing.Size(200, 60);
+            this.uiTableLayoutPanel18.TabIndex = 9;
+            this.uiTableLayoutPanel18.TagString = null;
+            // 
+            // opContentC1
+            // 
+            this.opContentC1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opContentC1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.opContentC1.Location = new System.Drawing.Point(55, 2);
+            this.opContentC1.Margin = new System.Windows.Forms.Padding(2);
+            this.opContentC1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opContentC1.Name = "opContentC1";
+            this.opContentC1.Size = new System.Drawing.Size(143, 56);
+            this.opContentC1.TabIndex = 5;
+            this.opContentC1.Text = "i.tcx.com.vn/189312345678900A50918124aLYmSaM6";
+            this.opContentC1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // opResultPassFailC1
+            // 
+            this.opResultPassFailC1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opResultPassFailC1.FillColor = System.Drawing.Color.Green;
+            this.opResultPassFailC1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.opResultPassFailC1.ForeColor = System.Drawing.Color.White;
+            this.opResultPassFailC1.Location = new System.Drawing.Point(2, 2);
+            this.opResultPassFailC1.Margin = new System.Windows.Forms.Padding(2);
+            this.opResultPassFailC1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opResultPassFailC1.Name = "opResultPassFailC1";
+            this.opResultPassFailC1.Size = new System.Drawing.Size(49, 56);
+            this.opResultPassFailC1.TabIndex = 4;
+            this.opResultPassFailC1.Text = "TỐT";
+            this.opResultPassFailC1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // WK_Update
             // 
@@ -1783,10 +1783,10 @@
             this.panelinfoCode.ResumeLayout(false);
             this.uiTableLayoutPanel16.ResumeLayout(false);
             this.uiTabControl3.ResumeLayout(false);
-            this.cam01.ResumeLayout(false);
-            this.uiTableLayoutPanel18.ResumeLayout(false);
             this.cam02.ResumeLayout(false);
             this.uiTableLayoutPanel37.ResumeLayout(false);
+            this.cam01.ResumeLayout(false);
+            this.uiTableLayoutPanel18.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

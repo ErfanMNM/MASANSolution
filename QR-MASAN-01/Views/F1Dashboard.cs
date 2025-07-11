@@ -1010,9 +1010,6 @@ namespace QR_MASAN_01
                         if (Globalvariable.ACTIVE_C1 == false)
                         {
                             //ghi log 
-                            //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Bật Camera 01", "PLC", "Nhận kích hoạt camera 01 từ PLC, nhận giá trị khác 1");
-                            ////Ghi vào hàng chờ
-                            //ActiveLogQueue.Enqueue(activeLogs);
                             Globalvariable.ACTIVE_C1 = true;
                         }
                     }
@@ -1020,10 +1017,6 @@ namespace QR_MASAN_01
                     {
                         if (Globalvariable.ACTIVE_C1 == true)
                         {
-                            ////ghi log
-                            //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Tắt Camera 01", "PLC", "Nhận ngừng kích hoạt camera 01 từ PLC, nhận giá trị bằng 1");
-                            ////Ghi vào hàng chờ
-                            //ActiveLogQueue.Enqueue(activeLogs);
                             Globalvariable.ACTIVE_C1 = false;
                         }
                     }
@@ -1036,9 +1029,6 @@ namespace QR_MASAN_01
                     {
                         if (Globalvariable.ACTIVE_C2 == false)
                         {
-                            //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.UNACTIVE, "Bật Camera 02", "PLC", "Nhận kích hoạt camera 02 từ PLC, nhận giá trị khác 1");
-                            ////Ghi vào hàng chờ
-                            //ActiveLogQueue.Enqueue(activeLogs);
                             Globalvariable.ACTIVE_C2 = true;
                         }
                     }
@@ -1046,9 +1036,6 @@ namespace QR_MASAN_01
                     {
                         if(Globalvariable.ACTIVE_C2 == true)
                         {
-                            //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.UNACTIVE, "Bật Camera 02", "PLC", "Nhận kích hoạt camera 02 từ PLC, nhận giá trị bằng 1");
-                            ////Ghi vào hàng chờ
-                            //ActiveLogQueue.Enqueue(activeLogs);
                             Globalvariable.ACTIVE_C2 = false;
                         }
                         
@@ -1057,16 +1044,10 @@ namespace QR_MASAN_01
 
                 if(Globalvariable.ACTIVE_C1 && Globalvariable.ACTIVE_C2)
                 {
-                    //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Kích hoạt kiểm", "PLC", "Nhận kích hoạt kiểm từ PLC");
-                    ////Ghi vào hàng chờ
-                    //ActiveLogQueue.Enqueue(activeLogs);
                     Globalvariable.ACTIVE = true;
                 }
                 else
                 {
-                    //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Dừng kiểm", "PLC", "Nhận kích hoạt từ PLC");
-                    ////Ghi vào hàng chờ
-                    //ActiveLogQueue.Enqueue(activeLogs);
                     Globalvariable.ACTIVE = false;
                 }
 

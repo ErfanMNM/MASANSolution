@@ -141,6 +141,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                             //ghi logs vào hàng đợi
                             SystemLogs.LogQueue.Enqueue(systemLogsEdit);
 
+                           
                         }
                         else
                         {
@@ -192,8 +193,12 @@ namespace QR_MASAN_01.Views.MFI_Service
 
                 // Hiển thị thông báo thành công
                 this.ShowSuccessTip("Thông tin PO đã được lưu thành công.");
+                DateTime localTime = ipProductionDate.Value;
+                //DateTime utcTime = localTime.ToUniversalTime();
+                string isoString = localTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+
                 Globalvariable.Seleted_PO_Data = poService.Get_PO_Info_By_OrderNo(ipOrderNO.Text);
-                Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"] = ipProductionDate.Text;// Cập nhật ngày sản xuất trong theo user chỉnh sửa
+                Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"] = isoString;// Cập nhật ngày sản xuất trong theo user chỉnh sửa
 
                 // Đặt lại trạng thái
                 ipOrderNO.ReadOnly = true; // Không cho phép chỉnh sửa Order No
@@ -247,7 +252,6 @@ namespace QR_MASAN_01.Views.MFI_Service
 
                             //nút chỉnh 
                             btnPO.Enabled = false; // Tắt nút chỉnh thông tin PO khi đang chạy sản xuất
-
                         }));
                         break;
                     case e_Production_Status.PAUSED:
@@ -345,13 +349,6 @@ namespace QR_MASAN_01.Views.MFI_Service
 
                 }
 
-                this.Invoke(new Action(() =>
-                {
-                    // Cập nhật giao diện người dùng hoặc thực hiện các hành động khác nếu cần
-                    opNoti.Items.Add($"📥 [{DateTime.Now:HH:mm:ss}] Đã nhận {dataTable.Rows.Count} mã từ PO: {Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"]}.");
-                    opNoti.Items.Add($"📥 [{DateTime.Now:HH:mm:ss}] Tổng số mã trong hệ thống: {GV.C2_CodeData_Dictionary.Count} mã.");
-                    opNoti.SelectedItem = opNoti.Items[opNoti.Items.Count - 1]; // Tự động cuộn xuống cuối danh sách
-                }));
                 connection.Close();
             }
         }

@@ -123,7 +123,7 @@ namespace QR_MASAN_01
                     // ghi log
                     SafeInvoke(() =>
                     {
-                        AWSLogs aWSLogs = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.CONNECT, "Connected", Globalvariable.CurrentUser.Username, "Kết nối thành công với AWS IoT Core");
+                        AWSLogs aWSLogs = new AWSLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.CONNECT, "Connected", Globalvariable.CurrentUser.Username, "Kết nối thành công với AWS IoT Core");
                         //thêm vào Queue để ghi log
                         AWSLogsQueue.Enqueue(aWSLogs);
 
@@ -143,7 +143,7 @@ namespace QR_MASAN_01
                     SafeInvoke(() =>
                     {
                         //ghi log
-                        AWSLogs aWSLogs1 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.DISCONNECT, "Disconnect", Globalvariable.CurrentUser.Username, "Mất kết nối với AWS IoT Core");
+                        AWSLogs aWSLogs1 = new AWSLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.DISCONNECT, "Disconnect", Globalvariable.CurrentUser.Username, "Mất kết nối với AWS IoT Core");
                         //thêm vào Queue để ghi log
                         AWSLogsQueue.Enqueue(aWSLogs1);
                         //cập nhật trạng thái kết nối
@@ -154,7 +154,7 @@ namespace QR_MASAN_01
                     SafeInvoke(() =>
                     {
                         //ghi log
-                        AWSLogs aWSLogs2 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.CONNECT, "Connecting", Globalvariable.CurrentUser.Username, "Đang kết nối với AWS IoT Core");
+                        AWSLogs aWSLogs2 = new AWSLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.CONNECT, "Connecting", Globalvariable.CurrentUser.Username, "Đang kết nối với AWS IoT Core");
                         //thêm vào Queue để ghi log
                         AWSLogsQueue.Enqueue(aWSLogs2);
                         //cập nhật trạng thái kết nối
@@ -165,7 +165,7 @@ namespace QR_MASAN_01
                     SafeInvoke(() =>
                     {
                         //ghi log
-                        AWSLogs aWSLogs3 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.ERROR, "Error", Globalvariable.CurrentUser.Username, $"Lỗi: {e.Message}");
+                        AWSLogs aWSLogs3 = new AWSLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.ERROR, "Error", Globalvariable.CurrentUser.Username, $"Lỗi: {e.Message}");
                         //thêm vào Queue để ghi log
                         AWSLogsQueue.Enqueue(aWSLogs3);
                         //cập nhật trạng thái kết nối
@@ -176,7 +176,7 @@ namespace QR_MASAN_01
                     SafeInvoke(() =>
                     {
                         //ghi log
-                        AWSLogs aWSLogs4 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.SUBSCRIBE, "Subscribed", Globalvariable.CurrentUser.Username, $"Đã đăng ký topic: {e.Message}");
+                        AWSLogs aWSLogs4 = new AWSLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.SUBSCRIBE, "Subscribed", Globalvariable.CurrentUser.Username, $"Đã đăng ký topic: {e.Message}");
                         //thêm vào Queue để ghi log
                         AWSLogsQueue.Enqueue(aWSLogs4);
                         //cập nhật trạng thái kết nối
@@ -187,7 +187,7 @@ namespace QR_MASAN_01
                     SafeInvoke(() =>
                     {
                         //ghi log
-                        AWSLogs aWSLogs5 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.SUBSCRIBE, "Unsubscribed", Globalvariable.CurrentUser.Username, "Đã hủy đăng ký các topic.");
+                        AWSLogs aWSLogs5 = new AWSLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.SUBSCRIBE, "Unsubscribed", Globalvariable.CurrentUser.Username, "Đã hủy đăng ký các topic.");
                         //thêm vào Queue để ghi log
                         AWSLogsQueue.Enqueue(aWSLogs5);
                         //cập nhật trạng thái kết nối
@@ -201,7 +201,7 @@ namespace QR_MASAN_01
                     SafeInvoke(() =>
                     {
                         //ghi log
-                        AWSLogs aWSLogs7 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.PUBLISH, "Unpublished", Globalvariable.CurrentUser.Username, $"Không thể publish: {e.Message}");
+                        AWSLogs aWSLogs7 = new AWSLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.PUBLISH, "Unpublished", Globalvariable.CurrentUser.Username, $"Không thể publish: {e.Message}");
                         //thêm vào Queue để ghi log
                         AWSLogsQueue.Enqueue(aWSLogs7);
                     });
@@ -224,6 +224,7 @@ namespace QR_MASAN_01
                     opproductionDate.Text = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString();
                     opGTIN.Text = Globalvariable.Seleted_PO_Data.Rows[0]["GTIN"].ToString();
                     oporderQty.Text = Globalvariable.Seleted_PO_Data.Rows[0]["orderQty"].ToString();
+                    opCodeCount.Text = Globalvariable.Seleted_PO_Data.Rows[0]["UniqueCodeCount"].ToString();
                 }));
             }
             // Cập nhật các trường thông tin MFI trên giao diện
@@ -348,6 +349,7 @@ namespace QR_MASAN_01
                 //        ClearPLC = false;
                 //    }));
                 //}
+
                 //Kiểm tra PLC_ACTIVE_DM nếu = 1 set Globale ACTIVE = true dùng hsl
                 OperateResult<int> read = PLC.plc.ReadInt32(PLCAddress.Get("PLC_Bypass_DM_C1"));
                 if (read.IsSuccess)
@@ -411,9 +413,6 @@ namespace QR_MASAN_01
                 }
                 else
                 {
-                    //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Dừng kiểm", "PLC", "Nhận kích hoạt từ PLC");
-                    ////Ghi vào hàng chờ
-                    //ActiveLogQueue.Enqueue(activeLogs);
                     Globalvariable.ACTIVE = false;
                 }
 
@@ -697,7 +696,7 @@ namespace QR_MASAN_01
                 {
                     C1CodeData.Status = "1";
                     //giờ kích hoạt theo ISO
-                    C1CodeData.Activate_Datetime = DateTime.Now.ToString("o");
+                    C1CodeData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
                     C1CodeData.Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString();
                     //Gửi vào hàng chờ để cập nhật SQLite
                     GV.C1_Update_Content_To_SQLite_Queue.Enqueue(C1CodeData);
@@ -756,7 +755,7 @@ namespace QR_MASAN_01
                         Globalvariable.GCounter.PLC_1_Pass_C2++;
                         C2CodeData.Status = "1";
                         //giờ kích hoạt theo ISO
-                        C2CodeData.Activate_Datetime = DateTime.Now.ToString("o");
+                        C2CodeData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
                         C2CodeData.Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString();
                         //Gửi vào hàng chờ để cập nhật SQLite
                         GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
@@ -769,7 +768,7 @@ namespace QR_MASAN_01
                         //Gửi xuống PLC fail được tính là fail trong csdl luôn
                         C2CodeData.Status = "-1";
                         //giờ kích hoạt theo ISO
-                        C2CodeData.Activate_Datetime = DateTime.Now.ToString("o");
+                        C2CodeData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
                         C2CodeData.Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString();
                         //Gửi vào hàng chờ để cập nhật SQLite
                         GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
@@ -983,7 +982,7 @@ namespace QR_MASAN_01
                             orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
                             Status = content_Result.ToString(),
                             PLC_Send_Status = "true",
-                            Activate_Datetime = DateTime.Now.ToString("O"),
+                            Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                             Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
                         };
                     GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
@@ -1016,7 +1015,7 @@ namespace QR_MASAN_01
                         orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write1.IsSuccess.ToString(),
-                        Activate_Datetime = DateTime.Now.ToString("O"),
+                        Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                         Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
                     };
                     GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
@@ -1045,7 +1044,7 @@ namespace QR_MASAN_01
                         orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write5.IsSuccess.ToString(),
-                        Activate_Datetime = DateTime.Now.ToString("O"),
+                        Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                         Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
                     };
                     GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
@@ -1075,7 +1074,7 @@ namespace QR_MASAN_01
                         orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write4.IsSuccess.ToString(),
-                        Activate_Datetime = DateTime.Now.ToString("O"),
+                        Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                         Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
                     };
                     GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
@@ -1105,7 +1104,7 @@ namespace QR_MASAN_01
                         orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write3.IsSuccess.ToString(),
-                        Activate_Datetime = DateTime.Now.ToString("O"),
+                        Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                         Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
                     };
                     GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
@@ -1134,7 +1133,7 @@ namespace QR_MASAN_01
                         orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write2.IsSuccess.ToString(),
-                        Activate_Datetime = DateTime.Now.ToString("O"),
+                        Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                         Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
                     };
                     GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
@@ -1160,7 +1159,7 @@ namespace QR_MASAN_01
                         orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write8.IsSuccess.ToString(),
-                        Activate_Datetime = DateTime.Now.ToString("O"),
+                        Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                         Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
                     };
                     GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
@@ -1178,7 +1177,7 @@ namespace QR_MASAN_01
                         orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
                         Status = content_Result.ToString(),
                         PLC_Send_Status = "FAIL-1",
-                        Activate_Datetime = DateTime.Now.ToString("O"),
+                        Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                         Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
                     };
 
@@ -1418,7 +1417,7 @@ namespace QR_MASAN_01
                         catch (Exception ex)
                         {
                             //ghi log
-                            AWSLogs aWSLogs = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.ERROR, "Lỗi khi nhận tin nhắn trả về", Globalvariable.CurrentUser.Username, ex.Message);
+                            AWSLogs aWSLogs = new AWSLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.ERROR, "Lỗi khi nhận tin nhắn trả về", Globalvariable.CurrentUser.Username, ex.Message);
                             //thêm vào Queue để ghi log
                             AWSLogsQueue.Enqueue(aWSLogs);
                         }
