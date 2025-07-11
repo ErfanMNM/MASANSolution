@@ -22,58 +22,45 @@ namespace QR_MASAN_01.Views.MFI_Service
         }
 
         public POService poService;
+        
+        //Phân ra từng bước cho dễ thao tác
+
+
 
         //hàm khởi động Page
         public void INIT()
         {
-            poService = new POService();
+           
             WK_Update.RunWorkerAsync(); // Bắt đầu chạy worker để cập nhật số lượng mã vạch đã chạy
-            poService.Check_PO_Log_File();//Kiểm tra xem file PG log có tồn tại hay không, nếu không thì tạo mới
-            poService.MES_Load_OrderNo_ToComboBox(ipOrderNO);
-
-            //lấy PO dùng trước đó
-            DataRow lastPO_Row = poService.Get_Last_Used_PO();
-            string lastPO_string = lastPO_Row["orderNO"].ToString();
-
-            if (lastPO_string != null)
+             }
+        //thêm văn bản vào listbox opTerminal
+        public void AddTerminal (string text)
+        {
+            if (opTerminal.InvokeRequired)
             {
-                bool found = ipOrderNO.Items.Cast<DataRowView>().Any(item =>
-                                                            item["orderNO"].ToString() == lastPO_string);
-
-                if (!found)
+                opTerminal.Invoke(new Action(() =>
                 {
-                    ipOrderNO.SelectedIndex = 0; // Chọn dòng đầu tiên (dòng rỗng)
-                    GV.Production_Status = e_Production_Status.UNKNOWN; // Đặt trạng thái sản xuất là UNKNOWN
-                     // Cập nhật số lượng sản phẩm đã qua kiểm tra từ dịch vụ PO
-                }
-                else
-                {
-
-                    ipOrderNO.SelectedValue = lastPO_Row["orderNO"].ToString();
-                    ipProductionDate.Text = lastPO_Row["productionDate"].ToString();
-
-                    GV.Pass_Product_Count = poService.Get_Pass_Product_Count(lastPO_Row["orderNO"].ToString());
-                    opPassCount.Text = GV.Pass_Product_Count.ToString();
-                    //ghi logs 
-                    //khởi động phần mềm
-                    SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Khởi động PO", "PO", $"Bắt đầu khởi động {lastPO_Row["orderNO"]}");
-
-                    //ghi logs vào hàng đợi
-                    SystemLogs.LogQueue.Enqueue(systemLogs);
-                    GV.Production_Status = e_Production_Status.READY; // Đặt trạng thái sản xuất là READY
-                    //Globalvariable.PI_Status = e_PI_Status.READY; // Trạng thái không có PO hoặc đang chỉnh sửa
+                    opTerminal.Items.Add (text);
+                    // Tự động cuộn xuống cuối danh sách
+                    opTerminal.SelectedIndex = opTerminal.Items.Count - 1; // Chọn mục cuối cùng để cuộn xuống
+                    if (opTerminal.Items.Count > 50) // Giới hạn số lượng mục hiển thị
+                    {
+                        opTerminal.Items.RemoveAt(0); // Xóa mục đầu tiên nếu vượt quá 1000 mục
+                    }
                 }
 
+                ));
             }
             else
             {
-                ipOrderNO.SelectedIndex = 0; // Chọn dòng đầu tiên (dòng rỗng) 
-                GV.Production_Status = e_Production_Status.UNKNOWN; // Đặt trạng thái sản xuất là UNKNOWN
+                opTerminal.Items.Add(text);
+                // Tự động cuộn xuống cuối danh sách
+                opTerminal.SelectedIndex = opTerminal.Items.Count - 1; // Chọn mục cuối cùng để cuộn xuống
+                if (opTerminal.Items.Count > 50) // Giới hạn số lượng mục hiển thị
+                {
+                    opTerminal.Items.RemoveAt(0); // Xóa mục đầu tiên nếu vượt quá 1000 mục
+                }
             }
-
-            //61508
-            btnPO.Text = "Chỉnh thông tin";
-            btnPO.Symbol = 61508; // Thay đổi biểu tượng của nút btnPO
         }
 
         private void ipOrderNO_SelectedIndexChanged(object sender, EventArgs e)
@@ -214,7 +201,9 @@ namespace QR_MASAN_01.Views.MFI_Service
 
         private void uiSymbolButton1_Click(object sender, EventArgs e)
         {
-            
+            opCZRunCount.Text = poService.Get_ID_RUN(Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString()).ToString();
+            GV.Pass_Product_Count = poService.Get_Pass_Product_Count(Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString());
+            opPassCount.Text = GV.Pass_Product_Count.ToString();
         }
 
         private void uiTableLayoutPanel1_Paint(object sender, PaintEventArgs e)
@@ -229,14 +218,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                 switch (GV.Production_Status)
                 {
                     case e_Production_Status.EDITING:
-                        //tắt nút chạy, đang editing
-                        this.Invoke(new Action(() =>
-                        {
-                            btnRUN.Text = "BẮT ĐẦU SẢN XUẤT";
-                            btnRUN.Symbol = 61475; // Thay đổi biểu tượng của nút btnRUN
-                            btnRUN.FillColor = Color.Green; // Đổi màu nền của nút btnRUN
-                            btnRUN.Enabled =false;
-                        }));
+                       
                         break;
                     case e_Production_Status.PUSHING:
                         break;
@@ -244,30 +226,28 @@ namespace QR_MASAN_01.Views.MFI_Service
 
                         break;
                     case e_Production_Status.RUNNING:
-                        this.Invoke(new Action(() =>
-                        {
-                            btnRUN.Text = "DỪNG SẢN XUẤT";
-                            btnRUN.Symbol = 61475; // Thay đổi biểu tượng của nút btnRUN
-                            btnRUN.FillColor = Color.Red; // Đổi màu nền của nút btnRUN
-
-                            //nút chỉnh 
-                            btnPO.Enabled = false; // Tắt nút chỉnh thông tin PO khi đang chạy sản xuất
-                        }));
+                        
                         break;
                     case e_Production_Status.PAUSED:
                         break;
                     case e_Production_Status.UNKNOWN:
                         break;
                     case e_Production_Status.READY:
+                        break;
+                    case e_Production_Status.NOPO:
+                        break;
+                    case e_Production_Status.STARTUP:
+                        //trạng thái khởi động.
+                        poService = new POService();
+                        poService.Check_PO_Log_File();//Kiểm tra xem file PG log có tồn tại hay không, nếu không thì tạo mới
+                        // Lấy PO đã sử dụng lần cuối
+                        DataRow lastUsedPO = poService.Get_Last_Used_PO();
+                        //lấy các thông tin cơ bản
 
-                        this.Invoke(new Action(() =>
-                        {
-                            btnRUN.Text = "BẮT ĐẦU SẢN XUẤT";
-                            btnRUN.Symbol = 61475; // Thay đổi biểu tượng của nút btnRUN
-                            btnRUN.FillColor = Color.Green; // Đổi màu nền của nút btnRUN
-                            btnRUN.Enabled = true; // Bật nút chạy khi ở trạng thái READY
-                            btnPO.Enabled = true; // Bật nút chỉnh thông tin PO khi ở trạng thái READY
-                        }));
+                        break;
+                    case e_Production_Status.LOAD:
+                        break;
+                    case e_Production_Status.CHECKING:
                         break;
                 }
                 Thread.Sleep(100); // Đợi 0.1 giây trước khi kiểm tra lại
@@ -296,7 +276,8 @@ namespace QR_MASAN_01.Views.MFI_Service
                 case e_Production_Status.READY:
                     //khởi động chạy
                     //đẩy dữ liệu vào Dic
-
+                    //kiểm tra PO đã đủ số hay chưa
+                    
                     Push_Data_To_Dic();
                     //chuyển lên trạng thái runnung
                     GV.Production_Status = e_Production_Status.RUNNING;

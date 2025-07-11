@@ -124,14 +124,50 @@
   <data name="header.ColumnCount" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="uiPanel2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="uiPanel2.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Tahoma, 20.25pt, style=Bold</value>
+  </data>
+  <data name="uiPanel2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>277, 0</value>
+  </data>
+  <data name="uiPanel2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 0</value>
+  </data>
+  <data name="uiPanel2.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>1, 1</value>
+  </data>
+  <data name="uiPanel2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>555, 55</value>
+  </data>
+  <data name="uiPanel2.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="uiPanel2.Text" xml:space="preserve">
+    <value>Serialization System</value>
+  </data>
+  <data name="&gt;&gt;uiPanel2.Name" xml:space="preserve">
+    <value>uiPanel2</value>
+  </data>
+  <data name="&gt;&gt;uiPanel2.Type" xml:space="preserve">
+    <value>Sunny.UI.UIPanel, SunnyUI, Version=3.8.6.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb</value>
+  </data>
+  <data name="&gt;&gt;uiPanel2.Parent" xml:space="preserve">
+    <value>header</value>
+  </data>
+  <data name="&gt;&gt;uiPanel2.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="Logo.ColumnCount" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="LogoImg.BackgroundImageLayout" type="System.Windows.Forms.ImageLayout, System.Windows.Forms">
     <value>Zoom</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="LogoImg.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 12pt</value>
   </data>
@@ -145,7 +181,7 @@
     <value>1, 1</value>
   </data>
   <data name="LogoImg.Size" type="System.Drawing.Size, System.Drawing">
-    <value>69, 39</value>
+    <value>66, 39</value>
   </data>
   <data name="LogoImg.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -169,10 +205,10 @@
     <value>Fill</value>
   </data>
   <data name="Logotext.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Tahoma, 20.25pt, style=Bold</value>
+    <value>Tahoma, 15.25pt, style=Bold</value>
   </data>
   <data name="Logotext.Location" type="System.Drawing.Point, System.Drawing">
-    <value>90, 0</value>
+    <value>74, 0</value>
   </data>
   <data name="Logotext.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 0</value>
@@ -181,13 +217,13 @@
     <value>1, 1</value>
   </data>
   <data name="Logotext.Size" type="System.Drawing.Size, System.Drawing">
-    <value>142, 49</value>
+    <value>197, 49</value>
   </data>
   <data name="Logotext.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
   <data name="Logotext.Text" xml:space="preserve">
-    <value>Tân Tiến</value>
+    <value>Tân Tiến HighTech</value>
   </data>
   <data name="&gt;&gt;Logotext.Name" xml:space="preserve">
     <value>Logotext</value>
@@ -211,7 +247,7 @@
     <value>1</value>
   </data>
   <data name="Logo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>232, 49</value>
+    <value>271, 49</value>
   </data>
   <data name="Logo.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -226,10 +262,10 @@
     <value>header</value>
   </data>
   <data name="&gt;&gt;Logo.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="Logo.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LogoImg" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="Logotext" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,90,Percent,50" /&gt;&lt;Rows Styles="Percent,48.3871" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LogoImg" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="Logotext" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,74,Percent,50" /&gt;&lt;Rows Styles="Percent,48.3871" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="opUser.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Right</value>
@@ -262,7 +298,7 @@
     <value>header</value>
   </data>
   <data name="&gt;&gt;opUser.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="header.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
@@ -292,7 +328,7 @@
     <value>0</value>
   </data>
   <data name="header.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="Logo" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="opUser" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,238,Absolute,594,Percent,100" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="uiPanel2" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="Logo" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="opUser" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,277,Absolute,555,Percent,100" /&gt;&lt;Rows Styles="Percent,100" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="uiTopbar.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 12pt</value>

@@ -45,6 +45,7 @@
             this.btnMini = new Sunny.UI.UISymbolButton();
             this.uiTabControl1 = new Sunny.UI.UITabControl();
             this.footer = new Sunny.UI.UITableLayoutPanel();
+            this.lblStatus = new Sunny.UI.UIPanel();
             this.uiPanel1 = new Sunny.UI.UIPanel();
             this.lblClock = new Sunny.UI.UIPanel();
             this.lblInternet = new Sunny.UI.UIPanel();
@@ -53,7 +54,7 @@
             this.ClockWK = new System.ComponentModel.BackgroundWorker();
             this.Internet = new SPMS1.InternetClass(this.components);
             this.WK_LaserPrinterTime = new System.ComponentModel.BackgroundWorker();
-            this.lblStatus = new Sunny.UI.UIPanel();
+            this.uiPanel2 = new Sunny.UI.UIPanel();
             this.mainPanelLayout.SuspendLayout();
             this.uiTopbar.SuspendLayout();
             this.header.SuspendLayout();
@@ -86,8 +87,9 @@
             // 
             // header
             // 
-            this.header.BackColor = System.Drawing.Color.Lavender;
+            this.header.BackColor = System.Drawing.Color.White;
             resources.ApplyResources(this.header, "header");
+            this.header.Controls.Add(this.uiPanel2, 1, 0);
             this.header.Controls.Add(this.Logo, 0, 0);
             this.header.Controls.Add(this.opUser, 2, 0);
             this.header.Name = "header";
@@ -240,6 +242,15 @@
             this.footer.Name = "footer";
             this.footer.TagString = null;
             // 
+            // lblStatus
+            // 
+            this.lblStatus.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            resources.ApplyResources(this.lblStatus, "lblStatus");
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Radius = 0;
+            this.lblStatus.RectColor = System.Drawing.Color.DodgerBlue;
+            this.lblStatus.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // uiPanel1
             // 
             this.uiPanel1.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
@@ -295,14 +306,17 @@
             this.WK_LaserPrinterTime.WorkerSupportsCancellation = true;
             this.WK_LaserPrinterTime.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_LaserPrinterTime_DoWork);
             // 
-            // lblStatus
+            // uiPanel2
             // 
-            this.lblStatus.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            resources.ApplyResources(this.lblStatus, "lblStatus");
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Radius = 0;
-            this.lblStatus.RectColor = System.Drawing.Color.DodgerBlue;
-            this.lblStatus.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.uiPanel2.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.uiPanel2, "uiPanel2");
+            this.uiPanel2.FillColor = System.Drawing.Color.Transparent;
+            this.uiPanel2.FillColor2 = System.Drawing.Color.Transparent;
+            this.uiPanel2.ForeColor = System.Drawing.Color.Blue;
+            this.uiPanel2.Name = "uiPanel2";
+            this.uiPanel2.Radius = 0;
+            this.uiPanel2.RectColor = System.Drawing.Color.Transparent;
+            this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // FMainQR01
             // 
@@ -353,6 +367,7 @@
         private System.ComponentModel.BackgroundWorker WK_LaserPrinterTime;
         private Sunny.UI.UIPanel uiPanel1;
         private Sunny.UI.UIPanel lblStatus;
+        private Sunny.UI.UIPanel uiPanel2;
     }
 }
 

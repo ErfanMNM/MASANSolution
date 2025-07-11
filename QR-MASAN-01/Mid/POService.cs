@@ -173,8 +173,6 @@ namespace QR_MASAN_01
                 return table;
             }
         }
-
-
         public DataTable Get_Unique_Codes_MES(string orderNo)
         {
             string czpath = _codes_Path_CZ_DB_MES + "/" + orderNo + ".db";
@@ -558,6 +556,44 @@ namespace QR_MASAN_01
                 command.ExecuteNonQuery();
             }
         }
+
+        
+    }
+
+    public class PO_Infomation
+    {
+        public string orderNo { get; set; } = "-";
+        public string site { get; set; } = "-";
+        public string factory { get; set; } = "-";
+        public string productionLine { get; set; } = "-";
+        public string productionDate { get; set; } = "-";
+        public string shift { get; set; } = "-";
+        public string orderQty { get; set; } = "-";
+        public string lotNumber { get; set; } = "-";
+        public string productCode { get; set; } = "-";
+        public string productName { get; set; } = "-";
+        public string GTIN { get; set; } = "-";
+        public string customerOrderNo { get; set; } = "-";
+        public string uom { get; set; } = "-";
+        public string CodeCount { get; set; } = "-";
+
+        public class Run_Infomation
+        {
+            public int pass { get; set; } = 0;
+            public int fail { get; set; } = 0;
+            public int duplicate { get; set; } = 0;
+            public int total { get; set; } = 0;
+        }
+
+        public class AWS_Infomation
+        {
+            public int sent { get; set; } = 0;//đã gửi
+            public int waiting { get; set; } = 0; //đang chờ phản hồi
+            public int error { get; set; } = 0; //lỗi phản hồi
+            public int pending { get; set; } = 0; //đang chờ gửi
+            public int recive { get; set; } = 0; //đã nhận phản hồi
+        }
+
     }
 
 

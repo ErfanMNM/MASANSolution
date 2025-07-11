@@ -425,40 +425,49 @@ namespace QR_MASAN_01
         //Cập nhật mã vừa đọc lên màn hình
         private void WK_Update_Result_To_UI_DoWork(object sender, DoWorkEventArgs e)
         {
+            int lastShowID = 0;
             while (!WK_UI_CAM_Update.CancellationPending)
             {
-                this.Invoke((Action)(() => {
+                this.Invoke(new Action(() => {
                     opContentC1.Text = Globalvariable.C1_UI.Curent_Content;
-                    if (Globalvariable.C1_UI.IsPass)
+                    if(GV.ID != lastShowID)
                     {
-                        opResultPassFailC1.Text = "TỐT";
-                        opResultPassFailC1.FillColor = Color.Green;
-                    }
-                    else
-                    {
-                        opResultPassFailC1.Text = "LỖI";
-                        opResultPassFailC1.FillColor = Color.Red;
-                    }
+                        opHis2.Items.Add($"#{GV.ID}:{DateTime.Now.ToString("HH:mm:ss.fff")} : {Globalvariable.C2_UI.Curent_Content}");
 
-                    opContentC2.Text = Globalvariable.C2_UI.Curent_Content;
+                        if (Globalvariable.C1_UI.IsPass)
+                        {
+                            opResultPassFailC1.Text = "TỐT";
+                            opResultPassFailC1.FillColor = Color.Green;
+                        }
+                        else
+                        {
+                            opResultPassFailC1.Text = "LỖI";
+                            opResultPassFailC1.FillColor = Color.Red;
+                        }
 
-                    if (Globalvariable.C2_UI.IsPass)
-                    {
-                        opResultPassFailC2.Text = "TỐT";
-                        opResultPassFailC2.FillColor = Color.Green;
-                    }
-                    else
-                    {
-                        opResultPassFailC2.Text = "LỖI";
-                        opResultPassFailC2.FillColor = Color.Red;
-                    }
+                        opContentC2.Text = Globalvariable.C2_UI.Curent_Content;
+
+                        if (Globalvariable.C2_UI.IsPass)
+                        {
+                            opResultPassFailC2.Text = "TỐT";
+                            opResultPassFailC2.FillColor = Color.Green;
+                        }
+                        else
+                        {
+                            opResultPassFailC2.Text = "LỖI";
+                            opResultPassFailC2.FillColor = Color.Red;
+                        }
 
 
-                    if (Alarm.Alarm1)
-                    {
-                        lblAlarm.Text = "CẢNH BÁO SAI BARCODE (" + Alarm.Alarm1_Count.ToString() + ")";
-                        lblAlarm.FillColor = Globalvariable.NG_Color;
+                        if (Alarm.Alarm1)
+                        {
+                            lblAlarm.Text = "CẢNH BÁO SAI BARCODE (" + Alarm.Alarm1_Count.ToString() + ")";
+                            lblAlarm.FillColor = Globalvariable.NG_Color;
+                        }
+                        lastShowID = GV.ID;
                     }
+                    
+                    
                 }));
                 Thread.Sleep(50);
             }
@@ -512,53 +521,54 @@ namespace QR_MASAN_01
                             opCamera.FillColor = Globalvariable.OK_Color;
                         }));
                     }
-                    if (Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.RUNNING)
-                    {
-                        Globalvariable.GCounter.Total_C1++;
-                        try
-                        {
-                            if (!WK_CMR1.IsBusy)
-                            {
-                                WK_CMR1.RunWorkerAsync(_strData);
-                            }
-                            else if (!WK_CMR2.IsBusy)
-                            {
-                                WK_CMR2.RunWorkerAsync(_strData);
-                            }
-                            else if (!WK_CMR3.IsBusy)
-                            {
-                                WK_CMR3.RunWorkerAsync(_strData);
-                            }
-                            else
-                            {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : Không đủ luồng xử lí");
-                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                    //tạm tắt CMR phụ
+                    //if (Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.RUNNING)
+                    //{
+                    //    Globalvariable.GCounter.Total_C1++;
+                    //    try
+                    //    {
+                    //        if (!WK_CMR1.IsBusy)
+                    //        {
+                    //            WK_CMR1.RunWorkerAsync(_strData);
+                    //        }
+                    //        else if (!WK_CMR2.IsBusy)
+                    //        {
+                    //            WK_CMR2.RunWorkerAsync(_strData);
+                    //        }
+                    //        else if (!WK_CMR3.IsBusy)
+                    //        {
+                    //            WK_CMR3.RunWorkerAsync(_strData);
+                    //        }
+                    //        else
+                    //        {
+                    //            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : Không đủ luồng xử lí");
+                    //            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
 
-                                //ghi log lỗi
-                                SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.CAMERA_ERROR, "Lỗi khi camera trả về C1", Globalvariable.CurrentUser.Username, "Không đủ luồng xử lí");
-                                Send_Result_Content_C1(e_Content_Result.ERROR, "Lỗi khi camera 02 trả về: Không đủ luồng xử lí");
-                                //thêm vào Queue để ghi log
-                                SystemLogs.LogQueue.Enqueue(systemLogs);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            this.Invoke(new Action(() =>
-                            {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : {ex.Message}");
-                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            }));
+                    //            //ghi log lỗi
+                    //            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.CAMERA_ERROR, "Lỗi khi camera trả về C1", Globalvariable.CurrentUser.Username, "Không đủ luồng xử lí");
+                    //            Send_Result_Content_C1(e_Content_Result.ERROR, "Lỗi khi camera 02 trả về: Không đủ luồng xử lí");
+                    //            //thêm vào Queue để ghi log
+                    //            SystemLogs.LogQueue.Enqueue(systemLogs);
+                    //        }
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        this.Invoke(new Action(() =>
+                    //        {
+                    //            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : {ex.Message}");
+                    //            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                    //        }));
 
-                            //ghi log lỗi
-                            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.CAMERA_ERROR, "Lỗi khi camera trả về C1", Globalvariable.CurrentUser.Username, ex.Message);
-                            //thêm vào Queue để ghi log
-                            SystemLogs.LogQueue.Enqueue(systemLogs);
-                        }
-                    }
-                    else
-                    {
-                        LogUpdate("CHƯA KHỞI ĐỘNG SẢN XUẤT");
-                    }
+                    //        //ghi log lỗi
+                    //        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.CAMERA_ERROR, "Lỗi khi camera trả về C1", Globalvariable.CurrentUser.Username, ex.Message);
+                    //        //thêm vào Queue để ghi log
+                    //        SystemLogs.LogQueue.Enqueue(systemLogs);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    LogUpdate("CHƯA KHỞI ĐỘNG SẢN XUẤT");
+                    //}
                     
                     break;
                 case SPMS1.enumClient.RECONNECT:
@@ -1365,64 +1375,66 @@ namespace QR_MASAN_01
                     //lấy tất cả các mã đã acvtivate và gửi đi
                     DataTable dataTable = new DataTable();
                     dataTable = Get_Unique_Codes_Run_Send_Pending(Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString());
-                    if (dataTable.Rows.Count > 0)
-                    {
-                        //lấy ra mã và gửi đi
-                        for (int i = 0; i < dataTable.Rows.Count; i++)
-                        {
-                            string orderNO = Globalvariable.Seleted_PO_Data.Rows[0]["orderNo"].ToString();
-                            string ID = dataTable.Rows[i]["ID"].ToString();
-                            string code = dataTable.Rows[i]["Code"].ToString();
-                            string Status = dataTable.Rows[i]["Status"].ToString();
-                            string activateDate = dataTable.Rows[i]["ActivateDate"].ToString();
-                            string productionDate = dataTable.Rows[i]["ProductionDate"].ToString();
-                            var payload = new
-                            {
-                                message_id = $"{ID}-{orderNO}",
-                                orderNo = orderNO,
-                                uniqueCode = code,
-                                status = Status,
-                                activate_datetime = activateDate,
-                                production_date = productionDate,
-                                thing_name = "MIPWP501"
-                            };
-                            string json = JsonConvert.SerializeObject(payload);
-                            var rs = awsClient.Publish_V2("CZ/data", json);
 
-                            if (rs.Issuccess)
-                            {
-                                //cập nhật trạng thái đã gửi
-                                Update_Send_Status(ID.ToInt32(), "Sent");
-                            }
-                            else
-                            {
-                                //ghi log lỗi không gửi được
-                                Update_Send_Status(ID.ToInt32(), "Failed");
-                            }
+                    //gửi mã
+                    //if (dataTable.Rows.Count > 0)
+                    //{
+                    //    //lấy ra mã và gửi đi
+                    //    for (int i = 0; i < dataTable.Rows.Count; i++)
+                    //    {
+                    //        string orderNO = Globalvariable.Seleted_PO_Data.Rows[0]["orderNo"].ToString();
+                    //        string ID = dataTable.Rows[i]["ID"].ToString();
+                    //        string code = dataTable.Rows[i]["Code"].ToString();
+                    //        string Status = dataTable.Rows[i]["Status"].ToString();
+                    //        string activateDate = dataTable.Rows[i]["ActivateDate"].ToString();
+                    //        string productionDate = dataTable.Rows[i]["ProductionDate"].ToString();
+                    //        var payload = new
+                    //        {
+                    //            message_id = $"{ID}-{orderNO}",
+                    //            orderNo = orderNO,
+                    //            uniqueCode = code,
+                    //            status = Status,
+                    //            activate_datetime = activateDate,
+                    //            production_date = productionDate,
+                    //            thing_name = "MIPWP501"
+                    //        };
+                    //        string json = JsonConvert.SerializeObject(payload);
+                    //        var rs = awsClient.Publish_V2("CZ/data", json);
+
+                    //        if (rs.Issuccess)
+                    //        {
+                    //            //cập nhật trạng thái đã gửi
+                    //            Update_Send_Status(ID.ToInt32(), "Sent");
+                    //        }
+                    //        else
+                    //        {
+                    //            //ghi log lỗi không gửi được
+                    //            Update_Send_Status(ID.ToInt32(), "Failed");
+                    //        }
 
 
-                        }
-                    }
+                    //    }
+                    //}
 
-                    //kiểm tra danh sách các mã đã gửi đi
-                    if (GV.AWS_Response_Queue.Count > 0)
-                    {
-                        //lấy ra dữ liệu
-                        var responseItem = GV.AWS_Response_Queue.Dequeue();
-                        string ID = responseItem.message_id.Split('-')[0];
-                        //cập nhật trạng thái đã gửi
-                        try {
-                            Update_Recive_Status(ID.ToInt32(), responseItem.status);
-                        }
-                        catch (Exception ex)
-                        {
-                            //ghi log
-                            AWSLogs aWSLogs = new AWSLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.ERROR, "Lỗi khi nhận tin nhắn trả về", Globalvariable.CurrentUser.Username, ex.Message);
-                            //thêm vào Queue để ghi log
-                            AWSLogsQueue.Enqueue(aWSLogs);
-                        }
+                    ////kiểm tra danh sách các mã đã gửi đi
+                    //if (GV.AWS_Response_Queue.Count > 0)
+                    //{
+                    //    //lấy ra dữ liệu
+                    //    var responseItem = GV.AWS_Response_Queue.Dequeue();
+                    //    string ID = responseItem.message_id.Split('-')[0];
+                    //    //cập nhật trạng thái đã gửi
+                    //    try {
+                    //        Update_Recive_Status(ID.ToInt32(), responseItem.status);
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        //ghi log
+                    //        AWSLogs aWSLogs = new AWSLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.ERROR, "Lỗi khi nhận tin nhắn trả về", Globalvariable.CurrentUser.Username, ex.Message);
+                    //        //thêm vào Queue để ghi log
+                    //        AWSLogsQueue.Enqueue(aWSLogs);
+                    //    }
                         
-                    }
+                    //}
 
                     //cập nhật số lượng đã gửi
                     GV.Sent_Count = Get_Unique_Codes_Run_Send_Count(Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString());
@@ -1676,7 +1688,6 @@ namespace QR_MASAN_01
 
         }
 
-       
         private void ipConsole_DoubleClick(object sender, EventArgs e)
         {
             this.ShowInfoDialog(ipConsole.SelectedItem as string);

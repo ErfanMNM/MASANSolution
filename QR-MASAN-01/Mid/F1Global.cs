@@ -121,7 +121,8 @@ namespace QR_MASAN_01
         public static Queue<AWS_Response> AWS_Response_Queue = new Queue<AWS_Response>();
         public static int ID { get; set; } = 0; // ID của sản phẩm hiện tại
 
-        public static e_Production_Status Production_Status { get; set; } = e_Production_Status.STOPPED;
+        public static e_Production_Status Production_Status { get; set; } = e_Production_Status.STARTUP;
+        public static PO_Infomation Selected_PO { get; set; } = new PO_Infomation(); // Thông tin PO được chọn
 
         public static int Pass_Product_Count { get; set; } = 0;
 
@@ -188,6 +189,10 @@ namespace QR_MASAN_01
         RUNNING, // Đang sản xuất
         PAUSED, // Tạm dừng sản xuất
         READY, // Sẵn sàng sản xuất
+        NOPO, // Không có PO
+        STARTUP, // Bắt đầu
+        LOAD, // Tải dữ liệu
+        CHECKING, // Đang kiểm tra
         UNKNOWN // Trạng thái không xác định
     }
 

@@ -116,6 +116,9 @@ namespace MainClass
         public string WK2_TimeProcess_C1 { get; set; } = "0/0";
         public string WK3_TimeProcess_C1 { get; set; } = "0/0";
 
+        public int AWS_Sent_Count { get; set; } = 0; // Biến để đếm số lượng gửi AWS
+        public int AWS_Recive_Count { get; set; } = 0; // Biến để đếm thời gian gửi AWS
+
         //thêm hàm để reset các giá trị về 0
         public void Reset()
         {
