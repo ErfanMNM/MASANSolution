@@ -183,7 +183,8 @@ namespace QR_MASAN_01
 
     public enum e_Production_Status
     {
-        EDITING, // Đang chỉnh sửa
+        EDITING, // Đang chỉnh sửa PO
+        DATE_EDITING, // Đang chỉnh sửa ngày sản xuất
         PUSHING, // Đang đẩy dữ liệu lên server
         STOPPED, // Dừng sản xuất
         RUNNING, // Đang sản xuất
@@ -193,6 +194,7 @@ namespace QR_MASAN_01
         STARTUP, // Bắt đầu
         LOAD, // Tải dữ liệu
         CHECKING, // Đang kiểm tra
+        COMPLETE, // Hoàn thành
         UNKNOWN // Trạng thái không xác định
     }
 

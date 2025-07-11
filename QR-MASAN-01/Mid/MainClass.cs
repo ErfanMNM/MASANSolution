@@ -182,3 +182,18 @@ namespace MainClass
         public string Last_Content { get; set; } = "0";
     }
 }
+
+namespace MainClass.Enum
+{
+    public enum e_Content_Result
+    {
+        PASS,//tốt
+        FAIL, //lỗi
+        REWORK, //thả lại
+        DUPLICATE, //trùng
+        EMPTY,//không có
+        ERR_FORMAT, //lỗi định dạng
+        NOT_FOUND, //không tìm thấy mã
+        ERROR //lỗi không xác định
+    }
+}

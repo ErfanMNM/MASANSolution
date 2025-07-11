@@ -1,4 +1,5 @@
 ﻿
+using MainClass.Enum;
 using Sunny.UI;
 using System;
 using System.Collections.Generic;
@@ -106,27 +107,7 @@ namespace QR_MASAN_01
             }
         }
 
-        public int Get_Pass_Product_Count(string orderNo)
-        {
-            try
-            {
-                string czpath = "C:/.ABC" + "/Record_" + orderNo + ".db";
-                using (var conn = new SQLiteConnection($"Data Source={czpath};Version=3;"))
-                {
-                    string query = "SELECT COUNT(*) FROM Records WHERE Status = 'PASS'";
-                    var command = new SQLiteCommand(query, conn);
-                    command.Parameters.AddWithValue("@orderNo", orderNo);
-                    conn.Open();
-                    int count = Convert.ToInt32(command.ExecuteScalar());
-                    return count;
-                }
-            }
-            catch
-            {
-                return 0;
-            }
-
-        }
+        
         //lấy số count mã czRun nằm trong thư mục C:/.ABC/MM-yy/<orderNo>.db SELECT COUNT(*) FROM `UniqueCodes`;
         public int Get_CZRun_Count(string orderNo)
         {
@@ -557,6 +538,86 @@ namespace QR_MASAN_01
             }
         }
 
+        public Get get { get; } = new Get();
+
+        public class Get
+        {
+            //lấy số lượng Count có Send_Status = 'Sent'
+            public int Get_Unique_Codes_Run_Send_Count(string orderNo)
+            {
+                //tạo thư mục nếu chưa tồn tại
+                string czRunPath = $"C:/.ABC/{orderNo}.db";
+                using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                {
+                    string query = "SELECT COUNT(*) FROM \"main\".\"UniqueCodes\" WHERE \"Send_Status\" = 'Sent'  AND \"Status\" != '0' ";
+                    var command = new SQLiteCommand(query, conn);
+                    conn.Open();
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    return count;
+                }
+            }
+
+            //lấy số lượng Count có Recive_Status != 'waiting'
+            public int Get_Unique_Codes_Run_Recive_Count(string orderNo)
+            {
+                //tạo thư mục nếu chưa tồn tại
+                string czRunPath = $"C:/.ABC/{orderNo}.db";
+                using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                {
+                    string query = "SELECT COUNT(*) FROM \"main\".\"UniqueCodes\" WHERE \"Recive_Status\" != 'waiting'  AND \"Status\" != '0' ";
+                    var command = new SQLiteCommand(query, conn);
+                    conn.Open();
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    return count;
+                }
+            }
+
+            public int Get_Record_Product_Count(string orderNo, e_Content_Result status)
+            {
+
+                try
+                {
+                    string czpath = "C:/.ABC" + "/Record_" + orderNo + ".db";
+                    using (var conn = new SQLiteConnection($"Data Source={czpath};Version=3;"))
+                    {
+                        string query = $"SELECT COUNT(*) FROM Records WHERE Status = '{status.ToString()}'";
+                        var command = new SQLiteCommand(query, conn);
+                        command.Parameters.AddWithValue("@orderNo", orderNo);
+                        conn.Open();
+                        int count = Convert.ToInt32(command.ExecuteScalar());
+                        return count;
+                    }
+                }
+                catch
+                {
+                    return 0;
+                }
+
+            }
+
+            public int Get_AWS_Sent_Count(string orderNo)
+            {
+
+                try
+                {
+                    string czpath = "C:/.ABC" + "/" + orderNo + ".db";
+                    using (var conn = new SQLiteConnection($"Data Source={czpath};Version=3;"))
+                    {
+                        string query = $"SELECT COUNT(*) FROM UniqueCodes WHERE Send_Status = 'Sent'";
+                        var command = new SQLiteCommand(query, conn);
+                        command.Parameters.AddWithValue("@orderNo", orderNo);
+                        conn.Open();
+                        int count = Convert.ToInt32(command.ExecuteScalar());
+                        return count;
+                    }
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
+
+        }
         
     }
 
@@ -575,7 +636,11 @@ namespace QR_MASAN_01
         public string GTIN { get; set; } = "-";
         public string customerOrderNo { get; set; } = "-";
         public string uom { get; set; } = "-";
-        public string CodeCount { get; set; } = "-";
+        public string CodeCount { get; set; } = "-";//tổng số lượng mã code đã nhận
+
+        // ✅ Thêm property để dùng class con
+        public Run_Infomation runInfo { get; set; } = new Run_Infomation();
+        public AWS_Infomation awsInfo { get; set; } = new AWS_Infomation();
 
         public class Run_Infomation
         {
@@ -595,6 +660,5 @@ namespace QR_MASAN_01
         }
 
     }
-
 
 }

@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml.ExtendedProperties;
 using HslCommunication;
 using MainClass;
+using MainClass.Enum;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using QR_MASAN_01.Auth;
@@ -220,11 +221,11 @@ namespace QR_MASAN_01
                 // Cập nhật trạng thái của các thành phần
                 this.Invoke(new Action(() =>
                 {
-                    oporderNO.Text = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString();
-                    opproductionDate.Text = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString();
-                    opGTIN.Text = Globalvariable.Seleted_PO_Data.Rows[0]["GTIN"].ToString();
-                    oporderQty.Text = Globalvariable.Seleted_PO_Data.Rows[0]["orderQty"].ToString();
-                    opCodeCount.Text = Globalvariable.Seleted_PO_Data.Rows[0]["UniqueCodeCount"].ToString();
+                    oporderNO.Text = GV.Selected_PO.orderNo.ToString();
+                    opproductionDate.Text = GV.Selected_PO.productionDate.ToString();
+                    opGTIN.Text = GV.Selected_PO.GTIN.ToString();
+                    oporderQty.Text = GV.Selected_PO.orderQty.ToString();
+                    opCodeCount.Text = GV.Selected_PO.CodeCount.ToString();
                 }));
             }
             // Cập nhật các trường thông tin MFI trên giao diện
@@ -806,17 +807,7 @@ namespace QR_MASAN_01
 
         #region Quản lý PLC và gửi tín hiệu PLC
 
-        public enum e_Content_Result
-        {
-            PASS,//tốt
-            FAIL, //lỗi
-            REWORK, //thả lại
-            DUPLICATE, //trùng
-            EMPTY,//không có
-            ERR_FORMAT, //lỗi định dạng
-            NOT_FOUND, //không tìm thấy mã
-            ERROR //lỗi không xác định
-        }
+        
 
         public void Send_Result_Content_C1(e_Content_Result content_Result, string _content)
         {
@@ -989,7 +980,7 @@ namespace QR_MASAN_01
                         {
                             ID = GV.ID, // Fix: Change the property type in DataResultSave class to string instead of int.  
                             Code = _content,
-                            orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                            orderNo = GV.Selected_PO.orderNo.ToString(),
                             Status = content_Result.ToString(),
                             PLC_Send_Status = "true",
                             Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
@@ -1022,7 +1013,7 @@ namespace QR_MASAN_01
                     {
                         ID = GV.ID, // Fix: Change the property type in DataResultSave class to string instead of int.  
                         Code = _content,
-                        orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                        orderNo = GV.Selected_PO.orderNo.ToString(),
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write1.IsSuccess.ToString(),
                         Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
@@ -1051,7 +1042,7 @@ namespace QR_MASAN_01
                     {
                         ID = GV.ID, // Fix: Change the property type in DataResultSave class to string instead of int.  
                         Code = _content,
-                        orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                        orderNo = GV.Selected_PO.orderNo.ToString(),
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write5.IsSuccess.ToString(),
                         Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
@@ -1081,7 +1072,7 @@ namespace QR_MASAN_01
                     {
                         ID = GV.ID, // Fix: Change the property type in DataResultSave class to string instead of int.  
                         Code = _content,
-                        orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                        orderNo = GV.Selected_PO.orderNo.ToString(),
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write4.IsSuccess.ToString(),
                         Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
@@ -1111,7 +1102,7 @@ namespace QR_MASAN_01
                     {
                         ID = GV.ID, // Fix: Change the property type in DataResultSave class to string instead of int.  
                         Code = _content,
-                        orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                        orderNo = GV.Selected_PO.orderNo.ToString(),
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write3.IsSuccess.ToString(),
                         Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
@@ -1140,7 +1131,7 @@ namespace QR_MASAN_01
                     {
                         ID = GV.ID, // Fix: Change the property type in DataResultSave class to string instead of int.  
                         Code = _content,
-                        orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                        orderNo = GV.Selected_PO.orderNo.ToString(),
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write2.IsSuccess.ToString(),
                         Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
@@ -1166,7 +1157,7 @@ namespace QR_MASAN_01
                     {
                         ID = GV.ID, // Fix: Change the property type in DataResultSave class to string instead of int.  
                         Code = _content,
-                        orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                        orderNo = GV.Selected_PO.orderNo.ToString(),
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write8.IsSuccess.ToString(),
                         Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
@@ -1184,7 +1175,7 @@ namespace QR_MASAN_01
                     {
                         ID = GV.ID, // Fix: Change the property type in DataResultSave class to string instead of int.  
                         Code = _content,
-                        orderNo = Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString(),
+                        orderNo = GV.Selected_PO.orderNo.ToString(),
                         Status = content_Result.ToString(),
                         PLC_Send_Status = "FAIL-1",
                         Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
@@ -1222,7 +1213,7 @@ namespace QR_MASAN_01
 
         public void Update_Active_Status(CodeData _CodeItem)
         {
-            using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/{Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString()}.db;Version=3;"))
+            using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/{GV.Selected_PO.orderNo.ToString()}.db;Version=3;"))
             {
                 connection.Open();
                 string query = "UPDATE `UniqueCodes` SET " +
@@ -1245,7 +1236,7 @@ namespace QR_MASAN_01
 
         public void Update_Send_Status(int ID, string Status)
         {
-            using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/{Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString()}.db;Version=3;"))
+            using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/{GV.Selected_PO.orderNo.ToString()}.db;Version=3;"))
             {
                 connection.Open();
                 string query = "UPDATE `UniqueCodes` SET " +
@@ -1263,7 +1254,7 @@ namespace QR_MASAN_01
 
         public void Update_Recive_Status(int ID, string Recive_Status)
         {
-            using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/{Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString()}.db;Version=3;"))
+            using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/{GV.Selected_PO.orderNo.ToString()}.db;Version=3;"))
             {
                 connection.Open();
                 string query = "UPDATE `UniqueCodes` SET " +
@@ -1281,7 +1272,7 @@ namespace QR_MASAN_01
 
         public void Add_Content_To_SQLite( DataResultSave _Queue)
         {
-            using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/Record_{Globalvariable.Seleted_PO_Data.Rows[0]["orderNo"].ToString()}.db;Version=3;"))
+            using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/Record_{GV.Selected_PO.orderNo.ToString()}.db;Version=3;"))
             {
                 connection.Open();
                 string query = "INSERT INTO `Records` " +
@@ -1374,7 +1365,7 @@ namespace QR_MASAN_01
                     //kiểm tra các queue cập nhật trạng thái gửi đi
                     //lấy tất cả các mã đã acvtivate và gửi đi
                     DataTable dataTable = new DataTable();
-                    dataTable = Get_Unique_Codes_Run_Send_Pending(Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString());
+                    dataTable = Get_Unique_Codes_Run_Send_Pending(GV.Selected_PO.orderNo.ToString());
 
                     //gửi mã
                     //if (dataTable.Rows.Count > 0)
@@ -1382,7 +1373,7 @@ namespace QR_MASAN_01
                     //    //lấy ra mã và gửi đi
                     //    for (int i = 0; i < dataTable.Rows.Count; i++)
                     //    {
-                    //        string orderNO = Globalvariable.Seleted_PO_Data.Rows[0]["orderNo"].ToString();
+                    //        string orderNO = GV.Selected_PO.orderNo.ToString();
                     //        string ID = dataTable.Rows[i]["ID"].ToString();
                     //        string code = dataTable.Rows[i]["Code"].ToString();
                     //        string Status = dataTable.Rows[i]["Status"].ToString();
@@ -1437,9 +1428,9 @@ namespace QR_MASAN_01
                     //}
 
                     //cập nhật số lượng đã gửi
-                    GV.Sent_Count = Get_Unique_Codes_Run_Send_Count(Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString());
+                    GV.Sent_Count = Get_Unique_Codes_Run_Send_Count(GV.Selected_PO.orderNo.ToString());
                     //cập nhật số lượng đã nhận
-                    GV.Received_Count = Get_Unique_Codes_Run_Recive_Count(Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString());
+                    GV.Received_Count = Get_Unique_Codes_Run_Recive_Count(GV.Selected_PO.orderNo.ToString());
 
                     if ((GV.Sent_Count - GV.Received_Count) > 20)
                     {
@@ -1455,13 +1446,13 @@ namespace QR_MASAN_01
 
                     //gửi lại các mã Fail
                     DataTable dataTableFailed = new DataTable();
-                    dataTableFailed = Get_Unique_Codes_Run_Send_Failed(Globalvariable.Seleted_PO_Data.Rows[0]["orderNO"].ToString());
+                    dataTableFailed = Get_Unique_Codes_Run_Send_Failed(GV.Selected_PO.orderNo.ToString());
                     if (dataTableFailed.Rows.Count > 0)
                     {
                         //lấy ra mã và gửi đi
                         for (int i = 0; i < dataTableFailed.Rows.Count; i++)
                         {
-                            string orderNO = Globalvariable.Seleted_PO_Data.Rows[0]["orderNo"].ToString();
+                            string orderNO = GV.Selected_PO.orderNo.ToString();
                             string ID = dataTableFailed.Rows[i]["ID"].ToString();
                             string code = dataTableFailed.Rows[i]["Code"].ToString();
                             string Status = dataTableFailed.Rows[i]["Status"].ToString();
