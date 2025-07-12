@@ -77,12 +77,12 @@
             this.opPassCount = new Sunny.UI.UIPanel();
             this.opFailCount = new Sunny.UI.UIPanel();
             this.opMESSendCount = new Sunny.UI.UIPanel();
+            this.opTer = new Sunny.UI.UIRichTextBox();
             this.uiTableLayoutPanel6 = new Sunny.UI.UITableLayoutPanel();
             this.opCZRunCount = new Sunny.UI.UIPanel();
             this.uiPanel3 = new Sunny.UI.UIPanel();
             this.opProductName = new Sunny.UI.UIPanel();
             this.WK_Update = new System.ComponentModel.BackgroundWorker();
-            this.opTer = new Sunny.UI.UIRichTextBox();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel2.SuspendLayout();
@@ -976,6 +976,20 @@
             this.opMESSendCount.Text = "-";
             this.opMESSendCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // opTer
+            // 
+            this.opTer.FillColor = System.Drawing.Color.White;
+            this.opTer.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opTer.Location = new System.Drawing.Point(4, 157);
+            this.opTer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.opTer.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opTer.Name = "opTer";
+            this.opTer.Padding = new System.Windows.Forms.Padding(2);
+            this.opTer.ShowText = false;
+            this.opTer.Size = new System.Drawing.Size(824, 85);
+            this.opTer.TabIndex = 14;
+            this.opTer.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // uiTableLayoutPanel6
             // 
             this.uiTableLayoutPanel6.ColumnCount = 3;
@@ -1045,20 +1059,6 @@
             this.WK_Update.WorkerReportsProgress = true;
             this.WK_Update.WorkerSupportsCancellation = true;
             this.WK_Update.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_Update_DoWork);
-            // 
-            // opTer
-            // 
-            this.opTer.FillColor = System.Drawing.Color.White;
-            this.opTer.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opTer.Location = new System.Drawing.Point(4, 157);
-            this.opTer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.opTer.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opTer.Name = "opTer";
-            this.opTer.Padding = new System.Windows.Forms.Padding(2);
-            this.opTer.ShowText = false;
-            this.opTer.Size = new System.Drawing.Size(824, 85);
-            this.opTer.TabIndex = 14;
-            this.opTer.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // FPI_Service
             // 

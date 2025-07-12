@@ -340,16 +340,6 @@ namespace QR_MASAN_01
                 {
                     PLC.Ready = 1;
                 }
-                
-                //if (ClearPLC)
-                //{
-                //    this.Invoke(new Action(() =>
-                //    {
-                //        btnClearPLC.Enabled = true;
-                //        btnClearPLC.Text = "Xóa lỗi PLC";
-                //        ClearPLC = false;
-                //    }));
-                //}
 
                 //Kiểm tra PLC_ACTIVE_DM nếu = 1 set Globale ACTIVE = true dùng hsl
                 OperateResult<int> read = PLC.plc.ReadInt32(PLCAddress.Get("PLC_Bypass_DM_C1"));
@@ -379,6 +369,16 @@ namespace QR_MASAN_01
                     }
                 }
 
+                //gửi trạng thái start cho PLC
+                if (GV.Production_Status == e_Production_Status.RUNNING)
+                {
+                    OperateResult writeStart = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 1);
+                }
+                else
+                {
+                    OperateResult writeStart = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+                }
+
                 OperateResult<int> read1 = PLC.plc.ReadInt32(PLCAddress.Get("PLC_Bypass_DM_C2"));
                 if (read1.IsSuccess)
                 {
@@ -405,6 +405,7 @@ namespace QR_MASAN_01
                     }
                 }
 
+
                 if(Globalvariable.ACTIVE_C1 && Globalvariable.ACTIVE_C2)
                 {
                     //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Kích hoạt kiểm", "PLC", "Nhận kích hoạt kiểm từ PLC");
@@ -417,7 +418,37 @@ namespace QR_MASAN_01
                     Globalvariable.ACTIVE = false;
                 }
 
+                //đọc từ PLC
+                OperateResult<int[]> readCount = PLC.plc.ReadInt32("D130", 5);
+                if (readCount.IsSuccess)
+                {
+                    SafeInvoke(() =>
+                    {
+                        lblPass.Text = readCount.Content[2].ToString();
+                        lblTotal.Text = readCount.Content[0].ToString();
+                        lblFail.Text = readCount.Content[1].ToString();
+                        lblTimeOut.Text = readCount.Content[4].ToString();
+                    });
+
+                }
+                else
+                {
+                    SafeInvoke(() =>
+                    {
+                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi đọc dữ liệu từ PLC: {readCount.Message}");
+                        ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+
+                        lblPass.Text = "-1";
+                        lblTotal.Text = "-1";
+                        lblFail.Text = "-1";
+                        lblTimeOut.Text = "-1";
+                    });
+                    
+                }
+
+
                 Update_HMI();
+
 
                 Thread.Sleep(1000);
             }
@@ -522,6 +553,10 @@ namespace QR_MASAN_01
                             opCamera.FillColor = Globalvariable.OK_Color;
                         }));
                     }
+
+                    //đếm đủ số chai, gửi PLC
+
+
                     //tạm tắt CMR phụ
                     //if (Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.RUNNING)
                     //{
@@ -734,7 +769,7 @@ namespace QR_MASAN_01
             //Kích hoạt hệ thống đo đạc
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            GV.ID++;
+            GV.ID ++;
             //kiểm tra chuỗi có hợp lệ hay không
             //Kiểm tra tính hợp lệ của dữ liệu
             if (_strData.IsNullOrEmpty())
@@ -1161,7 +1196,7 @@ namespace QR_MASAN_01
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write8.IsSuccess.ToString(),
                         Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                        Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
+                        Production_Datetime = GV.Selected_PO.productionDate.ToString()
                     };
                     GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
                     break;
@@ -1368,64 +1403,65 @@ namespace QR_MASAN_01
                     dataTable = Get_Unique_Codes_Run_Send_Pending(GV.Selected_PO.orderNo.ToString());
 
                     //gửi mã
-                    //if (dataTable.Rows.Count > 0)
-                    //{
-                    //    //lấy ra mã và gửi đi
-                    //    for (int i = 0; i < dataTable.Rows.Count; i++)
-                    //    {
-                    //        string orderNO = GV.Selected_PO.orderNo.ToString();
-                    //        string ID = dataTable.Rows[i]["ID"].ToString();
-                    //        string code = dataTable.Rows[i]["Code"].ToString();
-                    //        string Status = dataTable.Rows[i]["Status"].ToString();
-                    //        string activateDate = dataTable.Rows[i]["ActivateDate"].ToString();
-                    //        string productionDate = dataTable.Rows[i]["ProductionDate"].ToString();
-                    //        var payload = new
-                    //        {
-                    //            message_id = $"{ID}-{orderNO}",
-                    //            orderNo = orderNO,
-                    //            uniqueCode = code,
-                    //            status = Status,
-                    //            activate_datetime = activateDate,
-                    //            production_date = productionDate,
-                    //            thing_name = "MIPWP501"
-                    //        };
-                    //        string json = JsonConvert.SerializeObject(payload);
-                    //        var rs = awsClient.Publish_V2("CZ/data", json);
+                    if (dataTable.Rows.Count > 0)
+                    {
+                        //lấy ra mã và gửi đi
+                        for (int i = 0; i < dataTable.Rows.Count; i++)
+                        {
+                            string orderNO = GV.Selected_PO.orderNo.ToString();
+                            string ID = dataTable.Rows[i]["ID"].ToString();
+                            string code = dataTable.Rows[i]["Code"].ToString();
+                            string Status = dataTable.Rows[i]["Status"].ToString();
+                            string activateDate = dataTable.Rows[i]["ActivateDate"].ToString();
+                            string productionDate = dataTable.Rows[i]["ProductionDate"].ToString();
+                            var payload = new
+                            {
+                                message_id = $"{ID}-{orderNO}",
+                                orderNo = orderNO,
+                                uniqueCode = code,
+                                status = Status,
+                                activate_datetime = activateDate,
+                                production_date = productionDate,
+                                thing_name = "MIPWP501"
+                            };
+                            string json = JsonConvert.SerializeObject(payload);
+                            var rs = awsClient.Publish_V2("CZ/data", json);
 
-                    //        if (rs.Issuccess)
-                    //        {
-                    //            //cập nhật trạng thái đã gửi
-                    //            Update_Send_Status(ID.ToInt32(), "Sent");
-                    //        }
-                    //        else
-                    //        {
-                    //            //ghi log lỗi không gửi được
-                    //            Update_Send_Status(ID.ToInt32(), "Failed");
-                    //        }
+                            if (rs.Issuccess)
+                            {
+                                //cập nhật trạng thái đã gửi
+                                Update_Send_Status(ID.ToInt32(), "Sent");
+                            }
+                            else
+                            {
+                                //ghi log lỗi không gửi được
+                                Update_Send_Status(ID.ToInt32(), "Failed");
+                            }
 
 
-                    //    }
-                    //}
+                        }
+                    }
 
-                    ////kiểm tra danh sách các mã đã gửi đi
-                    //if (GV.AWS_Response_Queue.Count > 0)
-                    //{
-                    //    //lấy ra dữ liệu
-                    //    var responseItem = GV.AWS_Response_Queue.Dequeue();
-                    //    string ID = responseItem.message_id.Split('-')[0];
-                    //    //cập nhật trạng thái đã gửi
-                    //    try {
-                    //        Update_Recive_Status(ID.ToInt32(), responseItem.status);
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        //ghi log
-                    //        AWSLogs aWSLogs = new AWSLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.ERROR, "Lỗi khi nhận tin nhắn trả về", Globalvariable.CurrentUser.Username, ex.Message);
-                    //        //thêm vào Queue để ghi log
-                    //        AWSLogsQueue.Enqueue(aWSLogs);
-                    //    }
-                        
-                    //}
+                    //kiểm tra danh sách các mã đã gửi đi
+                    if (GV.AWS_Response_Queue.Count > 0)
+                    {
+                        //lấy ra dữ liệu
+                        var responseItem = GV.AWS_Response_Queue.Dequeue();
+                        string ID = responseItem.message_id.Split('-')[0];
+                        //cập nhật trạng thái đã gửi
+                        try
+                        {
+                            Update_Recive_Status(ID.ToInt32(), responseItem.status);
+                        }
+                        catch (Exception ex)
+                        {
+                            //ghi log
+                            AWSLogs aWSLogs = new AWSLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.ERROR, "Lỗi khi nhận tin nhắn trả về", Globalvariable.CurrentUser.Username, ex.Message);
+                            //thêm vào Queue để ghi log
+                            AWSLogsQueue.Enqueue(aWSLogs);
+                        }
+
+                    }
 
                     //cập nhật số lượng đã gửi
                     GV.Sent_Count = Get_Unique_Codes_Run_Send_Count(GV.Selected_PO.orderNo.ToString());

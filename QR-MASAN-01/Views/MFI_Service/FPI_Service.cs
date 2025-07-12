@@ -61,7 +61,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                     opSite.Text = Globalvariable.Seleted_PO_Data.Rows[0]["site"].ToString();
                     opCZCodeCount.Text = Globalvariable.Seleted_PO_Data.Rows[0]["UniqueCodeCount"].ToString();
                     opCZRunCount.Text = poService.Get_ID_RUN(GV.Selected_PO.orderNo.ToString()).ToString();
-                    GV.ID = opCZRunCount.Text.ToInt(); // Cập nhật ID từ opCZRunCount
+                    
                     opPassCount.Text = poService.get.Get_Record_Product_Count(GV.Selected_PO.orderNo.ToString(), e_Content_Result.PASS).ToString();
                     opFailCount.Text = "Đang tải...";
                     opDuplicateCount.Text = poService.get.Get_Record_Product_Count(GV.Selected_PO.orderNo.ToString(), e_Content_Result.DUPLICATE).ToString();
@@ -644,9 +644,36 @@ namespace QR_MASAN_01.Views.MFI_Service
                     SystemLogs stopLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Nhấn nút dừng sản xuất", "RUN", $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút dừng sản xuất");
                     //ghi logs vào hàng đợi
                     LogQueue.Enqueue(stopLogs);
-                    //tắt hết các nút
-                   // btnRUN.Enabled = false; // ẩn nút chạy
-                    //GV.Production_Status = e_Production_Status.READY;
+                    //kiểm tra xem có queue chưa xong hay không
+                    if (GV.AWS_Response_Queue.Count > 0)
+                    {
+                        this.ShowErrorNotifier("Vui lòng đợi queue sản xuất xong trước khi dừng sản xuất", false, 3000);
+                        return;
+                    }
+                    if(GV.C2_Save_Result_To_SQLite_Queue.Count > 0)
+                    {
+                        this.ShowErrorNotifier("Vui lòng đợi queue lưu kết quả vào SQLite xong trước khi dừng sản xuất", false, 3000);
+                        return;
+                    }
+
+                    if(GV.C2_Update_Content_To_SQLite_Queue.Count > 0)
+                    {
+                        this.ShowErrorNotifier("Vui lòng đợi queue cập nhật nội dung vào SQLite xong trước khi dừng sản xuất", false, 3000);
+                        return;
+                    }
+
+                    //đổi màu lại nút btnRUN
+                    btnRUN.Text = "DỪNG SẢN XUẤT"; // Đặt lại văn bản nút
+                    btnRUN.Symbol = 61515; // Đặt lại biểu tượng nút
+                    btnRUN.FillColor = Color.Red; // Đổi màu nền của nút btnRUN về màu CornflowerBlue
+                    btnRUN.ForeColor = Color.White; // Đổi màu chữ của nút btnRUN về màu trắng
+
+
+                    //dừng sản xuất
+                    GV.Production_Status = e_Production_Status.PAUSED; // Chuyển sang trạng thái tạm dừng
+
+
+
                     break;
                 case e_Production_Status.PAUSED:
                     break;
@@ -659,6 +686,8 @@ namespace QR_MASAN_01.Views.MFI_Service
                         return;
                     }
                     Push_Data_To_Dic();
+
+                    GV.ID = poService.Get_ID_RUN(GV.Selected_PO.orderNo.ToString()).ToString().ToInt(); // Cập nhật ID từ opCZRunCount
 
                     btnPO.Enabled = false; // ẩn nút chỉnh PO
                     btnProductionDate.Enabled = false; // ẩn nút chỉnh Date

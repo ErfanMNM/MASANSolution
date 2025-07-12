@@ -1526,7 +1526,7 @@
             this.tabPage3.Controls.Add(this.uiTableLayoutPanel19);
             this.tabPage3.Location = new System.Drawing.Point(0, 40);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(459, 357);
+            this.tabPage3.Size = new System.Drawing.Size(200, 60);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Thống kê";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -2440,7 +2440,7 @@
             this.tabPage2.Controls.Add(this.opHis2);
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(459, 357);
+            this.tabPage2.Size = new System.Drawing.Size(200, 60);
             this.tabPage2.TabIndex = 3;
             this.tabPage2.Text = "Lịch sử 2";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -2457,7 +2457,7 @@
             this.opHis2.Name = "opHis2";
             this.opHis2.Padding = new System.Windows.Forms.Padding(2);
             this.opHis2.ShowText = false;
-            this.opHis2.Size = new System.Drawing.Size(459, 357);
+            this.opHis2.Size = new System.Drawing.Size(200, 60);
             this.opHis2.TabIndex = 0;
             this.opHis2.Text = "uiListBox1";
             // 
@@ -2599,9 +2599,9 @@
             // cam01
             // 
             this.cam01.Controls.Add(this.uiTableLayoutPanel18);
-            this.cam01.Location = new System.Drawing.Point(0, 40);
+            this.cam01.Location = new System.Drawing.Point(0, 30);
             this.cam01.Name = "cam01";
-            this.cam01.Size = new System.Drawing.Size(200, 60);
+            this.cam01.Size = new System.Drawing.Size(463, 96);
             this.cam01.TabIndex = 2;
             this.cam01.Text = "CAMERA 01";
             this.cam01.UseVisualStyleBackColor = true;
@@ -2618,7 +2618,7 @@
             this.uiTableLayoutPanel18.Name = "uiTableLayoutPanel18";
             this.uiTableLayoutPanel18.RowCount = 1;
             this.uiTableLayoutPanel18.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel18.Size = new System.Drawing.Size(200, 60);
+            this.uiTableLayoutPanel18.Size = new System.Drawing.Size(463, 96);
             this.uiTableLayoutPanel18.TabIndex = 9;
             this.uiTableLayoutPanel18.TagString = null;
             // 
@@ -2626,13 +2626,13 @@
             // 
             this.opContentC1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opContentC1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opContentC1.Location = new System.Drawing.Point(55, 2);
+            this.opContentC1.Location = new System.Drawing.Point(126, 2);
             this.opContentC1.Margin = new System.Windows.Forms.Padding(2);
             this.opContentC1.MinimumSize = new System.Drawing.Size(1, 1);
             this.opContentC1.Name = "opContentC1";
-            this.opContentC1.Size = new System.Drawing.Size(143, 56);
+            this.opContentC1.Size = new System.Drawing.Size(335, 92);
             this.opContentC1.TabIndex = 5;
-            this.opContentC1.Text = "i.tcx.com.vn/189312345678900A50918124aLYmSaM6";
+            this.opContentC1.Text = "-";
             this.opContentC1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opResultPassFailC1
@@ -2645,7 +2645,7 @@
             this.opResultPassFailC1.Margin = new System.Windows.Forms.Padding(2);
             this.opResultPassFailC1.MinimumSize = new System.Drawing.Size(1, 1);
             this.opResultPassFailC1.Name = "opResultPassFailC1";
-            this.opResultPassFailC1.Size = new System.Drawing.Size(49, 56);
+            this.opResultPassFailC1.Size = new System.Drawing.Size(120, 92);
             this.opResultPassFailC1.TabIndex = 4;
             this.opResultPassFailC1.Text = "TỐT";
             this.opResultPassFailC1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
