@@ -33,6 +33,7 @@
             this.mainPanelLayout = new Sunny.UI.UITableLayoutPanel();
             this.uiTopbar = new Sunny.UI.UIPanel();
             this.header = new Sunny.UI.UITableLayoutPanel();
+            this.uiPanel2 = new Sunny.UI.UIPanel();
             this.Logo = new Sunny.UI.UITableLayoutPanel();
             this.LogoImg = new Sunny.UI.UIPanel();
             this.Logotext = new Sunny.UI.UIPanel();
@@ -54,7 +55,6 @@
             this.ClockWK = new System.ComponentModel.BackgroundWorker();
             this.Internet = new SPMS1.InternetClass(this.components);
             this.WK_LaserPrinterTime = new System.ComponentModel.BackgroundWorker();
-            this.uiPanel2 = new Sunny.UI.UIPanel();
             this.mainPanelLayout.SuspendLayout();
             this.uiTopbar.SuspendLayout();
             this.header.SuspendLayout();
@@ -94,6 +94,18 @@
             this.header.Controls.Add(this.opUser, 2, 0);
             this.header.Name = "header";
             this.header.TagString = null;
+            // 
+            // uiPanel2
+            // 
+            this.uiPanel2.BackColor = System.Drawing.Color.Transparent;
+            resources.ApplyResources(this.uiPanel2, "uiPanel2");
+            this.uiPanel2.FillColor = System.Drawing.Color.Transparent;
+            this.uiPanel2.FillColor2 = System.Drawing.Color.Transparent;
+            this.uiPanel2.ForeColor = System.Drawing.Color.Blue;
+            this.uiPanel2.Name = "uiPanel2";
+            this.uiPanel2.Radius = 0;
+            this.uiPanel2.RectColor = System.Drawing.Color.Transparent;
+            this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Logo
             // 
@@ -305,18 +317,6 @@
             // 
             this.WK_LaserPrinterTime.WorkerSupportsCancellation = true;
             this.WK_LaserPrinterTime.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_LaserPrinterTime_DoWork);
-            // 
-            // uiPanel2
-            // 
-            this.uiPanel2.BackColor = System.Drawing.Color.Transparent;
-            resources.ApplyResources(this.uiPanel2, "uiPanel2");
-            this.uiPanel2.FillColor = System.Drawing.Color.Transparent;
-            this.uiPanel2.FillColor2 = System.Drawing.Color.Transparent;
-            this.uiPanel2.ForeColor = System.Drawing.Color.Blue;
-            this.uiPanel2.Name = "uiPanel2";
-            this.uiPanel2.Radius = 0;
-            this.uiPanel2.RectColor = System.Drawing.Color.Transparent;
-            this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // FMainQR01
             // 

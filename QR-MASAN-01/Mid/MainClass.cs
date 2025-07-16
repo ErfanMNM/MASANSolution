@@ -195,5 +195,5 @@ namespace MainClass.Enum
         ERR_FORMAT, //lỗi định dạng
         NOT_FOUND, //không tìm thấy mã
         ERROR //lỗi không xác định
-    }
+    }   
 }

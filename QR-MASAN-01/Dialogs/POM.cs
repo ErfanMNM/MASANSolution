@@ -1,4 +1,5 @@
 ﻿using DATALOGIC_SCAN;
+using Diaglogs;
 using QR_MASAN_01;
 using SpT;
 using Sunny.UI;
@@ -16,6 +17,7 @@ namespace Dialogs
         //public event EventHandler OkClicked;
         //public event EventHandler CancelClicked;
         public string Message { get; set; } = string.Empty;
+        public string lydo { get; set; } 
         public string STT { get; set; } = string.Empty;
         public Pom_dialog()
         {
@@ -59,12 +61,36 @@ namespace Dialogs
                 }
 
             }
+
+            if(uiRichTextBox2.TextLength < 30)
+            {
+                Invoke(new Action(() => { this.ShowErrorTip("Vui lòng nhập nội dung ít nhất 30 ký tự"); }));
+                Message = "Vui lòng nhập nội dung ít nhất 30 ký tự";
+                // Kích hoạt sự kiện OkClicked
+                // OkClicked?.Invoke(this, EventArgs.Empty);
+                // Đóng form với kết quả OK
+                DialogResult = DialogResult.Cancel;
+                return;
+            }
+            lydo = uiRichTextBox2.Text;
             // Kích hoạt sự kiện OkClicked
             // OkClicked?.Invoke(this, EventArgs.Empty);
             // Đóng form với kết quả OK
             DialogResult = DialogResult.OK;
 
 
+        }
+
+        private void uiRichTextBox2_DoubleClick(object sender, EventArgs e)
+        {
+            using (var dialog = new Entertext())
+            {
+                dialog.TextValue = uiRichTextBox2.Text;
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    uiRichTextBox2.Text = dialog.TextValue ;
+                }
+            }
         }
     }
 }

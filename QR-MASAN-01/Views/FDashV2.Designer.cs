@@ -529,9 +529,9 @@
             // opC1
             // 
             this.opC1.Controls.Add(this.tableLayoutPanel2);
-            this.opC1.Location = new System.Drawing.Point(0, 40);
+            this.opC1.Location = new System.Drawing.Point(0, 30);
             this.opC1.Name = "opC1";
-            this.opC1.Size = new System.Drawing.Size(200, 60);
+            this.opC1.Size = new System.Drawing.Size(357, 155);
             this.opC1.TabIndex = 1;
             this.opC1.Text = "Camera  01";
             this.opC1.UseVisualStyleBackColor = true;
@@ -564,7 +564,7 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 31.78295F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 21.70543F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 27.90698F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(200, 60);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(357, 155);
             this.tableLayoutPanel2.TabIndex = 9;
             // 
             // opTotalC1
@@ -575,11 +575,11 @@
             this.opTotalC1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opTotalC1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opTotalC1.ForeColor = System.Drawing.Color.Black;
-            this.opTotalC1.Location = new System.Drawing.Point(2, 13);
+            this.opTotalC1.Location = new System.Drawing.Point(2, 32);
             this.opTotalC1.Margin = new System.Windows.Forms.Padding(2);
             this.opTotalC1.MinimumSize = new System.Drawing.Size(1, 1);
             this.opTotalC1.Name = "opTotalC1";
-            this.opTotalC1.Size = new System.Drawing.Size(62, 14);
+            this.opTotalC1.Size = new System.Drawing.Size(114, 44);
             this.opTotalC1.TabIndex = 15;
             this.opTotalC1.Text = "uiDigitalLabel1";
             // 
@@ -592,7 +592,7 @@
             this.uiLabel1.Location = new System.Drawing.Point(2, 2);
             this.uiLabel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 0);
             this.uiLabel1.Name = "uiLabel1";
-            this.uiLabel1.Size = new System.Drawing.Size(62, 9);
+            this.uiLabel1.Size = new System.Drawing.Size(114, 28);
             this.uiLabel1.TabIndex = 14;
             this.uiLabel1.Text = "TỔNG C1";
             this.uiLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -605,11 +605,11 @@
             this.opTimeOutC1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opTimeOutC1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opTimeOutC1.ForeColor = System.Drawing.Color.Black;
-            this.opTimeOutC1.Location = new System.Drawing.Point(68, 43);
+            this.opTimeOutC1.Location = new System.Drawing.Point(120, 113);
             this.opTimeOutC1.Margin = new System.Windows.Forms.Padding(2);
             this.opTimeOutC1.MinimumSize = new System.Drawing.Size(1, 1);
             this.opTimeOutC1.Name = "opTimeOutC1";
-            this.opTimeOutC1.Size = new System.Drawing.Size(62, 15);
+            this.opTimeOutC1.Size = new System.Drawing.Size(115, 40);
             this.opTimeOutC1.TabIndex = 13;
             this.opTimeOutC1.Text = "uiDigitalLabel3";
             // 
@@ -621,11 +621,11 @@
             this.opSpeedC1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opSpeedC1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opSpeedC1.ForeColor = System.Drawing.Color.Black;
-            this.opSpeedC1.Location = new System.Drawing.Point(134, 43);
+            this.opSpeedC1.Location = new System.Drawing.Point(239, 113);
             this.opSpeedC1.Margin = new System.Windows.Forms.Padding(2);
             this.opSpeedC1.MinimumSize = new System.Drawing.Size(1, 1);
             this.opSpeedC1.Name = "opSpeedC1";
-            this.opSpeedC1.Size = new System.Drawing.Size(64, 15);
+            this.opSpeedC1.Size = new System.Drawing.Size(116, 40);
             this.opSpeedC1.TabIndex = 12;
             this.opSpeedC1.Text = "uiDigitalLabel8";
             // 
@@ -637,11 +637,11 @@
             this.opWarningC1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opWarningC1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opWarningC1.ForeColor = System.Drawing.Color.Black;
-            this.opWarningC1.Location = new System.Drawing.Point(2, 43);
+            this.opWarningC1.Location = new System.Drawing.Point(2, 113);
             this.opWarningC1.Margin = new System.Windows.Forms.Padding(2);
             this.opWarningC1.MinimumSize = new System.Drawing.Size(1, 1);
             this.opWarningC1.Name = "opWarningC1";
-            this.opWarningC1.Size = new System.Drawing.Size(62, 15);
+            this.opWarningC1.Size = new System.Drawing.Size(114, 40);
             this.opWarningC1.TabIndex = 11;
             this.opWarningC1.Text = "uiDigitalLabel1";
             // 
@@ -651,10 +651,10 @@
             this.uiLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.uiLabel2.ForeColor = System.Drawing.Color.Black;
-            this.uiLabel2.Location = new System.Drawing.Point(134, 31);
+            this.uiLabel2.Location = new System.Drawing.Point(239, 80);
             this.uiLabel2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 0);
             this.uiLabel2.Name = "uiLabel2";
-            this.uiLabel2.Size = new System.Drawing.Size(64, 10);
+            this.uiLabel2.Size = new System.Drawing.Size(116, 31);
             this.uiLabel2.TabIndex = 10;
             this.uiLabel2.Text = "Tốc độ";
             this.uiLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -665,10 +665,10 @@
             this.uiLabel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.uiLabel3.ForeColor = System.Drawing.Color.Black;
-            this.uiLabel3.Location = new System.Drawing.Point(68, 31);
+            this.uiLabel3.Location = new System.Drawing.Point(120, 80);
             this.uiLabel3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 0);
             this.uiLabel3.Name = "uiLabel3";
-            this.uiLabel3.Size = new System.Drawing.Size(62, 10);
+            this.uiLabel3.Size = new System.Drawing.Size(115, 31);
             this.uiLabel3.TabIndex = 9;
             this.uiLabel3.Text = "Không kiểm";
             this.uiLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -679,10 +679,10 @@
             this.uiLabel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.uiLabel4.ForeColor = System.Drawing.Color.Black;
-            this.uiLabel4.Location = new System.Drawing.Point(2, 31);
+            this.uiLabel4.Location = new System.Drawing.Point(2, 80);
             this.uiLabel4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 0);
             this.uiLabel4.Name = "uiLabel4";
-            this.uiLabel4.Size = new System.Drawing.Size(62, 10);
+            this.uiLabel4.Size = new System.Drawing.Size(114, 31);
             this.uiLabel4.TabIndex = 8;
             this.uiLabel4.Text = "Cảnh báo C1";
             this.uiLabel4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -695,11 +695,11 @@
             this.opFailC1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opFailC1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opFailC1.ForeColor = System.Drawing.Color.Black;
-            this.opFailC1.Location = new System.Drawing.Point(134, 13);
+            this.opFailC1.Location = new System.Drawing.Point(239, 32);
             this.opFailC1.Margin = new System.Windows.Forms.Padding(2);
             this.opFailC1.MinimumSize = new System.Drawing.Size(1, 1);
             this.opFailC1.Name = "opFailC1";
-            this.opFailC1.Size = new System.Drawing.Size(64, 14);
+            this.opFailC1.Size = new System.Drawing.Size(116, 44);
             this.opFailC1.TabIndex = 7;
             this.opFailC1.Text = "uiDigitalLabel2";
             // 
@@ -709,10 +709,10 @@
             this.uiLabel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.uiLabel5.ForeColor = System.Drawing.Color.Tomato;
-            this.uiLabel5.Location = new System.Drawing.Point(134, 2);
+            this.uiLabel5.Location = new System.Drawing.Point(239, 2);
             this.uiLabel5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 0);
             this.uiLabel5.Name = "uiLabel5";
-            this.uiLabel5.Size = new System.Drawing.Size(64, 9);
+            this.uiLabel5.Size = new System.Drawing.Size(116, 28);
             this.uiLabel5.TabIndex = 6;
             this.uiLabel5.Text = "LỖI C1";
             this.uiLabel5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -723,10 +723,10 @@
             this.uiLabel12.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel12.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.uiLabel12.ForeColor = System.Drawing.Color.LimeGreen;
-            this.uiLabel12.Location = new System.Drawing.Point(68, 2);
+            this.uiLabel12.Location = new System.Drawing.Point(120, 2);
             this.uiLabel12.Margin = new System.Windows.Forms.Padding(2, 2, 2, 0);
             this.uiLabel12.Name = "uiLabel12";
-            this.uiLabel12.Size = new System.Drawing.Size(62, 9);
+            this.uiLabel12.Size = new System.Drawing.Size(115, 28);
             this.uiLabel12.TabIndex = 4;
             this.uiLabel12.Text = "TỐT C1";
             this.uiLabel12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -739,20 +739,20 @@
             this.opPassC1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opPassC1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opPassC1.ForeColor = System.Drawing.Color.Black;
-            this.opPassC1.Location = new System.Drawing.Point(68, 13);
+            this.opPassC1.Location = new System.Drawing.Point(120, 32);
             this.opPassC1.Margin = new System.Windows.Forms.Padding(2);
             this.opPassC1.MinimumSize = new System.Drawing.Size(1, 1);
             this.opPassC1.Name = "opPassC1";
-            this.opPassC1.Size = new System.Drawing.Size(62, 14);
+            this.opPassC1.Size = new System.Drawing.Size(115, 44);
             this.opPassC1.TabIndex = 5;
             this.opPassC1.Text = "uiDigitalLabel1";
             // 
             // opC2
             // 
             this.opC2.Controls.Add(this.tableLayoutPanel4);
-            this.opC2.Location = new System.Drawing.Point(0, 40);
+            this.opC2.Location = new System.Drawing.Point(0, 30);
             this.opC2.Name = "opC2";
-            this.opC2.Size = new System.Drawing.Size(200, 60);
+            this.opC2.Size = new System.Drawing.Size(357, 155);
             this.opC2.TabIndex = 0;
             this.opC2.Text = "Camera 02";
             this.opC2.UseVisualStyleBackColor = true;
@@ -785,7 +785,7 @@
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 31.78295F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 21.70543F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 27.90698F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(200, 60);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(357, 155);
             this.tableLayoutPanel4.TabIndex = 10;
             // 
             // opTotalC2
@@ -796,11 +796,11 @@
             this.opTotalC2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opTotalC2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opTotalC2.ForeColor = System.Drawing.Color.Black;
-            this.opTotalC2.Location = new System.Drawing.Point(2, 13);
+            this.opTotalC2.Location = new System.Drawing.Point(2, 32);
             this.opTotalC2.Margin = new System.Windows.Forms.Padding(2);
             this.opTotalC2.MinimumSize = new System.Drawing.Size(1, 1);
             this.opTotalC2.Name = "opTotalC2";
-            this.opTotalC2.Size = new System.Drawing.Size(62, 14);
+            this.opTotalC2.Size = new System.Drawing.Size(114, 44);
             this.opTotalC2.TabIndex = 15;
             this.opTotalC2.Text = "uiDigitalLabel1";
             // 
@@ -813,7 +813,7 @@
             this.uiLabel13.Location = new System.Drawing.Point(2, 2);
             this.uiLabel13.Margin = new System.Windows.Forms.Padding(2, 2, 2, 0);
             this.uiLabel13.Name = "uiLabel13";
-            this.uiLabel13.Size = new System.Drawing.Size(62, 9);
+            this.uiLabel13.Size = new System.Drawing.Size(114, 28);
             this.uiLabel13.TabIndex = 14;
             this.uiLabel13.Text = "TỔNG C2";
             this.uiLabel13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -826,11 +826,11 @@
             this.opTimeOutC2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opTimeOutC2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opTimeOutC2.ForeColor = System.Drawing.Color.Black;
-            this.opTimeOutC2.Location = new System.Drawing.Point(68, 43);
+            this.opTimeOutC2.Location = new System.Drawing.Point(120, 113);
             this.opTimeOutC2.Margin = new System.Windows.Forms.Padding(2);
             this.opTimeOutC2.MinimumSize = new System.Drawing.Size(1, 1);
             this.opTimeOutC2.Name = "opTimeOutC2";
-            this.opTimeOutC2.Size = new System.Drawing.Size(62, 15);
+            this.opTimeOutC2.Size = new System.Drawing.Size(115, 40);
             this.opTimeOutC2.TabIndex = 13;
             this.opTimeOutC2.Text = "uiDigitalLabel3";
             // 
@@ -842,11 +842,11 @@
             this.opSpeedC2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opSpeedC2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opSpeedC2.ForeColor = System.Drawing.Color.Black;
-            this.opSpeedC2.Location = new System.Drawing.Point(134, 43);
+            this.opSpeedC2.Location = new System.Drawing.Point(239, 113);
             this.opSpeedC2.Margin = new System.Windows.Forms.Padding(2);
             this.opSpeedC2.MinimumSize = new System.Drawing.Size(1, 1);
             this.opSpeedC2.Name = "opSpeedC2";
-            this.opSpeedC2.Size = new System.Drawing.Size(64, 15);
+            this.opSpeedC2.Size = new System.Drawing.Size(116, 40);
             this.opSpeedC2.TabIndex = 12;
             this.opSpeedC2.Text = "uiDigitalLabel8";
             // 
@@ -858,11 +858,11 @@
             this.opWarningC2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opWarningC2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opWarningC2.ForeColor = System.Drawing.Color.Black;
-            this.opWarningC2.Location = new System.Drawing.Point(2, 43);
+            this.opWarningC2.Location = new System.Drawing.Point(2, 113);
             this.opWarningC2.Margin = new System.Windows.Forms.Padding(2);
             this.opWarningC2.MinimumSize = new System.Drawing.Size(1, 1);
             this.opWarningC2.Name = "opWarningC2";
-            this.opWarningC2.Size = new System.Drawing.Size(62, 15);
+            this.opWarningC2.Size = new System.Drawing.Size(114, 40);
             this.opWarningC2.TabIndex = 11;
             this.opWarningC2.Text = "uiDigitalLabel1";
             // 
@@ -872,10 +872,10 @@
             this.uiLabel14.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel14.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.uiLabel14.ForeColor = System.Drawing.Color.Black;
-            this.uiLabel14.Location = new System.Drawing.Point(134, 31);
+            this.uiLabel14.Location = new System.Drawing.Point(239, 80);
             this.uiLabel14.Margin = new System.Windows.Forms.Padding(2, 2, 2, 0);
             this.uiLabel14.Name = "uiLabel14";
-            this.uiLabel14.Size = new System.Drawing.Size(64, 10);
+            this.uiLabel14.Size = new System.Drawing.Size(116, 31);
             this.uiLabel14.TabIndex = 10;
             this.uiLabel14.Text = "Tốc độ";
             this.uiLabel14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -886,10 +886,10 @@
             this.uiLabel15.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel15.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.uiLabel15.ForeColor = System.Drawing.Color.Black;
-            this.uiLabel15.Location = new System.Drawing.Point(68, 31);
+            this.uiLabel15.Location = new System.Drawing.Point(120, 80);
             this.uiLabel15.Margin = new System.Windows.Forms.Padding(2, 2, 2, 0);
             this.uiLabel15.Name = "uiLabel15";
-            this.uiLabel15.Size = new System.Drawing.Size(62, 10);
+            this.uiLabel15.Size = new System.Drawing.Size(115, 31);
             this.uiLabel15.TabIndex = 9;
             this.uiLabel15.Text = "Không kiểm";
             this.uiLabel15.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -900,10 +900,10 @@
             this.uiLabel16.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel16.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.uiLabel16.ForeColor = System.Drawing.Color.Black;
-            this.uiLabel16.Location = new System.Drawing.Point(2, 31);
+            this.uiLabel16.Location = new System.Drawing.Point(2, 80);
             this.uiLabel16.Margin = new System.Windows.Forms.Padding(2, 2, 2, 0);
             this.uiLabel16.Name = "uiLabel16";
-            this.uiLabel16.Size = new System.Drawing.Size(62, 10);
+            this.uiLabel16.Size = new System.Drawing.Size(114, 31);
             this.uiLabel16.TabIndex = 8;
             this.uiLabel16.Text = "Cảnh báo C2";
             this.uiLabel16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -916,11 +916,11 @@
             this.opFailC2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opFailC2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opFailC2.ForeColor = System.Drawing.Color.Black;
-            this.opFailC2.Location = new System.Drawing.Point(134, 13);
+            this.opFailC2.Location = new System.Drawing.Point(239, 32);
             this.opFailC2.Margin = new System.Windows.Forms.Padding(2);
             this.opFailC2.MinimumSize = new System.Drawing.Size(1, 1);
             this.opFailC2.Name = "opFailC2";
-            this.opFailC2.Size = new System.Drawing.Size(64, 14);
+            this.opFailC2.Size = new System.Drawing.Size(116, 44);
             this.opFailC2.TabIndex = 7;
             this.opFailC2.Text = "uiDigitalLabel2";
             // 
@@ -930,10 +930,10 @@
             this.uiLabel17.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel17.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.uiLabel17.ForeColor = System.Drawing.Color.Tomato;
-            this.uiLabel17.Location = new System.Drawing.Point(134, 2);
+            this.uiLabel17.Location = new System.Drawing.Point(239, 2);
             this.uiLabel17.Margin = new System.Windows.Forms.Padding(2, 2, 2, 0);
             this.uiLabel17.Name = "uiLabel17";
-            this.uiLabel17.Size = new System.Drawing.Size(64, 9);
+            this.uiLabel17.Size = new System.Drawing.Size(116, 28);
             this.uiLabel17.TabIndex = 6;
             this.uiLabel17.Text = "LỖI C2";
             this.uiLabel17.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -944,10 +944,10 @@
             this.uiLabel18.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.uiLabel18.ForeColor = System.Drawing.Color.LimeGreen;
-            this.uiLabel18.Location = new System.Drawing.Point(68, 2);
+            this.uiLabel18.Location = new System.Drawing.Point(120, 2);
             this.uiLabel18.Margin = new System.Windows.Forms.Padding(2, 2, 2, 0);
             this.uiLabel18.Name = "uiLabel18";
-            this.uiLabel18.Size = new System.Drawing.Size(62, 9);
+            this.uiLabel18.Size = new System.Drawing.Size(115, 28);
             this.uiLabel18.TabIndex = 4;
             this.uiLabel18.Text = "TỐT C2";
             this.uiLabel18.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -960,11 +960,11 @@
             this.opPassC2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opPassC2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opPassC2.ForeColor = System.Drawing.Color.Black;
-            this.opPassC2.Location = new System.Drawing.Point(68, 13);
+            this.opPassC2.Location = new System.Drawing.Point(120, 32);
             this.opPassC2.Margin = new System.Windows.Forms.Padding(2);
             this.opPassC2.MinimumSize = new System.Drawing.Size(1, 1);
             this.opPassC2.Name = "opPassC2";
-            this.opPassC2.Size = new System.Drawing.Size(62, 14);
+            this.opPassC2.Size = new System.Drawing.Size(115, 44);
             this.opPassC2.TabIndex = 5;
             this.opPassC2.Text = "uiDigitalLabel1";
             // 
@@ -2599,9 +2599,9 @@
             // cam01
             // 
             this.cam01.Controls.Add(this.uiTableLayoutPanel18);
-            this.cam01.Location = new System.Drawing.Point(0, 30);
+            this.cam01.Location = new System.Drawing.Point(0, 40);
             this.cam01.Name = "cam01";
-            this.cam01.Size = new System.Drawing.Size(463, 96);
+            this.cam01.Size = new System.Drawing.Size(200, 60);
             this.cam01.TabIndex = 2;
             this.cam01.Text = "CAMERA 01";
             this.cam01.UseVisualStyleBackColor = true;
@@ -2618,7 +2618,7 @@
             this.uiTableLayoutPanel18.Name = "uiTableLayoutPanel18";
             this.uiTableLayoutPanel18.RowCount = 1;
             this.uiTableLayoutPanel18.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel18.Size = new System.Drawing.Size(463, 96);
+            this.uiTableLayoutPanel18.Size = new System.Drawing.Size(200, 60);
             this.uiTableLayoutPanel18.TabIndex = 9;
             this.uiTableLayoutPanel18.TagString = null;
             // 
@@ -2626,11 +2626,11 @@
             // 
             this.opContentC1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opContentC1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opContentC1.Location = new System.Drawing.Point(126, 2);
+            this.opContentC1.Location = new System.Drawing.Point(55, 2);
             this.opContentC1.Margin = new System.Windows.Forms.Padding(2);
             this.opContentC1.MinimumSize = new System.Drawing.Size(1, 1);
             this.opContentC1.Name = "opContentC1";
-            this.opContentC1.Size = new System.Drawing.Size(335, 92);
+            this.opContentC1.Size = new System.Drawing.Size(143, 56);
             this.opContentC1.TabIndex = 5;
             this.opContentC1.Text = "-";
             this.opContentC1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2645,7 +2645,7 @@
             this.opResultPassFailC1.Margin = new System.Windows.Forms.Padding(2);
             this.opResultPassFailC1.MinimumSize = new System.Drawing.Size(1, 1);
             this.opResultPassFailC1.Name = "opResultPassFailC1";
-            this.opResultPassFailC1.Size = new System.Drawing.Size(120, 92);
+            this.opResultPassFailC1.Size = new System.Drawing.Size(49, 56);
             this.opResultPassFailC1.TabIndex = 4;
             this.opResultPassFailC1.Text = "TỐT";
             this.opResultPassFailC1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;

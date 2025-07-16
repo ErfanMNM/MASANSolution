@@ -99,7 +99,6 @@ namespace QR_MASAN_01
         public static bool ACTIVE_C2 { get; set; } = true;
 
         //PO
-        public static DataTable Seleted_PO_Data { get; set; } = new DataTable();
         public static e_PI_Status PI_Status { get; set; } = e_PI_Status.NOPO; // Trạng thái của PO (không có PO hoặc đang chỉnh sửa)
         public static int Product_Active_Count { get; set; } = 0; // Số lượng sản phẩm đã kích hoạt
 
@@ -195,6 +194,9 @@ namespace QR_MASAN_01
         LOAD, // Tải dữ liệu
         CHECKING, // Đang kiểm tra
         COMPLETE, // Hoàn thành
+        TESTING, // Đang kiểm tra
+        FINALTESTING, // Đã test xong
+        SENDORDERQTY,
         UNKNOWN // Trạng thái không xác định
     }
 
@@ -276,29 +278,30 @@ namespace QR_MASAN_01
         public string ServerIP { get; set; }
         public int ServerPort { get; set; }
         public string City { get; set; }
-        public string App_Mode { get; set; } // "ADD_Data", "NO_ADD", "REWORK", "REWORK_C1", "REWORK_C2"
+        public string App_Mode { get; set; }
 
-        // Removed invalid attribute from the class declaration  
         [ConfigSection("INK_PRINTER")]
         public string Printer_name { get; set; }
 
-        //cấu hình máy in laser
         [ConfigSection("LASER_PRINTER")]
         public string Laser_printer_server_url { get; set; }
 
         [ConfigSection("CAMERA")]
         public int Camera_Slot { get; set; }
+        public string IP_Camera_01 { get; set; } // Thêm camera slot 02 nếu cần
+        public string IP_Camera_02 { get; set; } // Thêm camera slot 03 nếu cần
+        public int Port_Camera_01 { get; set; } // Thêm camera slot 04 nếu cần
+        public int Port_Camera_02 { get; set; } // Thêm camera slot 05 nếu cần
 
         [ConfigSection("DATA")]
-        public string Code_Content_Pattern { get; set; } // Regex pattern for code content
-        public string Production_Mode { get; set; } // Regex pattern for C1 code content
-        public string PO_Data_path { get; set; } // Path to PO data file
+        public string Code_Content_Pattern { get; set; }
+        public string Production_Mode { get; set; }
+        public string PO_Data_path { get; set; }
 
         [ConfigSection("AUTH")]
-
-        public bool TwoFA_Enabled { get; set; } // Enable or disable 2FA
-        public string PO_Edit_AMode { get; set; } // chế độ xác thực khi chỉnh PO NONE = ai cũng được chỉnh, Admin = chỉ admin mới chỉnh, 2FA = chỉ admin mới chỉnh và phải nhập mã 2FA, OTP = chỉ cần nhập mã 2FA của admin là được chỉnh
-        public bool TwoFA_Enabled_PO { get; set; } // Enable or disable 2FA for PO editing
+        public bool TwoFA_Enabled { get; set; }
+        public string PO_Edit_AMode { get; set; }
+        public bool TwoFA_Enabled_PO { get; set; }
 
         public override void SetDefault()
         {
@@ -316,8 +319,12 @@ namespace QR_MASAN_01
             TwoFA_Enabled = false; // Enable 2FA by default
             PO_Edit_AMode = "NONE"; // Default mode for editing PO
             TwoFA_Enabled_PO = false; // Enable 2FA for PO editing by default
-            PO_Data_path = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\"; 
-            base.SetDefault();
+            PO_Data_path = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\";
+            IP_Camera_01 = "127.0.0.1";
+            IP_Camera_02 = "127.0.0.1";
+            Port_Camera_01 = 6969; // Default port for camera 01
+            Port_Camera_02 = 6968; // Default port for camera 02
+
         }
     }
 

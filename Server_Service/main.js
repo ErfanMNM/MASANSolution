@@ -17,7 +17,7 @@ app.whenReady().then(() => {
         },
     });
 
-    mainWindow.loadFile('public/index.html');
+    mainWindow.loadURL('http://localhost:49212/api-docs');
 
     // Xử lý khi nhấn nút đóng cửa sổ
     mainWindow.on('close', (event) => {

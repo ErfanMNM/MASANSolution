@@ -154,6 +154,21 @@ namespace QR_MASAN_01
                 return table;
             }
         }
+
+        public DataTable Get_Unique_Codes_Run_Sent_Recive_OK(string orderNo)
+        {
+            //tạo thư mục nếu chưa tồn tại
+            string czRunPath = $"C:/.ABC/{orderNo}.db";
+
+            using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+            {
+                string query = "SELECT \"_rowid_\",* FROM \"main\".\"UniqueCodes\" WHERE \"Send_Status\" = 'sent'  AND \"Status\" != '0' AND \"Recive_Status\" != 'waiting' ";
+                var adapter = new SQLiteDataAdapter(query, conn);
+                var table = new DataTable();
+                adapter.Fill(table);
+                return table;
+            }
+        }
         public DataTable Get_Unique_Codes_MES(string orderNo)
         {
             string czpath = _codes_Path_CZ_DB_MES + "/" + orderNo + ".db";
@@ -169,9 +184,10 @@ namespace QR_MASAN_01
 
         //tạo PO cho sản xuất gồm bảng lưu thông tin các PO đã dùng sản xuất và lịch sử chốt sổ (tách lô) và lịch sử đổi date
         //kiểm tra PO db đã tồn tại hay chưa, nếu chưa tạo mới
+        string poPath = "Databases/PO.tlog";
         public void RunPO(string orderNo, string productionDate)
         {
-            string poPath = "Databases/PO.tlog";
+            
             Check_PO_Log_File();
             
             Check_Run_File(orderNo); //kiểm tra xem file run đã tồn tại chưa, nếu chưa thì tạo mới
@@ -398,7 +414,7 @@ namespace QR_MASAN_01
                     conn.Open();
                     string createTableQuery = @"CREATE TABLE ""Records"" (
 	                                            ""ID""	INTEGER NOT NULL UNIQUE,
-	                                            ""Code""	TEXT NOT NULL UNIQUE,
+	                                            ""Code""	TEXT NOT NULL DEFAULT 'FAIL',
 	                                            ""Status""	INTEGER NOT NULL DEFAULT 0,
 	                                            ""PLC_Status""	TEXT NOT NULL DEFAULT 'FAIL',
 	                                            ""ActivateDate""	TEXT NOT NULL DEFAULT 0,
@@ -519,6 +535,24 @@ namespace QR_MASAN_01
             }
         }
 
+        public void Delete_PO (string orderNo, string lydo)
+        {
+            using (var conn = new SQLiteConnection($"Data Source={poPath};Version=3;"))
+            {
+                conn.Open();
+                string insertQuery = @"
+                            INSERT INTO PO (orderNO, productionDate, Action, UserName, Counter, Timestamp, Timeunix)
+                            VALUES (@orderNo, @productionDate, 'DELETE', @UserName, '{lydo:"+ lydo + "}', @Timestamp, @Timeunix)";
+                var command = new SQLiteCommand(insertQuery, conn);
+                command.Parameters.AddWithValue("@orderNo", orderNo);
+                command.Parameters.AddWithValue("@productionDate", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"));
+                command.Parameters.AddWithValue("@UserName", Globalvariable.CurrentUser.Username);
+                command.Parameters.AddWithValue("@Timestamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"));
+                command.Parameters.AddWithValue("@Timeunix", ((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds());
+                command.ExecuteNonQuery();
+            }
+        }
+
         //hàm inser vào bảng Records của CZ run db Recive AWS
         public void Insert_Record_Recive_AWS(string orderNo, string message_id, string status, string error_message, string recive_datetime)
         {
@@ -550,6 +584,21 @@ namespace QR_MASAN_01
                 using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                 {
                     string query = "SELECT COUNT(*) FROM \"main\".\"UniqueCodes\" WHERE \"Send_Status\" = 'Sent'  AND \"Status\" != '0' ";
+                    var command = new SQLiteCommand(query, conn);
+                    conn.Open();
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    return count;
+                }
+            }
+
+            public int Get_Unique_Codes_Run_Sent_Recive_OK_Count(string orderNo)
+            {
+                //tạo thư mục nếu chưa tồn tại
+                string czRunPath = $"C:/.ABC/{orderNo}.db";
+
+                using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                {
+                    string query = "SELECT COUNT(*) FROM \"main\".\"UniqueCodes\" WHERE \"Send_Status\" = 'sent'  AND \"Status\" != '0' AND \"Recive_Status\" != 'waiting' ";
                     var command = new SQLiteCommand(query, conn);
                     conn.Open();
                     int count = Convert.ToInt32(command.ExecuteScalar());

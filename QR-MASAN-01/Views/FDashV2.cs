@@ -50,6 +50,10 @@ namespace QR_MASAN_01
                 PLC.PLC_IP = PLCAddress.Get("PLC_IP");
                 PLC.PLC_PORT = Convert.ToInt32(PLCAddress.Get("PLC_PORT"));
                 PLC.PLC_Ready_DM = PLCAddress.Get("PLC_Ready_DM");
+                Camera_c.IP = Setting.Current.IP_Camera_02;
+                Camera.IP = Setting.Current.IP_Camera_01;
+                Camera_c.Port= Setting.Current.Port_Camera_02;
+                Camera.Port = Setting.Current.Port_Camera_01;
                 PLC.InitPLC();
 
                 //kết nối MQTT
@@ -57,8 +61,8 @@ namespace QR_MASAN_01
                 string host = "a22qv9bgjnbsae-ats.iot.ap-southeast-1.amazonaws.com";
                 string clientId = "MIPWP501";
 
-                string rootCAPath = @"C:\Users\THUC\Downloads\Compressed\Archive\MIPWP501\AmazonRootCA1.pem";
-                string pfxPath = @"C:\Users\THUC\Downloads\Compressed\Archive\MIPWP501\client-certificate.pfx";
+                string rootCAPath = @"C:\MIPWP501\AmazonRootCA1.pem";
+                string pfxPath = @"C:\MIPWP501\client-certificate.pfx";
                 string pfxPassword = "thuc";
 
                 awsClient = new AwsIotClientHelper(
@@ -221,11 +225,14 @@ namespace QR_MASAN_01
                 // Cập nhật trạng thái của các thành phần
                 this.Invoke(new Action(() =>
                 {
-                    oporderNO.Text = GV.Selected_PO.orderNo.ToString();
-                    opproductionDate.Text = GV.Selected_PO.productionDate.ToString();
-                    opGTIN.Text = GV.Selected_PO.GTIN.ToString();
-                    oporderQty.Text = GV.Selected_PO.orderQty.ToString();
-                    opCodeCount.Text = GV.Selected_PO.CodeCount.ToString();
+                    if (oporderNO.Text != GV.Selected_PO.orderNo.ToString())
+                    {
+                        oporderNO.Text = GV.Selected_PO.orderNo.ToString();
+                        opproductionDate.Text = GV.Selected_PO.productionDate.ToString();
+                        opGTIN.Text = GV.Selected_PO.GTIN.ToString();
+                        oporderQty.Text = GV.Selected_PO.orderQty.ToString();
+                        opCodeCount.Text = GV.Selected_PO.CodeCount.ToString();
+                    }
                 }));
             }
             // Cập nhật các trường thông tin MFI trên giao diện
@@ -242,7 +249,7 @@ namespace QR_MASAN_01
                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
             }));
         }
-
+        bool send_orderQty_Ok = false;
         private void WK_Update_DoWork(object sender, DoWorkEventArgs e)
         {
             while (!WK_Update.CancellationPending)
@@ -261,49 +268,15 @@ namespace QR_MASAN_01
                     opCamera.FillColor = Globalvariable.WB_Color;
                 }
 
-
-
                 if (!Globalvariable.PLCConnect)
                 {
                     opPLCStatus.FillColor = Globalvariable.WB_Color;
                 }
 
-               
-
-                //chế độ dữ liệu mới cũ
-
-                bool printers = false;
-
-                if (GPrinter.Printer_Status == e_PRINTER_Status.PRINTING)
-                {
-                    printers = true;
-                }
-                else
-                {
-                    printers = false;
-                    if (Setting.Current.App_Mode == "ADD_Data")
-                    {
-                        printers = true;
-                    }
-                }
-
-                if (Setting.Current.Camera_Slot == 1)
-                {
-                    GCamera.Camera_Status_02 = e_Camera_Status.CONNECTED;
-
-                    this.Invoke(new Action(() =>
-                    {
-                        opCMR02Stt.Text = "Không dùng";
-                        opCMR02Stt.FillColor = Color.Yellow;
-                    }));
-                }
-                else
-                {
-                    if (GCamera.Camera_Status_02 == e_Camera_Status.DISCONNECTED)
+                if (GCamera.Camera_Status_02 == e_Camera_Status.DISCONNECTED)
                     {
                         opCMR02Stt.FillColor = Globalvariable.WB_Color;
                     }
-                }
                 //Ready
                 if(Globalvariable.All_Ready)
                 {
@@ -319,7 +292,6 @@ namespace QR_MASAN_01
                         PLC.Ready = 0;
                     }
                 }
-
 
                 if (GCamera.Camera_Status == e_Camera_Status.CONNECTED && GCamera.Camera_Status_02 == e_Camera_Status.CONNECTED && Globalvariable.PLCConnect)
                 {
@@ -341,93 +313,19 @@ namespace QR_MASAN_01
                     PLC.Ready = 1;
                 }
 
-                //Kiểm tra PLC_ACTIVE_DM nếu = 1 set Globale ACTIVE = true dùng hsl
-                OperateResult<int> read = PLC.plc.ReadInt32(PLCAddress.Get("PLC_Bypass_DM_C1"));
-                if (read.IsSuccess)
-                {
-                    if (read.Content != 1)
-                    {
-                        if (Globalvariable.ACTIVE_C1 == false)
-                        {
-                            ////ghi log 
-                            //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Bật Camera 01", "PLC", "Nhận kích hoạt camera 01 từ PLC, nhận giá trị khác 1");
-                            ////Ghi vào hàng chờ
-                            //ActiveLogQueue.Enqueue(activeLogs);
-                            Globalvariable.ACTIVE_C1 = true;
-                        }
-                    }
-                    else
-                    {
-                        if (Globalvariable.ACTIVE_C1 == true)
-                        {
-                            ////ghi log
-                            //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Tắt Camera 01", "PLC", "Nhận ngừng kích hoạt camera 01 từ PLC, nhận giá trị bằng 1");
-                            ////Ghi vào hàng chờ
-                            //ActiveLogQueue.Enqueue(activeLogs);
-                            Globalvariable.ACTIVE_C1 = false;
-                        }
-                    }
-                }
-
-                //gửi trạng thái start cho PLC
-                if (GV.Production_Status == e_Production_Status.RUNNING)
-                {
-                    OperateResult writeStart = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 1);
-                }
-                else
-                {
-                    OperateResult writeStart = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
-                }
-
-                OperateResult<int> read1 = PLC.plc.ReadInt32(PLCAddress.Get("PLC_Bypass_DM_C2"));
-                if (read1.IsSuccess)
-                {
-                    if (read1.Content != 1)
-                    {
-                        if (Globalvariable.ACTIVE_C2 == false)
-                        {
-                            //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.UNACTIVE, "Bật Camera 02", "PLC", "Nhận kích hoạt camera 02 từ PLC, nhận giá trị khác 1");
-                            ////Ghi vào hàng chờ
-                            //ActiveLogQueue.Enqueue(activeLogs);
-                            Globalvariable.ACTIVE_C2 = true;
-                        }
-                    }
-                    else
-                    {
-                        if(Globalvariable.ACTIVE_C2 == true)
-                        {
-                            //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.UNACTIVE, "Bật Camera 02", "PLC", "Nhận kích hoạt camera 02 từ PLC, nhận giá trị bằng 1");
-                            ////Ghi vào hàng chờ
-                            //ActiveLogQueue.Enqueue(activeLogs);
-                            Globalvariable.ACTIVE_C2 = false;
-                        }
-                        
-                    }
-                }
-
-
-                if(Globalvariable.ACTIVE_C1 && Globalvariable.ACTIVE_C2)
-                {
-                    //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Kích hoạt kiểm", "PLC", "Nhận kích hoạt kiểm từ PLC");
-                    ////Ghi vào hàng chờ
-                    //ActiveLogQueue.Enqueue(activeLogs);
-                    Globalvariable.ACTIVE = true;
-                }
-                else
-                {
-                    Globalvariable.ACTIVE = false;
-                }
-
+                
+                Active_Pr();
+                PO_Process();
                 //đọc từ PLC
                 OperateResult<int[]> readCount = PLC.plc.ReadInt32("D130", 5);
                 if (readCount.IsSuccess)
                 {
                     SafeInvoke(() =>
                     {
-                        lblPass.Text = readCount.Content[2].ToString();
-                        lblTotal.Text = readCount.Content[0].ToString();
-                        lblFail.Text = readCount.Content[1].ToString();
-                        lblTimeOut.Text = readCount.Content[4].ToString();
+                        lblPass.Value = readCount.Content[2].ToString().ToInt32();
+                        lblTotal.Value = readCount.Content[0].ToString().ToInt32();
+                        lblFail.Value = readCount.Content[1].ToString().ToInt32();
+                        lblTimeOut.Value = readCount.Content[4].ToString().ToInt32();
                     });
 
                 }
@@ -446,11 +344,122 @@ namespace QR_MASAN_01
                     
                 }
 
-
                 Update_HMI();
+                Thread.Sleep(200);
+            }
+        }
 
+        public void PO_Process ()
+        {
+            //gửi trạng thái start cho PLC
+            if (GV.Production_Status == e_Production_Status.RUNNING)
+            {
+                OperateResult writeStart = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 1);
 
-                Thread.Sleep(1000);
+                //OperateResult writeOrderQty = PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), GV.Selected_PO.orderQty.ToInt32());
+                //if(writeOrderQty.IsSuccess)
+                //{
+                //    OperateResult writeT = PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), 10);
+
+                //}
+
+            }
+            else if (GV.Production_Status == e_Production_Status.TESTING)
+            {
+                OperateResult writeStart = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 1);
+                OperateResult writeT = PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), 10);
+            }
+            else if (GV.Production_Status == e_Production_Status.FINALTESTING)
+            {
+                OperateResult writeStart = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+                //xóa số đếm PLC 
+                OperateResult writeClear = PLC.plc.Write(PLCAddress.Get("RESET_COUNT_DM_SS1"), 1);
+                //chuyển sang Ready
+                GV.Production_Status = e_Production_Status.READY;
+            }
+            else if (GV.Production_Status == e_Production_Status.PUSHING)
+            {
+                //xóa số đếm PLC
+                OperateResult writeClear = PLC.plc.Write(PLCAddress.Get("PLC_Reset_Counter_DM_C2"), 1);
+                //xóa số đếm PLC 
+                OperateResult writeClear1 = PLC.plc.Write(PLCAddress.Get("RESET_COUNT_DM_SS1"), 1);
+
+                OperateResult writeOrderQty = PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), GV.Selected_PO.orderQty.ToInt32());
+                //chuyển sang Ready
+                GV.Production_Status = e_Production_Status.RUNNING;
+            }
+            else if (GV.Production_Status == e_Production_Status.SENDORDERQTY)
+            {
+                OperateResult writeOrderQty = PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), GV.Selected_PO.orderQty.ToInt32());
+                //chuyển sang Ready
+                GV.Production_Status = e_Production_Status.RUNNING;
+            }
+            else
+            {
+                OperateResult writeStart = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+            }
+        }
+
+        public void Active_Pr()
+        {
+            //Kiểm tra PLC_ACTIVE_DM nếu = 1 set Globale ACTIVE = true dùng hsl
+            OperateResult<int> read = PLC.plc.ReadInt32(PLCAddress.Get("PLC_Bypass_DM_C1"));
+            if (read.IsSuccess)
+            {
+                if (read.Content != 1)
+                {
+                    if (Globalvariable.ACTIVE_C1 == false)
+                    {
+                        ////ghi log 
+                        //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Bật Camera 01", "PLC", "Nhận kích hoạt camera 01 từ PLC, nhận giá trị khác 1");
+                        ////Ghi vào hàng chờ
+                        //ActiveLogQueue.Enqueue(activeLogs);
+                        Globalvariable.ACTIVE_C1 = true;
+                    }
+                }
+                else
+                {
+                    if (Globalvariable.ACTIVE_C1 == true)
+                    {
+                        ////ghi log
+                        //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Tắt Camera 01", "PLC", "Nhận ngừng kích hoạt camera 01 từ PLC, nhận giá trị bằng 1");
+                        ////Ghi vào hàng chờ
+                        //ActiveLogQueue.Enqueue(activeLogs);
+                        Globalvariable.ACTIVE_C1 = false;
+                    }
+                }
+            }
+
+            OperateResult<int> read1 = PLC.plc.ReadInt32(PLCAddress.Get("PLC_Bypass_DM_C2"));
+            if (read1.IsSuccess)
+            {
+                if (read1.Content != 1)
+                {
+                    if (Globalvariable.ACTIVE_C2 == false)
+                    {
+                        Globalvariable.ACTIVE_C2 = true;
+                    }
+                }
+                else
+                {
+                    if (Globalvariable.ACTIVE_C2 == true)
+                    {
+                        Globalvariable.ACTIVE_C2 = false;
+                    }
+
+                }
+            }
+
+            if (Globalvariable.ACTIVE_C1 && Globalvariable.ACTIVE_C2)
+            {
+                //ActiveLogs activeLogs = new ActiveLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_ActiveLogType.ACTIVE, "Kích hoạt kiểm", "PLC", "Nhận kích hoạt kiểm từ PLC");
+                ////Ghi vào hàng chờ
+                //ActiveLogQueue.Enqueue(activeLogs);
+                Globalvariable.ACTIVE = true;
+            }
+            else
+            {
+                Globalvariable.ACTIVE = false;
             }
         }
 
@@ -517,6 +526,7 @@ namespace QR_MASAN_01
 
         #region Xử lý tín hiệu từ camera
 
+        //camera 01
         private void Camera_ClientCallBack(SPMS1.enumClient eAE, string _strData)
         {
             switch (eAE)
@@ -555,57 +565,58 @@ namespace QR_MASAN_01
                     }
 
                     //đếm đủ số chai, gửi PLC
+                    if (Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.RUNNING)
+                    {
+                        Globalvariable.GCounter.Total_C1++;
+                        try
+                        {
+                            if (!WK_CMR1.IsBusy)
+                            {
+                                WK_CMR1.RunWorkerAsync(_strData);
+                            }
+                            else if (!WK_CMR2.IsBusy)
+                            {
+                                WK_CMR2.RunWorkerAsync(_strData);
+                            }
+                            else if (!WK_CMR3.IsBusy)
+                            {
+                                WK_CMR3.RunWorkerAsync(_strData);
+                            }
+                            else
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : Không đủ luồng xử lí");
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
 
+                                //ghi log lỗi
+                                SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.CAMERA_ERROR, "Lỗi khi camera trả về C1", Globalvariable.CurrentUser.Username, "Không đủ luồng xử lí");
+                                Send_Result_Content_C1(e_Content_Result.ERROR, "Lỗi khi camera 02 trả về: Không đủ luồng xử lí");
+                                //thêm vào Queue để ghi log
+                                SystemLogs.LogQueue.Enqueue(systemLogs);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : {ex.Message}");
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                            }));
 
-                    //tạm tắt CMR phụ
-                    //if (Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.RUNNING)
-                    //{
-                    //    Globalvariable.GCounter.Total_C1++;
-                    //    try
-                    //    {
-                    //        if (!WK_CMR1.IsBusy)
-                    //        {
-                    //            WK_CMR1.RunWorkerAsync(_strData);
-                    //        }
-                    //        else if (!WK_CMR2.IsBusy)
-                    //        {
-                    //            WK_CMR2.RunWorkerAsync(_strData);
-                    //        }
-                    //        else if (!WK_CMR3.IsBusy)
-                    //        {
-                    //            WK_CMR3.RunWorkerAsync(_strData);
-                    //        }
-                    //        else
-                    //        {
-                    //            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : Không đủ luồng xử lí");
-                    //            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                            //ghi log lỗi
+                            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.CAMERA_ERROR, "Lỗi khi camera trả về C1", Globalvariable.CurrentUser.Username, ex.Message);
+                            //thêm vào Queue để ghi log
+                            SystemLogs.LogQueue.Enqueue(systemLogs);
+                        }
+                    }
+                    else if (Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.TESTING)
+                    {
+                        LogUpdate("Đang ở chế độ TESTING, không xử lý dữ liệu camera.");
+                    }
+                    else
+                    {
+                        LogUpdate("CHƯA KHỞI ĐỘNG SẢN XUẤT");
+                    }
 
-                    //            //ghi log lỗi
-                    //            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.CAMERA_ERROR, "Lỗi khi camera trả về C1", Globalvariable.CurrentUser.Username, "Không đủ luồng xử lí");
-                    //            Send_Result_Content_C1(e_Content_Result.ERROR, "Lỗi khi camera 02 trả về: Không đủ luồng xử lí");
-                    //            //thêm vào Queue để ghi log
-                    //            SystemLogs.LogQueue.Enqueue(systemLogs);
-                    //        }
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        this.Invoke(new Action(() =>
-                    //        {
-                    //            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : {ex.Message}");
-                    //            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                    //        }));
-
-                    //        //ghi log lỗi
-                    //        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.CAMERA_ERROR, "Lỗi khi camera trả về C1", Globalvariable.CurrentUser.Username, ex.Message);
-                    //        //thêm vào Queue để ghi log
-                    //        SystemLogs.LogQueue.Enqueue(systemLogs);
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    LogUpdate("CHƯA KHỞI ĐỘNG SẢN XUẤT");
-                    //}
-                    
                     break;
                 case SPMS1.enumClient.RECONNECT:
                     if (GCamera.Camera_Status != e_Camera_Status.RECONNECT)
@@ -650,6 +661,7 @@ namespace QR_MASAN_01
                     }
                     break;
                 case SPMS1.enumClient.RECEIVED:
+
                     if(Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.RUNNING)
                     {
                         if (GCamera.Camera_Status != e_Camera_Status.CONNECTED)
@@ -690,6 +702,22 @@ namespace QR_MASAN_01
                             SystemLogs.LogQueue.Enqueue(systemLogs);
                         }
                     }
+                    else if (Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.TESTING)
+                    {
+                        if (_strData == "FAIL")
+                        {
+                            //truyền Fail xuống PLC
+                            OperateResult write = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C2"), short.Parse("0"));
+                            return;
+                        }
+                        else
+                        {
+
+                            //truyền pass xuống PLC
+                            OperateResult write = PLC.plc.Write(PLCAddress.Get("PLC_Reject_DM_C2"), short.Parse("1"));
+                        }
+
+                    }
                     else
                     {
                         LogUpdate("CHƯA KHỞI ĐỘNG SẢN XUẤT");
@@ -723,13 +751,13 @@ namespace QR_MASAN_01
             if (_strData.IsNullOrEmpty())
             {
                 //loại sản phẩm ngay lập tức
-                Send_Result_Content_C1(e_Content_Result.EMPTY, "MÃ RỖNG");
+               // Send_Result_Content_C1(e_Content_Result.EMPTY, "MÃ RỖNG");
                 return;
             }
             if (_strData == "FAIL")
             {
                 //loại sản phẩm ngay lập tức
-                Send_Result_Content_C1(e_Content_Result.FAIL, "Không đọc được");
+                //Send_Result_Content_C1(e_Content_Result.FAIL, "Không đọc được");
                 return;
             }
             //đổi <GS> về đúng ký tự thật
@@ -743,7 +771,7 @@ namespace QR_MASAN_01
                     C1CodeData.Status = "1";
                     //giờ kích hoạt theo ISO
                     C1CodeData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-                    C1CodeData.Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString();
+                    C1CodeData.Production_Datetime = GV.Selected_PO.productionDate;
                     //Gửi vào hàng chờ để cập nhật SQLite
                     GV.C1_Update_Content_To_SQLite_Queue.Enqueue(C1CodeData);
                 }
@@ -751,13 +779,13 @@ namespace QR_MASAN_01
                 else
                 {
                     //đá ra
-                    Send_Result_Content_C1(e_Content_Result.DUPLICATE, _strData);
+                    //Send_Result_Content_C1(e_Content_Result.DUPLICATE, _strData);
                     return;
                 }
             }
             //nếu không tồn tại thì đá ra, không cần quan tâm thêm
             else {
-                Send_Result_Content_C1(e_Content_Result.NOT_FOUND, _strData);
+                //Send_Result_Content_C1(e_Content_Result.NOT_FOUND, _strData);
                 return;
             }
         }
@@ -802,7 +830,7 @@ namespace QR_MASAN_01
                         C2CodeData.Status = "1";
                         //giờ kích hoạt theo ISO
                         C2CodeData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-                        C2CodeData.Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString();
+                        C2CodeData.Production_Datetime = GV.Selected_PO.productionDate;
                         //Gửi vào hàng chờ để cập nhật SQLite
                         GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
                         //Ghi thành công
@@ -815,7 +843,7 @@ namespace QR_MASAN_01
                         C2CodeData.Status = "-1";
                         //giờ kích hoạt theo ISO
                         C2CodeData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-                        C2CodeData.Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString();
+                        C2CodeData.Production_Datetime = GV.Selected_PO.productionDate;
                         //Gửi vào hàng chờ để cập nhật SQLite
                         GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
                         //Ghi thất bại
@@ -841,8 +869,6 @@ namespace QR_MASAN_01
         }
 
         #region Quản lý PLC và gửi tín hiệu PLC
-
-        
 
         public void Send_Result_Content_C1(e_Content_Result content_Result, string _content)
         {
@@ -1019,7 +1045,7 @@ namespace QR_MASAN_01
                             Status = content_Result.ToString(),
                             PLC_Send_Status = "true",
                             Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                            Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
+                            Production_Datetime = GV.Selected_PO.productionDate
                         };
                     GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
 
@@ -1052,7 +1078,7 @@ namespace QR_MASAN_01
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write1.IsSuccess.ToString(),
                         Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                        Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
+                        Production_Datetime = GV.Selected_PO.productionDate
                     };
                     GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
                     break;
@@ -1081,7 +1107,7 @@ namespace QR_MASAN_01
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write5.IsSuccess.ToString(),
                         Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                        Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
+                        Production_Datetime = GV.Selected_PO.productionDate
                     };
                     GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
                     break;
@@ -1111,7 +1137,7 @@ namespace QR_MASAN_01
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write4.IsSuccess.ToString(),
                         Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                        Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
+                        Production_Datetime = GV.Selected_PO.productionDate
                     };
                     GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
                     break;
@@ -1141,7 +1167,7 @@ namespace QR_MASAN_01
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write3.IsSuccess.ToString(),
                         Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                        Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
+                        Production_Datetime = GV.Selected_PO.productionDate
                     };
                     GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
                     break;
@@ -1170,7 +1196,7 @@ namespace QR_MASAN_01
                         Status = content_Result.ToString(),
                         PLC_Send_Status = write2.IsSuccess.ToString(),
                         Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                        Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
+                        Production_Datetime = GV.Selected_PO.productionDate
                     };
                     GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
                     break;
@@ -1214,7 +1240,7 @@ namespace QR_MASAN_01
                         Status = content_Result.ToString(),
                         PLC_Send_Status = "FAIL-1",
                         Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                        Production_Datetime = Globalvariable.Seleted_PO_Data.Rows[0]["productionDate"].ToString()
+                        Production_Datetime = GV.Selected_PO.productionDate
                     };
 
                     GV.C2_Save_Result_To_SQLite_Queue.Enqueue(dataResultSave);
@@ -1334,43 +1360,26 @@ namespace QR_MASAN_01
         private void btnResetCounter_Click(object sender, EventArgs e)
         {
 
-            //OperateResult write = PLC.plc.Write("D22", short.Parse("1"));
-            //if (write.IsSuccess)
-            //{
-
-            //    lblFail.Value = 0;
-            //    lblPass.Value = 0;
-            //    lblTotal.Value = 0;
-            //}
-            //else
-            //{
-
-            //}
         }
 
         private void btnClearPLC_Click(object sender, EventArgs e)
         {
-            //btnClearPLC.Enabled = false;
-            //btnClearPLC.Text = "Đang xóa lỗi";
-            //OperateResult write = PLC.plc.Write("D18", short.Parse("1"));
-            //if (write.IsSuccess)
-            //{
-            //    btnClearPLC.Enabled = true;
+            btnClearPLC.Enabled = false;
+            btnClearPLC.Text = "Đang xóa lỗi";
+            OperateResult write = PLC.plc.Write("D18", short.Parse("1"));
+            if (write.IsSuccess)
+            {
+                btnClearPLC.Enabled = true;
 
-            //    btnClearPLC.Text = "Xóa lỗi PLC";
+                btnClearPLC.Text = "Xóa lỗi PLC";
 
-            //    Alarm.Alarm1 = false;
-            //    Alarm.Alarm1_Count = 0;
+                Alarm.Alarm1 = false;
+                Alarm.Alarm1_Count = 0;
 
-            //    lblAlarm.Text = "-";
-            //    lblAlarm.FillColor = Globalvariable.OK_Color;
+                lblAlarm.Text = "-";
+                lblAlarm.FillColor = Globalvariable.OK_Color;
 
-            //}
-            //else
-            //{
-            //    ClearPLC = true;
-            //    //btnClearPLC.Enabled = true;
-            //}
+            }
         }
 
         //xử kiện xử lý Queue
@@ -1523,8 +1532,6 @@ namespace QR_MASAN_01
                 Thread.Sleep(100);
             }
         }
-
-
         public DataTable Get_Unique_Codes_Run_Send_Pending(string orderNo)
         {
             //tạo thư mục nếu chưa tồn tại

@@ -35,12 +35,15 @@
             this.btnCancel = new Sunny.UI.UISymbolButton();
             this.pnConnect = new Sunny.UI.UIPanel();
             this.uiSymbolLabel1 = new Sunny.UI.UISymbolLabel();
+            this.uiRichTextBox2 = new Sunny.UI.UIRichTextBox();
+            this.uiSymbolLabel2 = new Sunny.UI.UISymbolLabel();
             this.uiTitlePanel1.SuspendLayout();
             this.pnConnect.SuspendLayout();
             this.SuspendLayout();
             // 
             // uiTitlePanel1
             // 
+            this.uiTitlePanel1.Controls.Add(this.uiRichTextBox2);
             this.uiTitlePanel1.Controls.Add(this.uiRichTextBox1);
             this.uiTitlePanel1.Controls.Add(this.uiNumPadTextBox1);
             this.uiTitlePanel1.Controls.Add(this.btnOK);
@@ -58,14 +61,16 @@
             this.uiTitlePanel1.ShowText = false;
             this.uiTitlePanel1.Size = new System.Drawing.Size(606, 320);
             this.uiTitlePanel1.TabIndex = 0;
-            this.uiTitlePanel1.Text = "THÔNG BÁO";
+            this.uiTitlePanel1.Text = "CẢNH BÁO";
             this.uiTitlePanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.uiTitlePanel1.TitleColor = System.Drawing.Color.Red;
             this.uiTitlePanel1.TitleHeight = 50;
             // 
             // uiRichTextBox1
             // 
             this.uiRichTextBox1.FillColor = System.Drawing.Color.White;
             this.uiRichTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uiRichTextBox1.ForeColor = System.Drawing.Color.Red;
             this.uiRichTextBox1.Location = new System.Drawing.Point(5, 55);
             this.uiRichTextBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.uiRichTextBox1.MinimumSize = new System.Drawing.Size(1, 1);
@@ -73,10 +78,10 @@
             this.uiRichTextBox1.Padding = new System.Windows.Forms.Padding(2);
             this.uiRichTextBox1.ReadOnly = true;
             this.uiRichTextBox1.ShowText = false;
-            this.uiRichTextBox1.Size = new System.Drawing.Size(596, 202);
+            this.uiRichTextBox1.Size = new System.Drawing.Size(596, 135);
             this.uiRichTextBox1.TabIndex = 4;
-            this.uiRichTextBox1.Text = "Bạn có chắc chắn thay đổi thông tin PO?  \nHệ thống sẽ dừng khi đang chỉnh thông t" +
-    "in!\nVui lòng nhập mã xác thực và nhấn Đồng Ý.";
+            this.uiRichTextBox1.Text = "Tất cả dữ liệu sản xuất sẽ làm mới\nSau khi nhấn đồng ý\nTất cả dữ liệu sẽ mất hoàn" +
+    " toàn.\nNhập lý do vào ô bên dưới";
             this.uiRichTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiNumPadTextBox1
@@ -132,6 +137,7 @@
             // 
             // pnConnect
             // 
+            this.pnConnect.Controls.Add(this.uiSymbolLabel2);
             this.pnConnect.Controls.Add(this.uiSymbolLabel1);
             this.pnConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.pnConnect.Location = new System.Drawing.Point(5, 265);
@@ -140,6 +146,7 @@
             this.pnConnect.Name = "pnConnect";
             this.pnConnect.Size = new System.Drawing.Size(144, 49);
             this.pnConnect.TabIndex = 0;
+            this.pnConnect.Text = null;
             this.pnConnect.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiSymbolLabel1
@@ -155,6 +162,35 @@
             this.uiSymbolLabel1.SymbolSize = 30;
             this.uiSymbolLabel1.TabIndex = 0;
             this.uiSymbolLabel1.Text = "Mã xác thực";
+            // 
+            // uiRichTextBox2
+            // 
+            this.uiRichTextBox2.FillColor = System.Drawing.Color.White;
+            this.uiRichTextBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiRichTextBox2.Location = new System.Drawing.Point(5, 193);
+            this.uiRichTextBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiRichTextBox2.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiRichTextBox2.Name = "uiRichTextBox2";
+            this.uiRichTextBox2.Padding = new System.Windows.Forms.Padding(2);
+            this.uiRichTextBox2.ShowText = false;
+            this.uiRichTextBox2.Size = new System.Drawing.Size(596, 64);
+            this.uiRichTextBox2.TabIndex = 5;
+            this.uiRichTextBox2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.uiRichTextBox2.DoubleClick += new System.EventHandler(this.uiRichTextBox2_DoubleClick);
+            // 
+            // uiSymbolLabel2
+            // 
+            this.uiSymbolLabel2.BackColor = System.Drawing.Color.Transparent;
+            this.uiSymbolLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiSymbolLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolLabel2.Location = new System.Drawing.Point(0, 0);
+            this.uiSymbolLabel2.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolLabel2.Name = "uiSymbolLabel2";
+            this.uiSymbolLabel2.Size = new System.Drawing.Size(144, 49);
+            this.uiSymbolLabel2.Symbol = 57454;
+            this.uiSymbolLabel2.SymbolSize = 30;
+            this.uiSymbolLabel2.TabIndex = 1;
+            this.uiSymbolLabel2.Text = "Mã xác thực";
             // 
             // Pom_dialog
             // 
@@ -180,5 +216,7 @@
         private Sunny.UI.UIRichTextBox uiRichTextBox1;
         private Sunny.UI.UINumPadTextBox uiNumPadTextBox1;
         private Sunny.UI.UISymbolLabel uiSymbolLabel1;
+        private Sunny.UI.UIRichTextBox uiRichTextBox2;
+        private Sunny.UI.UISymbolLabel uiSymbolLabel2;
     }
 }

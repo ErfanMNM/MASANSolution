@@ -31,7 +31,8 @@ namespace QR_MASAN_01
 {
     public partial class FMainQR01 : UIForm2
     {
-        MFI_Service_Form _FMFI = new MFI_Service_Form();
+        //MFI_Service_Form _FMFI = new MFI_Service_Form();
+
         FDashboard _FDashboard = new FDashboard();
         ScanQR scanQR = new ScanQR();
         MyLanPrinter _myLanPrinter = new MyLanPrinter();
@@ -56,40 +57,23 @@ namespace QR_MASAN_01
 
             try
             {
+                Setting.Current.Load();
                 InitializeComponent();
                 UIStyles.CultureInfo = CultureInfos.en_US;
                 UIStyles.GlobalFont = true;
                 UIStyles.GlobalFontName = "Tahoma";
                 //load Setting
-                Setting.Current.Load();
-                Setting.Current.SetDefault(); //đặt giá trị mặc định nếu chưa có trong file cấu hình
+                
+                //Setting.Current.SetDefault(); //đặt giá trị mặc định nếu chưa có trong file cấu hình
+                //Setting.Current.Save(); //lưu lại cấu hình
+
 
                 this.MainTabControl = uiTabControl1;
                 uiNavMenu1.TabControl = uiTabControl1;
 
                 WKCheck.RunWorkerAsync();
 
-                //set mặc định timeprinter là giờ hiện tại
-                Globalvariable.TimeUnixPrinter = DateTimeOffset.Now.ToUnixTimeSeconds();
-
-                PLCAddress.Init(
-                                "credentials.json",
-                                "1V2xjY6AA4URrtcwUorQE54Ud5KyI7Ev2hpDPMMcXVTI",
-                                "PLC!A1:C100"
-                            );
                 
-                //Setting.Current.Save();
-                //đọc file sqlite đưa vào datatable
-
-
-                //using (var conn = new SQLiteConnection($@"Data Source=C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\codes\08936086140878010725BMIP01.db;Version=3;"))
-                //{
-                //    string query = $@"SELECT ""_rowid_"",* FROM ""main"".""UniqueCodes""";
-                //    var adapter = new SQLiteDataAdapter(query, conn);
-                //    var table = new DataTable();
-                //    adapter.Fill(table);
-                //}
-
             }
             catch (Exception ex)
             {
@@ -98,8 +82,29 @@ namespace QR_MASAN_01
                 // Hiển thị thông báo lỗi cho người dùng
                 this.ShowErrorDialog("Lỗi khởi động phần mềm", ex.Message, UIStyle.Red);
             }
-                
-        }
+
+            try
+            {
+                //set mặc định timeprinter là giờ hiện tại
+                Globalvariable.TimeUnixPrinter = DateTimeOffset.Now.ToUnixTimeSeconds();
+
+                PLCAddress.Init(
+                                "credentials.json",
+                                "1V2xjY6AA4URrtcwUorQE54Ud5KyI7Ev2hpDPMMcXVTI",
+                                "PLC!A1:C100"
+                            );
+            }
+            catch (Exception ex)
+            {
+                // Ghi log lỗi vào hàng đợi
+                SystemLogs.LogQueue.Enqueue(new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi khởi tạo PLCAddress", "System", ex.Message));
+
+                // Hiển thị thông báo lỗi cho người dùng
+                this.ShowErrorDialog("Lỗi khởi tạo PLCAddress", ex.Message, UIStyle.Red);
+
+            }
+
+            }
 
         private void btnAppClose_Click(object sender, EventArgs e)
         {
@@ -227,7 +232,7 @@ namespace QR_MASAN_01
 
                     lblStatus.Text = $"{Globalvariable.All_Ready}|{GV.Production_Status.ToString()}";
 
-                if ((GV.Production_Status == e_Production_Status.READY || GV.Production_Status == e_Production_Status.RUNNING) && Globalvariable.FDashBoard_Ready)
+                if ((GV.Production_Status == e_Production_Status.READY || GV.Production_Status == e_Production_Status.RUNNING || GV.Production_Status == e_Production_Status.TESTING) && Globalvariable.FDashBoard_Ready)
                 {
                     Globalvariable.All_Ready = true; //đặt trạng thái sẵn sàng của hệ thống là true
                 }
@@ -242,7 +247,7 @@ namespace QR_MASAN_01
 
                     lblAllStatus.Text = "Đang dừng sản xuất";
                     lblAllStatus.FillColor = Color.Yellow;
-                    lblAllStatus.ForeColor = Color.White;
+                    lblAllStatus.ForeColor = Color.Black;
                 }
                 else if (Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.RUNNING)
                 {
@@ -262,11 +267,17 @@ namespace QR_MASAN_01
                     lblAllStatus.FillColor = Color.Orange;
                     lblAllStatus.ForeColor = Color.Black;
                 }
-                else if (GCamera.Camera_Status != e_Camera_Status.CONNECTED && GCamera.Camera_Status_02 != e_Camera_Status.CONNECTED && !Globalvariable.PLCConnect)
+                else if (GCamera.Camera_Status != e_Camera_Status.CONNECTED || GCamera.Camera_Status_02 != e_Camera_Status.CONNECTED || !Globalvariable.PLCConnect)
                 {
                     lblAllStatus.Text = "Thiết bị đang lỗi";
                     lblAllStatus.FillColor = Color.Red;
                     lblAllStatus.ForeColor = Color.Black;
+                }
+                else if (Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.TESTING)
+                {
+                    lblAllStatus.Text = "Chế độ chạy thử";
+                    lblAllStatus.FillColor = Color.Orange;
+                    lblAllStatus.ForeColor = Color.White;
                 }
                 else
                 {

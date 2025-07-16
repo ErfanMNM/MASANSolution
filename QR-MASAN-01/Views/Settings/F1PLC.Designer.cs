@@ -40,7 +40,7 @@
             this.uiTableLayoutPanel16 = new Sunny.UI.UITableLayoutPanel();
             this.btnNewRecipe = new Sunny.UI.UISymbolButton();
             this.cbbRecipe = new Sunny.UI.UIComboBox();
-            this.webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
+
             this.uiTitlePanel1 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel10 = new Sunny.UI.UITableLayoutPanel();
@@ -90,7 +90,6 @@
             this.uiTableLayoutPanel22.SuspendLayout();
             this.uiTableLayoutPanel23.SuspendLayout();
             this.uiTableLayoutPanel16.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel10.SuspendLayout();
@@ -130,7 +129,7 @@
             this.panelRight.ColumnCount = 1;
             this.panelRight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.panelRight.Controls.Add(this.uiTitlePanel2, 0, 1);
-            this.panelRight.Controls.Add(this.webView21, 0, 0);
+
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelRight.Location = new System.Drawing.Point(352, 3);
             this.panelRight.Name = "panelRight";
@@ -287,18 +286,6 @@
             this.cbbRecipe.Watermark = "";
             this.cbbRecipe.SelectedIndexChanged += new System.EventHandler(this.cbbRecipe_SelectedIndexChanged);
             // 
-            // webView21
-            // 
-            this.webView21.AllowExternalDrop = true;
-            this.webView21.CreationProperties = null;
-            this.webView21.DefaultBackgroundColor = System.Drawing.Color.White;
-            this.webView21.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webView21.Location = new System.Drawing.Point(3, 3);
-            this.webView21.Name = "webView21";
-            this.webView21.Size = new System.Drawing.Size(475, 453);
-            this.webView21.Source = new System.Uri("http://192.168.250.12/monitor", System.UriKind.Absolute);
-            this.webView21.TabIndex = 3;
-            this.webView21.ZoomFactor = 1D;
             // 
             // uiTitlePanel1
             // 
@@ -1006,7 +993,7 @@
             this.uiTableLayoutPanel22.ResumeLayout(false);
             this.uiTableLayoutPanel23.ResumeLayout(false);
             this.uiTableLayoutPanel16.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.webView21)).EndInit();
+
             this.uiTitlePanel1.ResumeLayout(false);
             this.uiTableLayoutPanel1.ResumeLayout(false);
             this.uiTableLayoutPanel10.ResumeLayout(false);
