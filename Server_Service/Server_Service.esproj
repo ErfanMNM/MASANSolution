@@ -2,6 +2,7 @@
   <PropertyGroup>
     <BuildCommand>npm run package </BuildCommand>
     <BuildOutputFolder>dist/TempStorage/</BuildOutputFolder>
+    <StartupCommand>npm start</StartupCommand>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Mid\" />

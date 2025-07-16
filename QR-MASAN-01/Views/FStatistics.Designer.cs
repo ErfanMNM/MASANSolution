@@ -29,6 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.uiTabControl1 = new Sunny.UI.UITabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.uiTableLayoutPanel39 = new Sunny.UI.UITableLayoutPanel();
@@ -91,6 +96,12 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.WK_Update = new System.ComponentModel.BackgroundWorker();
             this.httpServer1 = new SPMS1.HTTPServer(this.components);
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.uiDataGridView1 = new Sunny.UI.UIDataGridView();
+            this.btnReloadPLC = new Sunny.UI.UISymbolButton();
+            this.omronPLC_Hsl1 = new SPMS1.OmronPLC_Hsl(this.components);
             this.uiTabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.uiTableLayoutPanel39.SuspendLayout();
@@ -114,12 +125,17 @@
             this.uiTableLayoutPanel18.SuspendLayout();
             this.uiTableLayoutPanel37.SuspendLayout();
             this.uiTableLayoutPanel38.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.uiDataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // uiTabControl1
             // 
             this.uiTabControl1.Controls.Add(this.tabPage1);
             this.uiTabControl1.Controls.Add(this.tabPage2);
+            this.uiTabControl1.Controls.Add(this.tabPage3);
+            this.uiTabControl1.Controls.Add(this.tabPage4);
             this.uiTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             this.uiTabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
@@ -1083,9 +1099,9 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Location = new System.Drawing.Point(0, 40);
+            this.tabPage2.Location = new System.Drawing.Point(0, 50);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(200, 60);
+            this.tabPage2.Size = new System.Drawing.Size(840, 624);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Sản lượng";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -1099,6 +1115,106 @@
             // httpServer1
             // 
             this.httpServer1.Host = "http://0.0.0.0:8080/";
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.flowLayoutPanel1);
+            this.tabPage3.Location = new System.Drawing.Point(0, 50);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(840, 624);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Số đếm";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.AutoScroll = true;
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(840, 624);
+            this.flowLayoutPanel1.TabIndex = 0;
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.btnReloadPLC);
+            this.tabPage4.Controls.Add(this.uiDataGridView1);
+            this.tabPage4.Location = new System.Drawing.Point(0, 50);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Size = new System.Drawing.Size(840, 624);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "PLC DM";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // uiDataGridView1
+            // 
+            this.uiDataGridView1.AllowUserToAddRows = false;
+            this.uiDataGridView1.AllowUserToDeleteRows = false;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            this.uiDataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.uiDataGridView1.BackgroundColor = System.Drawing.Color.White;
+            this.uiDataGridView1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(160)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.uiDataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            this.uiDataGridView1.ColumnHeadersHeight = 32;
+            this.uiDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.uiDataGridView1.DefaultCellStyle = dataGridViewCellStyle3;
+            this.uiDataGridView1.EnableHeadersVisualStyles = false;
+            this.uiDataGridView1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiDataGridView1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(160)))), ((int)(((byte)(255)))));
+            this.uiDataGridView1.Location = new System.Drawing.Point(3, 3);
+            this.uiDataGridView1.Name = "uiDataGridView1";
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(160)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.uiDataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiDataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle5;
+            this.uiDataGridView1.SelectedIndex = -1;
+            this.uiDataGridView1.Size = new System.Drawing.Size(834, 573);
+            this.uiDataGridView1.StripeOddColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            this.uiDataGridView1.TabIndex = 0;
+            this.uiDataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.uiDataGridView1_CellValueChanged);
+            // 
+            // btnReloadPLC
+            // 
+            this.btnReloadPLC.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnReloadPLC.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnReloadPLC.Location = new System.Drawing.Point(3, 582);
+            this.btnReloadPLC.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnReloadPLC.Name = "btnReloadPLC";
+            this.btnReloadPLC.Size = new System.Drawing.Size(111, 35);
+            this.btnReloadPLC.TabIndex = 1;
+            this.btnReloadPLC.Text = "Cập nhật";
+            this.btnReloadPLC.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnReloadPLC.Click += new System.EventHandler(this.btnReloadPLC_Click);
+            // 
+            // omronPLC_Hsl1
+            // 
+            this.omronPLC_Hsl1.PLC_IP = "127.0.0.1";
+            this.omronPLC_Hsl1.PLC_PORT = 9600;
+            this.omronPLC_Hsl1.PLC_Ready_DM = "D16";
+            this.omronPLC_Hsl1.PLC_STATUS = SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect;
+            this.omronPLC_Hsl1.Ready = 0;
+            this.omronPLC_Hsl1.Time_Update = 300;
             // 
             // FStatistics
             // 
@@ -1131,6 +1247,9 @@
             this.uiTableLayoutPanel18.ResumeLayout(false);
             this.uiTableLayoutPanel37.ResumeLayout(false);
             this.uiTableLayoutPanel38.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.uiDataGridView1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1198,5 +1317,11 @@
         private Sunny.UI.UIPanel uiPanel54;
         private System.ComponentModel.BackgroundWorker WK_Update;
         private SPMS1.HTTPServer httpServer1;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.TabPage tabPage4;
+        private Sunny.UI.UIDataGridView uiDataGridView1;
+        private Sunny.UI.UISymbolButton btnReloadPLC;
+        private SPMS1.OmronPLC_Hsl omronPLC_Hsl1;
     }
 }

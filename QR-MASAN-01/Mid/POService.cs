@@ -16,6 +16,7 @@ namespace QR_MASAN_01
     {
         private string _connectionString_PO_MES;
         private string _codes_Path_CZ_DB_MES;
+        string poPath = "Databases/PO.tlog";
 
         public POService()
         {
@@ -184,7 +185,7 @@ namespace QR_MASAN_01
 
         //tạo PO cho sản xuất gồm bảng lưu thông tin các PO đã dùng sản xuất và lịch sử chốt sổ (tách lô) và lịch sử đổi date
         //kiểm tra PO db đã tồn tại hay chưa, nếu chưa tạo mới
-        string poPath = "Databases/PO.tlog";
+        
         public void RunPO(string orderNo, string productionDate)
         {
             
@@ -576,6 +577,7 @@ namespace QR_MASAN_01
 
         public class Get
         {
+            string poPath = "Databases/PO.tlog";
             //lấy số lượng Count có Send_Status = 'Sent'
             public int Get_Unique_Codes_Run_Send_Count(string orderNo)
             {
@@ -666,8 +668,43 @@ namespace QR_MASAN_01
                 }
             }
 
+            //lấy orderNo các PO có Action = DELETE
+            public List<string> Get_PO_Deleted_OrderNo()
+            {
+                List<string> orderNos = new List<string>();
+                using (var conn = new SQLiteConnection($"Data Source={poPath};Version=3;"))
+                {
+                    string query = "SELECT DISTINCT orderNO FROM PO WHERE Action = 'DELETE'";
+                    var command = new SQLiteCommand(query, conn);
+                    conn.Open();
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            orderNos.Add(reader["orderNO"].ToString());
+                        }
+                    }
+                }
+                return orderNos;
+            }
+
+            //kiểm tra xem PO có DELETE hay không
+            public bool Is_PO_Deleted(string orderNo)
+            {
+                using (var conn = new SQLiteConnection($"Data Source={poPath};Version=3;"))
+                {
+                    string query = "SELECT COUNT(*) FROM PO WHERE orderNO = @orderNo AND Action = 'DELETE'";
+                    var command = new SQLiteCommand(query, conn);
+                    command.Parameters.AddWithValue("@orderNo", orderNo);
+                    conn.Open();
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    return count > 0;
+                }
+            }
+
+
         }
-        
+
     }
 
     public class PO_Infomation

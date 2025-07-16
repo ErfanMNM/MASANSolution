@@ -146,6 +146,7 @@ namespace QR_MASAN_01
             scanQR.INIT();
             fPI_Service.INIT();
             fAppSetting.FAppSetting_Load();
+            _FStatistics.INIT();
 
             //kiểm soát máy in
 
@@ -261,7 +262,7 @@ namespace QR_MASAN_01
                     lblAllStatus.FillColor = Color.Blue;
                     lblAllStatus.ForeColor = Color.Black;
                 }
-                else if (Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.UNKNOWN)
+                else if (GV.Production_Status == e_Production_Status.NOPO)
                 {
                     lblAllStatus.Text = "Chưa chọn PO";
                     lblAllStatus.FillColor = Color.Orange;

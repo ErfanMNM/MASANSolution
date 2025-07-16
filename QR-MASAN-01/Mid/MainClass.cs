@@ -9,8 +9,8 @@ namespace MainClass
     public class MFI_Info
     {
         public string Case_Barcode { get; set; } = "Barcode";
-        public string Product_Barcode { get; set; } = "0";
-        public string Case_LOT { get; set; } = "16122024";
+        public string Product_Barcode { get; set; } = "-1";
+        public string Case_LOT { get; set; } = "16122-124";
         public string Batch_Code { get; set; }
         public string Block_Size { get; set; }
         public string Case_Size { get; set; }
@@ -52,134 +52,143 @@ namespace MainClass
     {
         public string ProductID { get; set; }
         public string ProductQR { get; set; }
-        public int Active { get; set; } // 1: đã kích hoạt, 0: chưa kích hoạt
+        public int Active { get; set; } // 1: đã kích hoạt, -1: chưa kích hoạt
         public string TimeStamp { get; set; } // thời gian kích hoạt
     }
 
     public class Counter_Info
     {
-        public int Total_C2 { get; set; } = 0;
-        public int Total_Pass_C2 { get; set; } = 0;
-        public int Total_Failed_C2 { get; set; } = 0;
+        public int Total_C2 { get; set; } = -1;
+        public int Total_Pass_C2 { get; set; } = -1;
+        public int Total_Failed_C2 { get; set; } = -1;
 
-        public int Camera_Read_Fail_C2 { get; set; } = 0;
-        public int Duplicate_C2 { get; set; } = 0;
-        public int Format_C2 { get; set; } = 0;
+        public int Camera_Read_Fail_C2 { get; set; } = -1;
+        public int Duplicate_C2 { get; set; } = -1;
+        public int Format_C2 { get; set; } = -1;
 
-        public int Empty_C2 { get; set; } = 0;
-        public int NotFound_C2 { get; set; } = 0;
-        public int Rework_C2 { get; set; } = 0;
-        public int Unknown_C2 { get; set; } = 0;
+        public int Empty_C2 { get; set; } = -1;
+        public int NotFound_C2 { get; set; } = -1;
+        public int Rework_C2 { get; set; } = -1;
+        public int Unknown_C2 { get; set; } = -1;
 
-        public int Error_C2 { get; set; } = 0; // Thêm biến Error_C2 để đếm lỗi chung cho C2
-
-
-
-        public int PLC_0_Fail_C2 { get; set; } = 0;
-        public int PLC_0_Pass_C2 { get; set; } = 0;
-        public int PLC_1_Pass_C2 { get; set; } = 0;
-
-        public int PLC_1_Fail_C2 { get; set; } = 0;
-        public string TimeSendPLC_C2 { get; set; } = "0/0";
-        public string TimeProcess_C2 { get; set; } = "0/0";
-
-        public string WK4_TimeProcess_C2 { get; set; } = "0/0";
-        public string WK5_TimeProcess_C2 { get; set; } = "0/0";
-        public string WK6_TimeProcess_C2 { get; set; } = "0/0";
+        public int Error_C2 { get; set; } = -1; // Thêm biến Error_C2 để đếm lỗi chung cho C2
 
 
-        public int Total_C1 { get; set; } = 0;
-        public int Total_Pass_C1 { get; set; } = 0;
-        public int Total_Failed_C1 { get; set; } = 0;
 
-        public int Camera_Read_Fail_C1 { get; set; } = 0;
-        public int Duplicate_C1 { get; set; } = 0;
-        public int Format_C1 { get; set; } = 0;
+        public int PLC_0_Fail_C2 { get; set; } = -1;
+        public int PLC_0_Pass_C2 { get; set; } = -1;
+        public int PLC_1_Pass_C2 { get; set; } = -1;
 
-        public int Empty_C1 { get; set; } = 0;
-        public int NotFound_C1 { get; set; } = 0;
-        public int Rework_C1 { get; set; } = 0;
-        public int Unknown_C1 { get; set; } = 0;
+        public int PLC_1_Fail_C2 { get; set; } = -1;
+        public string TimeSendPLC_C2 { get; set; } = "-1/-1";
+        public string TimeProcess_C2 { get; set; } = "-1/-1";
 
-        public int Error_C1 { get; set; } = 0; // Thêm biến Error_C1 để đếm lỗi chung cho C1
+        public string WK4_TimeProcess_C2 { get; set; } = "-1/-1";
+        public string WK5_TimeProcess_C2 { get; set; } = "-1/-1";
+        public string WK6_TimeProcess_C2 { get; set; } = "-1/-1";
 
 
-        public int PLC_0_Fail_C1 { get; set; } = 0;
-        public int PLC_0_Pass_C1 { get; set; } = 0;
-        public int PLC_1_Pass_C1 { get; set; } = 0;
+        public int Total_C1 { get; set; } = -1;
+        public int Total_Pass_C1 { get; set; } = -1;
+        public int Total_Failed_C1 { get; set; } = -1;
 
-        public int PLC_1_Fail_C1 { get; set; } = 0;
-        public string TimeSendPLC_C1 { get; set; } = "0/0";
-        public string TimeProcess_C1 { get; set; } = "0/0";
+        public int Camera_Read_Fail_C1 { get; set; } = -1;
+        public int Duplicate_C1 { get; set; } = -1;
+        public int Format_C1 { get; set; } = -1;
 
-        public string WK1_TimeProcess_C1 { get; set; } = "0/0";
-        public string WK2_TimeProcess_C1 { get; set; } = "0/0";
-        public string WK3_TimeProcess_C1 { get; set; } = "0/0";
+        public int Empty_C1 { get; set; } = -1;
+        public int NotFound_C1 { get; set; } = -1;
+        public int Rework_C1 { get; set; } = -1;
+        public int Unknown_C1 { get; set; } = -1;
 
-        public int AWS_Sent_Count { get; set; } = 0; // Biến để đếm số lượng gửi AWS
-        public int AWS_Recive_Count { get; set; } = 0; // Biến để đếm thời gian gửi AWS
+        public int Error_C1 { get; set; } = -1; // Thêm biến Error_C1 để đếm lỗi chung cho C1
 
-        //thêm hàm để reset các giá trị về 0
+
+        public int PLC_0_Fail_C1 { get; set; } = -1;
+        public int PLC_0_Pass_C1 { get; set; } = -1;
+        public int PLC_1_Pass_C1 { get; set; } = -1;
+
+        public int PLC_1_Fail_C1 { get; set; } = -1;
+        public string TimeSendPLC_C1 { get; set; } = "-1/-1";
+        public string TimeProcess_C1 { get; set; } = "-1/-1";
+
+        public string WK1_TimeProcess_C1 { get; set; } = "-1/-1";
+        public string WK2_TimeProcess_C1 { get; set; } = "-1/-1";
+        public string WK3_TimeProcess_C1 { get; set; } = "-1/-1";
+
+        public int AWS_Sent_Count { get; set; } = -1; // Biến để đếm số lượng gửi AWS
+        public int AWS_Recive_Count { get; set; } = -1; // Biến để đếm thời gian gửi AWS
+
+        //thêm hàm để reset các giá trị về -1
         public void Reset()
         {
-            Total_C2 = 0;
-            Total_Pass_C2 = 0;
-            Total_Failed_C2 = 0;
+            Total_C2 = -1;
+            Total_Pass_C2 = -1;
+            Total_Failed_C2 = -1;
 
-            Camera_Read_Fail_C2 = 0;
-            Duplicate_C2 = 0;
-            Format_C2 = 0;
+            Camera_Read_Fail_C2 = -1;
+            Duplicate_C2 = -1;
+            Format_C2 = -1;
 
-            Empty_C2 = 0;
-            NotFound_C2 = 0;
-            Rework_C2 = 0;
-            Unknown_C2 = 0;
+            Empty_C2 = -1;
+            NotFound_C2 = -1;
+            Rework_C2 = -1;
+            Unknown_C2 = -1;
 
-            PLC_0_Fail_C2 = 0;
-            PLC_0_Pass_C2 = 0;
-            PLC_1_Pass_C2 = 0;
-            PLC_1_Fail_C2 = 0;
+            PLC_0_Fail_C2 = -1;
+            PLC_0_Pass_C2 = -1;
+            PLC_1_Pass_C2 = -1;
+            PLC_1_Fail_C2 = -1;
 
-            TimeSendPLC_C2 = "0/0";
-            TimeProcess_C2 = "0/0";
+            TimeSendPLC_C2 = "-1/-1";
+            TimeProcess_C2 = "-1/-1";
 
-            WK4_TimeProcess_C2 = "0/0";
-            WK5_TimeProcess_C2 = "0/0";
-            WK6_TimeProcess_C2 = "0/0";
+            WK4_TimeProcess_C2 = "-1/-1";
+            WK5_TimeProcess_C2 = "-1/-1";
+            WK6_TimeProcess_C2 = "-1/-1";
 
-            Total_C1 = 0;
-            Total_Pass_C1 = 0;
-            Total_Failed_C1 = 0;
+            Total_C1 = -1;
+            Total_Pass_C1 = -1;
+            Total_Failed_C1 = -1;
 
-            Camera_Read_Fail_C1 = 0;
-            Duplicate_C1 = 0;
-            Format_C1 = 0;
+            Camera_Read_Fail_C1 = -1;
+            Duplicate_C1 = -1;
+            Format_C1 = -1;
 
-            Empty_C1 = 0;
-            NotFound_C1 = 0;
-            Rework_C1 = 0;
-            Unknown_C1 = 0;
+            Empty_C1 = -1;
+            NotFound_C1 = -1;
+            Rework_C1 = -1;
+            Unknown_C1 = -1;
 
-            PLC_0_Fail_C1 = 0;
-            PLC_0_Pass_C1 = 0;
-            PLC_1_Pass_C1 = 0;
-            PLC_1_Fail_C1 = 0;
+            PLC_0_Fail_C1 = -1;
+            PLC_0_Pass_C1 = -1;
+            PLC_1_Pass_C1 = -1;
+            PLC_1_Fail_C1 = -1;
 
-            TimeSendPLC_C1 = "0/0";
-            TimeProcess_C1 = "0/0";
-            WK1_TimeProcess_C1 = "0/0";
-            WK2_TimeProcess_C1 = "0/0";
-            WK3_TimeProcess_C1 = "0/0";
+            TimeSendPLC_C1 = "-1/-1";
+            TimeProcess_C1 = "-1/-1";
+            WK1_TimeProcess_C1 = "-1/-1";
+            WK2_TimeProcess_C1 = "-1/-1";
+            WK3_TimeProcess_C1 = "-1/-1";
 
         }
     }
+
+    public class PLC_Counter_Info
+    {
+        public int Total { get; set; } = -1;
+        public int Pass { get; set; } = -1;
+        public int Fail { get; set; } = -1;
+        public int TimeOut { get; set; } = -1;
+        public int Sensor_1 { get; set; } = -1;
+    }
     public class UI_Info
     {
-        public string Curent_Content { get; set; } = "0";
+        public string Curent_Content { get; set; } = "-1";
         public bool IsPass { get; set; } = true;
         public bool IsRework { get; set; } = false;
         public bool IsFormat { get; set; } = false;
-        public string Last_Content { get; set; } = "0";
+        public string Last_Content { get; set; } = "-1";
     }
 }
 

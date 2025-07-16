@@ -41,6 +41,7 @@ namespace QR_MASAN_01
             {
                 // Khởi tạo các thành phần cần thiết
                 WK_Update.RunWorkerAsync();
+                WK_PO.RunWorkerAsync();
                 WK_UI_CAM_Update.RunWorkerAsync();
                 Camera.Connect();
                 if (Setting.Current.Camera_Slot > 1)
@@ -315,7 +316,6 @@ namespace QR_MASAN_01
 
                 
                 Active_Pr();
-                PO_Process();
                 //đọc từ PLC
                 OperateResult<int[]> readCount = PLC.plc.ReadInt32("D130", 5);
                 if (readCount.IsSuccess)
@@ -346,57 +346,6 @@ namespace QR_MASAN_01
 
                 Update_HMI();
                 Thread.Sleep(200);
-            }
-        }
-
-        public void PO_Process ()
-        {
-            //gửi trạng thái start cho PLC
-            if (GV.Production_Status == e_Production_Status.RUNNING)
-            {
-                OperateResult writeStart = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 1);
-
-                //OperateResult writeOrderQty = PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), GV.Selected_PO.orderQty.ToInt32());
-                //if(writeOrderQty.IsSuccess)
-                //{
-                //    OperateResult writeT = PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), 10);
-
-                //}
-
-            }
-            else if (GV.Production_Status == e_Production_Status.TESTING)
-            {
-                OperateResult writeStart = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 1);
-                OperateResult writeT = PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), 10);
-            }
-            else if (GV.Production_Status == e_Production_Status.FINALTESTING)
-            {
-                OperateResult writeStart = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
-                //xóa số đếm PLC 
-                OperateResult writeClear = PLC.plc.Write(PLCAddress.Get("RESET_COUNT_DM_SS1"), 1);
-                //chuyển sang Ready
-                GV.Production_Status = e_Production_Status.READY;
-            }
-            else if (GV.Production_Status == e_Production_Status.PUSHING)
-            {
-                //xóa số đếm PLC
-                OperateResult writeClear = PLC.plc.Write(PLCAddress.Get("PLC_Reset_Counter_DM_C2"), 1);
-                //xóa số đếm PLC 
-                OperateResult writeClear1 = PLC.plc.Write(PLCAddress.Get("RESET_COUNT_DM_SS1"), 1);
-
-                OperateResult writeOrderQty = PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), GV.Selected_PO.orderQty.ToInt32());
-                //chuyển sang Ready
-                GV.Production_Status = e_Production_Status.RUNNING;
-            }
-            else if (GV.Production_Status == e_Production_Status.SENDORDERQTY)
-            {
-                OperateResult writeOrderQty = PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), GV.Selected_PO.orderQty.ToInt32());
-                //chuyển sang Ready
-                GV.Production_Status = e_Production_Status.RUNNING;
-            }
-            else
-            {
-                OperateResult writeStart = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
             }
         }
 
@@ -829,7 +778,7 @@ namespace QR_MASAN_01
                         Globalvariable.GCounter.PLC_1_Pass_C2++;
                         C2CodeData.Status = "1";
                         //giờ kích hoạt theo ISO
-                        C2CodeData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+                        C2CodeData.Activate_Datetime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffK");
                         C2CodeData.Production_Datetime = GV.Selected_PO.productionDate;
                         //Gửi vào hàng chờ để cập nhật SQLite
                         GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
@@ -842,7 +791,7 @@ namespace QR_MASAN_01
                         //Gửi xuống PLC fail được tính là fail trong csdl luôn
                         C2CodeData.Status = "-1";
                         //giờ kích hoạt theo ISO
-                        C2CodeData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+                        C2CodeData.Activate_Datetime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffK");
                         C2CodeData.Production_Datetime = GV.Selected_PO.productionDate;
                         //Gửi vào hàng chờ để cập nhật SQLite
                         GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
@@ -1732,6 +1681,91 @@ namespace QR_MASAN_01
             OperateResult operateResult = PLC.plc.Write(PLCAddress.Get("PLC_Bypass_DM_C1"),int.Parse("1"));
             OperateResult operateResult2 = PLC.plc.Write(PLCAddress.Get("PLC_Bypass_DM_C2"), int.Parse("1"));
             //không cần đợi trả về làm gì
+        }
+
+        private void WK_PO_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int dem = 50;
+            while(!WK_PO.CancellationPending)
+            {
+                dem++;
+                switch (GV.Production_Status)
+                {
+                    case e_Production_Status.EDITING:
+                        OperateResult writeStartdd = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+                        break;
+                    case e_Production_Status.DATE_EDITING:
+                        OperateResult writeStartvc = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+                        break;
+                    case e_Production_Status.PLC_NEW_PO:
+                        //xóa số đếm PLC
+                        OperateResult writeClear = PLC.plc.Write(PLCAddress.Get("PLC_Reset_Counter_DM_C2"), 1);
+                        //xóa số đếm PLC 
+                        OperateResult writeClear1 = PLC.plc.Write(PLCAddress.Get("RESET_COUNT_DM_SS1"), 1);
+
+                        OperateResult writeOrderQty = PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), GV.Selected_PO.orderQty.ToInt32());
+                        //chuyển sang Ready
+                        GV.Production_Status = e_Production_Status.RUNNING;
+
+                        break;
+                    case e_Production_Status.STOPPED:
+                        OperateResult writeStartsssssss = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+                        break;
+                    case e_Production_Status.RUNNING:
+                        OperateResult writeStart = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 1);//gửi lệnh bắt đầu
+                        break;
+                    case e_Production_Status.PAUSED:
+                        OperateResult writeStartsssss = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+                        break;
+                    case e_Production_Status.READY:
+                        OperateResult writeStartssssss = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+                        break;
+                    case e_Production_Status.NOPO:
+                        OperateResult writeStartssss = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+                        break;
+                    case e_Production_Status.STARTUP:
+                        OperateResult writeStartsss= PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+                        break;
+                    case e_Production_Status.LOAD:
+                        OperateResult writeStartss = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+                        break;
+                    case e_Production_Status.CHECKING:
+                        OperateResult writeStartd = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+                        break;
+                    case e_Production_Status.COMPLETE:
+                        OperateResult writeStartsad = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+                        break;
+                    case e_Production_Status.TESTING:
+                        //gửi lệnh bắt đầu và số lượng sản xuất = 10 để test
+                        
+                        OperateResult writeStart1 = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 1);
+                        OperateResult writeT = PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), 10);
+                        break;
+                    case e_Production_Status.FINALTESTING:
+                        //dừng chạy kích đủ PO
+                        OperateResult writeStart2 = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+                        //xóa số đếm PLC 
+                        OperateResult writeClear11 = PLC.plc.Write(PLCAddress.Get("RESET_COUNT_DM_SS1"), 1);
+                        //chuyển sang Ready
+                        GV.Production_Status = e_Production_Status.READY;
+                        break;
+                    case e_Production_Status.PLC_CON_PO:
+                        //gửi số lượng order xuống
+                        OperateResult writeOrderQtyu = PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), GV.Selected_PO.orderQty.ToInt32());
+                        //chuyển sang Running
+                        GV.Production_Status = e_Production_Status.RUNNING;
+                        break;
+                    case e_Production_Status.UNKNOWN:
+                        OperateResult writeStart11 = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+                        break;
+                }
+
+                if (dem > 50)
+                {
+                    dem = 0;
+                }
+                Thread.Sleep(100);
+            }
         }
     }
 }

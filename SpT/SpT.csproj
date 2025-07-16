@@ -171,6 +171,12 @@
       <DependentUpon>UC_Section.cs</DependentUpon>
     </Compile>
     <Compile Include="SQLite\SQLiteHelper.cs" />
+    <Compile Include="Static\panelS.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Static\panelS.Designer.cs">
+      <DependentUpon>panelS.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -187,6 +193,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Setting\UC_Section.resx">
       <DependentUpon>UC_Section.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Static\panelS.resx">
+      <DependentUpon>panelS.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -418,7 +418,7 @@ namespace TestApp
                         orderNo = uiComboBox1.SelectedValue.ToString(),
                         uniqueCode = uniqueCodea,
                         status = 1,
-                        activate_datetime = DateTime.Now.ToString("o"),
+                        activate_datetime = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffK"),
                         production_date = "2025-07-15 00:00:00.000",
                         thing_name = "MIPWP501"
                     };

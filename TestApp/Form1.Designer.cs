@@ -40,21 +40,19 @@
             this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel3 = new Sunny.UI.UITableLayoutPanel();
             this.uiNumPadTextBox3 = new Sunny.UI.UINumPadTextBox();
-            this.uiPanel3 = new Sunny.UI.UIPanel();
             this.uiSymbolButton9 = new Sunny.UI.UISymbolButton();
-            this.uiSymbolButton4 = new Sunny.UI.UISymbolButton();
             this.uiSymbolButton7 = new Sunny.UI.UISymbolButton();
-            this.uiSymbolButton6 = new Sunny.UI.UISymbolButton();
             this.uiSymbolButton5 = new Sunny.UI.UISymbolButton();
-            this.uiSymbolButton2 = new Sunny.UI.UISymbolButton();
             this.uiSymbolButton3 = new Sunny.UI.UISymbolButton();
-            this.uiSymbolButton1 = new Sunny.UI.UISymbolButton();
-            this.uiNumPadTextBox1 = new Sunny.UI.UINumPadTextBox();
             this.uiNumPadTextBox2 = new Sunny.UI.UINumPadTextBox();
-            this.uiPanel1 = new Sunny.UI.UIPanel();
-            this.uiPanel2 = new Sunny.UI.UIPanel();
             this.uiTitlePanel1 = new Sunny.UI.UITitlePanel();
             this.uiComboBox1 = new Sunny.UI.UIComboBox();
+            this.uiNumPadTextBox1 = new Sunny.UI.UINumPadTextBox();
+            this.uiSymbolButton1 = new Sunny.UI.UISymbolButton();
+            this.uiSymbolButton2 = new Sunny.UI.UISymbolButton();
+            this.uiSymbolButton6 = new Sunny.UI.UISymbolButton();
+            this.uiSymbolButton4 = new Sunny.UI.UISymbolButton();
+            this.uiTextBox1 = new Sunny.UI.UITextBox();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uiDataGridView1)).BeginInit();
@@ -175,16 +173,14 @@
             // 
             // uiTableLayoutPanel3
             // 
-            this.uiTableLayoutPanel3.ColumnCount = 7;
+            this.uiTableLayoutPanel3.ColumnCount = 6;
             this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 117F));
             this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 104F));
-            this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 144F));
-            this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 107F));
-            this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 102F));
+            this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 149F));
             this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 79F));
             this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 296F));
-            this.uiTableLayoutPanel3.Controls.Add(this.uiNumPadTextBox3, 6, 1);
-            this.uiTableLayoutPanel3.Controls.Add(this.uiPanel3, 6, 0);
+            this.uiTableLayoutPanel3.Controls.Add(this.uiNumPadTextBox3, 5, 1);
             this.uiTableLayoutPanel3.Controls.Add(this.uiSymbolButton9, 3, 1);
             this.uiTableLayoutPanel3.Controls.Add(this.uiSymbolButton4, 3, 0);
             this.uiTableLayoutPanel3.Controls.Add(this.uiSymbolButton7, 2, 1);
@@ -193,10 +189,9 @@
             this.uiTableLayoutPanel3.Controls.Add(this.uiSymbolButton2, 1, 0);
             this.uiTableLayoutPanel3.Controls.Add(this.uiSymbolButton3, 0, 1);
             this.uiTableLayoutPanel3.Controls.Add(this.uiSymbolButton1, 0, 0);
-            this.uiTableLayoutPanel3.Controls.Add(this.uiNumPadTextBox1, 5, 0);
-            this.uiTableLayoutPanel3.Controls.Add(this.uiNumPadTextBox2, 5, 1);
-            this.uiTableLayoutPanel3.Controls.Add(this.uiPanel1, 4, 0);
-            this.uiTableLayoutPanel3.Controls.Add(this.uiPanel2, 4, 1);
+            this.uiTableLayoutPanel3.Controls.Add(this.uiNumPadTextBox1, 4, 0);
+            this.uiTableLayoutPanel3.Controls.Add(this.uiNumPadTextBox2, 4, 1);
+            this.uiTableLayoutPanel3.Controls.Add(this.uiTextBox1, 5, 0);
             this.uiTableLayoutPanel3.Location = new System.Drawing.Point(228, 3);
             this.uiTableLayoutPanel3.Name = "uiTableLayoutPanel3";
             this.uiTableLayoutPanel3.RowCount = 2;
@@ -210,61 +205,33 @@
             // 
             this.uiNumPadTextBox3.FillColor = System.Drawing.Color.White;
             this.uiNumPadTextBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiNumPadTextBox3.Location = new System.Drawing.Point(605, 52);
+            this.uiNumPadTextBox3.Location = new System.Drawing.Point(555, 52);
             this.uiNumPadTextBox3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.uiNumPadTextBox3.MinimumSize = new System.Drawing.Size(63, 0);
             this.uiNumPadTextBox3.Name = "uiNumPadTextBox3";
             this.uiNumPadTextBox3.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
-            this.uiNumPadTextBox3.Size = new System.Drawing.Size(78, 37);
+            this.uiNumPadTextBox3.Size = new System.Drawing.Size(128, 37);
             this.uiNumPadTextBox3.SymbolSize = 24;
             this.uiNumPadTextBox3.TabIndex = 17;
             this.uiNumPadTextBox3.Text = "1000";
             this.uiNumPadTextBox3.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.uiNumPadTextBox3.Watermark = "";
             // 
-            // uiPanel3
-            // 
-            this.uiPanel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel3.Location = new System.Drawing.Point(605, 5);
-            this.uiPanel3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.uiPanel3.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel3.Name = "uiPanel3";
-            this.uiPanel3.Size = new System.Drawing.Size(78, 37);
-            this.uiPanel3.TabIndex = 16;
-            this.uiPanel3.Text = "Khoảng cách (ms)";
-            this.uiPanel3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // uiSymbolButton9
             // 
             this.uiSymbolButton9.Cursor = System.Windows.Forms.Cursors.Hand;
             this.uiSymbolButton9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiSymbolButton9.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiSymbolButton9.Location = new System.Drawing.Point(368, 50);
+            this.uiSymbolButton9.Location = new System.Drawing.Point(326, 50);
             this.uiSymbolButton9.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiSymbolButton9.Name = "uiSymbolButton9";
             this.uiSymbolButton9.Radius = 1;
-            this.uiSymbolButton9.Size = new System.Drawing.Size(101, 41);
+            this.uiSymbolButton9.Size = new System.Drawing.Size(143, 41);
             this.uiSymbolButton9.Symbol = 557699;
             this.uiSymbolButton9.TabIndex = 11;
             this.uiSymbolButton9.Text = "Gửi mã";
             this.uiSymbolButton9.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.uiSymbolButton9.Click += new System.EventHandler(this.uiSymbolButton9_Click);
-            // 
-            // uiSymbolButton4
-            // 
-            this.uiSymbolButton4.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uiSymbolButton4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiSymbolButton4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiSymbolButton4.Location = new System.Drawing.Point(368, 3);
-            this.uiSymbolButton4.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiSymbolButton4.Name = "uiSymbolButton4";
-            this.uiSymbolButton4.Radius = 1;
-            this.uiSymbolButton4.Size = new System.Drawing.Size(101, 41);
-            this.uiSymbolButton4.Symbol = 557354;
-            this.uiSymbolButton4.TabIndex = 8;
-            this.uiSymbolButton4.Text = "Xem mã CZ";
-            this.uiSymbolButton4.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.uiSymbolButton4.Click += new System.EventHandler(this.uiSymbolButton4_Click);
             // 
             // uiSymbolButton7
             // 
@@ -275,28 +242,12 @@
             this.uiSymbolButton7.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiSymbolButton7.Name = "uiSymbolButton7";
             this.uiSymbolButton7.Radius = 1;
-            this.uiSymbolButton7.Size = new System.Drawing.Size(138, 41);
+            this.uiSymbolButton7.Size = new System.Drawing.Size(96, 41);
             this.uiSymbolButton7.Symbol = 162325;
             this.uiSymbolButton7.TabIndex = 7;
             this.uiSymbolButton7.Text = "Sub AWS";
             this.uiSymbolButton7.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.uiSymbolButton7.Click += new System.EventHandler(this.uiSymbolButton7_Click);
-            // 
-            // uiSymbolButton6
-            // 
-            this.uiSymbolButton6.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uiSymbolButton6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiSymbolButton6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiSymbolButton6.Location = new System.Drawing.Point(224, 3);
-            this.uiSymbolButton6.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiSymbolButton6.Name = "uiSymbolButton6";
-            this.uiSymbolButton6.Radius = 1;
-            this.uiSymbolButton6.Size = new System.Drawing.Size(138, 41);
-            this.uiSymbolButton6.Symbol = 162325;
-            this.uiSymbolButton6.TabIndex = 6;
-            this.uiSymbolButton6.Text = "Kết nối AWS";
-            this.uiSymbolButton6.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.uiSymbolButton6.Click += new System.EventHandler(this.uiSymbolButton6_Click);
             // 
             // uiSymbolButton5
             // 
@@ -314,22 +265,6 @@
             this.uiSymbolButton5.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.uiSymbolButton5.Click += new System.EventHandler(this.uiSymbolButton5_Click);
             // 
-            // uiSymbolButton2
-            // 
-            this.uiSymbolButton2.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uiSymbolButton2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiSymbolButton2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiSymbolButton2.Location = new System.Drawing.Point(120, 3);
-            this.uiSymbolButton2.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiSymbolButton2.Name = "uiSymbolButton2";
-            this.uiSymbolButton2.Radius = 1;
-            this.uiSymbolButton2.Size = new System.Drawing.Size(98, 41);
-            this.uiSymbolButton2.Symbol = 61643;
-            this.uiSymbolButton2.TabIndex = 3;
-            this.uiSymbolButton2.Text = "Danh sách PO";
-            this.uiSymbolButton2.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.uiSymbolButton2.Click += new System.EventHandler(this.uiSymbolButton2_Click);
-            // 
             // uiSymbolButton3
             // 
             this.uiSymbolButton3.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -346,45 +281,12 @@
             this.uiSymbolButton3.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.uiSymbolButton3.Click += new System.EventHandler(this.uiSymbolButton3_Click);
             // 
-            // uiSymbolButton1
-            // 
-            this.uiSymbolButton1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uiSymbolButton1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiSymbolButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiSymbolButton1.Location = new System.Drawing.Point(3, 3);
-            this.uiSymbolButton1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiSymbolButton1.Name = "uiSymbolButton1";
-            this.uiSymbolButton1.Radius = 1;
-            this.uiSymbolButton1.Size = new System.Drawing.Size(111, 41);
-            this.uiSymbolButton1.Symbol = 61473;
-            this.uiSymbolButton1.TabIndex = 0;
-            this.uiSymbolButton1.Text = "Tải PO";
-            this.uiSymbolButton1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.uiSymbolButton1.Click += new System.EventHandler(this.uiSymbolButton1_Click);
-            // 
-            // uiNumPadTextBox1
-            // 
-            this.uiNumPadTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiNumPadTextBox1.FillColor = System.Drawing.Color.White;
-            this.uiNumPadTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiNumPadTextBox1.Location = new System.Drawing.Point(526, 5);
-            this.uiNumPadTextBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.uiNumPadTextBox1.MinimumSize = new System.Drawing.Size(63, 0);
-            this.uiNumPadTextBox1.Name = "uiNumPadTextBox1";
-            this.uiNumPadTextBox1.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
-            this.uiNumPadTextBox1.Size = new System.Drawing.Size(71, 37);
-            this.uiNumPadTextBox1.SymbolSize = 24;
-            this.uiNumPadTextBox1.TabIndex = 12;
-            this.uiNumPadTextBox1.Text = "1";
-            this.uiNumPadTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.uiNumPadTextBox1.Watermark = "";
-            // 
             // uiNumPadTextBox2
             // 
             this.uiNumPadTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiNumPadTextBox2.FillColor = System.Drawing.Color.White;
             this.uiNumPadTextBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiNumPadTextBox2.Location = new System.Drawing.Point(526, 52);
+            this.uiNumPadTextBox2.Location = new System.Drawing.Point(476, 52);
             this.uiNumPadTextBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.uiNumPadTextBox2.MinimumSize = new System.Drawing.Size(63, 0);
             this.uiNumPadTextBox2.Name = "uiNumPadTextBox2";
@@ -395,32 +297,6 @@
             this.uiNumPadTextBox2.Text = "2";
             this.uiNumPadTextBox2.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.uiNumPadTextBox2.Watermark = "";
-            // 
-            // uiPanel1
-            // 
-            this.uiPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel1.Location = new System.Drawing.Point(476, 5);
-            this.uiPanel1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel1.Name = "uiPanel1";
-            this.uiPanel1.Size = new System.Drawing.Size(42, 37);
-            this.uiPanel1.TabIndex = 14;
-            this.uiPanel1.Text = "Vị trí bắt đầu";
-            this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel2
-            // 
-            this.uiPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel2.Location = new System.Drawing.Point(476, 52);
-            this.uiPanel2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.uiPanel2.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel2.Name = "uiPanel2";
-            this.uiPanel2.Size = new System.Drawing.Size(42, 37);
-            this.uiPanel2.TabIndex = 15;
-            this.uiPanel2.Text = "Số lượng";
-            this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiTitlePanel1
             // 
@@ -459,6 +335,103 @@
             this.uiComboBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.uiComboBox1.Watermark = "";
             // 
+            // uiNumPadTextBox1
+            // 
+            this.uiNumPadTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiNumPadTextBox1.FillColor = System.Drawing.Color.White;
+            this.uiNumPadTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiNumPadTextBox1.Location = new System.Drawing.Point(476, 5);
+            this.uiNumPadTextBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiNumPadTextBox1.MinimumSize = new System.Drawing.Size(63, 0);
+            this.uiNumPadTextBox1.Name = "uiNumPadTextBox1";
+            this.uiNumPadTextBox1.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
+            this.uiNumPadTextBox1.Size = new System.Drawing.Size(71, 37);
+            this.uiNumPadTextBox1.SymbolSize = 24;
+            this.uiNumPadTextBox1.TabIndex = 12;
+            this.uiNumPadTextBox1.Text = "1";
+            this.uiNumPadTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiNumPadTextBox1.Watermark = "";
+            // 
+            // uiSymbolButton1
+            // 
+            this.uiSymbolButton1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiSymbolButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton1.Location = new System.Drawing.Point(3, 3);
+            this.uiSymbolButton1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton1.Name = "uiSymbolButton1";
+            this.uiSymbolButton1.Radius = 1;
+            this.uiSymbolButton1.Size = new System.Drawing.Size(111, 41);
+            this.uiSymbolButton1.Symbol = 61473;
+            this.uiSymbolButton1.TabIndex = 0;
+            this.uiSymbolButton1.Text = "Tải PO";
+            this.uiSymbolButton1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.uiSymbolButton1.Click += new System.EventHandler(this.uiSymbolButton1_Click);
+            // 
+            // uiSymbolButton2
+            // 
+            this.uiSymbolButton2.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiSymbolButton2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton2.Location = new System.Drawing.Point(120, 3);
+            this.uiSymbolButton2.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton2.Name = "uiSymbolButton2";
+            this.uiSymbolButton2.Radius = 1;
+            this.uiSymbolButton2.Size = new System.Drawing.Size(98, 41);
+            this.uiSymbolButton2.Symbol = 61643;
+            this.uiSymbolButton2.TabIndex = 3;
+            this.uiSymbolButton2.Text = "Danh sách PO";
+            this.uiSymbolButton2.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.uiSymbolButton2.Click += new System.EventHandler(this.uiSymbolButton2_Click);
+            // 
+            // uiSymbolButton6
+            // 
+            this.uiSymbolButton6.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiSymbolButton6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton6.Location = new System.Drawing.Point(224, 3);
+            this.uiSymbolButton6.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton6.Name = "uiSymbolButton6";
+            this.uiSymbolButton6.Radius = 1;
+            this.uiSymbolButton6.Size = new System.Drawing.Size(96, 41);
+            this.uiSymbolButton6.Symbol = 162325;
+            this.uiSymbolButton6.TabIndex = 6;
+            this.uiSymbolButton6.Text = "Kết nối AWS";
+            this.uiSymbolButton6.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.uiSymbolButton6.Click += new System.EventHandler(this.uiSymbolButton6_Click);
+            // 
+            // uiSymbolButton4
+            // 
+            this.uiSymbolButton4.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiSymbolButton4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton4.Location = new System.Drawing.Point(326, 3);
+            this.uiSymbolButton4.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton4.Name = "uiSymbolButton4";
+            this.uiSymbolButton4.Radius = 1;
+            this.uiSymbolButton4.Size = new System.Drawing.Size(143, 41);
+            this.uiSymbolButton4.Symbol = 557354;
+            this.uiSymbolButton4.TabIndex = 8;
+            this.uiSymbolButton4.Text = "Xem mã CZ";
+            this.uiSymbolButton4.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.uiSymbolButton4.Click += new System.EventHandler(this.uiSymbolButton4_Click);
+            // 
+            // uiTextBox1
+            // 
+            this.uiTextBox1.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.uiTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTextBox1.Location = new System.Drawing.Point(555, 5);
+            this.uiTextBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiTextBox1.MinimumSize = new System.Drawing.Size(1, 16);
+            this.uiTextBox1.Name = "uiTextBox1";
+            this.uiTextBox1.Padding = new System.Windows.Forms.Padding(5);
+            this.uiTextBox1.ShowText = false;
+            this.uiTextBox1.Size = new System.Drawing.Size(128, 37);
+            this.uiTextBox1.TabIndex = 18;
+            this.uiTextBox1.Text = "2025-07-15 00:00:00.000";
+            this.uiTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiTextBox1.Watermark = "";
+            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -485,22 +458,20 @@
         private Sunny.UI.UIListBox uiListBox1;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel2;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel3;
-        private Sunny.UI.UISymbolButton uiSymbolButton1;
         private Sunny.UI.UITitlePanel uiTitlePanel1;
         private Sunny.UI.UIComboBox uiComboBox1;
         private Sunny.UI.UISymbolButton uiSymbolButton3;
-        private Sunny.UI.UISymbolButton uiSymbolButton2;
         private Sunny.UI.UISymbolButton uiSymbolButton5;
-        private Sunny.UI.UISymbolButton uiSymbolButton6;
         private Sunny.UI.UISymbolButton uiSymbolButton7;
-        private Sunny.UI.UISymbolButton uiSymbolButton4;
         private Sunny.UI.UISymbolButton uiSymbolButton9;
         private Sunny.UI.UINumPadTextBox uiNumPadTextBox2;
         private Sunny.UI.UINumPadTextBox uiNumPadTextBox3;
-        private Sunny.UI.UIPanel uiPanel3;
+        private Sunny.UI.UISymbolButton uiSymbolButton4;
+        private Sunny.UI.UISymbolButton uiSymbolButton6;
+        private Sunny.UI.UISymbolButton uiSymbolButton2;
+        private Sunny.UI.UISymbolButton uiSymbolButton1;
         private Sunny.UI.UINumPadTextBox uiNumPadTextBox1;
-        private Sunny.UI.UIPanel uiPanel1;
-        private Sunny.UI.UIPanel uiPanel2;
+        private Sunny.UI.UITextBox uiTextBox1;
     }
 }
 

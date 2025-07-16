@@ -265,7 +265,7 @@
     <value>1</value>
   </data>
   <data name="Logo.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LogoImg" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="Logotext" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,74,Percent,50" /&gt;&lt;Rows Styles="Percent,48.3871" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LogoImg" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="Logotext" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Absolute,74,Percent,50" /&gt;&lt;Rows Styles="Percent,48,3871" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="opUser.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Right</value>
@@ -652,7 +652,7 @@
     <value>7</value>
   </data>
   <data name="uiPanel1.Text" xml:space="preserve">
-    <value>10210</value>
+    <value>t177119</value>
   </data>
   <data name="&gt;&gt;uiPanel1.Name" xml:space="preserve">
     <value>uiPanel1</value>
@@ -832,7 +832,7 @@
     <value>0</value>
   </data>
   <data name="mainPanelLayout.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="uiTopbar" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="BodyPanel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="footer" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,7.161458,Percent,87.76041,Percent,5" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="uiTopbar" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="BodyPanel" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="footer" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,100" /&gt;&lt;Rows Styles="Percent,7,161458,Percent,87,76041,Percent,5" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <metadata name="WKCheck.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>

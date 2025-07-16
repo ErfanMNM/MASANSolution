@@ -172,6 +172,7 @@ namespace QR_MASAN_01.Views
         {
             // Tạo DataTable để lưu danh sách người dùng
             UsersList = UserData.GetUserListFromDB();
+           // uiSymbolButton1_Click();
 
             //thêm vào cbbox ipUserName
             ipUserName.Items.Clear();
@@ -199,47 +200,47 @@ namespace QR_MASAN_01.Views
 
         #region tạo user
 
-        //// File SQLite đặt cạnh file exe
-        //private string dbFile = "abcc.bcaa";
-        //private void uiSymbolButton1_Click(object sender, EventArgs e)
-        //{
-        //    CreateDatabaseIfNotExists();
+        // File SQLite đặt cạnh file exe
+        private string dbFile = "abcc.bcaa";
+        private void uiSymbolButton1_Click()
+        {
+            //CreateDatabaseIfNotExists();
 
-        //    string username = uiTextBox2.Text.Trim();
-        //    string password = uiTextBox1.Text.Trim();
-        //    string role = "user";
-        //    string key2FA = Guid.NewGuid().ToString();
+            string username = "Admin";
+            string password = "a";
+            string role = "admin";
+            string key2FA = Guid.NewGuid().ToString();
 
-        //    // 1️⃣ Tạo Salt random
-        //    byte[] saltBytes = new byte[16];
-        //    using (var rng = new RNGCryptoServiceProvider())
-        //    {
-        //        rng.GetBytes(saltBytes);
-        //    }
-        //    string salt = Convert.ToBase64String(saltBytes);
+            // 1️⃣ Tạo Salt random
+            byte[] saltBytes = new byte[16];
+            using (var rng = new RNGCryptoServiceProvider())
+            {
+                rng.GetBytes(saltBytes);
+            }
+            string salt = Convert.ToBase64String(saltBytes);
 
-        //    // 2️⃣ Hash Password + Salt
-        //    string hashedPassword = HashPassword(password, salt);
+            // 2️⃣ Hash Password + Salt
+            string hashedPassword = HashPassword(password, salt);
 
-        //    using (var conn = new SQLiteConnection($"Data Source={dbFile};Version=3;"))
-        //    {
-        //        conn.Open();
-        //        string sql = "INSERT INTO users (Username, Password, Salt, Role, Key2FA) VALUES (@username, @password, @salt, @role, @key2fa)";
-        //        using (var cmd = new SQLiteCommand(sql, conn))
-        //        {
-        //            cmd.Parameters.AddWithValue("@username", username);
-        //            cmd.Parameters.AddWithValue("@password", hashedPassword);
-        //            cmd.Parameters.AddWithValue("@salt", salt);
-        //            cmd.Parameters.AddWithValue("@role", role);
-        //            cmd.Parameters.AddWithValue("@key2fa", key2FA);
-        //            cmd.ExecuteNonQuery();
-        //        }
-        //        conn.Close();
-        //    }
+            using (var conn = new SQLiteConnection($"Data Source={dbFile};Version=3;"))
+            {
+                conn.Open();
+                string sql = "INSERT INTO users (Username, Password, Salt, Role, Key2FA) VALUES (@username, @password, @salt, @role, @key2fa)";
+                using (var cmd = new SQLiteCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@password", hashedPassword);
+                    cmd.Parameters.AddWithValue("@salt", salt);
+                    cmd.Parameters.AddWithValue("@role", role);
+                    cmd.Parameters.AddWithValue("@key2fa", key2FA);
+                    cmd.ExecuteNonQuery();
+                }
+                conn.Close();
+            }
 
-        //    MessageBox.Show("User đã được thêm OK (Mật khẩu đã được hash + salt)!");
+            MessageBox.Show("User đã được thêm OK (Mật khẩu đã được hash + salt)!");
 
-        //}
+        }
 
 
 

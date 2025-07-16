@@ -163,6 +163,12 @@ namespace QR_MASAN_01.Views.MFI_Service
 
                     break;
                 case e_Production_Status.READY:
+                    //đảm bảo PO chưa chạy
+                    if (GV.Selected_PO.runInfo.total > 0)
+                    {
+                        this.ShowErrorNotifier("PO đã chạy, không thể vào chế độ Test Mode.", false, 3000);
+                        return; // Không cho phép vào chế độ Test Mode nếu PO đã chạy
+                    }
                     //chuyển sang trạng thái test
                     GV.Production_Status = e_Production_Status.TESTING; // Chuyển sang trạng thái TESTING
                     //tắt hết các nút khác
@@ -179,7 +185,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                     break;
                 case e_Production_Status.DATE_EDITING:
                     break;
-                case e_Production_Status.PUSHING:
+                case e_Production_Status.PLC_NEW_PO:
                     break;
                 case e_Production_Status.STOPPED:
                     break;
@@ -236,7 +242,8 @@ namespace QR_MASAN_01.Views.MFI_Service
                         case e_Production_Status.EDITING:
                             //tắt hết các nút khác ngoại trừ nút chỉnh sửa
                             break;
-                        case e_Production_Status.PUSHING:
+                        case e_Production_Status.PLC_NEW_PO:
+                            //xử lý bên kia
                             break;
                         case e_Production_Status.STOPPED:
                             break;
@@ -282,13 +289,18 @@ namespace QR_MASAN_01.Views.MFI_Service
                         case e_Production_Status.NOPO:
                             SafeInvoke(() =>
                             {
-                                btnProductionDate.Enabled = true; // hiển thị nút chỉnh PO
-                                btnProductionDate.Text = "Đổi ngày sản xuất"; // Đặt lại văn bản nút
-                                btnPO.Enabled = true; // Hiển thị nút chỉnh PO
-                                btnPO.Text = "ĐỔI PO"; // Đặt lại văn bản nút
-                                btnPO.Symbol = 61508; // Đặt lại biểu tượng nút
-                                btnPO.FillColor = Color.Yellow; // Đổi màu nền của nút btnPO về màu CornflowerBlue
-                                btnPO.ForeColor = Color.Black; // Đổi màu chữ của nút btnPO về màu đen
+                                if (btnPO.Enabled == false)
+                                {
+                                    btnProductionDate.Enabled = false; // hiển thị nút chỉnh PO
+                                    btnProductionDate.Text = "Đổi ngày sản xuất"; // Đặt lại văn bản nút
+                                    btnPO.Enabled = true; // Hiển thị nút chỉnh PO
+                                    btnTestMode.Enabled = false; // ẩn nút chỉnh PO
+                                    btnPO.Text = "ĐỔI PO"; // Đặt lại văn bản nút
+                                    btnPO.Symbol = 61508; // Đặt lại biểu tượng nút
+                                    btnPO.FillColor = Color.Yellow; // Đổi màu nền của nút btnPO về màu CornflowerBlue
+                                    btnPO.ForeColor = Color.Black; // Đổi màu chữ của nút btnPO về màu đen
+                                }
+                               
                                 //GV.Production_Status = e_Production_Status.LOAD; // chuyển sang trạng thái sẵn sàng
                             });
                             break;
@@ -303,6 +315,23 @@ namespace QR_MASAN_01.Views.MFI_Service
                             {
                                 //nếu không có PO nào thì chuyển sang chế độ NO PO
                                 GV.Production_Status = e_Production_Status.NOPO;
+                                //chỉnh trạng thái các nút
+                                SafeInvoke(() =>
+                                {
+                                    btnProductionDate.Enabled = false; // ẩn nút chỉnh Date
+                                    btnPO.Enabled = true; // ẩn nút chỉnh PO
+                                    btnPO.Text = "ĐỔI PO"; // Đặt lại văn bản nút
+                                    btnPO.Symbol = 61508; // Đặt lại biểu tượng nút
+                                    btnPO.FillColor = Color.Green; // Đổi màu nền của nút btnPO về màu CornflowerBlue
+                                    btnPO.ForeColor = Color.Black; // Đổi màu chữ của nút btnPO về màu đen
+
+                                    btnTestMode.Enabled = false; // ẩn nút chỉnh PO
+                                    btnRUN.Enabled = false; // ẩn nút chạy
+                                    btnRUN.Text = "KHÔNG CÓ PO"; // Đặt lại văn bản nút
+                                    btnRUN.Symbol = 61515; // Đặt lại biểu tượng nút
+                                    btnRUN.FillColor = Color.Red; // Đổi màu nền của nút btnRUN về màu Red
+                                    btnRUN.ForeColor = Color.White; // Đổi màu chữ của nút btnRUN về màu trắng
+                                });
                                 return;
                             }
                             //lấy các thông tin cơ bản
@@ -467,7 +496,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                             // Trạng thái chỉnh sửa ngày sản xuất, có thể thực hiện các hành động cần thiết
                             break;
                     }
-                    Thread.Sleep(100); // Đợi 0.1 giây trước khi kiểm tra lại
+                    
                 }
                 catch (Exception ex)
                 {
@@ -477,7 +506,9 @@ namespace QR_MASAN_01.Views.MFI_Service
                         this.ShowErrorNotifier($"Lỗi trong quá trình cập nhật: {ex.Message}", false, 3000);
                     });
                 }
-                
+
+                Thread.Sleep(100); // Đợi 0.1 giây trước khi kiểm tra lại
+
             }
         }
 
@@ -555,6 +586,7 @@ namespace QR_MASAN_01.Views.MFI_Service
             switch (GV.Production_Status)
             {
                 case e_Production_Status.EDITING:
+
                     //kiểm tra PO trước khi lưu
                     if (ipOrderNO.Text == string.Empty || ipProductionDate.Text == string.Empty || ipOrderNO.Text == "Chọn orderNO")
                     {
@@ -581,6 +613,13 @@ namespace QR_MASAN_01.Views.MFI_Service
                     if (opOrderQty.Text.ToInt() > opCZCodeCount.Text.ToInt())
                     {
                         this.ShowErrorNotifier("Số lượng mã đã nhận không đủ cho PO này. Vui lòng chờ MES gửi đủ", false, 3000);
+                        return;
+                    }
+
+                    //kiểm tra phải PO deleted hay không
+                    if (poService.get.Is_PO_Deleted(ipOrderNO.Text))
+                    {
+                        this.ShowErrorNotifier("PO đã bị xóa, vui lòng chọn PO khác", false, 3000);
                         return;
                     }
 
@@ -664,7 +703,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                     GV.Production_Status = e_Production_Status.CHECKING; // Trạng thái không có PO hoặc đang chỉnh sửa
                     break;
 
-                case e_Production_Status.PUSHING:
+                case e_Production_Status.PLC_NEW_PO:
                     break;
                 case e_Production_Status.STOPPED:
                     break;
@@ -689,7 +728,9 @@ namespace QR_MASAN_01.Views.MFI_Service
                                 //ghi logs vào hàng đợi
                                 LogQueue.Enqueue(systemLogsDelete);
                                 //xóa PO
-                                poService.Delete_PO(GV.Selected_PO.orderNo, );
+                                poService.Delete_PO(GV.Selected_PO.orderNo, dialog.lydo);
+                                //chuyển sang chế độ NOPO
+                                GV.Production_Status = e_Production_Status.NOPO; // Chuyển sang trạng thái NOPO
                             }
                             else
                             {   
@@ -752,6 +793,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                         ipOrderNO.SelectedIndex = 0; // Chọn dòng đầu tiên (dòng rỗng)
                     });
                     break;
+
                 case e_Production_Status.STARTUP:
                     break;
                 case e_Production_Status.LOAD:
@@ -799,7 +841,7 @@ namespace QR_MASAN_01.Views.MFI_Service
             {
                 case e_Production_Status.EDITING:
                     break;
-                case e_Production_Status.PUSHING:
+                case e_Production_Status.PLC_NEW_PO:
                     break;
                 case e_Production_Status.STOPPED:
                     break;
@@ -871,13 +913,13 @@ namespace QR_MASAN_01.Views.MFI_Service
                     //chuyển lên trạng thái pushing
                     if(GV.Selected_PO.runInfo.pass <= 0)
                     {
-                        //nếu chưa chạy mã nào thì chuyển sang trạng thái PUSHING
-                        GV.Production_Status = e_Production_Status.PUSHING;
+                        //nếu chưa chạy mã nào thì chuyển sang trạng thái new PO
+                        GV.Production_Status = e_Production_Status.PLC_NEW_PO;
                     }
                     else
                     {
-                        //nếu đã chạy mã thì chuyển sang trạng thái RUNNING
-                        GV.Production_Status = e_Production_Status.SENDORDERQTY;
+                        //nếu đã chạy mã thì chuyển sang trạng thái Tiếp tục
+                        GV.Production_Status = e_Production_Status.PLC_CON_PO;
                     }
                     break;
                 case e_Production_Status.UNKNOWN:

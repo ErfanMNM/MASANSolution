@@ -43,6 +43,7 @@ namespace QR_MASAN_01
     public class Globalvariable
     {
         public static Counter_Info GCounter { get; set; } = new Counter_Info();
+        public static PLC_Counter_Info PLCCounter { get; set; } = new PLC_Counter_Info();
 
         public static UI_Info C1_UI { get; set; } = new UI_Info();
         public static UI_Info C2_UI { get; set; } = new UI_Info();
@@ -184,7 +185,7 @@ namespace QR_MASAN_01
     {
         EDITING, // Đang chỉnh sửa PO
         DATE_EDITING, // Đang chỉnh sửa ngày sản xuất
-        PUSHING, // Đang đẩy dữ liệu lên server
+        PLC_NEW_PO, // Đang đẩy dữ liệu lên server
         STOPPED, // Dừng sản xuất
         RUNNING, // Đang sản xuất
         PAUSED, // Tạm dừng sản xuất
@@ -196,7 +197,7 @@ namespace QR_MASAN_01
         COMPLETE, // Hoàn thành
         TESTING, // Đang kiểm tra
         FINALTESTING, // Đã test xong
-        SENDORDERQTY,
+        PLC_CON_PO, //tiếp tục PO cũ
         UNKNOWN // Trạng thái không xác định
     }
 
@@ -319,7 +320,7 @@ namespace QR_MASAN_01
             TwoFA_Enabled = false; // Enable 2FA by default
             PO_Edit_AMode = "NONE"; // Default mode for editing PO
             TwoFA_Enabled_PO = false; // Enable 2FA for PO editing by default
-            PO_Data_path = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\Server_Service\";
+            PO_Data_path = @"C:\Users\DANOMT\source\repos\MASANSolution\Server_Service";
             IP_Camera_01 = "127.0.0.1";
             IP_Camera_02 = "127.0.0.1";
             Port_Camera_01 = 6969; // Default port for camera 01
