@@ -233,7 +233,7 @@ namespace QR_MASAN_01
 
                     lblStatus.Text = $"{Globalvariable.All_Ready}|{GV.Production_Status.ToString()}";
 
-                if ((GV.Production_Status == e_Production_Status.READY || GV.Production_Status == e_Production_Status.RUNNING || GV.Production_Status == e_Production_Status.TESTING) && Globalvariable.FDashBoard_Ready)
+                if ((GV.Production_Status == e_Production_Status.READY || GV.Production_Status == e_Production_Status.RUNNING || GV.Production_Status == e_Production_Status.TESTING || GV.Production_Status == e_Production_Status.COMPLETE) && Globalvariable.FDashBoard_Ready)
                 {
                     Globalvariable.All_Ready = true; //đặt trạng thái sẵn sàng của hệ thống là true
                 }

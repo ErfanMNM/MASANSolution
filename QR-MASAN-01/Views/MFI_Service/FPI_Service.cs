@@ -257,10 +257,19 @@ namespace QR_MASAN_01.Views.MFI_Service
                                     GV.Pass_Product_Count = poService.get.Get_Record_Product_Count(GV.Selected_PO.orderNo.ToString(), e_Content_Result.PASS);
                                     opPassCount.Text = GV.Pass_Product_Count.ToString();
 
+                                    GV.Selected_PO.runInfo.pass = GV.Pass_Product_Count; // Cập nhật số lượng đã chạy thành công
+
                                     opMESSendCount.Text = poService.get.Get_Unique_Codes_Run_Sent_Recive_OK_Count(GV.Selected_PO.orderNo.ToString()).ToString();
                                 });
                             }
+
+                            if(GV.Pass_Product_Count >= GV.Selected_PO.orderQty.ToInt())
+                            {
+                                //nếu đã đủ số lượng thì chuyển sang trạng thái hoàn thành
+                                GV.Production_Status = e_Production_Status.COMPLETE;
+                            }
                             
+
                             if (!Globalvariable.All_Ready)
                             {
                                 GV.Production_Status = e_Production_Status.READY; // Chuyển về trạng thái READY nếu thiết bị lỗi
@@ -902,7 +911,7 @@ namespace QR_MASAN_01.Views.MFI_Service
 
                     GV.ID = poService.Get_ID_RUN(GV.Selected_PO.orderNo.ToString()).ToString().ToInt(); // Cập nhật ID từ opCZRunCount
 
-                    //btnPO.Enabled = false; // ẩn nút chỉnh PO
+                    btnPO.Enabled = false; // ẩn nút chỉnh PO
                     btnProductionDate.Enabled = false; // ẩn nút chỉnh Date
                     btnTestMode.Enabled = false;
                     btnRUN.Text = "DỪNG SẢN XUẤT"; // Đặt lại văn bản nút
@@ -921,6 +930,8 @@ namespace QR_MASAN_01.Views.MFI_Service
                         //nếu đã chạy mã thì chuyển sang trạng thái Tiếp tục
                         GV.Production_Status = e_Production_Status.PLC_CON_PO;
                     }
+
+                    btnRUN.Enabled = true; // Hiển thị lại nút chạy sản xuất
                     break;
                 case e_Production_Status.UNKNOWN:
                     break;

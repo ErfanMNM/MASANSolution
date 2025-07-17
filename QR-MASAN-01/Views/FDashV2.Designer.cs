@@ -193,6 +193,7 @@
             this.PLC = new SPMS1.OmronPLC_Hsl(this.components);
             this.Camera_c = new SPMS1.TCPClient(this.components);
             this.WK_PO = new System.ComponentModel.BackgroundWorker();
+            this.WK_PLC = new System.ComponentModel.BackgroundWorker();
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTitlePanel5.SuspendLayout();
             this.uiTabControl2.SuspendLayout();
@@ -2733,6 +2734,12 @@
             this.WK_PO.WorkerSupportsCancellation = true;
             this.WK_PO.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_PO_DoWork);
             // 
+            // WK_PLC
+            // 
+            this.WK_PLC.WorkerReportsProgress = true;
+            this.WK_PLC.WorkerSupportsCancellation = true;
+            this.WK_PLC.DoWork += new System.ComponentModel.DoWorkEventHandler(this.WK_PLC_DoWork);
+            // 
             // FDashboard
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -2964,5 +2971,6 @@
         private Sunny.UI.UIPanel uiPanel23;
         private Sunny.UI.UIPanel opAWSQueueCount;
         private System.ComponentModel.BackgroundWorker WK_PO;
+        private System.ComponentModel.BackgroundWorker WK_PLC;
     }
 }

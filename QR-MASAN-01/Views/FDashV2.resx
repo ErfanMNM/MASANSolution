@@ -127,7 +127,7 @@
     <value>849, 7</value>
   </metadata>
   <metadata name="WK_Process_AUData.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>113, 61</value>
+    <value>273, 48</value>
   </metadata>
   <metadata name="WK_CMR2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>844, 32</value>
@@ -151,9 +151,12 @@
     <value>27, 8</value>
   </metadata>
   <metadata name="Camera_c.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>8, 57</value>
+    <value>440, 37</value>
   </metadata>
   <metadata name="WK_PO.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>274, 20</value>
+    <value>308, 10</value>
+  </metadata>
+  <metadata name="WK_PLC.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>555, 24</value>
   </metadata>
 </root>

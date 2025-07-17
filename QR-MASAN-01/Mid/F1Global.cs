@@ -25,19 +25,19 @@ namespace QR_MASAN_01
 
     }
 
-    public class GPOInfo
+    public class PLC_Comfirm
     {
-        public static int Id { get; set; }
-        public static string OrderNo { get; set; }
-        public static string UniqueCode { get; set; }
-        public static string Site { get; set; }
-        public static string Factory { get; set; }
-        public static string ProductionLine { get; set; }
-        public static string ProductionDate { get; set; }
-        public static string Shift { get; set; }
-        public static string CzFilePath { get; set; }
-        public static string CzDataFilePath { get; set; }
+        public static int Curent_Sensor { get; set; } = 0;
+        public static int Last_Sensor { get; set; } = 0;
 
+        public static int Curent_Pass { get; set; } = 0;
+        public static int Last_Pass { get; set; } = 0;
+
+        public static int Curent_Fail { get; set; } = 0;
+        public static int Last_Fail { get; set; } = 0;
+
+        public static int Curent_Timeout { get; set; } = 0;
+        public static int Last_Timeout { get; set; } = 0;
     }
 
     public class Globalvariable
