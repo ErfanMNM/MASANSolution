@@ -115,7 +115,7 @@
             this.Logo.Controls.Add(this.Logotext, 1, 0);
             this.Logo.Name = "Logo";
             this.Logo.TagString = null;
-            this.Logo.Paint += new System.Windows.Forms.PaintEventHandler(this.Logo_Paint);
+
             // 
             // LogoImg
             // 

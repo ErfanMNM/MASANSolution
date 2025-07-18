@@ -712,9 +712,15 @@ namespace QR_MASAN_01.Views.MFI_Service
                     }
                     catch (Exception ex)
                     {
+                        // Hiển thị thông báo lỗi nếu có
+                        this.ShowErrorNotifier($"Lỗi khi lưu PO: {ex.Message}", false, 3000);
+                        //ghi logs lỗi khi lưu PO
+                        SystemLogs systemLogsError = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Lỗi khi lưu PO", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} gặp lỗi khi lưu PO: {ex.Message}");
+                        //ghi logs vào hàng đợi
+                        LogQueue.Enqueue(systemLogsError);
 
                     }
-                    
+
                     //chuyển sang trạng thái READY
                     GV.Production_Status = e_Production_Status.CHECKING; // Trạng thái không có PO hoặc đang chỉnh sửa
                     break;
@@ -913,6 +919,12 @@ namespace QR_MASAN_01.Views.MFI_Service
                         this.ShowErrorNotifier("Hệ thống chưa Sẵn sàng, vui lòng kiểm tra các thiết bị", false, 3000);
                         return;
                     }
+
+                    //giả bộ hiện loading
+                    SafeInvoke(() =>
+                    {
+                        Thread.Sleep(5000); // Giả lập thời gian xử lý
+                    });
 
                     //đẩy dữ liệu vào Ô nhớ
                     Push_Data_To_Dic();

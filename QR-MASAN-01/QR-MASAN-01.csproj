@@ -286,6 +286,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Report\ReportClass.cs" />
+    <Compile Include="Utils\FormExtension.cs" />
     <Compile Include="Views\DeActive.cs">
       <SubType>Form</SubType>
     </Compile>

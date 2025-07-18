@@ -5,6 +5,7 @@ using MainClass.Enum;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using QR_MASAN_01.Auth;
+using QR_MASAN_01.Utils;
 using SpT;
 using Sunny.UI;
 using System;
@@ -70,28 +71,28 @@ namespace QR_MASAN_01
             }
         }
 
-        private void Connect_AWS()
-        {
-            //kết nối MQTT
-            string host = Setting.Current.host;
-            string clientId = Setting.Current.clientId;
-            string rootCAPath = Setting.Current.rootCAPath;
-            string pfxPath = Setting.Current.pfxPath;
-            string pfxPassword = Setting.Current.pfxPassword;
+        //private void Connect_AWS()
+        //{
+        //    //kết nối MQTT
+        //    string host = Setting.Current.host;
+        //    string clientId = Setting.Current.clientId;
+        //    string rootCAPath = Setting.Current.rootCAPath;
+        //    string pfxPath = Setting.Current.pfxPath;
+        //    string pfxPassword = Setting.Current.pfxPassword;
 
-            awsClient = new AwsIotClientHelper(
-                host,
-                clientId,
-                rootCAPath,
-                "",
-                pfxPath,
-                pfxPassword
+        //    awsClient = new AwsIotClientHelper(
+        //        host,
+        //        clientId,
+        //        rootCAPath,
+        //        "",
+        //        pfxPath,
+        //        pfxPassword
 
-            );
-            awsClient.AWSStatus_OnChange += AWS_Status_Onchange;
-            awsClient.AWSStatus_OnReceive += AWS_Status_OnReceive;
-            awsClient.ConnectAsync();
-        }
+        //    );
+        //    awsClient.AWSStatus_OnChange += AWS_Status_Onchange;
+        //    awsClient.AWSStatus_OnReceive += AWS_Status_OnReceive;
+        //    awsClient.ConnectAsync();
+        //}
 
         private void Init_Camera()
         {
@@ -220,8 +221,6 @@ namespace QR_MASAN_01
                     });
                     break;
             }
-
-            bool ClearPLC = false;
         }
 
         public string dataBase_FileName = "";
@@ -259,13 +258,13 @@ namespace QR_MASAN_01
         //Gửi lên màn hình và lưu log
         public void LogUpdate(string message)
         {
-            this.Invoke(new Action(() =>
+             this.InvokeIfRequired (() =>
             {
                 ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: {message}");
                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-            }));
+            });
         }
-        bool send_orderQty_Ok = false;
+
         private void WK_Update_DoWork(object sender, DoWorkEventArgs e)
         {
             while (!WK_Update.CancellationPending)
@@ -411,7 +410,7 @@ namespace QR_MASAN_01
 
         public void AddHISTORY()
         {
-            this.Invoke(new Action(() =>
+             this.InvokeIfRequired (() =>
             {
                 opHis2.Items.Add($"#{GV.ID}:{DateTime.Now.ToString("HH:mm:ss.fff")} : {Globalvariable.C2_UI.Curent_Content}");
                 opHis2.SelectedIndex = opHis2.Items.Count - 1;
@@ -419,7 +418,7 @@ namespace QR_MASAN_01
                 {
                     opHis2.Items.RemoveAt(0); // Giữ số lượng mục trong danh sách không vượt quá 1000
                 }
-            }));
+            });
         }
 
         //Cập nhật mã vừa đọc lên màn hình
@@ -428,9 +427,10 @@ namespace QR_MASAN_01
             int lastShowID = 0;
             while (!WK_UI_CAM_Update.CancellationPending)
             {
-                this.Invoke(new Action(() => {
+                this.InvokeIfRequired (() =>
+                {
                     //opContentC1.Text = Globalvariable.C1_UI.Curent_Content;
-                    if(GV.ID != lastShowID)
+                    if (GV.ID != lastShowID)
                     {
                         AddHISTORY();
 
@@ -455,9 +455,7 @@ namespace QR_MASAN_01
                         }
                         lastShowID = GV.ID;
                     }
-                    
-                    
-                }));
+                });
                 Thread.Sleep(50);
             }
         }
@@ -483,21 +481,21 @@ namespace QR_MASAN_01
                     if (GCamera.Camera_Status != e_Camera_Status.CONNECTED)
                     {
                         GCamera.Camera_Status = e_Camera_Status.CONNECTED;
-                        Invoke(new Action(() =>
+                         this.InvokeIfRequired (() =>
                         {
                             opCamera.Text = "Sẵn sàng";
                             opCamera.FillColor = Globalvariable.OK_Color;
-                        }));
+                        });
                     }
                     break;
                 case SPMS1.enumClient.DISCONNECTED:
                     if (GCamera.Camera_Status != e_Camera_Status.DISCONNECTED)
                     {
                         GCamera.Camera_Status = e_Camera_Status.DISCONNECTED;
-                        Invoke(new Action(() =>
+                         this.InvokeIfRequired (() =>
                         {
                             opCamera.Text = "Mất kết nối";
-                        }));
+                        });
                     }
                     break;
                 case SPMS1.enumClient.RECEIVED:
@@ -505,11 +503,11 @@ namespace QR_MASAN_01
                     if (GCamera.Camera_Status != e_Camera_Status.CONNECTED)
                     {
                         GCamera.Camera_Status = e_Camera_Status.CONNECTED;
-                        Invoke(new Action(() =>
+                         this.InvokeIfRequired (() =>
                         {
                             opCamera.Text = "Sẵn sàng";
                             opCamera.FillColor = Globalvariable.OK_Color;
-                        }));
+                        });
                     }
 
                     //đếm đủ số chai, gửi PLC
@@ -544,11 +542,11 @@ namespace QR_MASAN_01
                         }
                         catch (Exception ex)
                         {
-                            this.Invoke(new Action(() =>
+                             this.InvokeIfRequired (() =>
                             {
                                 ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera trả về : {ex.Message}");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            }));
+                            });
 
                             //ghi log lỗi
                             SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.CAMERA_ERROR, "Lỗi khi camera trả về C1", Globalvariable.CurrentUser.Username, ex.Message);
@@ -571,10 +569,10 @@ namespace QR_MASAN_01
                     {
                         GCamera.Camera_Status = e_Camera_Status.RECONNECT;
 
-                        Invoke(new Action(() =>
+                         this.InvokeIfRequired (() =>
                         {
                             opCamera.Text = "Kết nối lại";
-                        }));
+                        });
                     }
                     
                     
@@ -593,21 +591,21 @@ namespace QR_MASAN_01
                     if (GCamera.Camera_Status_02 != e_Camera_Status.CONNECTED)
                     {
                         GCamera.Camera_Status_02 = e_Camera_Status.CONNECTED;
-                        Invoke(new Action(() =>
+                         this.InvokeIfRequired (() =>
                         {
                             opCMR02Stt.Text = "Sẵn sàng";
                             opCMR02Stt.FillColor = Globalvariable.OK_Color;
-                        }));
+                        });
                     }
                     break;
                 case SPMS1.enumClient.DISCONNECTED:
                     if (GCamera.Camera_Status_02 != e_Camera_Status.DISCONNECTED)
                     {
                         GCamera.Camera_Status_02 = e_Camera_Status.DISCONNECTED;
-                        Invoke(new Action(() =>
+                         this.InvokeIfRequired (() =>
                         {
                             opCMR02Stt.Text = "Mất kết nối";
-                        }));
+                        });
                     }
                     break;
                 case SPMS1.enumClient.RECEIVED:
@@ -620,11 +618,11 @@ namespace QR_MASAN_01
                         //nếu dữ liệu nhận về giống với lần trước thì không xử lý
                         if (_strData == lastData)
                         {
-                            this.Invoke(new Action(() =>
+                             this.InvokeIfRequired (() =>
                             {
                                 ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Chống dội");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            }));
+                            });
                             break;
                         }
                     }
@@ -633,11 +631,11 @@ namespace QR_MASAN_01
 
                     lastData = _strData;
 
-                    this.Invoke(new Action(() =>
+                     this.InvokeIfRequired (() =>
                     {
                         ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: {_strData}");
                         ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                    }));
+                    });
 
                     
 
@@ -646,11 +644,11 @@ namespace QR_MASAN_01
                         if (GCamera.Camera_Status != e_Camera_Status.CONNECTED)
                         {
                             GCamera.Camera_Status = e_Camera_Status.CONNECTED;
-                            Invoke(new Action(() =>
+                             this.InvokeIfRequired (() =>
                             {
                                 opCamera.Text = "Sẵn sàng";
                                 opCamera.FillColor = Globalvariable.OK_Color;
-                            }));
+                            });
                         }
                         
                         //xử lý dữ liệu nhận về
@@ -668,11 +666,11 @@ namespace QR_MASAN_01
                         }
                         else
                         {
-                            this.Invoke(new Action(() =>
+                             this.InvokeIfRequired (() =>
                             {
                                 ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera 02 trả về : Không đủ luồng xử lí");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            }));
+                            });
 
                             Send_Result_Content_C2(e_Content_Result.ERROR, "Lỗi khi camera 02 trả về: Không đủ luồng xử lí");
 
@@ -705,11 +703,11 @@ namespace QR_MASAN_01
                     break;
                 case SPMS1.enumClient.RECONNECT:
 
-                    Invoke(new Action(() =>
+                     this.InvokeIfRequired (() =>
                     {
                         opCMR02Stt.Text = "Kết nối lại";
                         opCMR02Stt.FillColor = Color.Red;
-                    }));
+                    });
 
                     break;
             }
@@ -903,11 +901,11 @@ namespace QR_MASAN_01
             }
             catch (Exception ex)
             {
-                this.Invoke(new Action(() =>
+                 this.InvokeIfRequired (() =>
                 {
                     ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi camera 02 trả về : {ex.Message}");
                     ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                }));
+                });
                 //ghi log lỗi
                 SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.CAMERA_ERROR, "Lỗi khi camera trả về C2", Globalvariable.CurrentUser.Username, ex.Message);
                 //thêm vào Queue để ghi log
@@ -1303,19 +1301,19 @@ namespace QR_MASAN_01
             {
                 case SPMS1.OmronPLC_Hsl.PLCStatus.Connecting:
                     Globalvariable.PLCConnect = true;
-                    this.Invoke(new Action(() =>
+                     this.InvokeIfRequired (() =>
                     {
                         opPLCStatus.Text = "Kết nối";
                         opPLCStatus.FillColor = Globalvariable.OK_Color;
-                    }));
+                    });
                     break;
                 case SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect:
                     Globalvariable.PLCConnect = false;
-                    this.Invoke(new Action(() =>
+                     this.InvokeIfRequired (() =>
                     {
                         opPLCStatus.Text = "Mất kết nối";
                         opPLCStatus.FillColor = Globalvariable.NG_Color;
-                    }));
+                    });
                     break;
             }
         }

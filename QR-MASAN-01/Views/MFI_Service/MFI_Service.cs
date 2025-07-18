@@ -882,7 +882,8 @@ namespace MFI_Service
                 }
                 catch (Exception ex)
                 {
-                    
+                    // Hiển thị thông báo lỗi nếu không thể phân tích ngày
+                    this.ShowErrorDialog($"Lỗi khi phân tích ngày từ batch code: {ex.Message}");
                 }
             }
 

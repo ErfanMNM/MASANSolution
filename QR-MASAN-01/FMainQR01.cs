@@ -49,11 +49,13 @@ namespace QR_MASAN_01
 
         public static e_Render_State Render_State = e_Render_State.LOGIN;
         public static e_App_State App_State = e_App_State.LOGIN;
+
+        public bool starter = false; // Biến để kiểm tra xem đã bắt đầu hay chưa
         public FMainQR01()
         {
             //khởi động phần mềm
-            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_EVENT, "Phần mềm khởi động", "System", "Bắt đầu khởi động");
-            SystemLogs.LogQueue.Enqueue(systemLogs);
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_LogType.SYSTEM_EVENT, "Phần mềm khởi động", "System", "Bắt đầu khởi động");
+            LogQueue.Enqueue(systemLogs);
 
             try
             {
@@ -62,18 +64,9 @@ namespace QR_MASAN_01
                 UIStyles.CultureInfo = CultureInfos.en_US;
                 UIStyles.GlobalFont = true;
                 UIStyles.GlobalFontName = "Tahoma";
-                //load Setting
-                
-                //Setting.Current.SetDefault(); //đặt giá trị mặc định nếu chưa có trong file cấu hình
-                //Setting.Current.Save(); //lưu lại cấu hình
-
-
                 this.MainTabControl = uiTabControl1;
                 uiNavMenu1.TabControl = uiTabControl1;
-
                 WKCheck.RunWorkerAsync();
-
-                
             }
             catch (Exception ex)
             {
@@ -104,15 +97,15 @@ namespace QR_MASAN_01
 
             }
 
-            }
+        }
 
         private void btnAppClose_Click(object sender, EventArgs e)
         {
             // Ghi log sự kiện đóng ứng dụng
             SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_EVENT, "Đóng ứng dụng", "System", "Người dùng đã đóng ứng dụng");
-            SystemLogs.LogQueue.Enqueue(systemLogs);
+            LogQueue.Enqueue(systemLogs);
             ClockWK.CancelAsync();
-            
+
             Environment.Exit(0);
         }
         private void RenderControlForm()
@@ -120,8 +113,6 @@ namespace QR_MASAN_01
             uiNavMenu1.Nodes.Clear();
             // Thêm các trang vào menu điều hướng
             uiNavMenu1.CreateNode(AddPage(_FDashboard, 1001));
-            //uiNavMenu1.CreateNode(AddPage(FDashboard_XK, 1006));
-            //uiNavMenu1.CreateNode(AddPage(_FMFI, 1003));
             uiNavMenu1.CreateNode(AddPage(fTest, 1007)); // Thêm trang Test
             uiNavMenu1.CreateNode(AddPage(fPI_Service, 1003));
             uiNavMenu1.CreateNode(AddPage(scanQR, 1004));
@@ -139,14 +130,6 @@ namespace QR_MASAN_01
             uiNavMenu1.Enabled = false; //vô hiệu hóa menu ban đầu
 
             Render_State = e_Render_State.LOGIN; //đặt trạng thái render ban đầu là LOGIN
-
-            _FDashboard.INIT();
-            //FDashboard_XK.INIT();
-            //_FMFI.FMFI_INIT();
-            scanQR.INIT();
-            fPI_Service.INIT();
-            fAppSetting.FAppSetting_Load();
-            _FStatistics.INIT();
 
             //kiểm soát máy in
 
@@ -168,6 +151,12 @@ namespace QR_MASAN_01
                     //không làm gì cả
                     break;
             }
+
+            _FDashboard.INIT();
+            scanQR.INIT();
+            fPI_Service.INIT();
+            fAppSetting.FAppSetting_Load();
+            _FStatistics.INIT();
         }
         private void ToggleFullScreen()
         {
@@ -191,6 +180,7 @@ namespace QR_MASAN_01
         private void MainForm_Load(object sender, EventArgs e)
         {
             RenderControlForm();
+
             ToggleFullScreen();
             WK_LaserPrinterTime.RunWorkerAsync();
             ClockWK.RunWorkerAsync();
@@ -231,7 +221,7 @@ namespace QR_MASAN_01
 
                 }
 
-                    lblStatus.Text = $"{Globalvariable.All_Ready}|{GV.Production_Status.ToString()}";
+                lblStatus.Text = $"{Globalvariable.All_Ready}|{GV.Production_Status.ToString()}";
 
                 if ((GV.Production_Status == e_Production_Status.READY || GV.Production_Status == e_Production_Status.RUNNING || GV.Production_Status == e_Production_Status.TESTING || GV.Production_Status == e_Production_Status.COMPLETE) && Globalvariable.FDashBoard_Ready)
                 {
@@ -293,11 +283,10 @@ namespace QR_MASAN_01
         /// TUI THÍCH GHI UNACTIVE LÀ DEACTIVE CHỨ NÓ KHÔNG CÓ Ý NGHĨA GÌ ĐÂU NHA
         /// </summary>
 
-        bool login_rendered = false; // Biến để kiểm tra xem đã render trang đăng nhập hay chưa
         private void ClockWK_DoWork(object sender, DoWorkEventArgs e)
         {
             //đồng hồ
-            while(!ClockWK.CancellationPending)
+            while (!ClockWK.CancellationPending)
             {
                 try
                 {
@@ -307,7 +296,7 @@ namespace QR_MASAN_01
                         InsertToSQLite(LogQueue.Dequeue());
                     }
 
-                    if(AWSLogsQueue.Count > 0)
+                    if (AWSLogsQueue.Count > 0)
                     {
                         AWSInsertToSQLite(AWSLogsQueue.Dequeue());
                     }
@@ -343,8 +332,8 @@ namespace QR_MASAN_01
                             //hiện thị thông tin user 
                             this.Invoke(new Action(() =>
                             {
-                                
-                                switch(Globalvariable.CurrentUser.Role)
+
+                                switch (Globalvariable.CurrentUser.Role)
                                 {
                                     case "ADMIN":
                                         opUser.Text = $"[ADMIN] {Globalvariable.CurrentUser.Username}";
@@ -366,6 +355,8 @@ namespace QR_MASAN_01
                                         break;
                                 }
                             }));
+
+
                             if (Globalvariable.ACTIVE)
                             {
                                 //nếu đã đăng nhập và ACTIVE thì chuyển sang trạng thái ACTIVE
@@ -425,15 +416,15 @@ namespace QR_MASAN_01
                         //kiểm tra xem đã render trang DEACTIVE chưa
                         if (Render_State != e_Render_State.DEACTIVE)
                         {
-                            
+
                             this.Invoke(new Action(() =>
                             {
-                                
+
                                 if (Render_State == e_Render_State.LOGIN)
                                 {
                                     uiNavMenu1.Nodes[uiNavMenu1.Nodes.Count - 1].Remove(); // xóa trang cuối nếu đã đăng nhập
                                 }
-                                btnDeActive.Enabled = false; 
+                                btnDeActive.Enabled = false;
                                 uiNavMenu1.CreateNode("DMA", 1998); // thêm trang DEACTIVE vào menu
                                 uiNavMenu1.SelectPage(1998); // chọn trang DEACTIVE
                                 uiNavMenu1.Enabled = false; //vô hiệu hóa menu
@@ -483,64 +474,64 @@ namespace QR_MASAN_01
         {
 
         }
-        int logs = 11;
-        private async void WK_LaserPrinterTime_DoWork(object sender, DoWorkEventArgs e) 
+
+        private void WK_LaserPrinterTime_DoWork(object sender, DoWorkEventArgs e)
         {
-            while(!WK_LaserPrinterTime.CancellationPending)
-            {
-                //try
-                //{
-                //    HttpClient HttpClient = new HttpClient();
+            //while (!WK_LaserPrinterTime.CancellationPending)
+            //{
+            //    //try
+            //    //{
+            //    //    HttpClient HttpClient = new HttpClient();
 
-                //    // Lấy chuỗi thời gian từ URL máy in
-                //    string timeString = await HttpClient.GetStringAsync(Setting.Current.Laser_printer_server_url);
-                //    timeString = timeString.Trim();
+            //    //    // Lấy chuỗi thời gian từ URL máy in
+            //    //    string timeString = await HttpClient.GetStringAsync(Setting.Current.Laser_printer_server_url);
+            //    //    timeString = timeString.Trim();
 
-                //    // Parse datetime từ chuỗi nhận được (giả sử đúng format)
-                //   if( DateTime.TryParse(timeString, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime dateTime))
-                //    {
-                //        Globalvariable.TimeUnixPrinter = ((DateTimeOffset)dateTime).ToUnixTimeSeconds();
+            //    //    // Parse datetime từ chuỗi nhận được (giả sử đúng format)
+            //    //   if( DateTime.TryParse(timeString, new CultureInfo("en-US"), DateTimeStyles.None, out DateTime dateTime))
+            //    //    {
+            //    //        Globalvariable.TimeUnixPrinter = ((DateTimeOffset)dateTime).ToUnixTimeSeconds();
 
-                //        this.Invoke(new Action(() =>
-                //        {
-                //            opLaserPrinterTime.Text = $"{dateTime.ToString("dd-MM-yyyy HH:mm:ss")}";
-                //            opLaserPrinterTime.ForeColor = Color.Green;
-                //        }));
-                //    }
-                //    else
-                //    {
-                //        Globalvariable.TimeUnixPrinter++;
-                //        this.Invoke(new Action(() =>
-                //        {
-                //            //chuyển số giây Unix sang định dạng ngày giờ hiện lên texbox
-                //            timeString = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).ToString("dd-MM-yyyy HH:mm:ss", new CultureInfo("en-US"));
-                //            opLaserPrinterTime.Text = $"{timeString}";
-                //            opLaserPrinterTime.ForeColor = Color.Red;
+            //    //        this.Invoke(new Action(() =>
+            //    //        {
+            //    //            opLaserPrinterTime.Text = $"{dateTime.ToString("dd-MM-yyyy HH:mm:ss")}";
+            //    //            opLaserPrinterTime.ForeColor = Color.Green;
+            //    //        }));
+            //    //    }
+            //    //    else
+            //    //    {
+            //    //        Globalvariable.TimeUnixPrinter++;
+            //    //        this.Invoke(new Action(() =>
+            //    //        {
+            //    //            //chuyển số giây Unix sang định dạng ngày giờ hiện lên texbox
+            //    //            timeString = DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).ToString("dd-MM-yyyy HH:mm:ss", new CultureInfo("en-US"));
+            //    //            opLaserPrinterTime.Text = $"{timeString}";
+            //    //            opLaserPrinterTime.ForeColor = Color.Red;
 
-                //        }));
-                //    }
-                //}
-                //catch (Exception ex)
-                //{
-                //    Globalvariable.TimeUnixPrinter++;
-                //    this.Invoke(new Action(() =>
-                //    {
-                //        opLaserPrinterTime.Text = $"{DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).ToString("dd-MM-yyyy HH:mm:ss", new CultureInfo("en-US"))}";
-                //        opLaserPrinterTime.ForeColor = Color.Red;
-                //    }));
-                //    logs++;
-                //    if (logs > 10)
-                //    {
-                //        logs = 0;
-                //        //ghi log lỗi
-                //        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi kết nối máy in laser", "System", ex.Message);
-                //        SystemLogs.LogQueue.Enqueue(systemLogs);
-                //    }
-                    
-                //}
+            //    //        }));
+            //    //    }
+            //    //}
+            //    //catch (Exception ex)
+            //    //{
+            //    //    Globalvariable.TimeUnixPrinter++;
+            //    //    this.Invoke(new Action(() =>
+            //    //    {
+            //    //        opLaserPrinterTime.Text = $"{DateTimeOffset.FromUnixTimeSeconds(Globalvariable.TimeUnixPrinter).ToString("dd-MM-yyyy HH:mm:ss", new CultureInfo("en-US"))}";
+            //    //        opLaserPrinterTime.ForeColor = Color.Red;
+            //    //    }));
+            //    //    logs++;
+            //    //    if (logs > 10)
+            //    //    {
+            //    //        logs = 0;
+            //    //        //ghi log lỗi
+            //    //        SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.SYSTEM_ERROR, "Lỗi kết nối máy in laser", "System", ex.Message);
+            //    //        SystemLogs.LogQueue.Enqueue(systemLogs);
+            //    //    }
 
-                Thread.Sleep(1000);
-            }
+            //    //}
+
+            //    Thread.Sleep(1000);
+            //}
         }
 
 
@@ -562,7 +553,7 @@ namespace QR_MASAN_01
         private void btnDeActive_Click(object sender, EventArgs e)
         {
             timecurrentclick = DateTimeOffset.Now.ToUnixTimeSeconds();
-            
+
             if (timecurrentclick - timelastclick > 5)
             {
 
@@ -578,7 +569,7 @@ namespace QR_MASAN_01
             }
             else
             {
-                this.ShowErrorNotifier("Nhấn chậm chậm thôi, máy treo đó",false,2000);
+                this.ShowErrorNotifier("Nhấn chậm chậm thôi, máy treo đó", false, 2000);
             }
 
         }
