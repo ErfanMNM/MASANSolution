@@ -45,7 +45,7 @@ namespace QR_MASAN_01
 
                 StartTask();
                 Init_Camera();
-                Connect_AWS();
+                //Connect_AWS();
 
                 PLC.PLC_IP = PLCAddress.Get("PLC_IP");
                 PLC.PLC_PORT = Convert.ToInt32(PLCAddress.Get("PLC_PORT"));
@@ -238,7 +238,7 @@ namespace QR_MASAN_01
                         opproductionDate.Text = GV.Selected_PO.productionDate.ToString();
                         opGTIN.Text = GV.Selected_PO.GTIN.ToString();
                         oporderQty.Text = GV.Selected_PO.orderQty.ToString();
-                        opCodeCount.Text = GV.Selected_PO.CodeCount.ToString();
+                        opReQty.Text = GV.Selected_PO.CodeCount.ToString();
                     }
 
                     opCamera_M_Pass.Value = Globalvariable.GCounter.Total_Pass_C2;
@@ -409,6 +409,19 @@ namespace QR_MASAN_01
             }
         }
 
+        public void AddHISTORY()
+        {
+            this.Invoke(new Action(() =>
+            {
+                opHis2.Items.Add($"#{GV.ID}:{DateTime.Now.ToString("HH:mm:ss.fff")} : {Globalvariable.C2_UI.Curent_Content}");
+                opHis2.SelectedIndex = opHis2.Items.Count - 1;
+                if (opHis2.Items.Count > 100)
+                {
+                    opHis2.Items.RemoveAt(0); // Giữ số lượng mục trong danh sách không vượt quá 1000
+                }
+            }));
+        }
+
         //Cập nhật mã vừa đọc lên màn hình
         private void WK_Update_Result_To_UI_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -416,21 +429,10 @@ namespace QR_MASAN_01
             while (!WK_UI_CAM_Update.CancellationPending)
             {
                 this.Invoke(new Action(() => {
-                    opContentC1.Text = Globalvariable.C1_UI.Curent_Content;
+                    //opContentC1.Text = Globalvariable.C1_UI.Curent_Content;
                     if(GV.ID != lastShowID)
                     {
-                        opHis2.Items.Add($"#{GV.ID}:{DateTime.Now.ToString("HH:mm:ss.fff")} : {Globalvariable.C2_UI.Curent_Content}");
-
-                        if (Globalvariable.C1_UI.IsPass)
-                        {
-                            opResultPassFailC1.Text = "TỐT";
-                            opResultPassFailC1.FillColor = Color.Green;
-                        }
-                        else
-                        {
-                            opResultPassFailC1.Text = "LỖI";
-                            opResultPassFailC1.FillColor = Color.Red;
-                        }
+                        AddHISTORY();
 
                         opContentC2.Text = Globalvariable.C2_UI.Curent_Content;
 
@@ -580,6 +582,8 @@ namespace QR_MASAN_01
             }
         }
 
+        long lastRecive = 0;
+        string lastData = "";
         //camera 02
         private void Camera_c_ClientCallBack(SPMS1.enumClient eAE, string _strData)
         {
@@ -607,11 +611,35 @@ namespace QR_MASAN_01
                     }
                     break;
                 case SPMS1.enumClient.RECEIVED:
+
+                    var a = DateTime.Now.Ticks - lastRecive;
+                    var b = TimeSpan.TicksPerMillisecond * 100;
+                    //tránh gửi trùng liên tiếp 2 lần thời gian hiện tại - lastRecive < 100ms nếu code mới nhận về giống với lần trước
+                    if (a < b)
+                    {
+                        //nếu dữ liệu nhận về giống với lần trước thì không xử lý
+                        if (_strData == lastData)
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Chống dội");
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                            }));
+                            break;
+                        }
+                    }
+
+                    lastRecive = DateTime.Now.Ticks;
+
+                    lastData = _strData;
+
                     this.Invoke(new Action(() =>
                     {
                         ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: {_strData}");
                         ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                     }));
+
+                    
 
                     if (Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.RUNNING)
                     {
@@ -783,10 +811,11 @@ namespace QR_MASAN_01
                         if (write.IsSuccess)
                         {
 
-                            while(!PLC_Comfirm.PLC_Total_Status_Dictionary.TryGetValue(Globalvariable.GCounter.Total_C2, out string Status_s))
+                            while(true)
                             {
                                 //đợi cho đến khi có giá trị
                                 //nếu có giá trị thì lấy Status_s
+                               PLC_Comfirm.PLC_Total_Status_Dictionary.TryGetValue(Globalvariable.GCounter.Total_C2, out string Status_s);
 
                                 if (Status_s == "PASS")
                                 {
@@ -1377,31 +1406,6 @@ namespace QR_MASAN_01
 
         #endregion
 
-        private void btnResetCounter_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnClearPLC_Click(object sender, EventArgs e)
-        {
-            btnClearPLC.Enabled = false;
-            btnClearPLC.Text = "Đang xóa lỗi";
-            OperateResult write = PLC.plc.Write("D18", short.Parse("1"));
-            if (write.IsSuccess)
-            {
-                btnClearPLC.Enabled = true;
-
-                btnClearPLC.Text = "Xóa lỗi PLC";
-
-                Alarm.Alarm1 = false;
-                Alarm.Alarm1_Count = 0;
-
-                lblAlarm.Text = "-";
-                lblAlarm.FillColor = Globalvariable.OK_Color;
-
-            }
-        }
-
         //xử kiện xử lý Queue
 
         private void WK_Process_SQLite_DoWork(object sender, DoWorkEventArgs e)
@@ -1426,127 +1430,131 @@ namespace QR_MASAN_01
                         //cập nhật vào SQLite
                         Add_Content_To_SQLite(queueItem);
                     }
-                    //kiểm tra các queue cập nhật trạng thái gửi đi
-                    //lấy tất cả các mã đã acvtivate và gửi đi
-                    DataTable dataTable = new DataTable();
-                    dataTable = Get_Unique_Codes_Run_Send_Pending(GV.Selected_PO.orderNo.ToString());
-
-                    //gửi mã
-                    if (dataTable.Rows.Count > 0)
-                    {
-                        //lấy ra mã và gửi đi
-                        for (int i = 0; i < dataTable.Rows.Count; i++)
-                        {
-                            string orderNO = GV.Selected_PO.orderNo.ToString();
-                            string ID = dataTable.Rows[i]["ID"].ToString();
-                            string code = dataTable.Rows[i]["Code"].ToString();
-                            string Status = dataTable.Rows[i]["Status"].ToString();
-                            string activateDate = dataTable.Rows[i]["ActivateDate"].ToString();
-                            string productionDate = dataTable.Rows[i]["ProductionDate"].ToString();
-                            var payload = new
-                            {
-                                message_id = $"{ID}-{orderNO}",
-                                orderNo = orderNO,
-                                uniqueCode = code,
-                                status = Status,
-                                activate_datetime = activateDate,
-                                production_date = productionDate,
-                                thing_name = "MIPWP501"
-                            };
-                            string json = JsonConvert.SerializeObject(payload);
-                            var rs = awsClient.Publish_V2("CZ/data", json);
-
-                            if (rs.Issuccess)
-                            {
-                                //cập nhật trạng thái đã gửi
-                                Update_Send_Status(ID.ToInt32(), "Sent");
-                            }
-                            else
-                            {
-                                //ghi log lỗi không gửi được
-                                Update_Send_Status(ID.ToInt32(), "Failed");
-                            }
 
 
-                        }
-                    }
+                    ////kiểm tra các queue cập nhật trạng thái gửi đi
+                    ////lấy tất cả các mã đã acvtivate và gửi đi
+                    //DataTable dataTable = new DataTable();
+                    //dataTable = Get_Unique_Codes_Run_Send_Pending(GV.Selected_PO.orderNo.ToString());
 
-                    //kiểm tra danh sách các mã đã gửi đi
-                    if (GV.AWS_Response_Queue.Count > 0)
-                    {
-                        //lấy ra dữ liệu
-                        var responseItem = GV.AWS_Response_Queue.Dequeue();
-                        string ID = responseItem.message_id.Split('-')[0];
-                        //cập nhật trạng thái đã gửi
-                        try
-                        {
-                            Update_Recive_Status(ID.ToInt32(), responseItem.status);
-                        }
-                        catch (Exception ex)
-                        {
-                            //ghi log
-                            AWSLogs aWSLogs = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.ERROR, "Lỗi khi nhận tin nhắn trả về", Globalvariable.CurrentUser.Username, ex.Message);
-                            //thêm vào Queue để ghi log
-                            AWSLogsQueue.Enqueue(aWSLogs);
-                        }
+                    ////gửi mã
+                    //if (dataTable.Rows.Count > 0)
+                    //{
+                    //    //lấy ra mã và gửi đi
+                    //    for (int i = 0; i < dataTable.Rows.Count; i++)
+                    //    {
+                    //        string orderNO = GV.Selected_PO.orderNo.ToString();
+                    //        string ID = dataTable.Rows[i]["ID"].ToString();
+                    //        string code = dataTable.Rows[i]["Code"].ToString();
+                    //        string Status = dataTable.Rows[i]["Status"].ToString();
+                    //        string activateDate = dataTable.Rows[i]["ActivateDate"].ToString();
+                    //        string productionDate = dataTable.Rows[i]["ProductionDate"].ToString();
+                    //        var payload = new
+                    //        {
+                    //            message_id = $"{ID}-{orderNO}",
+                    //            orderNo = orderNO,
+                    //            uniqueCode = code,
+                    //            status = Status,
+                    //            activate_datetime = activateDate,
+                    //            production_date = productionDate,
+                    //            thing_name = "MIPWP501"
+                    //        };
+                    //        string json = JsonConvert.SerializeObject(payload);
+                    //        var rs = awsClient.Publish_V2("CZ/data", json);
 
-                    }
+                    //        if (rs.Issuccess)
+                    //        {
+                    //            //cập nhật trạng thái đã gửi
+                    //            Update_Send_Status(ID.ToInt32(), "Sent");
+                    //        }
+                    //        else
+                    //        {
+                    //            //ghi log lỗi không gửi được
+                    //            Update_Send_Status(ID.ToInt32(), "Failed");
+                    //        }
 
-                    //cập nhật số lượng đã gửi
-                    GV.Sent_Count = Get_Unique_Codes_Run_Send_Count(GV.Selected_PO.orderNo.ToString());
-                    //cập nhật số lượng đã nhận
-                    GV.Received_Count = Get_Unique_Codes_Run_Recive_Count(GV.Selected_PO.orderNo.ToString());
 
-                    if ((GV.Sent_Count - GV.Received_Count) > 20)
-                    {
-                        //sub lại
-                        string[] topicsToSub = new[]
-                                          {
-                                            "CZ/MIPWP501/response"
-                                        };
+                    //    }
+                    //}
 
-                        awsClient.SubscribeMultiple(topicsToSub);
+                    ////kiểm tra danh sách các mã đã gửi đi
+                    //if (GV.AWS_Response_Queue.Count > 0)
+                    //{
+                    //    //lấy ra dữ liệu
+                    //    var responseItem = GV.AWS_Response_Queue.Dequeue();
+                    //    string ID = responseItem.message_id.Split('-')[0];
+                    //    //cập nhật trạng thái đã gửi
+                    //    try
+                    //    {
+                    //        Update_Recive_Status(ID.ToInt32(), responseItem.status);
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        //ghi log
+                    //        AWSLogs aWSLogs = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.ERROR, "Lỗi khi nhận tin nhắn trả về", Globalvariable.CurrentUser.Username, ex.Message);
+                    //        //thêm vào Queue để ghi log
+                    //        AWSLogsQueue.Enqueue(aWSLogs);
+                    //    }
 
-                    }
+                    //}
 
-                    //gửi lại các mã Fail
-                    DataTable dataTableFailed = new DataTable();
-                    dataTableFailed = Get_Unique_Codes_Run_Send_Failed(GV.Selected_PO.orderNo.ToString());
-                    if (dataTableFailed.Rows.Count > 0)
-                    {
-                        //lấy ra mã và gửi đi
-                        for (int i = 0; i < dataTableFailed.Rows.Count; i++)
-                        {
-                            string orderNO = GV.Selected_PO.orderNo.ToString();
-                            string ID = dataTableFailed.Rows[i]["ID"].ToString();
-                            string code = dataTableFailed.Rows[i]["Code"].ToString();
-                            string Status = dataTableFailed.Rows[i]["Status"].ToString();
-                            string activateDate = dataTableFailed.Rows[i]["ActivateDate"].ToString();
-                            string productionDate = dataTableFailed.Rows[i]["ProductionDate"].ToString();
-                            var payload = new
-                            {
-                                message_id = $"{ID}-{orderNO}",
-                                orderNo = orderNO,
-                                uniqueCode = code,
-                                status = Status,
-                                activate_datetime = activateDate,
-                                production_date = productionDate,
-                                thing_name = "MIPWP501"
-                            };
-                            string json = JsonConvert.SerializeObject(payload);
-                            var rs = awsClient.Publish_V2("CZ/data", json);
-                            if (rs.Issuccess)
-                            {
-                                //cập nhật trạng thái đã gửi
-                                Update_Send_Status(ID.ToInt32(), "Sent");
-                            }
-                            else
-                            {
-                                //ghi log lỗi không gửi được
-                                Update_Send_Status(ID.ToInt32(), "Failed");
-                            }
-                        }
-                    }
+                    ////cập nhật số lượng đã gửi
+                    //GV.Sent_Count = Get_Unique_Codes_Run_Send_Count(GV.Selected_PO.orderNo.ToString());
+                    ////cập nhật số lượng đã nhận
+                    //GV.Received_Count = Get_Unique_Codes_Run_Recive_Count(GV.Selected_PO.orderNo.ToString());
+
+                    //if ((GV.Sent_Count - GV.Received_Count) > 20)
+                    //{
+                    //    //sub lại
+                    //    string[] topicsToSub = new[]
+                    //                      {
+                    //                        "CZ/MIPWP501/response"
+                    //                    };
+
+                    //    awsClient.SubscribeMultiple(topicsToSub);
+
+                    //}
+
+                    ////gửi lại các mã Fail
+                    //DataTable dataTableFailed = new DataTable();
+                    //dataTableFailed = Get_Unique_Codes_Run_Send_Failed(GV.Selected_PO.orderNo.ToString());
+                    //if (dataTableFailed.Rows.Count > 0)
+                    //{
+                    //    //lấy ra mã và gửi đi
+                    //    for (int i = 0; i < dataTableFailed.Rows.Count; i++)
+                    //    {
+                    //        string orderNO = GV.Selected_PO.orderNo.ToString();
+                    //        string ID = dataTableFailed.Rows[i]["ID"].ToString();
+                    //        string code = dataTableFailed.Rows[i]["Code"].ToString();
+                    //        string Status = dataTableFailed.Rows[i]["Status"].ToString();
+                    //        string activateDate = dataTableFailed.Rows[i]["ActivateDate"].ToString();
+                    //        string productionDate = dataTableFailed.Rows[i]["ProductionDate"].ToString();
+                    //        var payload = new
+                    //        {
+                    //            message_id = $"{ID}-{orderNO}",
+                    //            orderNo = orderNO,
+                    //            uniqueCode = code,
+                    //            status = Status,
+                    //            activate_datetime = activateDate,
+                    //            production_date = productionDate,
+                    //            thing_name = "MIPWP501"
+                    //        };
+                    //        string json = JsonConvert.SerializeObject(payload);
+                    //        var rs = awsClient.Publish_V2("CZ/data", json);
+                    //        if (rs.Issuccess)
+                    //        {
+                    //            //cập nhật trạng thái đã gửi
+                    //            Update_Send_Status(ID.ToInt32(), "Sent");
+                    //        }
+                    //        else
+                    //        {
+                    //            //ghi log lỗi không gửi được
+                    //            Update_Send_Status(ID.ToInt32(), "Failed");
+                    //        }
+                    //    }
+                    //}
+
+
                 }
 
                 Thread.Sleep(100);

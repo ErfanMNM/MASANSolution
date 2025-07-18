@@ -208,10 +208,12 @@
             // 
             this.btnAppClose.Cursor = System.Windows.Forms.Cursors.Hand;
             resources.ApplyResources(this.btnAppClose, "btnAppClose");
+            this.btnAppClose.ForeColor = System.Drawing.Color.OrangeRed;
             this.btnAppClose.Name = "btnAppClose";
             this.btnAppClose.Radius = 0;
             this.btnAppClose.RectColor = System.Drawing.Color.Blue;
             this.btnAppClose.Symbol = 61453;
+            this.btnAppClose.SymbolColor = System.Drawing.Color.OrangeRed;
             this.btnAppClose.TipsColor = System.Drawing.Color.RoyalBlue;
             this.btnAppClose.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnAppClose.Click += new System.EventHandler(this.btnAppClose_Click);

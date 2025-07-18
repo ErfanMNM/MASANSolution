@@ -295,6 +295,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                             });
 
                             break;
+
                         case e_Production_Status.NOPO:
                             SafeInvoke(() =>
                             {
@@ -309,8 +310,6 @@ namespace QR_MASAN_01.Views.MFI_Service
                                     btnPO.FillColor = Color.Yellow; // Đổi màu nền của nút btnPO về màu CornflowerBlue
                                     btnPO.ForeColor = Color.Black; // Đổi màu chữ của nút btnPO về màu đen
                                 }
-                               
-                                //GV.Production_Status = e_Production_Status.LOAD; // chuyển sang trạng thái sẵn sàng
                             });
                             break;
                         case e_Production_Status.STARTUP:
@@ -341,7 +340,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                                     btnRUN.FillColor = Color.Red; // Đổi màu nền của nút btnRUN về màu Red
                                     btnRUN.ForeColor = Color.White; // Đổi màu chữ của nút btnRUN về màu trắng
                                 });
-                                return;
+                                break;
                             }
                             //lấy các thông tin cơ bản
                             DataTable lastUsedPO_Data = poService.Get_PO_Info_By_OrderNo(lastUsedPO["orderNO"].ToString());
@@ -351,7 +350,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                             {
                                 //nếu không có PO này thì chuyển sang chế độ NO PO
                                 GV.Production_Status = e_Production_Status.NOPO;
-                                return;
+                                break;
                             }
                             //kiểm tra file 
                             poService.Check_Run_File(lastUsedPO_Data.Rows[0]["orderNO"].ToString()); // Kiểm tra file đã chạy hay chưa
@@ -596,118 +595,126 @@ namespace QR_MASAN_01.Views.MFI_Service
             {
                 case e_Production_Status.EDITING:
 
-                    //kiểm tra PO trước khi lưu
-                    if (ipOrderNO.Text == string.Empty || ipProductionDate.Text == string.Empty || ipOrderNO.Text == "Chọn orderNO")
+                    try
                     {
-                        this.ShowErrorNotifier("Vui lòng nhập đầy đủ thông tin Order No và Production Date.",false,3000);
-                        return;
-                    }
-
-                    //kiểm tra nếu PO đã hoàn thành thì không cho lưu
-                    if (opOrderQty.Text.ToInt() <= opPassCount.Text.ToInt32())
-                    {
-                        this.ShowErrorNotifier("PO vừa chọn đã chạy hoàn tất, vui lòng chọn PO khác", false, 3000);
-                        return;
-                    }
-
-                    DataTable usedPO = new DataTable();
-                    usedPO = poService.Get_PO_Info_By_OrderNo(ipOrderNO.Text);
-                    if (usedPO.Rows.Count <= 0)
-                    {
-                        //báo lỗi không tìm thấy PO
-                        this.ShowErrorNotifier("Không tìm thấy PO đã lưu, vui lòng kiểm tra lại", false, 3000);
-                        return;
-                    }
-                    //kiểm PO đủ mã hay chưa
-                    if (opOrderQty.Text.ToInt() > opCZCodeCount.Text.ToInt())
-                    {
-                        this.ShowErrorNotifier("Số lượng mã đã nhận không đủ cho PO này. Vui lòng chờ MES gửi đủ", false, 3000);
-                        return;
-                    }
-
-                    //kiểm tra phải PO deleted hay không
-                    if (poService.get.Is_PO_Deleted(ipOrderNO.Text))
-                    {
-                        this.ShowErrorNotifier("PO đã bị xóa, vui lòng chọn PO khác", false, 3000);
-                        return;
-                    }
-
-                    // Cập nhật dữ liệu PO
-                    poService.RunPO(ipOrderNO.Text, ipProductionDate.Text);
-                    //đổi màu lại
-                    ipOrderNO.FillColor = Color.CornflowerBlue; // Đổi màu nền của ô nhập Order No về màu CornflowerBlue
-                    ipProductionDate.FillColor = Color.CornflowerBlue; // Đổi màu nền của ô nhập Production Date về màu CornflowerBlue
-                    //ghi logs đổi PO thành công
-                    SystemLogs systemLogsSuccess = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Đổi PO thành công", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} đã đổi PO thành công: {ipOrderNO.Text}");
-                    //ghi logs vào hàng đợi
-                    LogQueue.Enqueue(systemLogsSuccess);
-
-                    // Hiển thị thông báo thành công
-                    this.ShowSuccessNotifier("Thông tin PO đã được lưu thành công.", false, 3000);
-
-                    //cập nhật GV.Selected_PO_Data
-                    GV.Selected_PO.orderNo = ipOrderNO.Text;
-                    GV.Selected_PO.productionDate = usedPO.Rows[0]["productionDate"].ToString();
-                    GV.Selected_PO.productName = usedPO.Rows[0]["productName"].ToString();
-                    GV.Selected_PO.productCode = usedPO.Rows[0]["productCode"].ToString();
-                    GV.Selected_PO.lotNumber = usedPO.Rows[0]["lotNumber"].ToString();
-                    GV.Selected_PO.GTIN = usedPO.Rows[0]["gtin"].ToString();
-                    GV.Selected_PO.shift = usedPO.Rows[0]["shift"].ToString();
-                    GV.Selected_PO.factory = usedPO.Rows[0]["factory"].ToString();
-                    GV.Selected_PO.site = usedPO.Rows[0]["site"].ToString();
-                    GV.Selected_PO.orderQty = usedPO.Rows[0]["orderQty"].ToString();
-                    GV.Selected_PO.CodeCount = usedPO.Rows[0]["UniqueCodeCount"].ToString();
-                    GV.Selected_PO.customerOrderNo = usedPO.Rows[0]["customerOrderNo"].ToString();
-                    GV.Selected_PO.runInfo.total = poService.Get_ID_RUN(usedPO.Rows[0]["orderNO"].ToString());
-                    GV.Selected_PO.runInfo.pass = poService.get.Get_Record_Product_Count(usedPO.Rows[0]["orderNO"].ToString(), e_Content_Result.PASS);
-                    GV.Selected_PO.runInfo.fail = GV.Selected_PO.runInfo.total - GV.Selected_PO.runInfo.pass;
-                    GV.Selected_PO.runInfo.duplicate = poService.get.Get_Record_Product_Count(usedPO.Rows[0]["orderNO"].ToString(), e_Content_Result.DUPLICATE);
-                    //lấy các thông tin gửi AWS
-                    GV.Selected_PO.awsInfo.sent = poService.get.Get_AWS_Sent_Count(usedPO.Rows[0]["orderNO"].ToString());
-                    // Đặt lại trạng thái
-                    ipOrderNO.ReadOnly = true; // Không cho phép chỉnh sửa Order No
-                    ipProductionDate.ReadOnly = true; // Không cho phép chỉnh sửa Production Date
-                    GV.Production_Status = e_Production_Status.READY; // Trạng thái không có PO hoặc đang chỉnh sửa
-                    btnProductionDate.Text = "Chỉnh thông tin"; // Đặt lại văn bản nút
-                    btnProductionDate.Symbol = 61508; // Thay đổi biểu tượng của nút btnPO
-                    btnPO.Text = "ĐỔI PO"; // Đặt lại văn bản nút
-                    btnPO.Symbol = 61508; // Đặt lại biểu tượng nút
-                    btnPO.FillColor = Color.CornflowerBlue; // Đổi màu nền của nút btnPO về màu CornflowerBlue
-                    ipOrderNO.FillColor = Color.CornflowerBlue; // Đổi màu nền của ô nhập Order No về màu CornflowerBlue
-                    ipProductionDate.FillColor = Color.CornflowerBlue; // Đổi màu nền của ô nhập Production Date về màu CornflowerBlue
-                    ipOrderNO.ForeColor = Color.White; // Đổi màu chữ của ô nhập Order No về màu trắng
-                    ipProductionDate.ForeColor = Color.White; // Đổi màu chữ của ô nhập Production Date về màu trắng
-                    // Cập nhật các thông tin PO đã chọn
-                    SafeInvoke(() =>
-                    {
-                        opProductName.Text = GV.Selected_PO.productName;
-                        opProductCode.Text = GV.Selected_PO.productCode;
-                        opLotNumber.Text = GV.Selected_PO.lotNumber;
-                        opGTIN.Text = GV.Selected_PO.GTIN;
-                        opShift.Text = GV.Selected_PO.shift;
-                        opFactory.Text = GV.Selected_PO.factory;
-                        opSite.Text = GV.Selected_PO.site;
-                        opOrderQty.Text = GV.Selected_PO.orderQty;
-                        opCZCodeCount.Text = GV.Selected_PO.CodeCount;
-                        opCZRunCount.Text = GV.Selected_PO.runInfo.total.ToString();
-                        opPassCount.Text = GV.Selected_PO.runInfo.pass.ToString();
-                        opFailCount.Text = (GV.Selected_PO.runInfo.total - GV.Selected_PO.runInfo.pass).ToString();
-                        opDuplicateCount.Text = GV.Selected_PO.runInfo.duplicate.ToString();
-                        //đặt trạng thái các nút
-                        if (GV.Selected_PO.runInfo.pass <= 0)
+                        //kiểm tra PO trước khi lưu
+                        if (ipOrderNO.Text == string.Empty || ipProductionDate.Text == string.Empty || ipOrderNO.Text == "Chọn orderNO")
                         {
-                            btnPO.Enabled = true; // Hiển thị nút chỉnh PO
-                            btnProductionDate.Enabled = true; // Hiển thị nút chỉnh Date
-
-                        }
-                        else
-                        {
-                            btnPO.Enabled = false; // ẩn nút chỉnh PO
-                            btnProductionDate.Enabled = true; // ẩn nút chỉnh Date
+                            this.ShowErrorNotifier("Vui lòng nhập đầy đủ thông tin Order No và Production Date.", false, 3000);
+                            return;
                         }
 
-                        opTer.Text = $"-";
-                    });
+                        //kiểm tra nếu PO đã hoàn thành thì không cho lưu
+                        if (opOrderQty.Text.ToInt() <= opPassCount.Text.ToInt32())
+                        {
+                            this.ShowErrorNotifier("PO vừa chọn đã chạy hoàn tất, vui lòng chọn PO khác", false, 3000);
+                            return;
+                        }
+
+                        DataTable usedPO = new DataTable();
+                        usedPO = poService.Get_PO_Info_By_OrderNo(ipOrderNO.Text);
+                        if (usedPO.Rows.Count <= 0)
+                        {
+                            //báo lỗi không tìm thấy PO
+                            this.ShowErrorNotifier("Không tìm thấy PO đã lưu, vui lòng kiểm tra lại", false, 3000);
+                            return;
+                        }
+                        //kiểm PO đủ mã hay chưa
+                        if (opOrderQty.Text.ToInt() > opCZCodeCount.Text.ToInt())
+                        {
+                            this.ShowErrorNotifier("Số lượng mã đã nhận không đủ cho PO này. Vui lòng chờ MES gửi đủ", false, 3000);
+                            return;
+                        }
+
+                        //kiểm tra phải PO deleted hay không
+                        if (poService.get.Is_PO_Deleted(ipOrderNO.Text))
+                        {
+                            this.ShowErrorNotifier("PO đã bị xóa, vui lòng chọn PO khác", false, 3000);
+                            return;
+                        }
+
+                        // Cập nhật dữ liệu PO
+                        poService.RunPO(ipOrderNO.Text, ipProductionDate.Text);
+                        //đổi màu lại
+                        ipOrderNO.FillColor = Color.CornflowerBlue; // Đổi màu nền của ô nhập Order No về màu CornflowerBlue
+                        ipProductionDate.FillColor = Color.CornflowerBlue; // Đổi màu nền của ô nhập Production Date về màu CornflowerBlue
+                                                                           //ghi logs đổi PO thành công
+                        SystemLogs systemLogsSuccess = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Đổi PO thành công", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} đã đổi PO thành công: {ipOrderNO.Text}");
+                        //ghi logs vào hàng đợi
+                        LogQueue.Enqueue(systemLogsSuccess);
+
+                        // Hiển thị thông báo thành công
+                        this.ShowSuccessNotifier("Thông tin PO đã được lưu thành công.", false, 3000);
+
+                        //cập nhật GV.Selected_PO_Data
+                        GV.Selected_PO.orderNo = ipOrderNO.Text;
+                        GV.Selected_PO.productionDate = usedPO.Rows[0]["productionDate"].ToString();
+                        GV.Selected_PO.productName = usedPO.Rows[0]["productName"].ToString();
+                        GV.Selected_PO.productCode = usedPO.Rows[0]["productCode"].ToString();
+                        GV.Selected_PO.lotNumber = usedPO.Rows[0]["lotNumber"].ToString();
+                        GV.Selected_PO.GTIN = usedPO.Rows[0]["gtin"].ToString();
+                        GV.Selected_PO.shift = usedPO.Rows[0]["shift"].ToString();
+                        GV.Selected_PO.factory = usedPO.Rows[0]["factory"].ToString();
+                        GV.Selected_PO.site = usedPO.Rows[0]["site"].ToString();
+                        GV.Selected_PO.orderQty = usedPO.Rows[0]["orderQty"].ToString();
+                        GV.Selected_PO.CodeCount = usedPO.Rows[0]["UniqueCodeCount"].ToString();
+                        GV.Selected_PO.customerOrderNo = usedPO.Rows[0]["customerOrderNo"].ToString();
+                        GV.Selected_PO.runInfo.total = poService.Get_ID_RUN(usedPO.Rows[0]["orderNO"].ToString());
+                        GV.Selected_PO.runInfo.pass = poService.get.Get_Record_Product_Count(usedPO.Rows[0]["orderNO"].ToString(), e_Content_Result.PASS);
+                        GV.Selected_PO.runInfo.fail = GV.Selected_PO.runInfo.total - GV.Selected_PO.runInfo.pass;
+                        GV.Selected_PO.runInfo.duplicate = poService.get.Get_Record_Product_Count(usedPO.Rows[0]["orderNO"].ToString(), e_Content_Result.DUPLICATE);
+                        //lấy các thông tin gửi AWS
+                        GV.Selected_PO.awsInfo.sent = poService.get.Get_AWS_Sent_Count(usedPO.Rows[0]["orderNO"].ToString());
+                        // Đặt lại trạng thái
+                        ipOrderNO.ReadOnly = true; // Không cho phép chỉnh sửa Order No
+                        ipProductionDate.ReadOnly = true; // Không cho phép chỉnh sửa Production Date
+                        GV.Production_Status = e_Production_Status.READY; // Trạng thái không có PO hoặc đang chỉnh sửa
+                        btnProductionDate.Text = "Chỉnh thông tin"; // Đặt lại văn bản nút
+                        btnProductionDate.Symbol = 61508; // Thay đổi biểu tượng của nút btnPO
+                        btnPO.Text = "ĐỔI PO"; // Đặt lại văn bản nút
+                        btnPO.Symbol = 61508; // Đặt lại biểu tượng nút
+                        btnPO.FillColor = Color.CornflowerBlue; // Đổi màu nền của nút btnPO về màu CornflowerBlue
+                        ipOrderNO.FillColor = Color.CornflowerBlue; // Đổi màu nền của ô nhập Order No về màu CornflowerBlue
+                        ipProductionDate.FillColor = Color.CornflowerBlue; // Đổi màu nền của ô nhập Production Date về màu CornflowerBlue
+                        ipOrderNO.ForeColor = Color.White; // Đổi màu chữ của ô nhập Order No về màu trắng
+                        ipProductionDate.ForeColor = Color.White; // Đổi màu chữ của ô nhập Production Date về màu trắng
+                                                                  // Cập nhật các thông tin PO đã chọn
+                        SafeInvoke(() =>
+                        {
+                            opProductName.Text = GV.Selected_PO.productName;
+                            opProductCode.Text = GV.Selected_PO.productCode;
+                            opLotNumber.Text = GV.Selected_PO.lotNumber;
+                            opGTIN.Text = GV.Selected_PO.GTIN;
+                            opShift.Text = GV.Selected_PO.shift;
+                            opFactory.Text = GV.Selected_PO.factory;
+                            opSite.Text = GV.Selected_PO.site;
+                            opOrderQty.Text = GV.Selected_PO.orderQty;
+                            opCZCodeCount.Text = GV.Selected_PO.CodeCount;
+                            opCZRunCount.Text = GV.Selected_PO.runInfo.total.ToString();
+                            opPassCount.Text = GV.Selected_PO.runInfo.pass.ToString();
+                            opFailCount.Text = (GV.Selected_PO.runInfo.total - GV.Selected_PO.runInfo.pass).ToString();
+                            opDuplicateCount.Text = GV.Selected_PO.runInfo.duplicate.ToString();
+                            //đặt trạng thái các nút
+                            if (GV.Selected_PO.runInfo.pass <= 0)
+                            {
+                                btnPO.Enabled = true; // Hiển thị nút chỉnh PO
+                                btnProductionDate.Enabled = true; // Hiển thị nút chỉnh Date
+
+                            }
+                            else
+                            {
+                                btnPO.Enabled = false; // ẩn nút chỉnh PO
+                                btnProductionDate.Enabled = true; // ẩn nút chỉnh Date
+                            }
+
+                            opTer.Text = $"-";
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                    
                     //chuyển sang trạng thái READY
                     GV.Production_Status = e_Production_Status.CHECKING; // Trạng thái không có PO hoặc đang chỉnh sửa
                     break;
