@@ -416,7 +416,7 @@ namespace QR_MASAN_01
                     string createTableQuery = @"CREATE TABLE ""Records"" (
 	                                            ""ID""	INTEGER NOT NULL UNIQUE,
 	                                            ""Code""	TEXT NOT NULL DEFAULT 'FAIL',
-	                                            ""Status""	INTEGER NOT NULL DEFAULT 0,
+	                                            ""Status""	TEXT NOT NULL DEFAULT 0,
 	                                            ""PLC_Status""	TEXT NOT NULL DEFAULT 'FAIL',
 	                                            ""ActivateDate""	TEXT NOT NULL DEFAULT 0,
 	                                            ""ActivateUser""	TEXT NOT NULL DEFAULT 0,
@@ -699,6 +699,21 @@ namespace QR_MASAN_01
                     conn.Open();
                     int count = Convert.ToInt32(command.ExecuteScalar());
                     return count > 0;
+                }
+            }
+
+            public DataTable Get_Records(string orderNo)
+            {
+                //tạo thư mục nếu chưa tồn tại
+                string czRunPath = $"C:/.ABC/Record_{orderNo}.db";
+
+                using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                {
+                    string query = "SELECT * FROM Records";
+                    var adapter = new SQLiteDataAdapter(query, conn);
+                    var table = new DataTable();
+                    adapter.Fill(table);
+                    return table;
                 }
             }
 

@@ -845,6 +845,7 @@ namespace QR_MASAN_01.Views.MFI_Service
             SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Nhấn nút chạy sản xuất", "RUN", $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút chạy sản xuất ");
             //ghi logs vào hàng đợi
             LogQueue.Enqueue(systemLogs);
+
             //kiểm tra trạng thái hiện tại
             switch (GV.Production_Status)
             {
@@ -922,11 +923,88 @@ namespace QR_MASAN_01.Views.MFI_Service
                     //chuyển lên trạng thái pushing
                     if(GV.Selected_PO.runInfo.pass <= 0)
                     {
+                        //khởi động lại các counter 
+                        Globalvariable.GCounter.Total_C2 = 0;
+                        Globalvariable.GCounter.Total_Failed_C2 = 0;
+                        Globalvariable.GCounter.Total_Pass_C2 = 0;
+
+                        Globalvariable.GCounter.Unknown_C2 = 0;
+                        Globalvariable.GCounter.Camera_Read_Fail_C2 = 0;
+                        Globalvariable.GCounter.Error_C2 = 0;
+                        Globalvariable.GCounter.Duplicate_C2 = 0;
+                        Globalvariable.GCounter.Rework_C2 = 0;
+                        Globalvariable.GCounter.Duplicate_C2 = 0;
+                        Globalvariable.GCounter.Empty_C2 = 0;
+                        Globalvariable.GCounter.Format_C2 = 0;
+                        Globalvariable.GCounter.NotFound_C2 = 0;
+
                         //nếu chưa chạy mã nào thì chuyển sang trạng thái new PO
                         GV.Production_Status = e_Production_Status.PLC_NEW_PO;
                     }
                     else
                     {
+                        //khởi động lại các counter 
+                        Globalvariable.GCounter.Total_C2 = 0;
+                        Globalvariable.GCounter.Total_Failed_C2 = 0;
+                        Globalvariable.GCounter.Total_Pass_C2 = 0;
+
+                        Globalvariable.GCounter.Unknown_C2 = 0;
+                        Globalvariable.GCounter.Camera_Read_Fail_C2 = 0;
+                        Globalvariable.GCounter.Error_C2 = 0;
+                        Globalvariable.GCounter.Duplicate_C2 = 0;
+                        Globalvariable.GCounter.Rework_C2 = 0;
+                        Globalvariable.GCounter.Duplicate_C2 = 0;
+                        Globalvariable.GCounter.Empty_C2 = 0;
+                        Globalvariable.GCounter.Format_C2 = 0;
+                        Globalvariable.GCounter.NotFound_C2 = 0;
+
+                        //load từ SQLite
+                        DataTable Record_PO = poService.get.Get_Records(GV.Selected_PO.orderNo);
+
+                        //tạo vòng lặp để đẩy dữ liệu vào bộ đếm
+                        foreach (DataRow row in Record_PO.Rows)
+                        {
+                            //lấy dữ liệu từ SQLite
+                            string Code = row["Code"].ToString();
+                            string status = row["Status"].ToString();
+                            string activateDate = row["ActivateDate"].ToString();
+                            string productionDate = row["ProductionDate"].ToString();
+                            //đẩy vào bộ đếm
+                            Globalvariable.GCounter.Total_C2++;
+
+                            if (status == e_Content_Result.PASS.ToString())
+                            {
+                                Globalvariable.GCounter.Total_Pass_C2++;
+                            }
+                            else if (status == e_Content_Result.FAIL.ToString())
+                            {
+                                Globalvariable.GCounter.Total_Failed_C2++;
+                            }
+                            else if (status == e_Content_Result.ERROR.ToString())
+                            {
+                                Globalvariable.GCounter.Total_Failed_C2++;
+                                Globalvariable.GCounter.Error_C2++;
+                            }
+                            else if (status == e_Content_Result.DUPLICATE.ToString())
+                            {
+                                Globalvariable.GCounter.Total_Failed_C2++;
+                                Globalvariable.GCounter.Duplicate_C2++;
+                            }
+                            else if (status == e_Content_Result.REWORK.ToString())
+                            {
+                                Globalvariable.GCounter.Rework_C2++;
+                            }
+                            else if (status == e_Content_Result.EMPTY.ToString())
+                            {
+                                Globalvariable.GCounter.Total_Failed_C2++;
+                                Globalvariable.GCounter.Empty_C2++;
+                            }
+                            else if (status == e_Content_Result.ERR_FORMAT.ToString())
+                            {
+                                Globalvariable.GCounter.Total_Failed_C2++;
+                                Globalvariable.GCounter.Format_C2++;
+                            }
+                        }
                         //nếu đã chạy mã thì chuyển sang trạng thái Tiếp tục
                         GV.Production_Status = e_Production_Status.PLC_CON_PO;
                     }

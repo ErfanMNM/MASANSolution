@@ -277,6 +277,7 @@
       <DependentUpon>FMainQR01.cs</DependentUpon>
     </Compile>
     <Compile Include="Mid\Audittrail.cs" />
+    <Compile Include="Mid\Configs.cs" />
     <Compile Include="Mid\F1Global.cs" />
     <Compile Include="Mid\MainClass.cs" />
     <Compile Include="Mid\PLCAddress.cs" />

@@ -9,6 +9,7 @@ using System.Data.SQLite;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static MainClass.Counter_Info;
 
@@ -25,10 +26,10 @@ namespace QR_MASAN_01
 
     }
 
-    public class PLC_Comfirm
+    public static class PLC_Comfirm
     {
-        public static int Curent_Sensor { get; set; } = 0;
-        public static int Last_Sensor { get; set; } = 0;
+        public static int Curent_Total { get; set; } = 0;
+        public static int Last_Total { get; set; } = 0;
 
         public static int Curent_Pass { get; set; } = 0;
         public static int Last_Pass { get; set; } = 0;
@@ -38,9 +39,17 @@ namespace QR_MASAN_01
 
         public static int Curent_Timeout { get; set; } = 0;
         public static int Last_Timeout { get; set; } = 0;
+
+        public static int Curent_Status { get; set; } = 0;
+
+        //dictionary để lưu trữ các giá trị của PLC Total - trạng thái
+        public static Dictionary<int, string> PLC_Total_Status_Dictionary { get; set; } = new Dictionary<int, string>();
+
     }
 
-    public class Globalvariable
+
+
+    public static class Globalvariable
     {
         public static Counter_Info GCounter { get; set; } = new Counter_Info();
         public static PLC_Counter_Info PLCCounter { get; set; } = new PLC_Counter_Info();
@@ -108,7 +117,7 @@ namespace QR_MASAN_01
 
     }
 
-    public class GV
+    public static class GV
     {
         //bể dữ liệu chính của C2
         public static Dictionary<string, CodeData> C2_CodeData_Dictionary = new Dictionary<string, CodeData>();
@@ -130,6 +139,11 @@ namespace QR_MASAN_01
         public static int Sent_Count { get; set; } = 0;
         //số lượng mã đã nhận response từ AWS
         public static int Received_Count { get; set; } = 0;
+    }
+
+    public static class GTask
+    {
+       public static CancellationTokenSource Task_PLC_Comfirm = new CancellationTokenSource();
     }
 
     public class Alarm
@@ -271,62 +285,6 @@ namespace QR_MASAN_01
         public static bool ByPass_Ready { get; set; } = false;
     }
 
-    [ConfigFile("MSC\\Setting.ini")]
-    public class Setting : IniConfig<Setting>
-    {
-        [ConfigSection("APP")]
-        public string SoftName { get; set; }
-        public string ServerIP { get; set; }
-        public int ServerPort { get; set; }
-        public string City { get; set; }
-        public string App_Mode { get; set; }
-
-        [ConfigSection("INK_PRINTER")]
-        public string Printer_name { get; set; }
-
-        [ConfigSection("LASER_PRINTER")]
-        public string Laser_printer_server_url { get; set; }
-
-        [ConfigSection("CAMERA")]
-        public int Camera_Slot { get; set; }
-        public string IP_Camera_01 { get; set; } // Thêm camera slot 02 nếu cần
-        public string IP_Camera_02 { get; set; } // Thêm camera slot 03 nếu cần
-        public int Port_Camera_01 { get; set; } // Thêm camera slot 04 nếu cần
-        public int Port_Camera_02 { get; set; } // Thêm camera slot 05 nếu cần
-
-        [ConfigSection("DATA")]
-        public string Code_Content_Pattern { get; set; }
-        public string Production_Mode { get; set; }
-        public string PO_Data_path { get; set; }
-
-        [ConfigSection("AUTH")]
-        public bool TwoFA_Enabled { get; set; }
-        public string PO_Edit_AMode { get; set; }
-        public bool TwoFA_Enabled_PO { get; set; }
-
-        public override void SetDefault()
-        {
-            base.SetDefault();
-            SoftName = "MS";
-            ServerIP = "http://localhost";
-            ServerPort = 49211;
-            City = "MSI";
-            Printer_name = "NONE"; // Default printer name
-            Camera_Slot = 2; // Default camera slot
-            App_Mode = "ADD_Data"; // NO_ADD
-            Laser_printer_server_url = "http://127.0.0.1:9000/get-time";
-            Code_Content_Pattern = @"i\.tcx\.com\.vn/.*\d{13}.*[a-zA-Z0-9]";
-            Production_Mode = "MFI"; // chạy dạng MFI , không chạy dạng PO
-            TwoFA_Enabled = false; // Enable 2FA by default
-            PO_Edit_AMode = "NONE"; // Default mode for editing PO
-            TwoFA_Enabled_PO = false; // Enable 2FA for PO editing by default
-            PO_Data_path = @"C:\Users\DANOMT\source\repos\MASANSolution\Server_Service";
-            IP_Camera_01 = "127.0.0.1";
-            IP_Camera_02 = "127.0.0.1";
-            Port_Camera_01 = 6969; // Default port for camera 01
-            Port_Camera_02 = 6968; // Default port for camera 02
-
-        }
-    }
+    
 
 }

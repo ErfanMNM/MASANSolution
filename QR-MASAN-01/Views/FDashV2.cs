@@ -19,8 +19,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
-using static MFI_Service.MFI_Service_Form;
-using static QR_MASAN_01.ActiveLogs;
+using System.Threading.Tasks;
 using static QR_MASAN_01.AWSLogs;
 using static QR_MASAN_01.SystemLogs;
 
@@ -43,42 +42,20 @@ namespace QR_MASAN_01
                 WK_Update.RunWorkerAsync();
                 WK_PO.RunWorkerAsync();
                 WK_UI_CAM_Update.RunWorkerAsync();
-                Camera.Connect();
-                if (Setting.Current.Camera_Slot > 1)
-                {
-                    Camera_c.Connect();
-                }
+
+                StartTask();
+                Init_Camera();
+                Connect_AWS();
+
                 PLC.PLC_IP = PLCAddress.Get("PLC_IP");
                 PLC.PLC_PORT = Convert.ToInt32(PLCAddress.Get("PLC_PORT"));
                 PLC.PLC_Ready_DM = PLCAddress.Get("PLC_Ready_DM");
-                Camera_c.IP = Setting.Current.IP_Camera_02;
-                Camera.IP = Setting.Current.IP_Camera_01;
-                Camera_c.Port= Setting.Current.Port_Camera_02;
-                Camera.Port = Setting.Current.Port_Camera_01;
+                
                 PLC.InitPLC();
 
-                //kết nối MQTT
+                Camera.Connect();
+                Camera_c.Connect();
 
-                string host = "a22qv9bgjnbsae-ats.iot.ap-southeast-1.amazonaws.com";
-                string clientId = "MIPWP501";
-
-                string rootCAPath = @"C:\MIPWP501\AmazonRootCA1.pem";
-                string pfxPath = @"C:\MIPWP501\client-certificate.pfx";
-                string pfxPassword = "thuc";
-
-                awsClient = new AwsIotClientHelper(
-                    host,
-                    clientId,
-                    rootCAPath,
-                    "",
-                    pfxPath,
-                    pfxPassword
-
-                );
-                awsClient.AWSStatus_OnChange += AWS_Status_Onchange;
-                awsClient.AWSStatus_OnReceive += AWS_Status_OnReceive;
-
-                awsClient.ConnectAsync();
             }
             catch (Exception ex)
             {
@@ -91,7 +68,37 @@ namespace QR_MASAN_01
                 LogUpdate($"Lỗi khởi tạo Dashboard: {ex.Message}");
                 LogUpdate($"VUI LÒNG TẮT MÁY MỞ LẠI");
             }
+        }
 
+        private void Connect_AWS()
+        {
+            //kết nối MQTT
+            string host = Setting.Current.host;
+            string clientId = Setting.Current.clientId;
+            string rootCAPath = Setting.Current.rootCAPath;
+            string pfxPath = Setting.Current.pfxPath;
+            string pfxPassword = Setting.Current.pfxPassword;
+
+            awsClient = new AwsIotClientHelper(
+                host,
+                clientId,
+                rootCAPath,
+                "",
+                pfxPath,
+                pfxPassword
+
+            );
+            awsClient.AWSStatus_OnChange += AWS_Status_Onchange;
+            awsClient.AWSStatus_OnReceive += AWS_Status_OnReceive;
+            awsClient.ConnectAsync();
+        }
+
+        private void Init_Camera()
+        {
+            Camera_c.IP = Setting.Current.IP_Camera_02;
+            Camera.IP = Setting.Current.IP_Camera_01;
+            Camera_c.Port = Setting.Current.Port_Camera_02;
+            Camera.Port = Setting.Current.Port_Camera_01;
         }
 
         void SafeInvoke(Action action)
@@ -221,10 +228,9 @@ namespace QR_MASAN_01
 
         public void Update_HMI()
         {
-            if(GV.Production_Status == e_Production_Status.RUNNING)
+            if (GV.Production_Status == e_Production_Status.RUNNING)
             {
-                // Cập nhật trạng thái của các thành phần
-                this.Invoke(new Action(() =>
+                SafeInvoke(() =>
                 {
                     if (oporderNO.Text != GV.Selected_PO.orderNo.ToString())
                     {
@@ -234,7 +240,16 @@ namespace QR_MASAN_01
                         oporderQty.Text = GV.Selected_PO.orderQty.ToString();
                         opCodeCount.Text = GV.Selected_PO.CodeCount.ToString();
                     }
-                }));
+
+                    opCamera_M_Pass.Value = Globalvariable.GCounter.Total_Pass_C2;
+                    opCamera_M_Fail.Value = Globalvariable.GCounter.Total_Failed_C2;
+                    opCamera_M_Total.Value = Globalvariable.GCounter.Total_C2;
+
+                    lblPass.Value = PLC_Comfirm.Curent_Pass;
+                    lblTotal.Value = PLC_Comfirm.Curent_Total;
+                    lblFail.Value = PLC_Comfirm.Curent_Fail;
+
+                });
             }
             // Cập nhật các trường thông tin MFI trên giao diện
            
@@ -275,11 +290,11 @@ namespace QR_MASAN_01
                 }
 
                 if (GCamera.Camera_Status_02 == e_Camera_Status.DISCONNECTED)
-                    {
-                        opCMR02Stt.FillColor = Globalvariable.WB_Color;
-                    }
+                {
+                    opCMR02Stt.FillColor = Globalvariable.WB_Color;
+                }
                 //Ready
-                if(Globalvariable.All_Ready)
+                if (Globalvariable.All_Ready)
                 {
                     if (PLC.Ready != 1)
                     {
@@ -314,35 +329,17 @@ namespace QR_MASAN_01
                     PLC.Ready = 1;
                 }
 
-                
+
                 Active_Pr();
-                //đọc từ PLC
-                OperateResult<int[]> readCount = PLC.plc.ReadInt32("D130", 5);
-                if (readCount.IsSuccess)
-                {
-                    SafeInvoke(() =>
-                    {
-                        lblPass.Value = readCount.Content[2].ToString().ToInt32();
-                        lblTotal.Value = readCount.Content[0].ToString().ToInt32();
-                        lblFail.Value = readCount.Content[1].ToString().ToInt32();
-                        lblTimeOut.Value = readCount.Content[4].ToString().ToInt32();
-                    });
 
-                }
-                else
+                SafeInvoke(() =>
                 {
-                    SafeInvoke(() =>
-                    {
-                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi đọc dữ liệu từ PLC: {readCount.Message}");
-                        ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                    lblPass.Text = "-1";
+                    lblTotal.Text = "-1";
+                    lblFail.Text = "-1";
+                    opCamera_M_Pass.Text = "-1";
+                });
 
-                        lblPass.Text = "-1";
-                        lblTotal.Text = "-1";
-                        lblFail.Text = "-1";
-                        lblTimeOut.Text = "-1";
-                    });
-                    
-                }
 
                 Update_HMI();
                 Thread.Sleep(200);
@@ -615,6 +612,7 @@ namespace QR_MASAN_01
                         ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: {_strData}");
                         ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                     }));
+
                     if (Globalvariable.All_Ready && GV.Production_Status == e_Production_Status.RUNNING)
                     {
                         if (GCamera.Camera_Status != e_Camera_Status.CONNECTED)
@@ -626,6 +624,7 @@ namespace QR_MASAN_01
                                 opCamera.FillColor = Globalvariable.OK_Color;
                             }));
                         }
+                        
                         //xử lý dữ liệu nhận về
                         if (!WK_CMR4.IsBusy)
                         {
@@ -751,6 +750,8 @@ namespace QR_MASAN_01
                 //Kích hoạt hệ thống đo đạc
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
+                //tăng tổng số Camera 02 đã nhận
+                Globalvariable.GCounter.Total_C2++;
                 GV.ID++;
                 //kiểm tra chuỗi có hợp lệ hay không
                 //Kiểm tra tính hợp lệ của dữ liệu
@@ -781,16 +782,66 @@ namespace QR_MASAN_01
                         //Ghi log
                         if (write.IsSuccess)
                         {
-                            Globalvariable.GCounter.PLC_1_Pass_C2++;
-                            C2CodeData.Status = "1";
-                            //giờ kích hoạt theo ISO
-                            C2CodeData.Activate_Datetime = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                            //chuyển productionDate dạng string về UTC
-                            C2CodeData.Production_Datetime = GV.Selected_PO.productionDate;
-                            //Gửi vào hàng chờ để cập nhật SQLite
-                            GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
-                            //Ghi thành công
-                            Send_Result_Content_C2(e_Content_Result.PASS, _strData);
+
+                            while(!PLC_Comfirm.PLC_Total_Status_Dictionary.TryGetValue(Globalvariable.GCounter.Total_C2, out string Status_s))
+                            {
+                                //đợi cho đến khi có giá trị
+                                //nếu có giá trị thì lấy Status_s
+
+                                if (Status_s == "PASS")
+                                {
+                                    //pass
+                                    C2CodeData.Status = "1";
+                                    //giờ kích hoạt theo ISO
+                                    C2CodeData.Activate_Datetime = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                                    //chuyển productionDate dạng string về UTC
+                                    C2CodeData.Production_Datetime = GV.Selected_PO.productionDate;
+                                    //Gửi vào hàng chờ để cập nhật SQLite
+                                    GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
+                                    //Ghi thành công
+                                    Send_Result_Content_C2(e_Content_Result.PASS, _strData);
+
+                                    break;
+                                }
+                                else if (Status_s == "FAIL")
+                                {
+                                    //fail
+                                    //Gửi xuống PLC fail được tính là fail trong csdl luôn
+                                    C2CodeData.Status = "-1";
+                                    //giờ kích hoạt theo ISO
+                                    C2CodeData.Activate_Datetime = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                                    C2CodeData.Production_Datetime = GV.Selected_PO.productionDate;
+                                    //Gửi vào hàng chờ để cập nhật SQLite
+                                    GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
+                                    //Ghi thất bại
+                                    Send_Result_Content_C2(e_Content_Result.ERROR, _strData);
+
+                                    break;
+                                }
+                                else if (Status_s == "TIMEOUT")
+                                {
+                                    //Gửi xuống PLC fail được tính là fail trong csdl luôn
+                                    //Gửi xuống PLC fail được tính là fail trong csdl luôn
+                                    C2CodeData.Status = "-1";
+                                    //giờ kích hoạt theo ISO
+                                    C2CodeData.Activate_Datetime = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                                    C2CodeData.Production_Datetime = GV.Selected_PO.productionDate;
+                                    //Gửi vào hàng chờ để cập nhật SQLite
+                                    GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
+                                    //Ghi thất bại
+                                    Send_Result_Content_C2(e_Content_Result.ERROR, _strData);
+                                    break;
+                                }
+                                else
+                                {
+                                    //nếu không có giá trị thì đợi 100ms
+                                    //để tránh treo ứng dụng
+                                    Thread.Sleep(5);
+                                }
+                            }
+
+
+                            
                         }
                         else
                         {
@@ -805,8 +856,6 @@ namespace QR_MASAN_01
                             //Ghi thất bại
                             Send_Result_Content_C2(e_Content_Result.ERROR, _strData);
                         }
-
-
                     }
                     //nếu đã kích hoạt thì đá ra
                     else
@@ -1201,6 +1250,7 @@ namespace QR_MASAN_01
                     Globalvariable.C2_UI.Curent_Content = "Lỗi không xác định";
                     Globalvariable.C2_UI.IsPass = false;
                     Globalvariable.GCounter.Error_C2++;
+                    Globalvariable.GCounter.Total_Failed_C2++;
 
                     dataResultSave = new DataResultSave
                     {
@@ -1774,7 +1824,7 @@ namespace QR_MASAN_01
                         //gửi số lượng order xuống
                         OperateResult writeOrderQtyu = PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), GV.Selected_PO.orderQty.ToInt32());
                         OperateResult writeStart3 = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 1);//gửi lệnh bắt đầu
-                        //chuyển sang Running
+                        
                         GV.Production_Status = e_Production_Status.RUNNING;
                         break;
                     case e_Production_Status.UNKNOWN:
@@ -1790,9 +1840,60 @@ namespace QR_MASAN_01
             }
         }
 
-        private void WK_PLC_DoWork(object sender, DoWorkEventArgs e)
+        private async Task PLC_Comfirm_Async()
         {
+            
+            // Bắt đầu nhiệm vụ
+            try
+            {
+                while (!GTask.Task_PLC_Comfirm.Token.IsCancellationRequested)
+                {
+                    if (GV.Production_Status == e_Production_Status.RUNNING)
+                    {
+                        // đọc PLC
+                        //đọc từ PLC
+                        OperateResult<int[]> readCount = PLC.plc.ReadInt32("D130", 5);
+                        if (readCount.IsSuccess)
+                        {
+                            PLC_Comfirm.Curent_Pass = readCount.Content[2].ToString().ToInt32();
+                            PLC_Comfirm.Curent_Total = readCount.Content[0].ToString().ToInt32();
+                            PLC_Comfirm.Curent_Fail = readCount.Content[1].ToString().ToInt32();
+                            PLC_Comfirm.Curent_Timeout = readCount.Content[4].ToString().ToInt32();
+                        }
 
+                        //kiểm tra xem biến nào lệch thì nhảy sự kiện biến đó
+                        if (PLC_Comfirm.Curent_Total != PLC_Comfirm.Last_Total)
+                        {
+                            //kiểm tra từng cái xem cái nào khác
+                            if (PLC_Comfirm.Curent_Pass != PLC_Comfirm.Last_Pass)
+                            {
+                                PLC_Comfirm.PLC_Total_Status_Dictionary[PLC_Comfirm.Curent_Total] = "PASS";
+                            }
+                            if (PLC_Comfirm.Curent_Fail != PLC_Comfirm.Last_Fail)
+                            {
+                                PLC_Comfirm.PLC_Total_Status_Dictionary[PLC_Comfirm.Curent_Total] = "FAIL";
+                            }
+                            if (PLC_Comfirm.Curent_Timeout != PLC_Comfirm.Last_Timeout)
+                            {
+                                PLC_Comfirm.PLC_Total_Status_Dictionary[PLC_Comfirm.Curent_Total] = "TIMEOUT";
+                            }
+                            // cập nhật lại giá trị cuối cùng
+                            PLC_Comfirm.Last_Pass = PLC_Comfirm.Curent_Pass;
+                            PLC_Comfirm.Last_Fail = PLC_Comfirm.Curent_Fail;
+                            PLC_Comfirm.Last_Total = PLC_Comfirm.Curent_Total;
+                            PLC_Comfirm.Last_Timeout = PLC_Comfirm.Curent_Timeout;
+                        }
+                    }
+                    
+                    await Task.Delay(20, GTask.Task_PLC_Comfirm.Token);
+                }
+            }
+            catch (TaskCanceledException) { }
+        }
+
+        private void StartTask()
+        {
+            Task.Run(PLC_Comfirm_Async, GTask.Task_PLC_Comfirm.Token);
         }
     }
 }
