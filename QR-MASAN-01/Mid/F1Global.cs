@@ -144,6 +144,7 @@ namespace QR_MASAN_01
     public static class GTask
     {
        public static CancellationTokenSource Task_PLC_Comfirm = new CancellationTokenSource();
+        public static CancellationTokenSource Task_Setting_PLC_Load_Parameter = new CancellationTokenSource();
     }
 
     public class Alarm

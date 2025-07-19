@@ -361,12 +361,6 @@
     <Compile Include="Views\ScanQR.Designer.cs">
       <DependentUpon>ScanQR.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\F1PLC.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\Settings\F1PLC.Designer.cs">
-      <DependentUpon>F1PLC.cs</DependentUpon>
-    </Compile>
     <Compile Include="Views\Settings\FAppSetting.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -442,9 +436,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ScanQR.resx">
       <DependentUpon>ScanQR.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\Settings\F1PLC.resx">
-      <DependentUpon>F1PLC.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Settings\FAppSetting.resx">
       <DependentUpon>FAppSetting.cs</DependentUpon>

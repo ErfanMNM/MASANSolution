@@ -157,6 +157,7 @@ namespace QR_MASAN_01
             fPI_Service.INIT();
             fAppSetting.FAppSetting_Load();
             _FStatistics.INIT();
+            _f1PLC.INIT();
         }
         private void ToggleFullScreen()
         {
