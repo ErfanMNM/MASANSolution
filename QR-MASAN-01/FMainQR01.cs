@@ -39,7 +39,7 @@ namespace QR_MASAN_01
         Printer_V7 _printer_V7 = new Printer_V7();
         FStatistics _FStatistics = new FStatistics();
         FSystemlogs FSystemlogs = new FSystemlogs();
-        F1PLC _f1PLC = new F1PLC();
+        PLCSetting _f1PLC = new PLCSetting();
         LoginForm loginForm = new LoginForm();
         DeActive deActive = new DeActive();
         FPI_Service fPI_Service = new FPI_Service();
