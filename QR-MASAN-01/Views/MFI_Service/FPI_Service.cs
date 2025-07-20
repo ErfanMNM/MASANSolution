@@ -100,7 +100,7 @@ namespace QR_MASAN_01.Views.MFI_Service
         private void btnPO_Click(object sender, EventArgs e)
         {
             //ghi logs người dùng nhấn nút
-            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Nhấn nút chỉnh sửa Date", "ProductDate", $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút chỉnh sửa Date");
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Nhấn nút chỉnh sửa Date", "ProductDate", $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút chỉnh sửa Date");
             btnPO.Enabled = false; // ẩn nút chỉnh PO để tránh nhấn nhiều lần
             //ghi logs vào hàng đợi
             if (GV.Production_Status != e_Production_Status.DATE_EDITING)
@@ -130,9 +130,9 @@ namespace QR_MASAN_01.Views.MFI_Service
                 if (DateTime.TryParse(ipProductionDate.Text, out DateTime productionDate))
                 {
                     //nếu hợp lệ thì lưu lại
-                    poService.RunPO(ipOrderNO.Text, productionDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+                    poService.RunPO(ipOrderNO.Text, productionDate.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                     //ghi logs đổi ngày sản xuất thành công
-                    SystemLogs systemLogsSuccess = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Đổi ngày sản xuất thành công", "ProductDate", $"Người dùng {Globalvariable.CurrentUser.Username} đã đổi ngày sản xuất thành công: {ipProductionDate.Text}");
+                    SystemLogs systemLogsSuccess = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Đổi ngày sản xuất thành công", "ProductDate", $"Người dùng {Globalvariable.CurrentUser.Username} đã đổi ngày sản xuất thành công: {ipProductionDate.Text}");
                     LogQueue.Enqueue(systemLogsSuccess);
                     //hiển thị thông báo thành công
                     this.ShowSuccessNotifier("Ngày sản xuất đã được lưu thành công.", false, 3000);
@@ -153,7 +153,7 @@ namespace QR_MASAN_01.Views.MFI_Service
         private void uiSymbolButton1_Click(object sender, EventArgs e)
         {
             //ghi logs người dùng nhấn nút test mode
-            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_LogType.USER_ACTION, "Nhấn nút Test Mode", GV.Production_Status.ToString(), $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút Test Mode");
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_LogType.USER_ACTION, "Nhấn nút Test Mode", GV.Production_Status.ToString(), $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút Test Mode");
             //ghi logs vào hàng đợi
             LogQueue.Enqueue(systemLogs);
 
@@ -579,7 +579,7 @@ namespace QR_MASAN_01.Views.MFI_Service
         private void FPI_Service_Initialize(object sender, EventArgs e)
         {
             //ghi logs người dùng khởi động trang FPI_Service
-            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Khởi động trang FPI_Service", "FPI_Service", $"Người dùng {Globalvariable.CurrentUser.Username} đã khởi động trang FPI_Service");
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Khởi động trang FPI_Service", "FPI_Service", $"Người dùng {Globalvariable.CurrentUser.Username} đã khởi động trang FPI_Service");
             //ghi logs vào hàng đợi
             SystemLogs.LogQueue.Enqueue(systemLogs);
         }
@@ -587,7 +587,7 @@ namespace QR_MASAN_01.Views.MFI_Service
         private void btnPO_Click_1(object sender, EventArgs e)
         {
             //ghi logs người dùng nhấn nút chỉnh sửa PO
-            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Nhấn nút chỉnh sửa PO", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút chỉnh sửa PO");
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Nhấn nút chỉnh sửa PO", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút chỉnh sửa PO");
             //ghi logs vào hàng đợi
             SystemLogs.LogQueue.Enqueue(systemLogs);
 
@@ -639,7 +639,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                         ipOrderNO.FillColor = Color.CornflowerBlue; // Đổi màu nền của ô nhập Order No về màu CornflowerBlue
                         ipProductionDate.FillColor = Color.CornflowerBlue; // Đổi màu nền của ô nhập Production Date về màu CornflowerBlue
                                                                            //ghi logs đổi PO thành công
-                        SystemLogs systemLogsSuccess = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Đổi PO thành công", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} đã đổi PO thành công: {ipOrderNO.Text}");
+                        SystemLogs systemLogsSuccess = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Đổi PO thành công", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} đã đổi PO thành công: {ipOrderNO.Text}");
                         //ghi logs vào hàng đợi
                         LogQueue.Enqueue(systemLogsSuccess);
 
@@ -715,7 +715,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                         // Hiển thị thông báo lỗi nếu có
                         this.ShowErrorNotifier($"Lỗi khi lưu PO: {ex.Message}", false, 3000);
                         //ghi logs lỗi khi lưu PO
-                        SystemLogs systemLogsError = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Lỗi khi lưu PO", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} gặp lỗi khi lưu PO: {ex.Message}");
+                        SystemLogs systemLogsError = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Lỗi khi lưu PO", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} gặp lỗi khi lưu PO: {ex.Message}");
                         //ghi logs vào hàng đợi
                         LogQueue.Enqueue(systemLogsError);
 
@@ -746,7 +746,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                                 //thực hiện thao tác xóa PO
 
                                 //ghi logs người dùng xác nhận xóa PO
-                                SystemLogs systemLogsDelete = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Xác nhận xóa PO", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} đã xác nhận xóa PO: {GV.Selected_PO.orderNo}");
+                                SystemLogs systemLogsDelete = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.PO, "Xác nhận xóa PO", "PO", $"Người dùng {Globalvariable.CurrentUser.Username} đã xác nhận xóa PO: {GV.Selected_PO.orderNo}");
                                 //ghi logs vào hàng đợi
                                 LogQueue.Enqueue(systemLogsDelete);
                                 //xóa PO
@@ -855,7 +855,7 @@ namespace QR_MASAN_01.Views.MFI_Service
         {
             //khởi động PO  
             //ghi logs người dùng nhấn nút chạy sản xuất
-            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Nhấn nút chạy sản xuất", "RUN", $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút chạy sản xuất ");
+            SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Nhấn nút chạy sản xuất", "RUN", $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút chạy sản xuất ");
             //ghi logs vào hàng đợi
             LogQueue.Enqueue(systemLogs);
 
@@ -871,7 +871,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                 case e_Production_Status.RUNNING:
                     //dừng sản xuất
                     //ghi logs người dùng dừng sản xuất
-                    SystemLogs stopLogs = new SystemLogs(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Nhấn nút dừng sản xuất", "RUN", $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút dừng sản xuất");
+                    SystemLogs stopLogs = new SystemLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Nhấn nút dừng sản xuất", "RUN", $"Người dùng {Globalvariable.CurrentUser.Username} nhấn nút dừng sản xuất");
                     //ghi logs vào hàng đợi
                     LogQueue.Enqueue(stopLogs);
                     btnRUN.Enabled = false; // ẩn nút chạy sản xuất

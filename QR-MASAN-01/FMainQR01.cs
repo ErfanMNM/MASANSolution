@@ -34,7 +34,8 @@ namespace QR_MASAN_01
         //MFI_Service_Form _FMFI = new MFI_Service_Form();
 
         FDashboard _FDashboard = new FDashboard();
-        ScanQR scanQR = new ScanQR();
+        //ScanQR scanQR = new ScanQR();
+        ScanQR_V2 scanQR_V2 = new ScanQR_V2();
         MyLanPrinter _myLanPrinter = new MyLanPrinter();
         Printer_V7 _printer_V7 = new Printer_V7();
         FStatistics _FStatistics = new FStatistics();
@@ -44,8 +45,9 @@ namespace QR_MASAN_01
         DeActive deActive = new DeActive();
         FPI_Service fPI_Service = new FPI_Service();
         //FDashboard_XK FDashboard_XK = new FDashboard_XK();
-        FormTest fTest = new FormTest();
+        //FormTest fTest = new FormTest();
         FAppSetting fAppSetting = new FAppSetting();
+
 
         public static e_Render_State Render_State = e_Render_State.LOGIN;
         public static e_App_State App_State = e_App_State.LOGIN;
@@ -113,9 +115,10 @@ namespace QR_MASAN_01
             uiNavMenu1.Nodes.Clear();
             // Thêm các trang vào menu điều hướng
             uiNavMenu1.CreateNode(AddPage(_FDashboard, 1001));
-            uiNavMenu1.CreateNode(AddPage(fTest, 1007)); // Thêm trang Test
+            //uiNavMenu1.CreateNode(AddPage(fTest, 1007)); // Thêm trang Test
             uiNavMenu1.CreateNode(AddPage(fPI_Service, 1003));
-            uiNavMenu1.CreateNode(AddPage(scanQR, 1004));
+           // uiNavMenu1.CreateNode(AddPage(scanQR, 1004));
+            uiNavMenu1.CreateNode(AddPage(scanQR_V2, 1004)); // Thêm trang máy in MyLan
             uiNavMenu1.CreateNode(AddPage(_f1PLC, 1009));
             uiNavMenu1.CreateNode(AddPage(_FStatistics, 1002));
             uiNavMenu1.CreateNode(AddPage(FSystemlogs, 1005));
@@ -153,7 +156,7 @@ namespace QR_MASAN_01
             }
 
             _FDashboard.INIT();
-            scanQR.INIT();
+            scanQR_V2.INIT();
             fPI_Service.INIT();
             fAppSetting.FAppSetting_Load();
             _FStatistics.INIT();

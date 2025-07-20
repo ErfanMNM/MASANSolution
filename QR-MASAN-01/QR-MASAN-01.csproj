@@ -355,6 +355,12 @@
     <Compile Include="Views\Scada\FSystemlogs.Designer.cs">
       <DependentUpon>FSystemlogs.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\ScanQR_V2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ScanQR_V2.Designer.cs">
+      <DependentUpon>ScanQR_V2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\ScanQR.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -433,6 +439,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Scada\FSystemlogs.resx">
       <DependentUpon>FSystemlogs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ScanQR_V2.resx">
+      <DependentUpon>ScanQR_V2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ScanQR.resx">
       <DependentUpon>ScanQR.cs</DependentUpon>

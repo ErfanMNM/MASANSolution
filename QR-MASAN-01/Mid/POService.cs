@@ -188,7 +188,10 @@ namespace QR_MASAN_01
         
         public void RunPO(string orderNo, string productionDate)
         {
-            
+            DateTime date = DateTime.ParseExact(productionDate, "yyyy-MM-dd", null);
+            // Format lại thành yyyy-MM-dd HH:mm:ss.fff
+            string output = date.ToString("yyyy-MM-dd HH:mm:ss.fff");
+
             Check_PO_Log_File();
             
             Check_Run_File(orderNo); //kiểm tra xem file run đã tồn tại chưa, nếu chưa thì tạo mới

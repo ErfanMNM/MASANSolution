@@ -21,6 +21,7 @@ namespace QR_MASAN_01
         public string pfxPassword { get; set; } // Đường dẫn đến file khóa riêng của client
         public string host { get; set; } // Địa chỉ chủ
         public string clientId { get; set; } // ID của client
+        public string HandScanCOM { get; set; }
 
 
         [ConfigSection("INK_PRINTER")]
@@ -72,6 +73,7 @@ namespace QR_MASAN_01
             host = "a22qv9bgjnbsae-ats.iot.ap-southeast-1.amazonaws.com"; // Default host address
             pfxPassword = "thuc"; // Default password for client certificate
             clientId = "MIPWP501"; // Default client ID
+            HandScanCOM = "COM2"; // Default COM port for hand scanner
         }
     }
 }

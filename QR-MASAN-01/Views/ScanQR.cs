@@ -58,11 +58,10 @@ namespace QR_MASAN_01
 
         public void INIT()
         {
-            //opScanerCOM.Text = Globalvariable.config.ScanerCOM;
             _ScanConection.SERIALPORT = serialPort1;
             _ScanConection.EVENT += _ScanConection_EVENT; ;
             _ScanConection.LOAD();
-            _ScanConection.CONNECT("COM2");
+            _ScanConection.CONNECT(Setting.Current.HandScanCOM);
         }
 
         private void _ScanConection_EVENT(e_Serial e, string s)
