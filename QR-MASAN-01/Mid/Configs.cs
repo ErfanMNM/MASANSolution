@@ -22,7 +22,7 @@ namespace QR_MASAN_01
         public string host { get; set; } // Địa chỉ chủ
         public string clientId { get; set; } // ID của client
         public string HandScanCOM { get; set; }
-        public bool AWS_ENA { get; set; }; // Tốc độ baud rate mặc định cho máy quét tay
+        public bool AWS_ENA { get; set; } // Tốc độ baud rate mặc định cho máy quét tay
 
 
         [ConfigSection("INK_PRINTER")]
