@@ -22,6 +22,7 @@ namespace QR_MASAN_01
         public string host { get; set; } // Địa chỉ chủ
         public string clientId { get; set; } // ID của client
         public string HandScanCOM { get; set; }
+        public bool AWS_ENA { get; set; }; // Tốc độ baud rate mặc định cho máy quét tay
 
 
         [ConfigSection("INK_PRINTER")]
@@ -74,6 +75,7 @@ namespace QR_MASAN_01
             pfxPassword = "thuc"; // Default password for client certificate
             clientId = "MIPWP501"; // Default client ID
             HandScanCOM = "COM2"; // Default COM port for hand scanner
+            AWS_ENA = false; // Enable AWS by default
         }
     }
 }

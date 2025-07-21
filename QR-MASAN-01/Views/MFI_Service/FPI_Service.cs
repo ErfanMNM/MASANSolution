@@ -38,63 +38,72 @@ namespace QR_MASAN_01.Views.MFI_Service
 
         private void ipOrderNO_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (ipOrderNO.SelectedItem != null)
-            {
-                var selected_PO_Info = poService.Get_PO_Info_By_OrderNo(ipOrderNO.SelectedText);
-
-                if (selected_PO_Info.Rows.Count > 0)
+            
+                if (ipOrderNO.SelectedItem != null)
                 {
-                    // Cập nhật các thông tin PO đã chọn
-                    poService.Check_Run_File(selected_PO_Info.Rows[0]["orderNo"].ToString()); // Kiểm
-                    opCZCodeCount.Text = selected_PO_Info.Rows[0]["UniqueCodeCount"].ToString();
-                    opProductionLine.Text = selected_PO_Info.Rows[0]["productionLine"].ToString();
-                    opOrderQty.Text = selected_PO_Info.Rows[0]["orderQty"].ToString();
-                    opCustomerOrderNO.Text = selected_PO_Info.Rows[0]["customerOrderNo"].ToString();
-                    opProductName.Text = selected_PO_Info.Rows[0]["productName"].ToString();
-                    opProductCode.Text = selected_PO_Info.Rows[0]["productCode"].ToString();
-                    opLotNumber.Text = selected_PO_Info.Rows[0]["lotNumber"].ToString();
-                    opGTIN.Text = selected_PO_Info.Rows[0]["gtin"].ToString();
-                    opShift.Text = selected_PO_Info.Rows[0]["shift"].ToString();
-                    opFactory.Text = selected_PO_Info.Rows[0]["factory"].ToString();
-                    opSite.Text = selected_PO_Info.Rows[0]["site"].ToString();
-                    opCZCodeCount.Text = selected_PO_Info.Rows[0]["UniqueCodeCount"].ToString();
-                    opCZRunCount.Text = poService.Get_ID_RUN(selected_PO_Info.Rows[0]["orderNo"].ToString()).ToString();
+                try
+                {
+                    var selected_PO_Info = poService.Get_PO_Info_By_OrderNo(ipOrderNO.SelectedText);
 
-                    opPassCount.Text = poService.get.Get_Record_Product_Count(selected_PO_Info.Rows[0]["orderNo"].ToString(), e_Content_Result.PASS).ToString();
-                    opFailCount.Text = "Đang tải...";
-                    opDuplicateCount.Text = poService.get.Get_Record_Product_Count(selected_PO_Info.Rows[0]["orderNo"].ToString(), e_Content_Result.DUPLICATE).ToString();
-                    opMESSendCount.Text = poService.get.Get_Unique_Codes_Run_Sent_Recive_OK_Count(selected_PO_Info.Rows[0]["orderNo"].ToString()).ToString();
-                    // Cập nhật thông tin vào biến Selected_PO
-
-                    if (opOrderQty.Text.ToInt() <= opPassCount.Text.ToInt32())
+                    if (selected_PO_Info.Rows.Count > 0)
                     {
-                        opTer.Text = $"PO đang chọn đã hoàn thành\r\n>> Hãy chọn PO khác";
-                        opTer.ForeColor = Color.Red; // Đổi màu chữ của ô thông báo
-                        opTer.Font = new Font(opTer.Font, FontStyle.Bold); // Đổi chữ đậm
+                        // Cập nhật các thông tin PO đã chọn
+                        poService.Check_Run_File(selected_PO_Info.Rows[0]["orderNo"].ToString()); // Kiểm
+                        opCZCodeCount.Text = selected_PO_Info.Rows[0]["UniqueCodeCount"].ToString();
+                        opProductionLine.Text = selected_PO_Info.Rows[0]["productionLine"].ToString();
+                        opOrderQty.Text = selected_PO_Info.Rows[0]["orderQty"].ToString();
+                        opCustomerOrderNO.Text = selected_PO_Info.Rows[0]["customerOrderNo"].ToString();
+                        opProductName.Text = selected_PO_Info.Rows[0]["productName"].ToString();
+                        opProductCode.Text = selected_PO_Info.Rows[0]["productCode"].ToString();
+                        opLotNumber.Text = selected_PO_Info.Rows[0]["lotNumber"].ToString();
+                        opGTIN.Text = selected_PO_Info.Rows[0]["gtin"].ToString();
+                        opShift.Text = selected_PO_Info.Rows[0]["shift"].ToString();
+                        opFactory.Text = selected_PO_Info.Rows[0]["factory"].ToString();
+                        opSite.Text = selected_PO_Info.Rows[0]["site"].ToString();
+                        opCZCodeCount.Text = selected_PO_Info.Rows[0]["UniqueCodeCount"].ToString();
+                        opCZRunCount.Text = poService.Get_ID_RUN(selected_PO_Info.Rows[0]["orderNo"].ToString()).ToString();
+
+                        opPassCount.Text = poService.get.Get_Record_Product_Count(selected_PO_Info.Rows[0]["orderNo"].ToString(), e_Content_Result.PASS).ToString();
+                        opFailCount.Text = "Đang tải...";
+                        opDuplicateCount.Text = poService.get.Get_Record_Product_Count(selected_PO_Info.Rows[0]["orderNo"].ToString(), e_Content_Result.DUPLICATE).ToString();
+                        opMESSendCount.Text = poService.get.Get_Unique_Codes_Run_Sent_Recive_OK_Count(selected_PO_Info.Rows[0]["orderNo"].ToString()).ToString();
+                        // Cập nhật thông tin vào biến Selected_PO
+
+                        if (opOrderQty.Text.ToInt() <= opPassCount.Text.ToInt32())
+                        {
+                            opTer.Text = $"PO đang chọn đã hoàn thành\r\n>> Hãy chọn PO khác";
+                            opTer.ForeColor = Color.Red; // Đổi màu chữ của ô thông báo
+                            opTer.Font = new Font(opTer.Font, FontStyle.Bold); // Đổi chữ đậm
+                        }
+                        else
+                        {
+                            opTer.Text = $"Nhấn LƯU LẠI để áp dụng PO";
+                            opTer.ForeColor = Color.Green; // Đổi màu chữ của ô thông báo
+                            opTer.Font = new Font(opTer.Font, FontStyle.Regular); // Đổi chữ thường
+                        }
                     }
                     else
                     {
-                        opTer.Text = $"Nhấn LƯU LẠI để áp dụng PO";
-                        opTer.ForeColor = Color.Green; // Đổi màu chữ của ô thông báo
-                        opTer.Font = new Font(opTer.Font, FontStyle.Regular); // Đổi chữ thường
+                        opProductionLine.Text = string.Empty;
+                        opOrderQty.Text = string.Empty;
+                        opCustomerOrderNO.Text = string.Empty;
+                        opProductName.Text = string.Empty;
+                        opProductCode.Text = string.Empty;
+                        opLotNumber.Text = string.Empty;
+                        opGTIN.Text = string.Empty;
+                        opShift.Text = string.Empty;
+                        opFactory.Text = string.Empty;
+                        opSite.Text = string.Empty;
+                        opCZCodeCount.Text = "0";
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    opProductionLine.Text = string.Empty;
-                    opOrderQty.Text = string.Empty;
-                    opCustomerOrderNO.Text = string.Empty;
-                    opProductName.Text = string.Empty;
-                    opProductCode.Text = string.Empty;
-                    opLotNumber.Text = string.Empty;
-                    opGTIN.Text = string.Empty;
-                    opShift.Text = string.Empty;
-                    opFactory.Text = string.Empty;
-                    opSite.Text = string.Empty;
-                    opCZCodeCount.Text = "0";
+                    this.ShowErrorNotifier($"Lỗi khi chọn Order No: {ex.Message}", false, 3000);
                 }
-
             }
+            
+            
         }
 
         private void btnPO_Click(object sender, EventArgs e)
@@ -419,7 +428,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                                 opCZCodeCount.Text = GV.Selected_PO.CodeCount;
                                 opCZRunCount.Text = GV.Selected_PO.runInfo.total.ToString();
                                 opPassCount.Text = GV.Selected_PO.runInfo.pass.ToString();
-                                opFailCount.Text = GV.Selected_PO.runInfo.fail.ToString();
+                                opFailCount.Text = (GV.Selected_PO.runInfo.total - GV.Selected_PO.runInfo.pass).ToString();
                                 opDuplicateCount.Text = GV.Selected_PO.runInfo.duplicate.ToString();
 
                                 opMESSendCount.Text = poService.get.Get_Unique_Codes_Run_Sent_Recive_OK_Count(GV.Selected_PO.orderNo.ToString()).ToString();
@@ -923,7 +932,8 @@ namespace QR_MASAN_01.Views.MFI_Service
                     //giả bộ hiện loading
                     SafeInvoke(() =>
                     {
-                        Thread.Sleep(5000); // Giả lập thời gian xử lý
+                        this.ShowInfoNotifier("Đang khởi động sản xuất, vui lòng đợi...", false, 3000);
+                        Thread.Sleep(3000); // Giả lập thời gian xử lý
                     });
 
                     //đẩy dữ liệu vào Ô nhớ
@@ -991,6 +1001,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                             //đẩy vào bộ đếm
                             Globalvariable.GCounter.Total_C2++;
 
+                            #region Datatabase to Counter
                             if (status == e_Content_Result.PASS.ToString())
                             {
                                 Globalvariable.GCounter.Total_Pass_C2++;
@@ -1023,6 +1034,13 @@ namespace QR_MASAN_01.Views.MFI_Service
                                 Globalvariable.GCounter.Total_Failed_C2++;
                                 Globalvariable.GCounter.Format_C2++;
                             }
+                            else if (status == e_Content_Result.NOT_FOUND.ToString())
+                            {
+                                Globalvariable.GCounter.Total_Failed_C2++;
+                                Globalvariable.GCounter.NotFound_C2++;
+                            }
+
+                            #endregion
                         }
                         //nếu đã chạy mã thì chuyển sang trạng thái Tiếp tục
                         GV.Production_Status = e_Production_Status.PLC_CON_PO;

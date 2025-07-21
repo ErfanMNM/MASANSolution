@@ -267,5 +267,10 @@ namespace QR_MASAN_01.Views.Scada
             }
 
         }
+
+        private void uiTableLayoutPanel7_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

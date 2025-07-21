@@ -82,9 +82,6 @@ namespace QR_MASAN_01.Auth
         }
     }
 
-
-
-
     //cấu trúc db
     //CREATE TABLE "users" (
     //	"ID"	INTEGER,

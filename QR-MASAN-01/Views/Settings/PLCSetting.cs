@@ -402,11 +402,11 @@ namespace QR_MASAN_01.Views.Settings
 
             isOpen = true;
 
-            Uri uri = new Uri($"http://{Setting.Current.IP_Camera_02}:{Setting.Current.Port_Camera_02}/monitor");
+            Uri uri = new Uri($"http://{Setting.Current.IP_Camera_02}/monitor");
             Uri uri1 = new Uri($"https://google.com");
-            webView21.Source = uri1;
+            webView21.Source = uri;
 
-            Uri uri2 = new Uri($"http://{Setting.Current.IP_Camera_01}:{Setting.Current.Port_Camera_01}/monitor");
+            Uri uri2 = new Uri($"http://{Setting.Current.IP_Camera_01}/monitor");
             Uri uri21 = new Uri($"https://google.com");
             webView22.Source = uri2;
         }   
@@ -860,12 +860,12 @@ namespace QR_MASAN_01.Views.Settings
                     // Ghi log
                     AddLogRecipe_CS(SelectRecipeName_CS, $"{delayCamera},{delayReject},{rejectStreng}", "UPDATE", Globalvariable.CurrentUser.Username);
 
-                    this.ShowSuccessNotifier("Cập nhật Camera Sau thành công!");
+                   // this.ShowSuccessNotifier("Cập nhật Camera Sau thành công!");
 
                 }
                 catch (Exception ex)
                 {
-                    this.ShowErrorNotifier($"Lỗi khi cập nhật Camera Sau: {ex.Message}");
+                    //this.ShowErrorNotifier($"Lỗi khi cập nhật Camera Sau: {ex.Message}");
 
                 }
             });

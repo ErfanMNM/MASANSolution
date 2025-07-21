@@ -25,6 +25,8 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "TimeService", "TimeService\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{3D291BA9-EC93-442F-8273-FF1E12766FFD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MASAN-SERIALIZATION", "MASAN-SERIALIZATION\MASAN-SERIALIZATION.csproj", "{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,14 @@ Global
 		{3D291BA9-EC93-442F-8273-FF1E12766FFD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3D291BA9-EC93-442F-8273-FF1E12766FFD}.Release|x64.ActiveCfg = Release|Any CPU
 		{3D291BA9-EC93-442F-8273-FF1E12766FFD}.Release|x64.Build.0 = Release|Any CPU
+		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Debug|x64.Build.0 = Debug|Any CPU
+		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Release|x64.ActiveCfg = Release|Any CPU
+		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

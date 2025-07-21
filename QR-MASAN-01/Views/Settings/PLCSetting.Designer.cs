@@ -56,7 +56,6 @@
             this.btnNewRecipe = new Sunny.UI.UISymbolButton();
             this.ipRecipe = new Sunny.UI.UIComboBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.omronPLC_Hsl1 = new SPMS1.OmronPLC_Hsl(this.components);
             this.uiTableLayoutPanel4 = new Sunny.UI.UITableLayoutPanel();
             this.uiTitlePanel4 = new Sunny.UI.UITitlePanel();
             this.webView22 = new Microsoft.Web.WebView2.WinForms.WebView2();
@@ -81,6 +80,7 @@
             this.uiTableLayoutPanel9 = new Sunny.UI.UITableLayoutPanel();
             this.btnNewCS = new Sunny.UI.UISymbolButton();
             this.ipRecipe_CS = new Sunny.UI.UIComboBox();
+            this.omronPLC_Hsl1 = new SPMS1.OmronPLC_Hsl(this.components);
             this.uiTabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
@@ -567,15 +567,6 @@
             this.tabPage2.Text = "Camera Sau";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // omronPLC_Hsl1
-            // 
-            this.omronPLC_Hsl1.PLC_IP = "127.0.0.1";
-            this.omronPLC_Hsl1.PLC_PORT = 9600;
-            this.omronPLC_Hsl1.PLC_Ready_DM = "D16";
-            this.omronPLC_Hsl1.PLC_STATUS = SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect;
-            this.omronPLC_Hsl1.Ready = 0;
-            this.omronPLC_Hsl1.Time_Update = 300;
-            // 
             // uiTableLayoutPanel4
             // 
             this.uiTableLayoutPanel4.ColumnCount = 1;
@@ -995,6 +986,15 @@
             this.ipRecipe_CS.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipRecipe_CS.Watermark = "";
             this.ipRecipe_CS.SelectedIndexChanged += new System.EventHandler(this.ipRecipe_CS_SelectedIndexChanged);
+            // 
+            // omronPLC_Hsl1
+            // 
+            this.omronPLC_Hsl1.PLC_IP = "127.0.0.1";
+            this.omronPLC_Hsl1.PLC_PORT = 9600;
+            this.omronPLC_Hsl1.PLC_Ready_DM = "D16";
+            this.omronPLC_Hsl1.PLC_STATUS = SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect;
+            this.omronPLC_Hsl1.Ready = 0;
+            this.omronPLC_Hsl1.Time_Update = 300;
             // 
             // PLCSetting
             // 
