@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +23,12 @@ namespace SpT.Auth
         AdminPrivileges // Thêm hành động quản trị viên
     }
 
+    public class LoginActionEventArgs : EventArgs
+    {
+        public bool Status { get; set; }
+        public string Message { get; set; }
+    }
+
     public class UserData
     {
         public string Username { get; set; } = string.Empty;  // Tên user
@@ -36,10 +43,10 @@ namespace SpT.Auth
         }
 
         //lấy danh sách user từ sqlite trong table users cột Username
-        public static DataTable GetUserListFromDB()
+        public static DataTable GetUserListFromDB(string data_file_path)
         {
             var dataTable = new DataTable();
-            using (var db = new SQLiteConnection("Data Source=abcc.bcaa;Version=3;"))
+            using (var db = new SQLiteConnection($"Data Source={data_file_path};Version=3;"))
             {
                 db.Open();
                 using (var command = new SQLiteCommand("SELECT Username FROM users", db))
@@ -93,6 +100,121 @@ namespace SpT.Auth
             }
 
             return user;
+        }
+    }
+
+    public class UserHelper
+    {
+        public static bool ValidateCredentials(string username, string password, string data_file_path)
+        {
+            // File SQLite đặt cạnh file exe
+            string dbFile = data_file_path;
+            if (!System.IO.File.Exists(dbFile))
+            {
+                //trả về sự kiện
+                return false;
+            }
+            using (var conn = new SQLiteConnection($"Data Source={dbFile};Version=3;"))
+            {
+                conn.Open();
+                string sql = "SELECT Password, Salt FROM users WHERE Username = @username";
+                using (var cmd = new SQLiteCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@username", username);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            string storedPassword = reader.GetString(0);
+                            string salt = reader.GetString(1);
+                            string hashedPassword = HashPassword(password, salt);
+                            return storedPassword == hashedPassword;
+                        }
+                    }
+                }
+                conn.Close();
+            }
+            return false;
+        }
+
+        // Hàm HashPassword để hash mật khẩu với salt
+        public static string HashPassword(string password, string salt)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] combinedBytes = Encoding.UTF8.GetBytes(password + salt);
+                byte[] hashBytes = sha256.ComputeHash(combinedBytes);
+                return Convert.ToBase64String(hashBytes);
+            }
+        }
+
+        public static bool UpdatePassword(string username, string password, string data_file_path) {
+
+            // File SQLite đặt cạnh file exe
+            string dbFile = data_file_path;
+            if (!System.IO.File.Exists(dbFile))
+            {
+                //trả về sự kiện
+                return false;
+            }
+            using (var conn = new SQLiteConnection($"Data Source={dbFile};Version=3;"))
+            {
+                conn.Open();
+                string salt = Guid.NewGuid().ToString(); // Tạo salt mới
+                string hashedPassword = HashPassword(password, salt);
+                string sql = "UPDATE users SET Password = @password, Salt = @salt WHERE Username = @username";
+                using (var cmd = new SQLiteCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@password", hashedPassword);
+                    cmd.Parameters.AddWithValue("@salt", salt);
+                    cmd.Parameters.AddWithValue("@username", username);
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    return rowsAffected > 0; // Trả về true nếu cập nhật thành công
+                }
+            }
+
+        }
+
+        public static bool AddUser(string username, string password, string Role, string data_file_path)
+        {
+            
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(Role))
+            {
+                return false; // Trả về false nếu thông tin không hợp lệ
+            }
+            //tạo key 2FA chuẩn base32
+            string key2FA = TwoFAHelper.GenerateSecret();
+            UserData user = new UserData
+            {
+                Username = username,
+                Password = password,
+                Role = Role,
+                Key2FA = string.Empty // Khóa 2FA có thể để trống nếu không sử dụng
+            };
+            // File SQLite đặt cạnh file exe
+            string dbFile = data_file_path;
+            if (!System.IO.File.Exists(dbFile))
+            {
+                //trả về sự kiện
+                return false;
+            }
+            using (var conn = new SQLiteConnection($"Data Source={dbFile};Version=3;"))
+            {
+                conn.Open();
+                string salt = Guid.NewGuid().ToString(); // Tạo salt mới
+                string hashedPassword = HashPassword(user.Password, salt);
+                string sql = "INSERT INTO users (Username, Password, Salt, Role, Key2FA) VALUES (@username, @password, @salt, @role, @key2fa)";
+                using (var cmd = new SQLiteCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@username", user.Username);
+                    cmd.Parameters.AddWithValue("@password", hashedPassword);
+                    cmd.Parameters.AddWithValue("@salt", salt);
+                    cmd.Parameters.AddWithValue("@role", user.Role);
+                    cmd.Parameters.AddWithValue("@key2fa", user.Key2FA);
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    return rowsAffected > 0; // Trả về true nếu thêm thành công
+                }
+            }
         }
     }
 }

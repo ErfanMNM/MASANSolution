@@ -1,6 +1,6 @@
 ﻿
 using MainClass;
-using QR_MASAN_01.Auth;
+using SpT.Auth;
 using Sunny.UI;
 using System;
 using System.Collections.Generic;
@@ -100,7 +100,6 @@ namespace QR_MASAN_01
         public static string QRCode_FileName { get; set; } = string.Empty;
 
         public static long TimeUnixPrinter { get; set; } = 0;
-
 
         public static UserData CurrentUser { get; set; } = new UserData(); // Lưu thông tin người dùng hiện tại
 

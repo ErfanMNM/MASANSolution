@@ -54,7 +54,6 @@ namespace QR_MASAN_01.Views.Settings
 
         }
 
-
         public void LoadSettingToTreeView(UITreeView treeView)
         {
             treeView.Nodes.Clear();
@@ -101,6 +100,18 @@ namespace QR_MASAN_01.Views.Settings
                 object key = prop.Name;
             }
 
+        }
+
+        private void FAppSetting_Initialize(object sender, EventArgs e)
+        {
+
+            uc_UserSetting1.CurrentUserName = Globalvariable.CurrentUser.Username; // Thiết lập tên người dùng hiện tại
+            uc_UserSetting1.INIT(); // Khởi tạo thông tin người dùng
+        }
+
+        private void uc_UserSetting1_OnUserAction(object sender, SpT.Auth.LoginActionEventArgs e)
+        {
+            this.ShowInfoTip(e.Message);
         }
     }
 }

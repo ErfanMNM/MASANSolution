@@ -4,7 +4,6 @@ using MainClass;
 using MainClass.Enum;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using QR_MASAN_01.Auth;
 using QR_MASAN_01.Utils;
 using SpT;
 using Sunny.UI;

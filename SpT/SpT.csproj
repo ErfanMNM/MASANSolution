@@ -168,6 +168,12 @@
     <Compile Include="AWS\AwsMqttHelper.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="DecodeEncode\Hash.cs" />
+    <Compile Include="Dialogs\Entertext.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\Entertext.Designer.cs">
+      <DependentUpon>Entertext.cs</DependentUpon>
+    </Compile>
     <Compile Include="Files\FileControl.cs" />
     <Compile Include="GoogleAPI\GoogleAPI.cs" />
     <Compile Include="AuditTrail\LogHelper.cs" />
@@ -207,6 +213,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Auth\uc_UserSetting.resx">
       <DependentUpon>uc_UserSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\Entertext.resx">
+      <DependentUpon>Entertext.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Setting\stringtype.resx">
       <DependentUpon>stringtype.cs</DependentUpon>

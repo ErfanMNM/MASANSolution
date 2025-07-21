@@ -1,5 +1,4 @@
 ﻿using MFI_Service;
-using QR_MASAN_01.Auth;
 using QR_MASAN_01.Mid;
 using QR_MASAN_01.Views;
 using QR_MASAN_01.Views.MFI_Service;
@@ -24,6 +23,7 @@ using System.Threading;
 using System.Windows.Forms;
 using static QR_MASAN_01.SystemLogs;
 using static QR_MASAN_01.AWSLogs;
+using QR_MASAN_01.Views.User_Pages;
 
 
 
@@ -41,7 +41,8 @@ namespace QR_MASAN_01
         FStatistics _FStatistics = new FStatistics();
         FSystemlogs FSystemlogs = new FSystemlogs();
         PLCSetting _f1PLC = new PLCSetting();
-        LoginForm loginForm = new LoginForm();
+        //LoginForm loginForm = new LoginForm();
+        PLogin _pLogin = new PLogin();
         DeActive deActive = new DeActive();
         FPI_Service fPI_Service = new FPI_Service();
         //FDashboard_XK FDashboard_XK = new FDashboard_XK();
@@ -123,7 +124,8 @@ namespace QR_MASAN_01
             uiNavMenu1.CreateNode(AddPage(_FStatistics, 1002));
             uiNavMenu1.CreateNode(AddPage(FSystemlogs, 1005));
             uiNavMenu1.CreateNode(AddPage(fAppSetting, 1008)); // Thêm trang Cài đặt ứng dụng
-            uiNavMenu1.CreateNode(AddPage(loginForm, 1999));
+            //uiNavMenu1.CreateNode(AddPage(loginForm, 1999));
+            uiNavMenu1.CreateNode(AddPage(_pLogin, 1999)); // Thêm trang đăng nhập
             uiNavMenu1.CreateNode(AddPage(deActive, 1998));
 
             uiNavMenu1.SelectPage(1999); //chọn trang Dashboard mặc định
@@ -161,6 +163,7 @@ namespace QR_MASAN_01
             fAppSetting.FAppSetting_Load();
             _FStatistics.INIT();
             _f1PLC.INIT();
+            _pLogin.INIT();
         }
         private void ToggleFullScreen()
         {

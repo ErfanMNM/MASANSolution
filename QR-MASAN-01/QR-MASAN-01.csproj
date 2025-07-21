@@ -241,7 +241,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Auth\UserClass.cs" />
     <Compile Include="Dialogs\CreateRecipe.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -319,12 +318,6 @@
     <Compile Include="Views\FStatistics.Designer.cs">
       <DependentUpon>FStatistics.cs</DependentUpon>
     </Compile>
-    <Compile Include="Views\LoginForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Views\LoginForm.Designer.cs">
-      <DependentUpon>LoginForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Views\MFI_Service\FPI_Service.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -379,6 +372,12 @@
     <Compile Include="Views\Settings\PLCSetting.Designer.cs">
       <DependentUpon>PLCSetting.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\User_Pages\PLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\User_Pages\PLogin.Designer.cs">
+      <DependentUpon>PLogin.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Dialogs\CreateRecipe.resx">
       <DependentUpon>CreateRecipe.cs</DependentUpon>
     </EmbeddedResource>
@@ -422,9 +421,6 @@
     <EmbeddedResource Include="Views\FStatistics.resx">
       <DependentUpon>FStatistics.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\LoginForm.resx">
-      <DependentUpon>LoginForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Views\MFI_Service\FPI_Service.resx">
       <DependentUpon>FPI_Service.cs</DependentUpon>
     </EmbeddedResource>
@@ -451,6 +447,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Settings\PLCSetting.resx">
       <DependentUpon>PLCSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\User_Pages\PLogin.resx">
+      <DependentUpon>PLogin.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

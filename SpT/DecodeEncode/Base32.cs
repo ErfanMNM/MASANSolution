@@ -12,8 +12,10 @@ namespace SpT
 
 	public static class Base32
 	{
-		private static readonly char[] Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".ToCharArray();
-		private static readonly int[] Map = new int[128];
+        //t?t c? các ký t? h?p l? trong Base32
+        private static readonly char[] Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567".ToCharArray();
+        //private static readonly char[] Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789abcdef".ToCharArray();
+        private static readonly int[] Map = new int[128];
 
 		static Base32()
 		{

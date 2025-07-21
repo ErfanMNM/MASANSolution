@@ -1,4 +1,5 @@
-﻿using SpT;
+﻿using SpT.Auth;
+using SpT.Diaglogs;
 using SpT.Logs;
 using Sunny.UI;
 using System;
@@ -22,7 +23,15 @@ namespace SpT.Auth
             InitializeComponent();
         }
 
+        public event EventHandler<LoginActionEventArgs> OnLoginAction; // Sự kiện đăng nhập, đăng xuất, cập nhật thông tin người dùng, v.v.
         public bool IS2FAEnabled { get; set; } = true; // Biến để kiểm tra xem 2FA có được bật hay không
+        // Đường dẫn đến file dữ liệu SQLite, có thể thay đổi theo nhu cầu, mặc dịnh trong Appdata Local TanTien/Users
+        public string data_file_path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TanTien", "Users", "users.database");
+
+        private LogHelper<LoginAction> log; // Biến để lưu trữ thông tin log
+        public UserData CurrentUser { get; private set; } // Biến để lưu trữ thông tin người dùng hiện tại
+
+        DataTable UsersList = new DataTable();
 
         private void uiTableLayoutPanel2_Paint(object sender, PaintEventArgs e)
         {
@@ -31,106 +40,223 @@ namespace SpT.Auth
 
         public void INIT()
         {
+            //tạo đường dẫn đến Appdata Local
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            //tạo đường dẫn đến file lưu log
+            string logFilePath = System.IO.Path.Combine(appDataPath, "TanTien","Logs", "userlog.logs");
+            //kiểm tra thư mục có tồn tại không
+            string directoryPath = System.IO.Path.GetDirectoryName(data_file_path);
+            if (!System.IO.Directory.Exists(directoryPath))
+            {
+                //nếu không tồn tại thì tạo mới
+                System.IO.Directory.CreateDirectory(directoryPath);
+            }
             //tạo thông tin log
-            var log = new LogHelper<LoginAction>("userlog.db");
+            log = new LogHelper<LoginAction>(logFilePath);
+            //kiểm tra thư mục có tồn tại không
+
+            directoryPath = System.IO.Path.GetDirectoryName(logFilePath);
+            if (!System.IO.Directory.Exists(directoryPath))
+            {
+                //nếu không tồn tại thì tạo mới
+                System.IO.Directory.CreateDirectory(directoryPath);
+            }
+
+            //kiểm tra file dữ liệu có tồn tại không
+            if (!System.IO.File.Exists(data_file_path))
+            {
+                //nếu không tồn tại thì tạo mới
+                SQLiteConnection.CreateFile(data_file_path);
+                //tạo bảng users
+                using (var conn = new SQLiteConnection($"Data Source={data_file_path};Version=3;"))
+                {
+                    conn.Open();
+                    string sql = $@"CREATE TABLE ""users""(
+                                                    ""ID""    INTEGER,
+                                                    ""Username""  TEXT NOT NULL,
+                                                    ""Password""  TEXT NOT NULL,
+                                                    ""Salt""  TEXT NOT NULL,
+                                                    ""Role""  TEXT NOT NULL,
+                                                    ""Key2FA""    TEXT NOT NULL,
+                                                    PRIMARY KEY(""ID"" AUTOINCREMENT)
+                            );";
+                    using (var cmd = new SQLiteCommand(sql, conn))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                    conn.Close();
+                }
+            }
+
+            // Tạo DataTable để lưu danh sách người dùng
+            UsersList = UserData.GetUserListFromDB(data_file_path);
+            // uiSymbolButton1_Click();
+
+            //thêm vào cbbox ipUserName
+            ipUserName.Items.Clear();
+            foreach (DataRow row in UsersList.Rows)
+            {
+                string username = row["Username"].ToString();
+                if (!string.IsNullOrEmpty(username))
+                {
+                    ipUserName.Items.Add(username);
+                }
+            }
+
+            if (ipUserName.Items.Count > 0)
+            {
+                // Chọn mục đầu tiên nếu có
+                ipUserName.SelectedIndex = 0;
+            }
+            else
+            {
+                // Hiển thị thông báo nếu không có người dùng nào
+                OnLoginAction?.Invoke(this, new LoginActionEventArgs
+                {
+                    Status = false,
+                    Message = "Không có người dùng nào trong hệ thống."
+                });
+            }
 
         }
 
-        private async void btnLogin_Click(object sender, EventArgs e)
+        private void btnLogin_Click(object sender, EventArgs e)
         {
             try
             {
-                //lưu lại thông tin đăng nhập vào hàng đợi log
-                
-
+                btnLogin.Enabled = false; // Vô hiệu hóa nút đăng nhập trong quá trình xử lý
+                btnLogin.Text = "Đang tải..."; // Thay đổi văn bản nút đăng nhập để hiển thị trạng thái
                 // Kiểm tra thông tin đăng nhập
                 string username = ipUserName.Text.Trim();
                 string password = ipPassword.Text.Trim();
 
                 if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 {
-                    
+                    //trả về thông báo lỗi
+                    OnLoginAction?.Invoke(this, new LoginActionEventArgs
+                    {
+                        Status = false,
+                        Message = "Tên đăng nhập hoặc mật khẩu không được để trống."
+                    });
                     return;
                 }
 
                 //kiểm tra thông tin đăng nhập trong sqlite abcc.bcaa
-                if (ValidateCredentials(username, password))
+                if (UserHelper.ValidateCredentials(username, password,data_file_path))
                 {
-                    //kiểm tra 2FA nếu cài đặt có yêu cầu 2FA
-                    UserData dbUser = UserData.GetUserByUsername(username);
-
+                    //lấy thông tin user từ sqlite
+                    UserData dbUser = UserData.GetUserByUsername(username, data_file_path);
+                    //kiểm tra có khóa 2FA không
                     if (IS2FAEnabled)
                     {
                         bool isValid = TwoFAHelper.VerifyOTP(dbUser.Key2FA, ipOTP.Text, digits: 6);
                         if (!isValid)
                         {
                             //ghi log, trả sự kiện
+                            OnLoginAction?.Invoke(this, new LoginActionEventArgs
+                            {
+                                Status = false,
+                                Message = "Mã OTP không hợp lệ."
+                            });
+
+                            //ghi log lỗi
+                            Task.Run(async () =>
+                            {
+                                try
+                                {
+                                    await log.WriteLogAsync("NA", LoginAction.Login, $"Đăng nhập thất bại cho người dùng {username}: Mã OTP không hợp lệ.");
+                                }
+                                catch (Exception ex)
+                                {
+                                    // log hoặc ignore
+                                }
+                            });
+
                             return;
                         }
                     }
                     //trả lại thông tin user
-
+                    CurrentUser = dbUser;
                     //ghi log
+                    //await log.WriteLogAsync(username, LoginAction.Login, $"Đăng nhập thành công cho người dùng {username}.");
 
                     //trả về sự kiện
+                    OnLoginAction?.Invoke(this, new LoginActionEventArgs
+                    {
+                        Status = true,
+                        Message = $"Đăng nhập thành công cho người dùng {username}."
+                    });
 
                     return;
                 }
                 else
                 {
-                    //trả về sự kiện lỗi, ghi log
+                    OnLoginAction?.Invoke(this, new LoginActionEventArgs
+                    {
+                        Status = false,
+                        Message = "Tên đăng nhập hoặc mật khẩu không đúng."
+                    });
+                    //ghi log lỗi
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await log.WriteLogAsync("NA", LoginAction.Login, $"Đăng nhập thất bại cho người dùng {username}: Tên đăng nhập hoặc mật khẩu không đúng.");
+                        }
+                        catch (Exception ex)
+                        {
+                            // log hoặc ignore
+                        }
+                    });
                 }
 
             }
             catch (Exception ex)
             {
-                // Ghi log lỗi vào hàng đợi
-                
-                // Hiển thị thông báo lỗi cho người dùng
-                
-            }
-        }
-
-        private bool ValidateCredentials(string username, string password)
-        {
-            // File SQLite đặt cạnh file exe
-            string dbFile = "abcc.bcaa";
-            if (!System.IO.File.Exists(dbFile))
-            {
-                //trả về sự kiện
-                return false;
-            }
-            using (var conn = new SQLiteConnection($"Data Source={dbFile};Version=3;"))
-            {
-                conn.Open();
-                string sql = "SELECT Password, Salt FROM users WHERE Username = @username";
-                using (var cmd = new SQLiteCommand(sql, conn))
+                // Ghi log lỗi
+                //await log.WriteLogAsync("NA", LoginAction.Login, $"Lỗi khi đăng nhập: {ex.Message}");
+                // Trả về sự kiện lỗi
+                OnLoginAction?.Invoke(this, new LoginActionEventArgs
                 {
-                    cmd.Parameters.AddWithValue("@username", username);
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            string storedPassword = reader.GetString(0);
-                            string salt = reader.GetString(1);
-                            string hashedPassword = HashPassword(password, salt);
-                            return storedPassword == hashedPassword;
-                        }
-                    }
-                }
-                conn.Close();
+                    Status = false,
+                    Message = $"Lỗi khi đăng nhập: {ex.Message}"
+                });
             }
-            return false;
+            finally
+            {
+                btnLogin.Enabled = true; // Bật lại nút đăng nhập sau khi xử lý xong
+                btnLogin.Text = "Đăng nhập"; // Đặt lại văn bản nút đăng nhập
+            }
         }
 
-        // Hàm HashPassword để hash mật khẩu với salt
-        private string HashPassword(string password, string salt)
+        
+
+        private void ipUserName_DoubleClick(object sender, EventArgs e)
         {
-            using (SHA256 sha256 = SHA256.Create())
+            using (Entertext enterText = new Entertext())
             {
-                byte[] combinedBytes = Encoding.UTF8.GetBytes(password + salt);
-                byte[] hashBytes = sha256.ComputeHash(combinedBytes);
-                return Convert.ToBase64String(hashBytes);
+                enterText.TileText = "Nhập tên đăng nhập";
+                enterText.TextValue = ipUserName.Text;
+                enterText.EnterClicked += (s, args) =>
+                {
+                    ipUserName.Text = enterText.TextValue;
+                };
+                enterText.ShowDialog();
+            }
+        }
+
+        private void ipPassword_DoubleClick(object sender, EventArgs e)
+        {
+            using (Entertext enterText = new Entertext())
+            {
+                enterText.TileText = "Nhập mật khẩu";
+                enterText.TextValue = ipPassword.Text;
+                enterText.IsPassword = true; // Thiết lập chế độ nhập mật khẩu
+                enterText.EnterClicked += (s, args) =>
+                {
+                    ipPassword.Text = enterText.TextValue;
+                };
+                enterText.ShowDialog();
             }
         }
     }

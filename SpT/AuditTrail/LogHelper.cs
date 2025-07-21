@@ -26,6 +26,12 @@ namespace SpT.Logs
 
         private void Init()
         {
+            // Kiểm tra và tạo thư mục nếu không tồn tại
+            var directory = Path.GetDirectoryName(_dbPath);
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
             if (!File.Exists(_dbPath))
             {
                 SQLiteConnection.CreateFile(_dbPath);

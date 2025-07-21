@@ -24,26 +24,24 @@ namespace QR_MASAN_01
         public string HandScanCOM { get; set; }
         public bool AWS_ENA { get; set; } // Tốc độ baud rate mặc định cho máy quét tay
 
+        public string User_Database { get; set; } = @"abcc.bcaa"; // Đường dẫn đến file cơ sở dữ liệu người dùng
 
-        [ConfigSection("INK_PRINTER")]
         public string Printer_name { get; set; }
 
-        [ConfigSection("LASER_PRINTER")]
+
         public string Laser_printer_server_url { get; set; }
 
-        [ConfigSection("CAMERA")]
+
         public int Camera_Slot { get; set; }
         public string IP_Camera_01 { get; set; } // Thêm camera slot 02 nếu cần
         public string IP_Camera_02 { get; set; } // Thêm camera slot 03 nếu cần
         public int Port_Camera_01 { get; set; } // Thêm camera slot 04 nếu cần
         public int Port_Camera_02 { get; set; } // Thêm camera slot 05 nếu cần
 
-        [ConfigSection("DATA")]
         public string Code_Content_Pattern { get; set; }
         public string Production_Mode { get; set; }
         public string PO_Data_path { get; set; }
 
-        [ConfigSection("AUTH")]
         public bool TwoFA_Enabled { get; set; }
         public string PO_Edit_AMode { get; set; }
         public bool TwoFA_Enabled_PO { get; set; }
