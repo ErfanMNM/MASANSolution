@@ -767,13 +767,13 @@ namespace QR_MASAN_01
             //Kiểm tra tính hợp lệ của dữ liệu
             if (_strData.IsNullOrEmpty())
             {
-                //loại sản phẩm ngay lập tức
+                //Đi thẳng sản phẩm
                Send_Result_Content_C1(e_Content_Result.EMPTY, "MÃ RỖNG");
                 return;
             }
             if (_strData == "FAIL")
             {
-                //chỗ này xử lý sau
+                //Đi thẳng luôn
                 Send_Result_Content_C1(e_Content_Result.FAIL, "KHÔNG ĐỌC ĐƯỢC");
                 return;
             }
@@ -786,14 +786,14 @@ namespace QR_MASAN_01
                 if (C1CodeData.Status == "0")
                 {
                     //C1CodeData.ID = GV.ID;
-                    //Chưa kích hoạt
+                    //Chưa kích hoạt báo lỗi
                     Send_Result_Content_C1(e_Content_Result.FAIL, _strData);
                     return;
                 }
                 //nếu đã kích hoạt
                 else
                 {
-                    //thêm vào thùng
+                    //thêm vào thùng, cập nhật lại mã thùng
                     Send_Result_Content_C1(e_Content_Result.PASS, _strData);
                     return;
                 }
@@ -847,14 +847,14 @@ namespace QR_MASAN_01
                         if (write.IsSuccess)
                         {
 
-                            //while(true)
-                            //{
-                            //    //đợi cho đến khi có giá trị
-                            //    //nếu có giá trị thì lấy Status_s
-                            //   PLC_Comfirm.PLC_Total_Status_Dictionary.TryGetValue(Globalvariable.GCounter.Total_C2, out string Status_s);
+                            while (true)
+                            {
+                                //đợi cho đến khi có giá trị
+                                //nếu có giá trị thì lấy Status_s
+                                PLC_Comfirm.PLC_Total_Status_Dictionary.TryGetValue(Globalvariable.GCounter.Total_C2, out string Status_s);
 
-                            //    if (Status_s == "PASS")
-                            //    {
+                                if (Status_s == "PASS")
+                                {
                                     //pass
                                     C2CodeData.Status = "1";
                                     //giờ kích hoạt theo ISO
@@ -866,48 +866,42 @@ namespace QR_MASAN_01
                                     //Ghi thành công
                                     Send_Result_Content_C2(e_Content_Result.PASS, _strData);
                                     return;
-                                //}
-                                //else if (Status_s == "FAIL")
-                                //{
-                                //    //fail
-                                //    //Gửi xuống PLC fail được tính là fail trong csdl luôn
-                                //    C2CodeData.Status = "-1";
-                                //    //giờ kích hoạt theo ISO
-                                //    C2CodeData.Activate_Datetime = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                                //    C2CodeData.Production_Datetime = GV.Selected_PO.productionDate;
-                                //    //Gửi vào hàng chờ để cập nhật SQLite
-                                //    GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
-                                //    //Ghi thất bại
-                                //    Send_Result_Content_C2(e_Content_Result.ERROR, _strData);
+                                }
+                                else if (Status_s == "FAIL")
+                                {
+                                    //fail
+                                    //Gửi xuống PLC fail được tính là fail trong csdl luôn
+                                    C2CodeData.Status = "-1";
+                                    //giờ kích hoạt theo ISO
+                                    C2CodeData.Activate_Datetime = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                                    C2CodeData.Production_Datetime = GV.Selected_PO.productionDate;
+                                    //Gửi vào hàng chờ để cập nhật SQLite
+                                    GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
+                                    //Ghi thất bại
+                                    Send_Result_Content_C2(e_Content_Result.ERROR, _strData);
 
-                                //    break;
-                                //}
-                                //else if (Status_s == "TIMEOUT")
-                                //{
-                                //    //Gửi xuống PLC fail được tính là fail trong csdl luôn
-                                //    //Gửi xuống PLC fail được tính là fail trong csdl luôn
-                                //    C2CodeData.Status = "-1";
-                                //    //giờ kích hoạt theo ISO
-                                //    C2CodeData.Activate_Datetime = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                                //    C2CodeData.Production_Datetime = GV.Selected_PO.productionDate;
-                                //    //Gửi vào hàng chờ để cập nhật SQLite
-                                //    GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
-                                //    //Ghi thất bại
-                                //    Send_Result_Content_C2(e_Content_Result.ERROR, _strData);
-                                //    break;
-                                //}
-                                //else
-                                //{
-                                //    //nếu không có giá trị thì đợi 100ms
-                                //    //để tránh treo ứng dụng
-                                //    Thread.Sleep(5);
-                                //}
-                           // }
-
-                            
-
-
-
+                                    break;
+                                }
+                                else if (Status_s == "TIMEOUT")
+                                {
+                                    //Gửi xuống PLC fail được tính là fail trong csdl luôn
+                                    C2CodeData.Status = "-1";
+                                    //giờ kích hoạt theo ISO
+                                    C2CodeData.Activate_Datetime = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                                    C2CodeData.Production_Datetime = GV.Selected_PO.productionDate;
+                                    //Gửi vào hàng chờ để cập nhật SQLite
+                                    GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
+                                    //Ghi thất bại
+                                    Send_Result_Content_C2(e_Content_Result.ERROR, _strData);
+                                    break;
+                                }
+                                else
+                                {
+                                    //nếu không có giá trị thì đợi 100ms
+                                    //để tránh treo ứng dụng
+                                    Thread.Sleep(5);
+                                }
+                            }
                         }
                         else
                         {

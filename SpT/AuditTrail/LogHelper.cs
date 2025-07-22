@@ -1,29 +1,48 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
-using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SpT.Logs
 {
+    public class LogEntry<TAction> where TAction : struct, IConvertible
+    {
+        public int Id { get; set; }
+        public string TimeISO { get; set; }
+        public long TimestampMs { get; set; }
+        public string User { get; set; }
+        public TAction Action { get; set; }
+        public string Description { get; set; }
+        public string JsonParams { get; set; }
+    }
 
-    public class LogHelper<TAction> where TAction : Enum
+    public class LogHelper<TAction> : IDisposable where TAction : struct, IConvertible
     {
         private readonly string _dbPath;
         private readonly string _connectionString;
+        private readonly BlockingCollection<LogEntry<TAction>> _logQueue = new BlockingCollection<LogEntry<TAction>>();
+        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
+        private readonly Task _logWorker;
 
         public LogHelper(string dbPath)
         {
+            if (!typeof(TAction).IsEnum)
+                throw new ArgumentException("TAction phải là enum");
+
             _dbPath = dbPath;
             _connectionString = $"Data Source={_dbPath};Version=3;";
-            Init();
+            InitDatabase();
+
+            _logWorker = Task.Factory.StartNew(ProcessLogQueue,
+                TaskCreationOptions.LongRunning);
         }
 
-        private void Init()
+        private void InitDatabase()
         {
-            // Kiểm tra và tạo thư mục nếu không tồn tại
             var directory = Path.GetDirectoryName(_dbPath);
             if (!Directory.Exists(directory))
             {
@@ -37,63 +56,128 @@ namespace SpT.Logs
             using (var conn = new SQLiteConnection(_connectionString))
             {
                 conn.Open();
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = @"
-            CREATE TABLE IF NOT EXISTS Logs (
-                Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                TimeISO TEXT,
-                TimestampMs INTEGER,
-                User TEXT,
-                Action TEXT,
-                Description TEXT,
-                JsonParams TEXT
-            );";
-                cmd.ExecuteNonQuery();
+
+                using (var pragmaCmd = conn.CreateCommand())
+                {
+                    pragmaCmd.CommandText = "PRAGMA journal_mode=WAL;";
+                    pragmaCmd.ExecuteNonQuery();
+                }
+
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        CREATE TABLE IF NOT EXISTS Logs (
+                            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            TimeISO TEXT,
+                            TimestampMs INTEGER,
+                            User TEXT,
+                            Action TEXT,
+                            Description TEXT,
+                            JsonParams TEXT
+                        );";
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
 
-        public async Task WriteLogAsync(string user, TAction action, string description, string jsonParams = "")
+        public Task WriteLogAsync(string user, TAction action, string description, string jsonParams = "")
         {
-            await Task.Run(() =>
-            {
-                var now = DateTime.UtcNow;
-                var timestampMs = (long)(now - new DateTime(1970, 1, 1)).TotalMilliseconds;
-                var timeISO = now.ToString("o");
+            var now = DateTime.UtcNow;
+            var timestampMs = (long)(now - new DateTime(1970, 1, 1)).TotalMilliseconds;
+            var timeISO = now.ToString("o");
 
-                using (var conn = new SQLiteConnection(_connectionString))
-                {
-                    conn.Open();
-                    var cmd = conn.CreateCommand();
-                    cmd.CommandText = @"
-                INSERT INTO Logs (TimeISO, TimestampMs, User, Action, Description, JsonParams)
-                VALUES (@TimeISO, @TimestampMs, @User, @Action, @Description, @JsonParams);";
-                    cmd.Parameters.AddWithValue("@TimeISO", timeISO);
-                    cmd.Parameters.AddWithValue("@TimestampMs", timestampMs);
-                    cmd.Parameters.AddWithValue("@User", user);
-                    cmd.Parameters.AddWithValue("@Action", action.ToString());
-                    cmd.Parameters.AddWithValue("@Description", description);
-                    cmd.Parameters.AddWithValue("@JsonParams", jsonParams ?? "");
-                    cmd.ExecuteNonQuery();
-                }
-            });
+            var entry = new LogEntry<TAction>
+            {
+                TimeISO = timeISO,
+                TimestampMs = timestampMs,
+                User = user,
+                Action = action,
+                Description = description,
+                JsonParams = jsonParams ?? ""
+            };
+
+            _logQueue.Add(entry);
+            return Task.CompletedTask;
         }
 
-        public List<LogEntry<TAction>> GetLogs(int limit = 50, int offset = 0)
+        private void ProcessLogQueue()
+        {
+            using (var conn = new SQLiteConnection(_connectionString))
+            {
+                conn.Open();
+
+                while (!_cts.IsCancellationRequested || !_logQueue.IsCompleted)
+                {
+                    LogEntry<TAction> entry = null;
+                    try
+                    {
+                        if (!_logQueue.TryTake(out entry, Timeout.Infinite, _cts.Token))
+                            continue;
+
+                        using (var cmd = conn.CreateCommand())
+                        {
+                            cmd.CommandText = @"
+                                INSERT INTO Logs (TimeISO, TimestampMs, User, Action, Description, JsonParams)
+                                VALUES (@TimeISO, @TimestampMs, @User, @Action, @Description, @JsonParams);";
+                            cmd.Parameters.AddWithValue("@TimeISO", entry.TimeISO);
+                            cmd.Parameters.AddWithValue("@TimestampMs", entry.TimestampMs);
+                            cmd.Parameters.AddWithValue("@User", entry.User);
+                            cmd.Parameters.AddWithValue("@Action", entry.Action.ToString());
+                            cmd.Parameters.AddWithValue("@Description", entry.Description);
+                            cmd.Parameters.AddWithValue("@JsonParams", entry.JsonParams ?? "");
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            var fallbackPath = Path.Combine(Path.GetDirectoryName(_dbPath), "fallback_log.txt");
+                            var sb = new StringBuilder();
+                            sb.AppendLine($"[{DateTime.UtcNow:o}] FAIL TO WRITE LOG");
+                            if (entry != null)
+                            {
+                                sb.AppendLine($"User: {entry.User}");
+                                sb.AppendLine($"Action: {entry.Action}");
+                                sb.AppendLine($"Description: {entry.Description}");
+                                sb.AppendLine($"JsonParams: {entry.JsonParams}");
+                            }
+                            sb.AppendLine($"Error: {ex}");
+                            sb.AppendLine();
+
+                            File.AppendAllText(fallbackPath, sb.ToString(), Encoding.UTF8);
+                        }
+                        catch
+                        {
+                            // bỏ qua nếu lỗi fallback
+                        }
+                    }
+                }
+            }
+        }
+
+        public List<LogEntry<TAction>> GetLogs(int limit = 100, int offset = 0)
         {
             var logs = new List<LogEntry<TAction>>();
             using (var conn = new SQLiteConnection(_connectionString))
             {
                 conn.Open();
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = @"SELECT * FROM Logs ORDER BY Id DESC LIMIT @Limit OFFSET @Offset;";
-                cmd.Parameters.AddWithValue("@Limit", limit);
-                cmd.Parameters.AddWithValue("@Offset", offset);
-
-                using (var reader = cmd.ExecuteReader())
+                using (var cmd = conn.CreateCommand())
                 {
-                    while (reader.Read())
+                    cmd.CommandText = @"SELECT * FROM Logs ORDER BY Id DESC LIMIT @Limit OFFSET @Offset;";
+                    cmd.Parameters.AddWithValue("@Limit", limit);
+                    cmd.Parameters.AddWithValue("@Offset", offset);
+
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        logs.Add(ReadLogEntry(reader));
+                        while (reader.Read())
+                        {
+                            logs.Add(ReadLogEntry(reader));
+                        }
                     }
                 }
             }
@@ -109,16 +193,18 @@ namespace SpT.Logs
             using (var conn = new SQLiteConnection(_connectionString))
             {
                 conn.Open();
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = @"SELECT * FROM Logs WHERE TimestampMs BETWEEN @From AND @To ORDER BY Id DESC;";
-                cmd.Parameters.AddWithValue("@From", fromMs);
-                cmd.Parameters.AddWithValue("@To", toMs);
-
-                using (var reader = cmd.ExecuteReader())
+                using (var cmd = conn.CreateCommand())
                 {
-                    while (reader.Read())
+                    cmd.CommandText = @"SELECT * FROM Logs WHERE TimestampMs BETWEEN @From AND @To ORDER BY Id DESC;";
+                    cmd.Parameters.AddWithValue("@From", fromMs);
+                    cmd.Parameters.AddWithValue("@To", toMs);
+
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        logs.Add(ReadLogEntry(reader));
+                        while (reader.Read())
+                        {
+                            logs.Add(ReadLogEntry(reader));
+                        }
                     }
                 }
             }
@@ -131,15 +217,17 @@ namespace SpT.Logs
             using (var conn = new SQLiteConnection(_connectionString))
             {
                 conn.Open();
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = @"SELECT * FROM Logs WHERE Action = @Action ORDER BY Id DESC;";
-                cmd.Parameters.AddWithValue("@Action", action.ToString());
-
-                using (var reader = cmd.ExecuteReader())
+                using (var cmd = conn.CreateCommand())
                 {
-                    while (reader.Read())
+                    cmd.CommandText = @"SELECT * FROM Logs WHERE Action = @Action ORDER BY Id DESC;";
+                    cmd.Parameters.AddWithValue("@Action", action.ToString());
+
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        logs.Add(ReadLogEntry(reader));
+                        while (reader.Read())
+                        {
+                            logs.Add(ReadLogEntry(reader));
+                        }
                     }
                 }
             }
@@ -152,15 +240,17 @@ namespace SpT.Logs
             using (var conn = new SQLiteConnection(_connectionString))
             {
                 conn.Open();
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = @"SELECT * FROM Logs WHERE User = @User ORDER BY Id DESC;";
-                cmd.Parameters.AddWithValue("@User", user);
-
-                using (var reader = cmd.ExecuteReader())
+                using (var cmd = conn.CreateCommand())
                 {
-                    while (reader.Read())
+                    cmd.CommandText = @"SELECT * FROM Logs WHERE User = @User ORDER BY Id DESC;";
+                    cmd.Parameters.AddWithValue("@User", user);
+
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        logs.Add(ReadLogEntry(reader));
+                        while (reader.Read())
+                        {
+                            logs.Add(ReadLogEntry(reader));
+                        }
                     }
                 }
             }
@@ -169,15 +259,12 @@ namespace SpT.Logs
 
         private LogEntry<TAction> ReadLogEntry(SQLiteDataReader reader)
         {
-            TAction action = default;
+            TAction action = default(TAction);
             try
             {
                 action = (TAction)Enum.Parse(typeof(TAction), reader["Action"].ToString());
             }
-            catch
-            {
-                // fallback nếu parse fail, giữ default
-            }
+            catch { /* fallback giữ default */ }
 
             return new LogEntry<TAction>
             {
@@ -190,18 +277,12 @@ namespace SpT.Logs
                 JsonParams = reader["JsonParams"].ToString()
             };
         }
+
+        public void Dispose()
+        {
+            _cts.Cancel();
+            _logQueue.CompleteAdding();
+            _logWorker.Wait();
+        }
     }
-
-    public class LogEntry<TAction> where TAction : Enum
-    {
-        public int Id { get; set; }
-        public string TimeISO { get; set; }
-        public long TimestampMs { get; set; }
-        public string User { get; set; }
-        public TAction Action { get; set; }
-        public string Description { get; set; }
-        public string JsonParams { get; set; }
-    }
-
-
 }

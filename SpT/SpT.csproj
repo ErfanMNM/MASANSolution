@@ -176,6 +176,12 @@
     <Compile Include="Auth\UserHelper.cs" />
     <Compile Include="AWS\AwsMqttHelper.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="Communications\TCP\TCPClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Communications\TCP\TCPClient.Designer.cs">
+      <DependentUpon>TCPClient.cs</DependentUpon>
+    </Compile>
     <Compile Include="DecodeEncode\Hash.cs" />
     <Compile Include="Dialogs\EnterAddUser.cs">
       <SubType>Form</SubType>
@@ -192,6 +198,7 @@
     <Compile Include="Files\FileControl.cs" />
     <Compile Include="GoogleAPI\GoogleAPI.cs" />
     <Compile Include="AuditTrail\LogHelper.cs" />
+    <Compile Include="PLC\OMRON\GGSheetConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setting\stringtype.cs">
       <SubType>UserControl</SubType>

@@ -86,7 +86,7 @@ namespace SpT.Auth
         //lấy user từ sqlite trong table users theo Username
         public static UserData GetUserByUsername(string username, string data_file_path)
         {
-            Auth.UserData user = null;
+            UserData user = null;
 
             using (var conn = new SQLiteConnection($"Data Source={data_file_path};Version=3;"))
             {
