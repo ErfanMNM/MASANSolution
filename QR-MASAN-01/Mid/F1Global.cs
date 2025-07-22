@@ -166,6 +166,7 @@ namespace QR_MASAN_01
     {
         public int ID { get; set; }
         public string orderNo { get; set; } // Số đơn hàng
+        public string cartonCode { get; set; } // Mã code
         public string Status { get; set; } // 0: Chưa kích hoạt,Active là 1, reject là -1
         public string Activate_Datetime { get; set; } // Thời gian kích hoạt
         public string Production_Datetime { get; set; } // Thời gian sản xuất

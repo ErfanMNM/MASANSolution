@@ -1,4 +1,6 @@
 ﻿using Org.BouncyCastle.Tls;
+using SpT.Auth;
+using SpT.Logs;
 using SpT.Setting;
 using Sunny.UI;
 using System;
@@ -7,12 +9,14 @@ using System.ComponentModel;
 using System.ComponentModel.Composition.Primitives;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static Org.BouncyCastle.Math.EC.ECCurve;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+
 
 namespace QR_MASAN_01.Views.Settings
 {
@@ -23,35 +27,14 @@ namespace QR_MASAN_01.Views.Settings
             InitializeComponent();
         }
 
+        //gọi log
+
+       LogHelper<LoginAction> logssss;
+
         public void FAppSetting_Load()
         {
             LoadSettingToTreeView(treeView);
-            //flowLayoutPanel1.Controls.Clear();
-
-            //var sectionDict = new Dictionary<string, List<PropertyInfo>>();
-            //foreach (var prop in typeof(Setting).GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            //{
-            //    if (prop.GetCustomAttribute<ConfigIgnoreAttribute>() != null)
-            //        continue;
-
-            //    var sectionAttr = prop.GetCustomAttribute<ConfigSectionAttribute>();
-            //    string section = sectionAttr?.Section ?? "Setup";
-
-            //    if (!sectionDict.ContainsKey(section))
-            //        sectionDict[section] = new List<PropertyInfo>();
-
-            //    sectionDict[section].Add(prop);
-            //}
-
-            //// Load các UC_Section
-            //foreach (var kvp in sectionDict)
-            //{
-            //    UC_Section sectionUC = new UC_Section();
-            //    sectionUC.Width = flowLayoutPanel1.ClientSize.Width - 30; // căn chỉnh vừa khít
-            //    sectionUC.Init(kvp.Key, kvp.Value, Setting.Current);
-            //    flowLayoutPanel1.Controls.Add(sectionUC);
-            //}
-
+            logssss = new LogHelper<LoginAction>(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TanTien", "Logs", "userlog.logs"));
         }
 
         public void LoadSettingToTreeView(UITreeView treeView)
@@ -107,11 +90,40 @@ namespace QR_MASAN_01.Views.Settings
 
             uc_UserSetting1.CurrentUserName = Globalvariable.CurrentUser.Username; // Thiết lập tên người dùng hiện tại
             uc_UserSetting1.INIT(); // Khởi tạo thông tin người dùng
+            uc_UserManager2.CurrentUserName = Globalvariable.CurrentUser.Username; // Thiết lập tên người dùng hiện tại
+            if(Globalvariable.CurrentUser.Role == "Admin")
+            {
+                uc_UserManager2.Enabled = true; // Hiển thị quản lý người dùng nếu là Admin
+            }
+            else
+            {
+                uc_UserManager2.Enabled = false; // Ẩn quản lý người dùng nếu không phải Admin
+            }
         }
 
-        private void uc_UserSetting1_OnUserAction(object sender, SpT.Auth.LoginActionEventArgs e)
+        private void uc_UserSetting1_OnUserAction(object sender, LoginActionEventArgs e)
         {
             this.ShowInfoTip(e.Message);
+        }
+
+        private void uc_UserManager2_OnAction(object sender, LoginActionEventArgs e)
+        {
+
+            this.ShowInfoTip(e.Message);
+
+            Task.Run( async () =>
+            {
+                try
+                {
+                    await logssss.WriteLogAsync(Globalvariable.CurrentUser.Username, LoginAction.AdminPrivileges, e.Message);
+                }
+                catch (Exception ex)
+                {
+                    // log hoặc ignore
+                    Console.WriteLine($"Lỗi ghi log: {ex.Message}");
+                }
+
+            });
         }
     }
 }

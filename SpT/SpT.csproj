@@ -91,6 +91,9 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Printer">
+      <HintPath>..\PRINTER\Printer\obj\Debug\Printer.dll</HintPath>
+    </Reference>
     <Reference Include="SunnyUI, Version=3.8.6.0, Culture=neutral, PublicKeyToken=27d7d2e821d97aeb, processorArchitecture=MSIL">
       <HintPath>..\packages\SunnyUI.3.8.6\lib\net472\SunnyUI.dll</HintPath>
     </Reference>
@@ -158,6 +161,12 @@
     <Compile Include="Auth\ucUser_Login.Designer.cs">
       <DependentUpon>ucUser_Login.cs</DependentUpon>
     </Compile>
+    <Compile Include="Auth\uc_UserManager.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Auth\uc_UserManager.Designer.cs">
+      <DependentUpon>uc_UserManager.cs</DependentUpon>
+    </Compile>
     <Compile Include="Auth\uc_UserSetting.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -168,6 +177,12 @@
     <Compile Include="AWS\AwsMqttHelper.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="DecodeEncode\Hash.cs" />
+    <Compile Include="Dialogs\EnterAddUser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\EnterAddUser.Designer.cs">
+      <DependentUpon>EnterAddUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Entertext.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -211,8 +226,14 @@
     <EmbeddedResource Include="Auth\ucUser_Login.resx">
       <DependentUpon>ucUser_Login.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Auth\uc_UserManager.resx">
+      <DependentUpon>uc_UserManager.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Auth\uc_UserSetting.resx">
       <DependentUpon>uc_UserSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\EnterAddUser.resx">
+      <DependentUpon>EnterAddUser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\Entertext.resx">
       <DependentUpon>Entertext.cs</DependentUpon>

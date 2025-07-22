@@ -29,7 +29,7 @@ namespace SpT.Auth
         // Biến để lưu log
         public LogHelper<LoginAction> log;
 
-        public async void INIT()
+        public void INIT()
         {
             //xóa rỗng các textbox ip
             ipUserName.Text = string.Empty;
@@ -72,7 +72,18 @@ namespace SpT.Auth
                     Message = "Không tìm thấy thông tin người dùng."
                 });
                 //ghi log lỗi
-                await log.WriteLogAsync(userData.Username, LoginAction.UpdateProfile, "Cập nhật thông tin người dùng thất bại: Không tìm thấy thông tin người dùng.");
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await log.WriteLogAsync(CurrentUserName, LoginAction.UpdateProfile, "Cập nhật thông tin người dùng thất bại: Không tìm thấy thông tin người dùng.");
+                    }
+                    catch (Exception ex)
+                    {
+                        // log hoặc ignore
+                        Console.WriteLine($"Error logging: {ex.Message}");
+                    }
+                });
             }
         }
 
@@ -105,6 +116,7 @@ namespace SpT.Auth
                                 catch (Exception ex)
                                 {
                                     // log hoặc ignore
+                                    Console.WriteLine($"Error logging: {ex.Message}");
                                 }
                             });
                             //await log.WriteLogAsync(userData.Username, LoginAction.UpdateProfile, "Cập nhật thông tin người dùng thất bại: Mã OTP không được để trống.");
@@ -130,6 +142,7 @@ namespace SpT.Auth
                                 catch (Exception ex)
                                 {
                                     // log hoặc ignore
+                                    Console.WriteLine($"Error logging: {ex.Message}");
                                 }
                             });
                             //await log.WriteLogAsync(userData.Username, LoginAction.UpdateProfile, "Cập nhật thông tin người dùng thất bại: Mã OTP không hợp lệ.");
@@ -154,6 +167,7 @@ namespace SpT.Auth
                             catch (Exception ex)
                             {
                                 // log hoặc ignore
+                                Console.WriteLine($"Error logging: {ex.Message}");
                             }
                         });
                         // await log.WriteLogAsync(userData.Username, LoginAction.UpdateProfile, "Cập nhật thông tin người dùng thất bại: Mật khẩu mới và xác nhận mật khẩu mới không được để trống.");
@@ -178,6 +192,7 @@ namespace SpT.Auth
                             catch (Exception ex)
                             {
                                 // log hoặc ignore
+                                    Console.WriteLine($"Error logging: {ex.Message}");
                             }
                         });
                         //await log.WriteLogAsync(userData.Username, LoginAction.UpdateProfile, "Cập nhật thông tin người dùng thất bại: Mật khẩu mới và xác nhận mật khẩu mới không giống nhau.");
@@ -210,6 +225,7 @@ namespace SpT.Auth
                             catch (Exception ex)
                             {
                                 // log hoặc ignore
+                                Console.WriteLine($"Error logging: {ex.Message}");
                             }
                         });
                         //await log.WriteLogAsync(userData.Username, LoginAction.UpdateProfile, "Cập nhật thông tin người dùng thành công.");
@@ -231,6 +247,7 @@ namespace SpT.Auth
                             catch (Exception ex)
                             {
                                 // log hoặc ignore
+                                Console.WriteLine($"Error logging: {ex.Message}");
                             }
                         });
                         //await log.WriteLogAsync(userData.Username, LoginAction.UpdateProfile, "Cập nhật thông tin người dùng thất bại: Không thể cập nhật mật khẩu.");
@@ -255,6 +272,7 @@ namespace SpT.Auth
                         catch (Exception ex)
                         {
                             // log hoặc ignore
+                            Console.WriteLine($"Error logging: {ex.Message}");
                         }
                     });
                     // await log.WriteLogAsync(userData.Username, LoginAction.UpdateProfile, "Cập nhật thông tin người dùng thất bại: Mật khẩu cũ không đúng.");
@@ -277,6 +295,7 @@ namespace SpT.Auth
                     catch (Exception logEx)
                     {
                         // log hoặc ignore
+                        Console.WriteLine($"Error logging: {logEx.Message}");   
                     }
                 });
                 //await log.WriteLogAsync(userData.Username, LoginAction.UpdateProfile, $"Cập nhật thông tin người dùng thất bại: {ex.Message}");

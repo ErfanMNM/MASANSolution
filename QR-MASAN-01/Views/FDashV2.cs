@@ -92,7 +92,21 @@ namespace QR_MASAN_01
                 );
                 awsClient.AWSStatus_OnChange += AWS_Status_Onchange;
                 awsClient.AWSStatus_OnReceive += AWS_Status_OnReceive;
-                awsClient.ConnectAsync();
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        awsClient.ConnectAsync().Wait();
+                    }
+                    catch (Exception ex)
+                    {
+                        //ghi log lỗi
+                        AWSLogs aWSLogs = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.ERROR, "Lỗi kết nối AWS IoT Core", Globalvariable.CurrentUser.Username, ex.Message);
+                        //thêm vào Queue để ghi log
+                        AWSLogsQueue.Enqueue(aWSLogs);
+                        LogUpdate($"Lỗi kết nối AWS IoT Core: {ex.Message}");
+                    }
+                });
             }
            
         }
@@ -475,6 +489,8 @@ namespace QR_MASAN_01
         #region Xử lý tín hiệu từ camera
 
         //camera 01
+        long lastRecive1 = 0;
+        string lastData1 = "";
         private void Camera_ClientCallBack(SPMS1.enumClient eAE, string _strData)
         {
             switch (eAE)
@@ -501,6 +517,27 @@ namespace QR_MASAN_01
                     }
                     break;
                 case SPMS1.enumClient.RECEIVED:
+
+                    var a = DateTime.Now.Ticks - lastRecive1;
+                    var b = TimeSpan.TicksPerMillisecond * 100;
+                    //tránh gửi trùng liên tiếp 2 lần thời gian hiện tại - lastRecive < 100ms nếu code mới nhận về giống với lần trước
+                    if (a < b)
+                    {
+                        //nếu dữ liệu nhận về giống với lần trước thì không xử lý
+                        if (_strData == lastData1)
+                        {
+                            this.InvokeIfRequired(() =>
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Chống dội C1");
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                            });
+                            break;
+                        }
+                    }
+
+                    lastRecive1 = DateTime.Now.Ticks;
+
+                    lastData1 = _strData;
 
                     if (GCamera.Camera_Status != e_Camera_Status.CONNECTED)
                     {
@@ -731,40 +768,39 @@ namespace QR_MASAN_01
             if (_strData.IsNullOrEmpty())
             {
                 //loại sản phẩm ngay lập tức
-               // Send_Result_Content_C1(e_Content_Result.EMPTY, "MÃ RỖNG");
+               Send_Result_Content_C1(e_Content_Result.EMPTY, "MÃ RỖNG");
                 return;
             }
             if (_strData == "FAIL")
             {
                 //chỗ này xử lý sau
+                Send_Result_Content_C1(e_Content_Result.FAIL, "KHÔNG ĐỌC ĐƯỢC");
                 return;
             }
             //đổi <GS> về đúng ký tự thật
             _strData = _strData.Replace("<GS>", "\u001D").Replace("<RS>", "\u001E").Replace("<US>", "\u001F");
             //kiểm tra chuỗi có tồn tại trong bể dữ liệu chính hay không
-            if (GV.C1_CodeData_Dictionary.TryGetValue(_strData, out CodeData C1CodeData))
+            if (GV.C2_CodeData_Dictionary.TryGetValue(_strData, out CodeData C1CodeData))
             {
                 //nếu chưa kích hoạt thì kích hoạt
                 if (C1CodeData.Status == "0")
                 {
-                    C1CodeData.Status = "1";
-                    //giờ kích hoạt theo ISO
-                    C1CodeData.Activate_Datetime = DateTime.Now.ToString("o");
-                    C1CodeData.Production_Datetime = GV.Selected_PO.productionDate;
-                    //Gửi vào hàng chờ để cập nhật SQLite
-                    GV.C1_Update_Content_To_SQLite_Queue.Enqueue(C1CodeData);
+                    //C1CodeData.ID = GV.ID;
+                    //Chưa kích hoạt
+                    Send_Result_Content_C1(e_Content_Result.FAIL, _strData);
+                    return;
                 }
-                //nếu đã kích hoạt thì đá ra
+                //nếu đã kích hoạt
                 else
                 {
-                    //đá ra
-                    //Send_Result_Content_C1(e_Content_Result.DUPLICATE, _strData);
+                    //thêm vào thùng
+                    Send_Result_Content_C1(e_Content_Result.PASS, _strData);
                     return;
                 }
             }
             //nếu không tồn tại thì đá ra, không cần quan tâm thêm
             else {
-                //Send_Result_Content_C1(e_Content_Result.NOT_FOUND, _strData);
+                Send_Result_Content_C1(e_Content_Result.NOT_FOUND, _strData);
                 return;
             }
         }
@@ -829,7 +865,6 @@ namespace QR_MASAN_01
                                     GV.C2_Update_Content_To_SQLite_Queue.Enqueue(C2CodeData);
                                     //Ghi thành công
                                     Send_Result_Content_C2(e_Content_Result.PASS, _strData);
-
                                     return;
                                 //}
                                 //else if (Status_s == "FAIL")
@@ -1566,7 +1601,6 @@ namespace QR_MASAN_01
         }
         public DataTable Get_Unique_Codes_Run_Send_Pending(string orderNo)
         {
-            //tạo thư mục nếu chưa tồn tại
             string czRunPath = $"C:/.ABC/{orderNo}.db";
 
             using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
@@ -1761,6 +1795,7 @@ namespace QR_MASAN_01
             //không cần đợi trả về làm gì
         }
 
+        //xử lý trạng thái phần mềm theo PO
         private void WK_PO_DoWork(object sender, DoWorkEventArgs e)
         {
             int dem = 50;
@@ -1847,6 +1882,7 @@ namespace QR_MASAN_01
             }
         }
 
+        #region Xử lý PLC Comfirm
         private async Task PLC_Comfirm_Async()
         {
             
@@ -1897,10 +1933,10 @@ namespace QR_MASAN_01
             }
             catch (TaskCanceledException) { }
         }
-
         private void StartTask()
         {
             Task.Run(PLC_Comfirm_Async, GTask.Task_PLC_Comfirm.Token);
         }
+        #endregion
     }
 }

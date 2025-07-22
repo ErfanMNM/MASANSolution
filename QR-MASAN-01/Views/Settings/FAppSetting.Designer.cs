@@ -34,11 +34,14 @@
             this.treeView = new Sunny.UI.UITreeView();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
+            this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
             this.uc_UserSetting1 = new SpT.Auth.uc_UserSetting();
+            this.uc_UserManager2 = new SpT.Auth.uc_UserManager();
             this.uiTabControl1.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
+            this.uiTableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // uiTabControl1
@@ -96,19 +99,35 @@
             // 
             // uiTableLayoutPanel1
             // 
-            this.uiTableLayoutPanel1.ColumnCount = 2;
+            this.uiTableLayoutPanel1.ColumnCount = 1;
             this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel1.Controls.Add(this.uc_UserSetting1, 0, 0);
+            this.uiTableLayoutPanel1.Controls.Add(this.uiTableLayoutPanel2, 0, 0);
             this.uiTableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.uiTableLayoutPanel1.Name = "uiTableLayoutPanel1";
             this.uiTableLayoutPanel1.RowCount = 2;
-            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 47.7918F));
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 52.2082F));
             this.uiTableLayoutPanel1.Size = new System.Drawing.Size(840, 634);
             this.uiTableLayoutPanel1.TabIndex = 0;
             this.uiTableLayoutPanel1.TagString = null;
+            // 
+            // uiTableLayoutPanel2
+            // 
+            this.uiTableLayoutPanel2.ColumnCount = 2;
+            this.uiTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel2.Controls.Add(this.uc_UserSetting1, 0, 0);
+            this.uiTableLayoutPanel2.Controls.Add(this.uc_UserManager2, 1, 0);
+            this.uiTableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel2.Location = new System.Drawing.Point(2, 2);
+            this.uiTableLayoutPanel2.Margin = new System.Windows.Forms.Padding(2);
+            this.uiTableLayoutPanel2.Name = "uiTableLayoutPanel2";
+            this.uiTableLayoutPanel2.RowCount = 1;
+            this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel2.Size = new System.Drawing.Size(836, 299);
+            this.uiTableLayoutPanel2.TabIndex = 0;
+            this.uiTableLayoutPanel2.TagString = null;
             // 
             // uc_UserSetting1
             // 
@@ -119,8 +138,8 @@
             this.uc_UserSetting1.Location = new System.Drawing.Point(3, 3);
             this.uc_UserSetting1.MinimumSize = new System.Drawing.Size(1, 1);
             this.uc_UserSetting1.Name = "uc_UserSetting1";
-            this.uc_UserSetting1.Size = new System.Drawing.Size(414, 311);
-            this.uc_UserSetting1.TabIndex = 0;
+            this.uc_UserSetting1.Size = new System.Drawing.Size(412, 293);
+            this.uc_UserSetting1.TabIndex = 1;
             this.uc_UserSetting1.Text = "uc_UserSetting1";
             this.uc_UserSetting1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             userData1.Key2FA = null;
@@ -129,7 +148,21 @@
             userData1.Salt = null;
             userData1.Username = "";
             this.uc_UserSetting1.userData = userData1;
-            this.uc_UserSetting1.OnUserAction += new System.EventHandler<SpT.Auth.LoginActionEventArgs>(this.uc_UserSetting1_OnUserAction);
+            // 
+            // uc_UserManager2
+            // 
+            this.uc_UserManager2.CurrentUserName = "";
+            this.uc_UserManager2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uc_UserManager2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uc_UserManager2.IS2FAEnabled = false;
+            this.uc_UserManager2.Location = new System.Drawing.Point(421, 3);
+            this.uc_UserManager2.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uc_UserManager2.Name = "uc_UserManager2";
+            this.uc_UserManager2.Size = new System.Drawing.Size(412, 293);
+            this.uc_UserManager2.TabIndex = 2;
+            this.uc_UserManager2.Text = null;
+            this.uc_UserManager2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.uc_UserManager2.OnAction += new System.EventHandler<SpT.Auth.LoginActionEventArgs>(this.uc_UserManager2_OnAction);
             // 
             // FAppSetting
             // 
@@ -143,6 +176,7 @@
             this.tabPage3.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
             this.uiTableLayoutPanel1.ResumeLayout(false);
+            this.uiTableLayoutPanel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -154,6 +188,8 @@
         private Sunny.UI.UITreeView treeView;
         private System.Windows.Forms.TabPage tabPage4;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel1;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel2;
         private SpT.Auth.uc_UserSetting uc_UserSetting1;
+        private SpT.Auth.uc_UserManager uc_UserManager2;
     }
 }

@@ -27,15 +27,11 @@ namespace QR_MASAN_01.Views.MFI_Service
         public POService poService;
 
         //Phân ra từng bước cho dễ thao tác
-
-
-
         //hàm khởi động Page
         public void INIT()
         {
             WK_Update.RunWorkerAsync(); // Bắt đầu chạy worker để cập nhật số lượng mã vạch đã chạy
         }
-
         private void ipOrderNO_SelectedIndexChanged(object sender, EventArgs e)
         {
             
@@ -105,7 +101,6 @@ namespace QR_MASAN_01.Views.MFI_Service
             
             
         }
-
         private void btnPO_Click(object sender, EventArgs e)
         {
             //ghi logs người dùng nhấn nút
@@ -158,7 +153,6 @@ namespace QR_MASAN_01.Views.MFI_Service
                 GV.Production_Status = e_Production_Status.CHECKING; // Trạng thái kiểm tra, có thể thực hiện các kiểm tra cần thiết
             }
         }
-
         private void uiSymbolButton1_Click(object sender, EventArgs e)
         {
             //ghi logs người dùng nhấn nút test mode
@@ -232,12 +226,10 @@ namespace QR_MASAN_01.Views.MFI_Service
                     break;
             }
         }
-
         private void uiTableLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
 
         }
-
         int delay = 50;
         private void WK_Update_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -528,7 +520,6 @@ namespace QR_MASAN_01.Views.MFI_Service
 
             }
         }
-
         //hàm save invoke
         void SafeInvoke(Action action)
         {
@@ -537,12 +528,9 @@ namespace QR_MASAN_01.Views.MFI_Service
             else
                 action();
         }
-
         public void Push_Data_To_Dic()
         {
             DataTable dataTable = new DataTable();
-            // Dictionary để lưu dữ liệu với CaseQR làm key
-            // Dictionary<string, ProductData> ProductQR_Dictionary = new Dictionary<string, ProductData>();
             //Đẩy vào dic chính
             string connectionString = $@"Data Source=C:/.ABC/{GV.Selected_PO.orderNo}.db;Version=3;";
 
@@ -574,6 +562,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                     {
                         ID = ID,
                         Status = Status,
+                        cartonCode = "0",
                         Activate_Datetime = ActivateDate,
                         Production_Datetime = ProductionDate,
                         orderNo = GV.Selected_PO.orderNo.ToString(),
@@ -584,7 +573,6 @@ namespace QR_MASAN_01.Views.MFI_Service
                 connection.Close();
             }
         }
-
         private void FPI_Service_Initialize(object sender, EventArgs e)
         {
             //ghi logs người dùng khởi động trang FPI_Service
@@ -592,7 +580,6 @@ namespace QR_MASAN_01.Views.MFI_Service
             //ghi logs vào hàng đợi
             SystemLogs.LogQueue.Enqueue(systemLogs);
         }
-
         private void btnPO_Click_1(object sender, EventArgs e)
         {
             //ghi logs người dùng nhấn nút chỉnh sửa PO
@@ -859,7 +846,6 @@ namespace QR_MASAN_01.Views.MFI_Service
                     break;
             }
         }
-
         private void btnRUN_Click(object sender, EventArgs e)
         {
             //khởi động PO  
@@ -1041,6 +1027,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                             }
 
                             #endregion
+
                         }
                         //nếu đã chạy mã thì chuyển sang trạng thái Tiếp tục
                         GV.Production_Status = e_Production_Status.PLC_CON_PO;

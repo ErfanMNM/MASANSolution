@@ -23,6 +23,14 @@ namespace SpT.Auth
         AdminPrivileges // Thêm hành động quản trị viên
     }
 
+    public enum e_User_Role
+    {
+        Admin,
+        Operator,
+        Ghost,
+        Worker
+    }
+
     public class LoginActionEventArgs : EventArgs
     {
         public bool Status { get; set; }
@@ -58,6 +66,21 @@ namespace SpT.Auth
                 }
             }
             return dataTable;
+        }
+
+        public static bool DeleteUser(string username, string data_file_path)
+        {
+            using (var conn = new SQLiteConnection($"Data Source={data_file_path};Version=3;"))
+            {
+                conn.Open();
+                string sql = "DELETE FROM users WHERE Username = @username";
+                using (var cmd = new SQLiteCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@username", username);
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    return rowsAffected > 0; // Trả về true nếu xóa thành công
+                }
+            }
         }
 
         //lấy user từ sqlite trong table users theo Username
@@ -189,7 +212,7 @@ namespace SpT.Auth
                 Username = username,
                 Password = password,
                 Role = Role,
-                Key2FA = string.Empty // Khóa 2FA có thể để trống nếu không sử dụng
+                Key2FA = key2FA // Khóa 2FA có thể để trống nếu không sử dụng
             };
             // File SQLite đặt cạnh file exe
             string dbFile = data_file_path;

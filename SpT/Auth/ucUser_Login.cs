@@ -169,6 +169,7 @@ namespace SpT.Auth
                                 catch (Exception ex)
                                 {
                                     // log hoặc ignore
+                                    Console.WriteLine($"Lỗi ghi log: {ex.Message}");
                                 }
                             });
 
@@ -178,6 +179,18 @@ namespace SpT.Auth
                     //trả lại thông tin user
                     CurrentUser = dbUser;
                     //ghi log
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await log.WriteLogAsync(username, LoginAction.Login, $"Đăng nhập thành công cho người dùng {username}.");
+                        }
+                        catch (Exception ex)
+                        {
+                            // log hoặc ignore
+                            Console.WriteLine($"Lỗi ghi log: {ex.Message}");
+                        }
+                    });
                     //await log.WriteLogAsync(username, LoginAction.Login, $"Đăng nhập thành công cho người dùng {username}.");
 
                     //trả về sự kiện
@@ -206,6 +219,7 @@ namespace SpT.Auth
                         catch (Exception ex)
                         {
                             // log hoặc ignore
+                            Console.WriteLine($"Lỗi ghi log: {ex.Message}");
                         }
                     });
                 }
@@ -214,6 +228,20 @@ namespace SpT.Auth
             catch (Exception ex)
             {
                 // Ghi log lỗi
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await log.WriteLogAsync("NA", LoginAction.Login, $"Lỗi khi đăng nhập: {ex.Message}");
+                    }
+                    catch (Exception logEx)
+                    {
+                        // log hoặc ignore
+                        Console.WriteLine($"Lỗi ghi log: {logEx.Message}");
+                    }
+                });
+
+                // Ghi log lỗi đăng nhập
                 //await log.WriteLogAsync("NA", LoginAction.Login, $"Lỗi khi đăng nhập: {ex.Message}");
                 // Trả về sự kiện lỗi
                 OnLoginAction?.Invoke(this, new LoginActionEventArgs

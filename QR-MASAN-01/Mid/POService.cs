@@ -373,6 +373,7 @@ namespace QR_MASAN_01
                     string createTableQuery = @"CREATE TABLE ""UniqueCodes"" (
 	                                        ""ID""	INTEGER NOT NULL UNIQUE,
 	                                        ""Code""	TEXT NOT NULL UNIQUE,
+                                            ""cartonCode""	TEXT NOT NULL DEFAULT 0,
 	                                        ""Status""	INTEGER NOT NULL DEFAULT 0,
 	                                        ""ActivateDate""	TEXT NOT NULL DEFAULT 0,
 	                                        ""ProductionDate""	TEXT NOT NULL DEFAULT 0,
@@ -430,8 +431,6 @@ namespace QR_MASAN_01
                     command.ExecuteNonQuery();
                 }
             }
-
-
             string recordPath_PLC = $"C:/.ABC/Record_{orderNo}_PLC.db";
             if (!System.IO.File.Exists(recordPath_PLC))
             {
@@ -448,8 +447,6 @@ namespace QR_MASAN_01
                     command.ExecuteNonQuery();
                 }
             }
-
-
             string recordAWS = $"C:/.ABC/Record_{orderNo}_Send_AWS.db";
             if (!System.IO.File.Exists(recordAWS))
             {
