@@ -3,6 +3,7 @@ using MASAN_SERIALIZATION.Enums;
 using MASAN_SERIALIZATION.Utils;
 using MASAN_SERIALIZATION.Views.Dashboards;
 using MASAN_SERIALIZATION.Views.Login;
+using MASAN_SERIALIZATION.Views.ProductionInfo;
 using SpT.Logs;
 using Sunny.UI;
 using System;
@@ -24,6 +25,9 @@ namespace MASAN_SERIALIZATION
         //khai báo biến toàn cục
         PLogin _pLogin = new PLogin();// trang đăng nhập
         FDashboard _pDashboard = new FDashboard();// trang dashboard
+        PPOInfo _pProduction = new PPOInfo(); // trang sản xuất
+
+
         public CancellationTokenSource Task_Main_Process = new CancellationTokenSource(); //token cho task chính
 
         public FMain()
@@ -102,6 +106,7 @@ namespace MASAN_SERIALIZATION
                 NavMenu.Nodes.Clear();
                 // Các trang chức năng chính chạy từ 1001 - 1999
                 NavMenu.CreateNode(AddPage(_pDashboard, 1001));
+                NavMenu.CreateNode(AddPage(_pProduction, 1002)); // Thêm trang sản xuất
                 //Các trang chức năng phụ chạy từ 2001 - 2999
                 NavMenu.CreateNode(AddPage(_pLogin, 2001)); // Thêm trang đăng nhập
                 //NavMenu.CreateNode(AddPage(deActive, 1998));
@@ -113,6 +118,9 @@ namespace MASAN_SERIALIZATION
                 NavMenu.Enabled = false; //vô hiệu hóa menu ban đầu
 
                 Globals.AppRenderState = e_App_Render_State.LOGIN; //đặt trạng thái render ban đầu là LOGIN
+
+                //INIT các trang chức năng
+                _pProduction.START(); //khởi tạo trang sản xuất
             }
             catch (Exception ex)
             {
@@ -198,7 +206,6 @@ namespace MASAN_SERIALIZATION
                                     //màu vàng cho vận hành
                                     opUser.Text = $"[OPERATOR] {Globals.CurrentUser.Username}";
                                     opUser.ForeColor = Color.Yellow;
-
                                     break;
                                 case "Worker":
                                     //màu xanh
@@ -240,10 +247,13 @@ namespace MASAN_SERIALIZATION
                         {
                            // btnDeActive.Enabled = true;
                             //NavMenu.Nodes[NavMenu.Nodes.Count - 1].Remove(); // xóa trang cuối nếu đã đăng nhập
-                            NavMenu.SelectPage(1001); // chọn trang Dashboard
+                            NavMenu.SelectPage(1002); // chọn trang Dashboard
                             NavMenu.Enabled = true; //bật menu
                             NavMenu.Visible = true; //hiện menu
                         }));
+
+                        //khởi động các trang chức năng
+
                     }
 
                     //kiểm tra xem người dùng đã đăng nhập chưa
@@ -309,6 +319,7 @@ namespace MASAN_SERIALIZATION
                     break;
             }
         }
+
         #endregion
 
         #region Luồng xử trạng thái ứng dụng
@@ -323,7 +334,7 @@ namespace MASAN_SERIALIZATION
                 {
                     try
                     {
-                        opClock.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+                        opClock.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss.fff");
                         Login_Process();
                     }
                     catch (Exception ex)
@@ -333,7 +344,7 @@ namespace MASAN_SERIALIZATION
                         // Hiển thị thông báo lỗi
                         this.ShowErrorTip($"Lỗi EM05 trong quá trình xử lý: {ex.Message}");
                     }
-                    await Task.Delay(500, Task_Main_Process.Token);
+                    await Task.Delay(100, Task_Main_Process.Token);
                 }
             }
             catch (TaskCanceledException) { }
@@ -350,6 +361,8 @@ namespace MASAN_SERIALIZATION
             // Dừng task chính
             Task_Main_Process.Cancel();
             //dừng task phụ nếu có
+            _pProduction.Stop_Process_Task();
+
             // Ghi nhật ký hệ thống
             Globals.Log.WriteLogAsync("System", e_LogType.Info, "Ứng dụng MASAN-SERIALIZATION đã được đóng");
             // Đóng ứng dụng

@@ -110,6 +110,12 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="zxing, Version=0.16.10.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>..\packages\ZXing.Net.0.16.10\lib\net48\zxing.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing.presentation, Version=0.16.10.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>..\packages\ZXing.Net.0.16.10\lib\net48\zxing.presentation.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configs\IniConfigs.cs" />
@@ -145,6 +151,12 @@
     <Compile Include="Views\ProductionInfo\PPOInfo.Designer.cs">
       <DependentUpon>PPOInfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\Test\DemoPage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Test\DemoPage.Designer.cs">
+      <DependentUpon>DemoPage.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="FMain.resx">
       <DependentUpon>FMain.cs</DependentUpon>
     </EmbeddedResource>
@@ -166,6 +178,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ProductionInfo\PPOInfo.resx">
       <DependentUpon>PPOInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Test\DemoPage.resx">
+      <DependentUpon>DemoPage.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

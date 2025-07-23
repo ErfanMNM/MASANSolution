@@ -90,7 +90,7 @@
             // opClock
             // 
             this.opClock.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opClock.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opClock.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.opClock.Location = new System.Drawing.Point(858, 0);
             this.opClock.Margin = new System.Windows.Forms.Padding(0);
             this.opClock.MinimumSize = new System.Drawing.Size(1, 1);
@@ -98,7 +98,7 @@
             this.opClock.Radius = 0;
             this.opClock.Size = new System.Drawing.Size(166, 39);
             this.opClock.TabIndex = 1;
-            this.opClock.Text = "20/11/2024 17:27:00";
+            this.opClock.Text = "20/11/2024 17:27:00.000";
             this.opClock.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblAllStatus

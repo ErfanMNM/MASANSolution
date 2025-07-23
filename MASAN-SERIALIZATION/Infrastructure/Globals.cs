@@ -1,4 +1,5 @@
 ﻿using MASAN_SERIALIZATION.Enums;
+using MASAN_SERIALIZATION.Production;
 using SpT.Auth;
 using SpT.Logs;
 using System;
@@ -24,6 +25,11 @@ namespace MASAN_SERIALIZATION
 
         //biến lưu nhật ký hệ thống
         public static LogHelper<e_LogType> Log { get; set; }
+
+        public static ProductionOrder ProductionData { get; set; } = new ProductionOrder();
+
+        // Biến toàn cục để lưu trữ trạng thái sản xuất
+        public static e_Production_State Production_State { get; set; } = e_Production_State.Start;
 
     }
 }
