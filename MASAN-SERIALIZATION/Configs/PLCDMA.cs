@@ -114,6 +114,7 @@ namespace MASAN_SERIALIZATION.Configs
             {
                 File.WriteAllText(LocalCachePath, "{}"); // Tạo file rỗng nếu không tồn tại
             }
+
             var json = File.ReadAllText(LocalCachePath);
             return JsonConvert.DeserializeObject<Dictionary<string, string>>(json)
                    ?? new Dictionary<string, string>();

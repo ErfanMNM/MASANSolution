@@ -30,7 +30,7 @@
         {
             this.lblStatus = new Sunny.UI.UIPanel();
             this.uiPanel1 = new Sunny.UI.UIPanel();
-            this.lblClock = new Sunny.UI.UIPanel();
+            this.opClock = new Sunny.UI.UIPanel();
             this.lblAllStatus = new Sunny.UI.UIPanel();
             this.footer = new Sunny.UI.UITableLayoutPanel();
             this.NavMenu = new Sunny.UI.UINavMenu();
@@ -43,10 +43,10 @@
             this.Logotext = new Sunny.UI.UIPanel();
             this.uiPanel2 = new Sunny.UI.UIPanel();
             this.Logo = new Sunny.UI.UITableLayoutPanel();
+            this.LogoImg = new Sunny.UI.UIPanel();
             this.header = new Sunny.UI.UITableLayoutPanel();
             this.uiTopbar = new Sunny.UI.UIPanel();
             this.mainPanelLayout = new Sunny.UI.UITableLayoutPanel();
-            this.LogoImg = new Sunny.UI.UIPanel();
             this.footer.SuspendLayout();
             this.BodyPanel.SuspendLayout();
             this.navPanel.SuspendLayout();
@@ -87,19 +87,19 @@
             this.uiPanel1.Text = "t177119";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // lblClock
+            // opClock
             // 
-            this.lblClock.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblClock.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.lblClock.Location = new System.Drawing.Point(858, 0);
-            this.lblClock.Margin = new System.Windows.Forms.Padding(0);
-            this.lblClock.MinimumSize = new System.Drawing.Size(1, 1);
-            this.lblClock.Name = "lblClock";
-            this.lblClock.Radius = 0;
-            this.lblClock.Size = new System.Drawing.Size(166, 39);
-            this.lblClock.TabIndex = 1;
-            this.lblClock.Text = "20/11/2024 17:27:00";
-            this.lblClock.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.opClock.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opClock.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opClock.Location = new System.Drawing.Point(858, 0);
+            this.opClock.Margin = new System.Windows.Forms.Padding(0);
+            this.opClock.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opClock.Name = "opClock";
+            this.opClock.Radius = 0;
+            this.opClock.Size = new System.Drawing.Size(166, 39);
+            this.opClock.TabIndex = 1;
+            this.opClock.Text = "20/11/2024 17:27:00";
+            this.opClock.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblAllStatus
             // 
@@ -128,7 +128,7 @@
             this.footer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 205F));
             this.footer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 166F));
             this.footer.Controls.Add(this.uiPanel1, 0, 0);
-            this.footer.Controls.Add(this.lblClock, 4, 0);
+            this.footer.Controls.Add(this.opClock, 4, 0);
             this.footer.Controls.Add(this.lblStatus, 3, 0);
             this.footer.Controls.Add(this.lblAllStatus, 2, 0);
             this.footer.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -244,6 +244,7 @@
             this.btnMini.Text = "Thu nhỏ";
             this.btnMini.TipsColor = System.Drawing.Color.RoyalBlue;
             this.btnMini.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnMini.Click += new System.EventHandler(this.btnMini_Click);
             // 
             // TabBody
             // 
@@ -332,6 +333,22 @@
             this.Logo.TabIndex = 2;
             this.Logo.TagString = null;
             // 
+            // LogoImg
+            // 
+            this.LogoImg.BackColor = System.Drawing.Color.Transparent;
+            this.LogoImg.BackgroundImage = global::MASAN_SERIALIZATION.Properties.Resources.LogoTanTien;
+            this.LogoImg.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.LogoImg.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.LogoImg.Location = new System.Drawing.Point(4, 5);
+            this.LogoImg.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.LogoImg.MinimumSize = new System.Drawing.Size(1, 1);
+            this.LogoImg.Name = "LogoImg";
+            this.LogoImg.RectColor = System.Drawing.Color.Transparent;
+            this.LogoImg.Size = new System.Drawing.Size(66, 39);
+            this.LogoImg.TabIndex = 0;
+            this.LogoImg.Text = null;
+            this.LogoImg.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // header
             // 
             this.header.BackColor = System.Drawing.Color.White;
@@ -388,22 +405,6 @@
             this.mainPanelLayout.TabIndex = 1;
             this.mainPanelLayout.TagString = null;
             // 
-            // LogoImg
-            // 
-            this.LogoImg.BackColor = System.Drawing.Color.Transparent;
-            this.LogoImg.BackgroundImage = global::MASAN_SERIALIZATION.Properties.Resources.LogoTanTien;
-            this.LogoImg.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.LogoImg.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.LogoImg.Location = new System.Drawing.Point(4, 5);
-            this.LogoImg.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.LogoImg.MinimumSize = new System.Drawing.Size(1, 1);
-            this.LogoImg.Name = "LogoImg";
-            this.LogoImg.RectColor = System.Drawing.Color.Transparent;
-            this.LogoImg.Size = new System.Drawing.Size(66, 39);
-            this.LogoImg.TabIndex = 0;
-            this.LogoImg.Text = null;
-            this.LogoImg.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // FMain
             // 
             this.AllowShowTitle = false;
@@ -432,7 +433,7 @@
         #endregion
         private Sunny.UI.UIPanel lblStatus;
         private Sunny.UI.UIPanel uiPanel1;
-        private Sunny.UI.UIPanel lblClock;
+        private Sunny.UI.UIPanel opClock;
         private Sunny.UI.UIPanel lblAllStatus;
         private Sunny.UI.UITableLayoutPanel footer;
         private Sunny.UI.UINavMenu NavMenu;

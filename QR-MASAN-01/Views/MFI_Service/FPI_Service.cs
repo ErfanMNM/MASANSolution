@@ -845,7 +845,7 @@ namespace QR_MASAN_01.Views.MFI_Service
                     
                     break;
             }
-        }
+        }     
         private void btnRUN_Click(object sender, EventArgs e)
         {
             //khởi động PO  

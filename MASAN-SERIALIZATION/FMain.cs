@@ -91,7 +91,7 @@ namespace MASAN_SERIALIZATION
                 //ghi nhật ký lỗi
                 Globals.Log.WriteLogAsync("System", e_LogType.Error, $"Lỗi khởi tạo cấu hình: {ex.Message}");
                 //hiển thị thông báo lỗi
-                this.ShowErrorNotifier($"Lỗi EM02 khởi tạo cấu hình: {ex.Message}");
+                this.ShowErrorDialog($"Lỗi EM02 khởi tạo cấu hình: {ex.Message}");
             }
             
         }
@@ -239,8 +239,8 @@ namespace MASAN_SERIALIZATION
                         this.Invoke(new Action(() =>
                         {
                            // btnDeActive.Enabled = true;
-                            NavMenu.Nodes[NavMenu.Nodes.Count - 1].Remove(); // xóa trang cuối nếu đã đăng nhập
-                            NavMenu.SelectPage(1003); // chọn trang Dashboard
+                            //NavMenu.Nodes[NavMenu.Nodes.Count - 1].Remove(); // xóa trang cuối nếu đã đăng nhập
+                            NavMenu.SelectPage(1001); // chọn trang Dashboard
                             NavMenu.Enabled = true; //bật menu
                             NavMenu.Visible = true; //hiện menu
                         }));
@@ -323,7 +323,7 @@ namespace MASAN_SERIALIZATION
                 {
                     try
                     {
-                        lblClock.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+                        opClock.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
                         Login_Process();
                     }
                     catch (Exception ex)
@@ -344,6 +344,7 @@ namespace MASAN_SERIALIZATION
         }
         #endregion
 
+        #region Các hàm sự kiện giao diện
         private void btnAppClose_Click(object sender, EventArgs e)
         {
             // Dừng task chính
@@ -355,5 +356,13 @@ namespace MASAN_SERIALIZATION
             Application.Exit();
 
         }
+
+        private void btnMini_Click(object sender, EventArgs e)
+        {
+            //thu nhỏ ứng dụng
+            WindowState = FormWindowState.Minimized;
+        }
+
+        #endregion
     }
 }

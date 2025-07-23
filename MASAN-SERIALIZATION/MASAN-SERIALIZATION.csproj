@@ -123,6 +123,7 @@
       <DependentUpon>FMain.cs</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\Globals.cs" />
+    <Compile Include="Production\ProductionHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\Extension.cs" />
@@ -137,6 +138,12 @@
     </Compile>
     <Compile Include="Views\Login\PLogin.Designer.cs">
       <DependentUpon>PLogin.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProductionInfo\PPOInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ProductionInfo\PPOInfo.Designer.cs">
+      <DependentUpon>PPOInfo.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="FMain.resx">
       <DependentUpon>FMain.cs</DependentUpon>
@@ -156,6 +163,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Login\PLogin.resx">
       <DependentUpon>PLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ProductionInfo\PPOInfo.resx">
+      <DependentUpon>PPOInfo.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
