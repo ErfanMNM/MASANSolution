@@ -48,6 +48,9 @@ namespace MASAN_SERIALIZATION.Production
         public string cartonSize { get; set; } = "-";
         public string totalCZCode { get; set; } = "-"; //Tổng số mã CZ đã nhận từ MES
         public Product_Counter counter { get; set; } = new Product_Counter();
+
+        public AWS_Send_Counter awsSendCounter { get; set; } = new AWS_Send_Counter(); //Thông tin bộ đếm gửi AWS
+        public AWS_Recived_Counter awsRecivedCounter { get; set; } = new AWS_Recived_Counter(); //Thông tin bộ đếm nhận AWS
         #endregion
 
         #region Các thống kê
@@ -65,6 +68,21 @@ namespace MASAN_SERIALIZATION.Production
             public int activatedCartonCount { get; set; } = 0; //Tổng số thùng đã kích hoạt
             public int errorCartonCount { get; set; } = 0; //Tổng số thùng lỗi (lỗi kích hoạt, lỗi gửi AWS, v.v.)
 
+            //hàm reset lại các bộ đếm
+            public void Reset()
+            {
+                passCount = 0;
+                failCount = 0;
+                duplicateCount = 0;
+                readfailCount = 0;
+                notfoundCount = 0;
+                errorCount = 0;
+                totalCount = 0;
+                totalCartonCount = 0;
+                activatedCartonCount = 0;
+                errorCartonCount = 0;
+            }
+
         }
 
         //thông tin bộ đếm gửi nhận aws
@@ -76,6 +94,14 @@ namespace MASAN_SERIALIZATION.Production
             public int sentCount { get; set; } = 0; //Số mã đã gửi thành công
             //số gửi lỗi
             public int failedCount { get; set; } = 0; //Số mã gửi lỗi
+
+            //hàm reset lại các bộ đếm
+            public void Reset()
+            {
+                pendingCount = 0;
+                sentCount = 0;
+                failedCount = 0;
+            }
         }
 
         public class AWS_Recived_Counter
@@ -84,6 +110,13 @@ namespace MASAN_SERIALIZATION.Production
             public int waitingCount { get; set; } = 0; //số mã đang chờ nhận
             //số đã gửi
             public int recivedCount { get; set; } = 0; //đã nhận thành công
+
+            //ham reset lại các bộ đếm
+            public void Reset()
+            {
+                waitingCount = 0;
+                recivedCount = 0;
+            }
         }
 
         #endregion
@@ -263,6 +296,26 @@ namespace MASAN_SERIALIZATION.Production
                 }
             }
 
+            public (bool issucess, DataTable logPO, string message) Get_PO_Run_History_By_OrderNo(string orderNo)
+            {
+                try
+                {
+                    using (var conn = new SQLiteConnection($"Data Source={POLog_dbPath};Version=3;"))
+                    {
+                        string query = "SELECT * FROM PO WHERE orderNO = @orderNo ORDER BY Timestamp DESC";
+                        var adapter = new SQLiteDataAdapter(query, conn);
+                        adapter.SelectCommand.Parameters.AddWithValue("@orderNo", orderNo);
+                        var table = new DataTable();
+                        adapter.Fill(table);
+                        return (table.Rows.Count > 0) ? (true, table, "Lấy lịch sử PO thành công.") : (false, null, "Không có lịch sử PO nào cho orderNo: " + orderNo);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return (false, null, $"Lỗi P05 khi lấy lịch sử PO: {ex.Message}");
+                }
+            }
+
             //lấy tổng số sản phẩm đã chạy
             public (bool issucess, int RecordCount, string message) Get_Record_Count(string orderNO)
             {
@@ -342,8 +395,175 @@ namespace MASAN_SERIALIZATION.Production
                 }
 
             }
+
+            public (bool issucess, DataTable Records, string message) Get_Records(string orderNo)
+            {
+                try
+                {
+                    string czRunPath = $"{dataPath}/Record_{orderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return (false, null, "Cơ sở dữ liệu ghi không tồn tại.");
+                    }
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = "SELECT * FROM Records";
+                        var adapter = new SQLiteDataAdapter(query, conn);
+                        var table = new DataTable();
+                        adapter.Fill(table);
+                        return (table.Rows.Count > 0) ? (true, table, "Lấy danh sách bản ghi thành công.") : (true, null, "Không có bản ghi nào trong cơ sở dữ liệu.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return (false, null, $"Lỗi PH08 khi lấy danh sách bản ghi: {ex.Message}");
+                }
+            }
+
+
+            public (bool issucess, DataTable Codes, string message) Get_Codes(string orderNo)
+            {
+                try
+                {
+                    string czRunPath = $"{dataPath}/{orderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return (false, null, "Cơ sở dữ liệu ghi không tồn tại.");
+                    }
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = "SELECT * FROM UniqueCodes";
+                        var adapter = new SQLiteDataAdapter(query, conn);
+                        var table = new DataTable();
+                        adapter.Fill(table);
+                        return (table.Rows.Count > 0) ? (true, table, "Lấy danh sách bản ghi thành công.") : (true, null, "Không có bản ghi nào trong cơ sở dữ liệu.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return (false, null, $"Lỗi PH110 khi lấy danh sách bản ghi: {ex.Message}");
+                }
+            }
+            public bool Is_PO_Deleted(string orderNo)
+            {
+                using (var conn = new SQLiteConnection($"Data Source={POLog_dbPath};Version=3;"))
+                {
+                    string query = "SELECT COUNT(*) FROM PO WHERE orderNO = @orderNo AND Action = 'Deleted'";
+                    var command = new SQLiteCommand(query, conn);
+                    command.Parameters.AddWithValue("@orderNo", orderNo);
+                    conn.Open();
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    return count > 0;
+                }
+            }
+
+            public bool Is_PO_Completed(string orderNo)
+            {
+                using (var conn = new SQLiteConnection($"Data Source={POLog_dbPath};Version=3;"))
+                {
+                    string query = "SELECT COUNT(*) FROM PO WHERE orderNO = @orderNo AND Action = 'Completed'";
+                    var command = new SQLiteCommand(query, conn);
+                    command.Parameters.AddWithValue("@orderNo", orderNo);
+                    conn.Open();
+                    int count = Convert.ToInt32(command.ExecuteScalar());
+                    return count > 0;
+                }
+            }
+
         }
 
+        #endregion
+
+        #region Các phương thức ghi dữ liệu vào cơ sở dữ liệu
+
+        public (bool issucces, string message) Save_PO(string orderNo, string _productionDate, string userName)
+        {
+            try
+            {
+                var POlog = getDataPO.Get_PO_Run_History_By_OrderNo(orderNo);
+
+                //nếu chưa từng tồn tại thì tạo mới
+                if (!POlog.issucess)
+                {
+                    using (var conn = new SQLiteConnection($"Data Source={POLog_dbPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string insertQuery = @"
+                        INSERT INTO PO (orderNO, productionDate, Action, UserName, Counter, Timestamp, Timeunix)
+                        VALUES (@orderNo, @productionDate, 'Create', @UserName, '{}', @Timestamp, @Timeunix)";
+                        var command = new SQLiteCommand(insertQuery, conn);
+                        command.Parameters.AddWithValue("@orderNo", orderNo);
+                        command.Parameters.AddWithValue("@productionDate", _productionDate);
+                        command.Parameters.AddWithValue("@UserName", userName);
+                        command.Parameters.AddWithValue("@Timestamp", DateTime.UtcNow.ToString("o"));
+                        command.Parameters.AddWithValue("@Timeunix", ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeMilliseconds());
+                        command.ExecuteNonQuery();
+                    }
+                }
+                //nếu tồn tại rồi thì ghi Update
+                else
+                {
+                    using (var conn = new SQLiteConnection($"Data Source={POLog_dbPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string insertQuery = @"
+                        INSERT INTO PO (orderNO, productionDate, Action, UserName, Counter, Timestamp, Timeunix)
+                        VALUES (@orderNo, @productionDate, 'Update', @UserName, '{}', @Timestamp, @Timeunix)";
+                        var command = new SQLiteCommand(insertQuery, conn);
+                        command.Parameters.AddWithValue("@orderNo", orderNo);
+                        command.Parameters.AddWithValue("@productionDate", _productionDate);
+                        command.Parameters.AddWithValue("@UserName", userName);
+                        command.Parameters.AddWithValue("@Timestamp", DateTime.UtcNow.ToString("o"));
+                        command.Parameters.AddWithValue("@Timeunix", ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeMilliseconds());
+                        command.ExecuteNonQuery();
+                    }
+                }
+
+                //cập nhật lại mã CZ cho chắc
+                var getUniqueCodesMes = getfromMES.Get_Unique_Codes_MES(orderNo);
+                if (!getUniqueCodesMes.issucess)
+                {
+                    return (false, getUniqueCodesMes.message);
+                }
+                DataTable poUniqueCodes = getUniqueCodesMes.Data;
+
+                var getUniqueCodesRun = getDataPO.Get_Codes(orderNo);
+                if (!getUniqueCodesRun.issucess)
+                {
+                    return (false, getUniqueCodesRun.message);
+                }
+                DataTable czRunUniqueCodes = getUniqueCodesRun.Codes;
+
+                List<string> poCodes = poUniqueCodes.AsEnumerable().Select(row => row.Field<string>("Code")).ToList();
+                List<string> czRunCodes = czRunUniqueCodes.AsEnumerable().Select(row => row.Field<string>("Code")).ToList();
+                List<string> codesToAdd = poCodes.Except(czRunCodes).ToList();
+
+                if (codesToAdd.Count > 0)
+                {
+                    //tạo thư mục nếu chưa tồn tại
+                    string czRunPath = $"{poAPIServerPath}/codes/{orderNo}.db";
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        foreach (string code in codesToAdd)
+                        {
+                            string insertQuery = "INSERT INTO UniqueCodes (Code) VALUES (@Code)";
+                            var command = new SQLiteCommand(insertQuery, conn);
+                            command.Parameters.AddWithValue("@Code", code);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+
+                return (true, "Ghi PO thành công vào cơ sở dữ liệu.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Lỗi P06 khi ghi PO vào cơ sở dữ liệu: {ex.Message}");
+            }
+        }
 
         #endregion
 
@@ -566,6 +786,7 @@ namespace MASAN_SERIALIZATION.Production
         Completed,// quá trình sản xuất đã hoàn thành
         Editing,// đang chỉnh sửa thông tin sản xuất
         Editting_ProductionDate,//Đang chỉnh sửa ngày sản xuất
+        Saving,// đang lưu thông tin sản xuất
         Error// có lỗi xảy ra trong quá trình sản xuất
     }
 
@@ -599,6 +820,16 @@ namespace MASAN_SERIALIZATION.Production
         Error_408 = 408, // lỗi timeout
         Error_409 = 409, // lỗi xung đột
         Error_402 = 402 // yêu cầu thanh toán
+    }
+
+    public enum e_Production_Order_Log_Type
+    {
+        Deleted, // PO đã bị xóa
+        Completed, // PO đã hoàn thành
+        Create, // PO đang chạy
+        Update, // PO đang chờ xử lý
+        UpdateProductionDate, // PO đang cập nhật ngày sản xuất
+        Error // có lỗi xảy ra với PO
     }
 
     #endregion

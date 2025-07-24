@@ -1,4 +1,4 @@
-﻿namespace MASANMASAN_SERIALIZATION.Communications.TCP
+﻿namespace SpT.Communications.TCP
 {
     partial class TCPClient
     {

@@ -780,6 +780,7 @@
             this.btnRUN.TabIndex = 4;
             this.btnRUN.Text = "BẮT ĐẦU SẢN XUẤT";
             this.btnRUN.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnRUN.Click += new System.EventHandler(this.btnRUN_Click);
             // 
             // btnTestMode
             // 

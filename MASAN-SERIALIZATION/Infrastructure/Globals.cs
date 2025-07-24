@@ -31,5 +31,10 @@ namespace MASAN_SERIALIZATION
         // Biến toàn cục để lưu trữ trạng thái sản xuất
         public static e_Production_State Production_State { get; set; } = e_Production_State.Start;
 
+        // Biến toàn cục để lưu trữ trạng thái sản xuất
+        public static bool APP_Ready { get; set; } = false;
+
+        public static e_Camera_State CameraMain_State { get; set; } = e_Camera_State.DISCONNECTED;
+        public static e_Camera_State CameraSub_State { get; set; } = e_Camera_State.DISCONNECTED;
     }
 }

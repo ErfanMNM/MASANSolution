@@ -335,6 +335,7 @@ namespace MASAN_SERIALIZATION
                     try
                     {
                         opClock.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss.fff");
+                        lblStatus.Text = Globals.Production_State.ToString();
                         Login_Process();
                     }
                     catch (Exception ex)

@@ -21,4 +21,12 @@ namespace MASAN_SERIALIZATION.Enums
         ACTIVE,
         DEACTIVE
     }
+
+    public enum e_Camera_State
+    {
+        DISCONNECTED,
+        CONNECTED,
+        RECONNECTING
+    }
+
 }
