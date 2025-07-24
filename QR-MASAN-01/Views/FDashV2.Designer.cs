@@ -112,6 +112,7 @@
             this.opTimeOutC2 = new Sunny.UI.UIDigitalLabel();
             this.uiLabel13 = new Sunny.UI.UILabel();
             this.opTotalC2 = new Sunny.UI.UIDigitalLabel();
+            this.uiStyleManager1 = new Sunny.UI.UIStyleManager(this.components);
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTitlePanel5.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -1292,6 +1293,11 @@
             this.opTotalC2.Size = new System.Drawing.Size(114, 44);
             this.opTotalC2.TabIndex = 15;
             // 
+            // uiStyleManager1
+            // 
+            this.uiStyleManager1.GlobalFont = true;
+            this.uiStyleManager1.GlobalFontName = "Tahoma";
+            // 
             // FDashboard
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1411,5 +1417,6 @@
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel37;
         private Sunny.UI.UIPanel opContentC2;
         private Sunny.UI.UIPanel opResultPassFailC2;
+        private Sunny.UI.UIStyleManager uiStyleManager1;
     }
 }

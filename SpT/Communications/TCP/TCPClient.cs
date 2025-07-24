@@ -114,6 +114,7 @@ namespace SpT.Communications.TCP
                         int received = await client.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
                         if (received > 0)
                         {
+                            
                             var data = Encoding.UTF8.GetString(buffer, 0, received);
                             ClientCallBack?.Invoke(enumClient.RECEIVED, data);
                         }

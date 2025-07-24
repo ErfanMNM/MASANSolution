@@ -36,5 +36,7 @@ namespace MASAN_SERIALIZATION
 
         public static e_Camera_State CameraMain_State { get; set; } = e_Camera_State.DISCONNECTED;
         public static e_Camera_State CameraSub_State { get; set; } = e_Camera_State.DISCONNECTED;
+
+        public static bool PLC_Connected { get; set; } = false; // Biến toàn cục để kiểm tra kết nối PLC
     }
 }

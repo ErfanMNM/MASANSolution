@@ -21,7 +21,7 @@ namespace MASAN_SERIALIZATION.Views.Login
 
         public void INIT()
         {
-            ucUser_Login1.IS2FAEnabled = Configs.Configs.Current.TwoFA_Enabled;
+            ucUser_Login1.IS2FAEnabled = AppConfigs.Current.TwoFA_Enabled;
         }
 
         private void PLogin_Initialize(object sender, EventArgs e)

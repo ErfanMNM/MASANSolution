@@ -412,6 +412,7 @@ namespace MASAN_SERIALIZATION.Views.Test
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error generating barcode: {ex.Message}");
                 // Nếu không có ZXing, hiển thị placeholder
                 pictureBox.Image = CreatePlaceholderBarcode(element.Bounds.Width, element.Bounds.Height, element.BarcodeType);
             }

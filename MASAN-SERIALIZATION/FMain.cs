@@ -81,7 +81,8 @@ namespace MASAN_SERIALIZATION
             try
             {
                 //nạp cấu hình từ file ini
-                Configs.Configs.Current.Load();
+                AppConfigs.Current.Load();
+                //AppConfigs.Current.Save(); //lưu cấu hình nếu có thay đổi
 
                 //nạp cấu hình PLC
                 PLCAddress.Init(
@@ -136,6 +137,7 @@ namespace MASAN_SERIALIZATION
             try
             {
                 _pLogin.INIT();
+                _pDashboard.STARTUP();
             }
             catch (Exception ex)
             {

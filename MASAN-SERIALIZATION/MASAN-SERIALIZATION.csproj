@@ -71,11 +71,29 @@
     <Reference Include="Google.Apis.Auth, Version=1.70.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Apis.Auth.1.70.0\lib\net462\Google.Apis.Auth.dll</HintPath>
     </Reference>
+    <Reference Include="Google.Apis.Bigquery.v2">
+      <HintPath>..\packages\Google.Apis.Bigquery.v2.1.69.0.3783\lib\net462\Google.Apis.Bigquery.v2.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Apis.Core, Version=1.70.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Apis.Core.1.70.0\lib\net462\Google.Apis.Core.dll</HintPath>
     </Reference>
     <Reference Include="Google.Apis.Sheets.v4, Version=1.70.0.3819, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Apis.Sheets.v4.1.70.0.3819\lib\net462\Google.Apis.Sheets.v4.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Storage.v1">
+      <HintPath>..\packages\Google.Apis.Storage.v1.1.69.0.3796\lib\net462\Google.Apis.Storage.v1.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Cloud.BigQuery.V2">
+      <HintPath>..\packages\Google.Cloud.BigQuery.V2.3.11.0\lib\net462\Google.Cloud.BigQuery.V2.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Cloud.Storage.V1">
+      <HintPath>..\packages\Google.Cloud.Storage.V1.4.13.0\lib\net462\Google.Cloud.Storage.V1.dll</HintPath>
+    </Reference>
+    <Reference Include="HslCommunication">
+      <HintPath>..\packages\HslCommunication.12.3.2\lib\net451\HslCommunication.dll</HintPath>
+    </Reference>
+    <Reference Include="MQTTnet">
+      <HintPath>..\packages\MQTTnet.4.1.3.436\lib\net461\MQTTnet.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -99,6 +117,7 @@
       <HintPath>..\packages\System.Data.SQLite.Linq.1.0.119.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Design" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Management" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
@@ -201,9 +220,17 @@
     <Folder Include="Auth\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SPMS1\SPMS1.csproj">
+      <Project>{B4D6CB7D-FA06-46A0-ABB3-21D3ED7A0C77}</Project>
+      <Name>SPMS1</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SpT\SpT.csproj">
       <Project>{eb745670-e877-411c-ab3f-253e16c30d82}</Project>
       <Name>SpT</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TeraUI\TeraUI.csproj">
+      <Project>{c975c83d-e9f6-4599-b742-2a9737bdaa63}</Project>
+      <Name>TeraUI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

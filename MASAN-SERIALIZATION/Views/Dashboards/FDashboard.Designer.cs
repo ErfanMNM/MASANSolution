@@ -65,15 +65,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTitlePanel3 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel4 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel9 = new Sunny.UI.UITableLayoutPanel();
-            this.uiTableLayoutPanel12 = new Sunny.UI.UITableLayoutPanel();
-            this.opCMR02Stt = new Sunny.UI.UIPanel();
-            this.uiPanel18 = new Sunny.UI.UIPanel();
-            this.uiTableLayoutPanel8 = new Sunny.UI.UITableLayoutPanel();
-            this.uiPanel8 = new Sunny.UI.UIPanel();
-            this.opCamera = new Sunny.UI.UIPanel();
-            this.uiTableLayoutPanel6 = new Sunny.UI.UITableLayoutPanel();
-            this.uiPanel12 = new Sunny.UI.UIPanel();
-            this.opPLCStatus = new Sunny.UI.UIPanel();
+            this.opCameraSub = new TeraUI.State.tuStatePanel();
+            this.opCameraMain = new TeraUI.State.tuStatePanel();
+            this.opPLCState = new TeraUI.State.tuStatePanel();
             this.uiTableLayoutPanel13 = new Sunny.UI.UITableLayoutPanel();
             this.uiTitlePanel1 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel17 = new Sunny.UI.UITableLayoutPanel();
@@ -93,6 +87,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opResultPassFailC2 = new Sunny.UI.UIPanel();
             this.Camera_Main = new SpT.Communications.TCP.TCPClient(this.components);
             this.Camera_Sub = new SpT.Communications.TCP.TCPClient(this.components);
+            this.OMRON_PLC = new SPMS1.OmronPLC_Hsl(this.components);
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTitlePanel5.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -103,9 +98,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTitlePanel3.SuspendLayout();
             this.uiTableLayoutPanel4.SuspendLayout();
             this.uiTableLayoutPanel9.SuspendLayout();
-            this.uiTableLayoutPanel12.SuspendLayout();
-            this.uiTableLayoutPanel8.SuspendLayout();
-            this.uiTableLayoutPanel6.SuspendLayout();
             this.uiTableLayoutPanel13.SuspendLayout();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTableLayoutPanel17.SuspendLayout();
@@ -645,9 +637,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.uiTableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 120F));
             this.uiTableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel9.Controls.Add(this.uiTableLayoutPanel12, 1, 0);
-            this.uiTableLayoutPanel9.Controls.Add(this.uiTableLayoutPanel8, 0, 0);
-            this.uiTableLayoutPanel9.Controls.Add(this.uiTableLayoutPanel6, 2, 0);
+            this.uiTableLayoutPanel9.Controls.Add(this.opCameraSub, 1, 0);
+            this.uiTableLayoutPanel9.Controls.Add(this.opCameraMain, 0, 0);
+            this.uiTableLayoutPanel9.Controls.Add(this.opPLCState, 2, 0);
             this.uiTableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTableLayoutPanel9.Location = new System.Drawing.Point(2, 2);
             this.uiTableLayoutPanel9.Margin = new System.Windows.Forms.Padding(2);
@@ -658,151 +650,65 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel9.TabIndex = 8;
             this.uiTableLayoutPanel9.TagString = null;
             // 
-            // uiTableLayoutPanel12
+            // opCameraSub
             // 
-            this.uiTableLayoutPanel12.BackColor = System.Drawing.Color.PaleTurquoise;
-            this.uiTableLayoutPanel12.ColumnCount = 1;
-            this.uiTableLayoutPanel12.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTableLayoutPanel12.Controls.Add(this.opCMR02Stt, 0, 1);
-            this.uiTableLayoutPanel12.Controls.Add(this.uiPanel18, 0, 0);
-            this.uiTableLayoutPanel12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel12.Location = new System.Drawing.Point(119, 2);
-            this.uiTableLayoutPanel12.Margin = new System.Windows.Forms.Padding(2);
-            this.uiTableLayoutPanel12.Name = "uiTableLayoutPanel12";
-            this.uiTableLayoutPanel12.RowCount = 2;
-            this.uiTableLayoutPanel12.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
-            this.uiTableLayoutPanel12.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
-            this.uiTableLayoutPanel12.Size = new System.Drawing.Size(116, 84);
-            this.uiTableLayoutPanel12.TabIndex = 18;
-            this.uiTableLayoutPanel12.TagString = null;
+            this.opCameraSub.BackGroundColor = System.Drawing.Color.PaleTurquoise;
+            this.opCameraSub.Blink_Interval = 500;
+            this.opCameraSub.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opCameraSub.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opCameraSub.IsBlinking = true;
+            this.opCameraSub.IsOn = true;
+            this.opCameraSub.Location = new System.Drawing.Point(120, 3);
+            this.opCameraSub.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opCameraSub.Name = "opCameraSub";
+            this.opCameraSub.OFFcolor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.opCameraSub.ONcolor = System.Drawing.Color.Red;
+            this.opCameraSub.Size = new System.Drawing.Size(114, 82);
+            this.opCameraSub.TabIndex = 4;
+            this.opCameraSub.Text = null;
+            this.opCameraSub.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.opCameraSub.Title = "Camera Sau";
+            this.opCameraSub.Value = "Mất kết nối";
             // 
-            // opCMR02Stt
+            // opCameraMain
             // 
-            this.opCMR02Stt.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opCMR02Stt.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.opCMR02Stt.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opCMR02Stt.Location = new System.Drawing.Point(2, 35);
-            this.opCMR02Stt.Margin = new System.Windows.Forms.Padding(2);
-            this.opCMR02Stt.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opCMR02Stt.Name = "opCMR02Stt";
-            this.opCMR02Stt.Radius = 3;
-            this.opCMR02Stt.Size = new System.Drawing.Size(112, 47);
-            this.opCMR02Stt.TabIndex = 3;
-            this.opCMR02Stt.Text = "-";
-            this.opCMR02Stt.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.opCameraMain.BackGroundColor = System.Drawing.Color.PaleTurquoise;
+            this.opCameraMain.Blink_Interval = 500;
+            this.opCameraMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opCameraMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opCameraMain.IsBlinking = true;
+            this.opCameraMain.IsOn = true;
+            this.opCameraMain.Location = new System.Drawing.Point(3, 3);
+            this.opCameraMain.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opCameraMain.Name = "opCameraMain";
+            this.opCameraMain.OFFcolor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.opCameraMain.ONcolor = System.Drawing.Color.Red;
+            this.opCameraMain.Size = new System.Drawing.Size(111, 82);
+            this.opCameraMain.TabIndex = 3;
+            this.opCameraMain.Text = null;
+            this.opCameraMain.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.opCameraMain.Title = "Camera Trước";
+            this.opCameraMain.Value = "Mất kết nối";
             // 
-            // uiPanel18
+            // opPLCState
             // 
-            this.uiPanel18.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel18.FillColor = System.Drawing.Color.DarkTurquoise;
-            this.uiPanel18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel18.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel18.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel18.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel18.Name = "uiPanel18";
-            this.uiPanel18.Radius = 1;
-            this.uiPanel18.RectColor = System.Drawing.Color.Teal;
-            this.uiPanel18.Size = new System.Drawing.Size(112, 29);
-            this.uiPanel18.TabIndex = 1;
-            this.uiPanel18.Text = "Camera 02";
-            this.uiPanel18.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiTableLayoutPanel8
-            // 
-            this.uiTableLayoutPanel8.BackColor = System.Drawing.Color.PaleTurquoise;
-            this.uiTableLayoutPanel8.ColumnCount = 1;
-            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTableLayoutPanel8.Controls.Add(this.uiPanel8, 0, 0);
-            this.uiTableLayoutPanel8.Controls.Add(this.opCamera, 0, 1);
-            this.uiTableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel8.Location = new System.Drawing.Point(2, 2);
-            this.uiTableLayoutPanel8.Margin = new System.Windows.Forms.Padding(2);
-            this.uiTableLayoutPanel8.Name = "uiTableLayoutPanel8";
-            this.uiTableLayoutPanel8.RowCount = 2;
-            this.uiTableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
-            this.uiTableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
-            this.uiTableLayoutPanel8.Size = new System.Drawing.Size(113, 84);
-            this.uiTableLayoutPanel8.TabIndex = 17;
-            this.uiTableLayoutPanel8.TagString = null;
-            // 
-            // uiPanel8
-            // 
-            this.uiPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel8.FillColor = System.Drawing.Color.DarkTurquoise;
-            this.uiPanel8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel8.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel8.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel8.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel8.Name = "uiPanel8";
-            this.uiPanel8.Radius = 1;
-            this.uiPanel8.RectColor = System.Drawing.Color.Teal;
-            this.uiPanel8.Size = new System.Drawing.Size(109, 29);
-            this.uiPanel8.TabIndex = 1;
-            this.uiPanel8.Text = "Camera 01";
-            this.uiPanel8.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opCamera
-            // 
-            this.opCamera.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opCamera.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.opCamera.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opCamera.Location = new System.Drawing.Point(2, 35);
-            this.opCamera.Margin = new System.Windows.Forms.Padding(2);
-            this.opCamera.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opCamera.Name = "opCamera";
-            this.opCamera.Radius = 3;
-            this.opCamera.Size = new System.Drawing.Size(109, 47);
-            this.opCamera.TabIndex = 2;
-            this.opCamera.Text = "-";
-            this.opCamera.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiTableLayoutPanel6
-            // 
-            this.uiTableLayoutPanel6.BackColor = System.Drawing.Color.PaleTurquoise;
-            this.uiTableLayoutPanel6.ColumnCount = 1;
-            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTableLayoutPanel6.Controls.Add(this.uiPanel12, 0, 0);
-            this.uiTableLayoutPanel6.Controls.Add(this.opPLCStatus, 0, 1);
-            this.uiTableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel6.Location = new System.Drawing.Point(239, 2);
-            this.uiTableLayoutPanel6.Margin = new System.Windows.Forms.Padding(2);
-            this.uiTableLayoutPanel6.Name = "uiTableLayoutPanel6";
-            this.uiTableLayoutPanel6.RowCount = 2;
-            this.uiTableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
-            this.uiTableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
-            this.uiTableLayoutPanel6.Size = new System.Drawing.Size(114, 84);
-            this.uiTableLayoutPanel6.TabIndex = 13;
-            this.uiTableLayoutPanel6.TagString = null;
-            // 
-            // uiPanel12
-            // 
-            this.uiPanel12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel12.FillColor = System.Drawing.Color.DarkTurquoise;
-            this.uiPanel12.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel12.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel12.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel12.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel12.Name = "uiPanel12";
-            this.uiPanel12.Radius = 1;
-            this.uiPanel12.RectColor = System.Drawing.Color.Teal;
-            this.uiPanel12.Size = new System.Drawing.Size(110, 29);
-            this.uiPanel12.TabIndex = 1;
-            this.uiPanel12.Text = "PLC";
-            this.uiPanel12.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opPLCStatus
-            // 
-            this.opPLCStatus.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opPLCStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opPLCStatus.Location = new System.Drawing.Point(2, 35);
-            this.opPLCStatus.Margin = new System.Windows.Forms.Padding(2);
-            this.opPLCStatus.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opPLCStatus.Name = "opPLCStatus";
-            this.opPLCStatus.Radius = 3;
-            this.opPLCStatus.Size = new System.Drawing.Size(110, 47);
-            this.opPLCStatus.TabIndex = 2;
-            this.opPLCStatus.Text = "-";
-            this.opPLCStatus.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.opPLCState.BackGroundColor = System.Drawing.Color.PaleTurquoise;
+            this.opPLCState.Blink_Interval = 500;
+            this.opPLCState.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opPLCState.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opPLCState.IsBlinking = true;
+            this.opPLCState.IsOn = true;
+            this.opPLCState.Location = new System.Drawing.Point(240, 3);
+            this.opPLCState.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opPLCState.Name = "opPLCState";
+            this.opPLCState.OFFcolor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.opPLCState.ONcolor = System.Drawing.Color.Red;
+            this.opPLCState.Size = new System.Drawing.Size(112, 82);
+            this.opPLCState.TabIndex = 2;
+            this.opPLCState.Text = null;
+            this.opPLCState.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.opPLCState.Title = "PLC";
+            this.opPLCState.Value = "Mất kết nối";
             // 
             // uiTableLayoutPanel13
             // 
@@ -868,7 +774,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.uiTabControl1.TabIndex = 0;
             this.uiTabControl1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.uiTabControl1.SelectedIndexChanged += new System.EventHandler(this.uiTabControl1_SelectedIndexChanged);
             // 
             // tabPage1
             // 
@@ -901,7 +806,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.tabPage2.Controls.Add(this.opHis2);
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(200, 60);
+            this.tabPage2.Size = new System.Drawing.Size(459, 405);
             this.tabPage2.TabIndex = 3;
             this.tabPage2.Text = "Lịch sử";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -918,7 +823,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opHis2.Name = "opHis2";
             this.opHis2.Padding = new System.Windows.Forms.Padding(2);
             this.opHis2.ShowText = false;
-            this.opHis2.Size = new System.Drawing.Size(200, 60);
+            this.opHis2.Size = new System.Drawing.Size(459, 405);
             this.opHis2.TabIndex = 0;
             this.opHis2.Text = "uiListBox1";
             // 
@@ -1066,6 +971,16 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.Camera_Sub.Port = 0;
             this.Camera_Sub.ClientCallBack += new SpT.Communications.TCP.TCPClient.EventForClient(this.CameraSub_ClientCallBack);
             // 
+            // OMRON_PLC
+            // 
+            this.OMRON_PLC.PLC_IP = "127.0.0.1";
+            this.OMRON_PLC.PLC_PORT = 9600;
+            this.OMRON_PLC.PLC_Ready_DM = "D16";
+            this.OMRON_PLC.PLC_STATUS = SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect;
+            this.OMRON_PLC.Ready = 0;
+            this.OMRON_PLC.Time_Update = 1500;
+            this.OMRON_PLC.PLCStatus_OnChange += new System.EventHandler<SPMS1.OmronPLC_Hsl.PLCStatusEventArgs>(this.OMRON_PLC_PLCStatus_OnChange);
+            // 
             // FDashboard
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1084,9 +999,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTitlePanel3.ResumeLayout(false);
             this.uiTableLayoutPanel4.ResumeLayout(false);
             this.uiTableLayoutPanel9.ResumeLayout(false);
-            this.uiTableLayoutPanel12.ResumeLayout(false);
-            this.uiTableLayoutPanel8.ResumeLayout(false);
-            this.uiTableLayoutPanel6.ResumeLayout(false);
             this.uiTableLayoutPanel13.ResumeLayout(false);
             this.uiTitlePanel1.ResumeLayout(false);
             this.uiTableLayoutPanel17.ResumeLayout(false);
@@ -1138,15 +1050,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private Sunny.UI.UITitlePanel uiTitlePanel3;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel4;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel9;
-        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel12;
-        private Sunny.UI.UIPanel opCMR02Stt;
-        private Sunny.UI.UIPanel uiPanel18;
-        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel8;
-        private Sunny.UI.UIPanel uiPanel8;
-        private Sunny.UI.UIPanel opCamera;
-        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel6;
-        private Sunny.UI.UIPanel uiPanel12;
-        private Sunny.UI.UIPanel opPLCStatus;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel13;
         private Sunny.UI.UITitlePanel uiTitlePanel1;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel17;
@@ -1166,5 +1069,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private Sunny.UI.UIListBox opHisCS;
         private SpT.Communications.TCP.TCPClient Camera_Main;
         private SpT.Communications.TCP.TCPClient Camera_Sub;
+        private SPMS1.OmronPLC_Hsl OMRON_PLC;
+        private TeraUI.State.tuStatePanel opPLCState;
+        private TeraUI.State.tuStatePanel opCameraSub;
+        private TeraUI.State.tuStatePanel opCameraMain;
     }
 }

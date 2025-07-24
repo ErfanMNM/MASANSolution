@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MASAN-SERIALIZATION", "MASAN-SERIALIZATION\MASAN-SERIALIZATION.csproj", "{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeraUI", "TeraUI\TeraUI.csproj", "{C975C83D-E9F6-4599-B742-2A9737BDAA63}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -121,6 +123,14 @@ Global
 		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Release|x64.ActiveCfg = Release|Any CPU
 		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Release|x64.Build.0 = Release|Any CPU
+		{C975C83D-E9F6-4599-B742-2A9737BDAA63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C975C83D-E9F6-4599-B742-2A9737BDAA63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C975C83D-E9F6-4599-B742-2A9737BDAA63}.Debug|x64.ActiveCfg = Debug|x64
+		{C975C83D-E9F6-4599-B742-2A9737BDAA63}.Debug|x64.Build.0 = Debug|x64
+		{C975C83D-E9F6-4599-B742-2A9737BDAA63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C975C83D-E9F6-4599-B742-2A9737BDAA63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C975C83D-E9F6-4599-B742-2A9737BDAA63}.Release|x64.ActiveCfg = Release|Any CPU
+		{C975C83D-E9F6-4599-B742-2A9737BDAA63}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
