@@ -34,18 +34,18 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel3 = new Sunny.UI.UITableLayoutPanel();
             this.uiTitlePanel5 = new Sunny.UI.UITitlePanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.lblTotal = new Sunny.UI.UIDigitalLabel();
+            this.opTotal = new Sunny.UI.UIDigitalLabel();
             this.uiLabel11 = new Sunny.UI.UILabel();
+            this.opReadFail = new Sunny.UI.UIDigitalLabel();
             this.opFailC2 = new Sunny.UI.UIDigitalLabel();
-            this.opCaseActivated = new Sunny.UI.UIDigitalLabel();
             this.opTotalCase = new Sunny.UI.UIDigitalLabel();
             this.uiLabel6 = new Sunny.UI.UILabel();
             this.uiLabel7 = new Sunny.UI.UILabel();
             this.uiLabel8 = new Sunny.UI.UILabel();
-            this.lblFail = new Sunny.UI.UIDigitalLabel();
+            this.opFail = new Sunny.UI.UIDigitalLabel();
             this.uiLabel9 = new Sunny.UI.UILabel();
             this.uiLabel10 = new Sunny.UI.UILabel();
-            this.lblPass = new Sunny.UI.UIDigitalLabel();
+            this.opPass = new Sunny.UI.UIDigitalLabel();
             this.uiTableLayoutPanel5 = new Sunny.UI.UITableLayoutPanel();
             this.uiTitlePanel4 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel7 = new Sunny.UI.UITableLayoutPanel();
@@ -158,18 +158,18 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
-            this.tableLayoutPanel1.Controls.Add(this.lblTotal, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.opTotal, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.uiLabel11, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.opReadFail, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.opFailC2, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.opCaseActivated, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.opTotalCase, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.uiLabel6, 2, 2);
             this.tableLayoutPanel1.Controls.Add(this.uiLabel7, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.uiLabel8, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.lblFail, 2, 1);
+            this.tableLayoutPanel1.Controls.Add(this.opFail, 2, 1);
             this.tableLayoutPanel1.Controls.Add(this.uiLabel9, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.uiLabel10, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.lblPass, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.opPass, 1, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(1, 36);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
@@ -183,21 +183,21 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.tableLayoutPanel1.Size = new System.Drawing.Size(357, 137);
             this.tableLayoutPanel1.TabIndex = 10;
             // 
-            // lblTotal
+            // opTotal
             // 
-            this.lblTotal.BackColor = System.Drawing.Color.DeepSkyBlue;
-            this.lblTotal.DecimalPlaces = 0;
-            this.lblTotal.DigitalSize = 14;
-            this.lblTotal.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTotal.ForeColor = System.Drawing.Color.Black;
-            this.lblTotal.Location = new System.Drawing.Point(2, 29);
-            this.lblTotal.Margin = new System.Windows.Forms.Padding(2);
-            this.lblTotal.MinimumSize = new System.Drawing.Size(1, 1);
-            this.lblTotal.Name = "lblTotal";
-            this.lblTotal.Size = new System.Drawing.Size(114, 38);
-            this.lblTotal.TabIndex = 15;
-            this.lblTotal.Text = "uiDigitalLabel1";
+            this.opTotal.BackColor = System.Drawing.Color.DeepSkyBlue;
+            this.opTotal.DecimalPlaces = 0;
+            this.opTotal.DigitalSize = 14;
+            this.opTotal.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.opTotal.ForeColor = System.Drawing.Color.Black;
+            this.opTotal.Location = new System.Drawing.Point(2, 29);
+            this.opTotal.Margin = new System.Windows.Forms.Padding(2);
+            this.opTotal.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opTotal.Name = "opTotal";
+            this.opTotal.Size = new System.Drawing.Size(114, 38);
+            this.opTotal.TabIndex = 15;
+            this.opTotal.Text = "uiDigitalLabel1";
             // 
             // uiLabel11
             // 
@@ -213,6 +213,22 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiLabel11.Text = "TỔNG";
             this.uiLabel11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // opReadFail
+            // 
+            this.opReadFail.BackColor = System.Drawing.Color.PaleTurquoise;
+            this.opReadFail.DecimalPlaces = 0;
+            this.opReadFail.DigitalSize = 14;
+            this.opReadFail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opReadFail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.opReadFail.ForeColor = System.Drawing.Color.Black;
+            this.opReadFail.Location = new System.Drawing.Point(120, 100);
+            this.opReadFail.Margin = new System.Windows.Forms.Padding(2);
+            this.opReadFail.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opReadFail.Name = "opReadFail";
+            this.opReadFail.Size = new System.Drawing.Size(115, 35);
+            this.opReadFail.TabIndex = 13;
+            this.opReadFail.Text = "uiDigitalLabel3";
+            // 
             // opFailC2
             // 
             this.opFailC2.BackColor = System.Drawing.Color.PaleTurquoise;
@@ -221,29 +237,13 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opFailC2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opFailC2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opFailC2.ForeColor = System.Drawing.Color.Black;
-            this.opFailC2.Location = new System.Drawing.Point(120, 100);
+            this.opFailC2.Location = new System.Drawing.Point(239, 100);
             this.opFailC2.Margin = new System.Windows.Forms.Padding(2);
             this.opFailC2.MinimumSize = new System.Drawing.Size(1, 1);
             this.opFailC2.Name = "opFailC2";
-            this.opFailC2.Size = new System.Drawing.Size(115, 35);
-            this.opFailC2.TabIndex = 13;
-            this.opFailC2.Text = "uiDigitalLabel3";
-            // 
-            // opCaseActivated
-            // 
-            this.opCaseActivated.BackColor = System.Drawing.Color.PaleTurquoise;
-            this.opCaseActivated.DecimalPlaces = 0;
-            this.opCaseActivated.DigitalSize = 14;
-            this.opCaseActivated.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opCaseActivated.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opCaseActivated.ForeColor = System.Drawing.Color.Black;
-            this.opCaseActivated.Location = new System.Drawing.Point(239, 100);
-            this.opCaseActivated.Margin = new System.Windows.Forms.Padding(2);
-            this.opCaseActivated.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opCaseActivated.Name = "opCaseActivated";
-            this.opCaseActivated.Size = new System.Drawing.Size(116, 35);
-            this.opCaseActivated.TabIndex = 12;
-            this.opCaseActivated.Text = "uiDigitalLabel8";
+            this.opFailC2.Size = new System.Drawing.Size(116, 35);
+            this.opFailC2.TabIndex = 12;
+            this.opFailC2.Text = "uiDigitalLabel8";
             // 
             // opTotalCase
             // 
@@ -272,7 +272,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiLabel6.Name = "uiLabel6";
             this.uiLabel6.Size = new System.Drawing.Size(116, 27);
             this.uiLabel6.TabIndex = 10;
-            this.uiLabel6.Text = "Thùng Active";
+            this.uiLabel6.Text = "Lỗi C2";
             this.uiLabel6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiLabel7
@@ -286,7 +286,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiLabel7.Name = "uiLabel7";
             this.uiLabel7.Size = new System.Drawing.Size(115, 27);
             this.uiLabel7.TabIndex = 9;
-            this.uiLabel7.Text = "Lỗi C2";
+            this.uiLabel7.Text = "Lỗi đọc";
             this.uiLabel7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiLabel8
@@ -303,21 +303,21 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiLabel8.Text = "Số Thùng";
             this.uiLabel8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // lblFail
+            // opFail
             // 
-            this.lblFail.BackColor = System.Drawing.Color.PeachPuff;
-            this.lblFail.DecimalPlaces = 0;
-            this.lblFail.DigitalSize = 14;
-            this.lblFail.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblFail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblFail.ForeColor = System.Drawing.Color.Black;
-            this.lblFail.Location = new System.Drawing.Point(239, 29);
-            this.lblFail.Margin = new System.Windows.Forms.Padding(2);
-            this.lblFail.MinimumSize = new System.Drawing.Size(1, 1);
-            this.lblFail.Name = "lblFail";
-            this.lblFail.Size = new System.Drawing.Size(116, 38);
-            this.lblFail.TabIndex = 7;
-            this.lblFail.Text = "uiDigitalLabel2";
+            this.opFail.BackColor = System.Drawing.Color.PeachPuff;
+            this.opFail.DecimalPlaces = 0;
+            this.opFail.DigitalSize = 14;
+            this.opFail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opFail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.opFail.ForeColor = System.Drawing.Color.Black;
+            this.opFail.Location = new System.Drawing.Point(239, 29);
+            this.opFail.Margin = new System.Windows.Forms.Padding(2);
+            this.opFail.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opFail.Name = "opFail";
+            this.opFail.Size = new System.Drawing.Size(116, 38);
+            this.opFail.TabIndex = 7;
+            this.opFail.Text = "uiDigitalLabel2";
             // 
             // uiLabel9
             // 
@@ -347,21 +347,21 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiLabel10.Text = "TỐT";
             this.uiLabel10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // lblPass
+            // opPass
             // 
-            this.lblPass.BackColor = System.Drawing.Color.PaleGreen;
-            this.lblPass.DecimalPlaces = 0;
-            this.lblPass.DigitalSize = 14;
-            this.lblPass.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblPass.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPass.ForeColor = System.Drawing.Color.Black;
-            this.lblPass.Location = new System.Drawing.Point(120, 29);
-            this.lblPass.Margin = new System.Windows.Forms.Padding(2);
-            this.lblPass.MinimumSize = new System.Drawing.Size(1, 1);
-            this.lblPass.Name = "lblPass";
-            this.lblPass.Size = new System.Drawing.Size(115, 38);
-            this.lblPass.TabIndex = 5;
-            this.lblPass.Text = "uiDigitalLabel1";
+            this.opPass.BackColor = System.Drawing.Color.PaleGreen;
+            this.opPass.DecimalPlaces = 0;
+            this.opPass.DigitalSize = 14;
+            this.opPass.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opPass.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.opPass.ForeColor = System.Drawing.Color.Black;
+            this.opPass.Location = new System.Drawing.Point(120, 29);
+            this.opPass.Margin = new System.Windows.Forms.Padding(2);
+            this.opPass.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opPass.Name = "opPass";
+            this.opPass.Size = new System.Drawing.Size(115, 38);
+            this.opPass.TabIndex = 5;
+            this.opPass.Text = "uiDigitalLabel1";
             // 
             // uiTableLayoutPanel5
             // 
@@ -1057,18 +1057,18 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel3;
         private Sunny.UI.UITitlePanel uiTitlePanel5;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private Sunny.UI.UIDigitalLabel lblTotal;
+        private Sunny.UI.UIDigitalLabel opTotal;
         private Sunny.UI.UILabel uiLabel11;
+        private Sunny.UI.UIDigitalLabel opReadFail;
         private Sunny.UI.UIDigitalLabel opFailC2;
-        private Sunny.UI.UIDigitalLabel opCaseActivated;
         private Sunny.UI.UIDigitalLabel opTotalCase;
         private Sunny.UI.UILabel uiLabel6;
         private Sunny.UI.UILabel uiLabel7;
         private Sunny.UI.UILabel uiLabel8;
-        private Sunny.UI.UIDigitalLabel lblFail;
+        private Sunny.UI.UIDigitalLabel opFail;
         private Sunny.UI.UILabel uiLabel9;
         private Sunny.UI.UILabel uiLabel10;
-        private Sunny.UI.UIDigitalLabel lblPass;
+        private Sunny.UI.UIDigitalLabel opPass;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel5;
         private Sunny.UI.UITitlePanel uiTitlePanel4;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel7;

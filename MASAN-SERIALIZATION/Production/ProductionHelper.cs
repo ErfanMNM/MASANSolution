@@ -396,6 +396,7 @@ namespace MASAN_SERIALIZATION.Production
 
             }
 
+
             public (bool issucess, DataTable Records, string message) Get_Records(string orderNo)
             {
                 try
@@ -420,7 +421,6 @@ namespace MASAN_SERIALIZATION.Production
                     return (false, null, $"Lỗi PH08 khi lấy danh sách bản ghi: {ex.Message}");
                 }
             }
-
 
             public (bool issucess, DataTable Codes, string message) Get_Codes(string orderNo)
             {
@@ -568,9 +568,10 @@ namespace MASAN_SERIALIZATION.Production
         public PostDB setDB { get; set; } = new PostDB();
         public class PostDB
         {
-            public void Update_Active_Status(CodeData _CodeItem)
+            public void Update_Active_Status(ProductionCodeData productionCodeData)
             {
-                using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/{GV.Selected_PO.orderNo.ToString()}.db;Version=3;"))
+                string czRunPath = $"{dataPath}/{orderNO}.db";
+                using (SQLiteConnection connection = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                 {
                     connection.Open();
                     string query = "UPDATE `UniqueCodes` SET " +
@@ -582,10 +583,10 @@ namespace MASAN_SERIALIZATION.Production
 
                     using (SQLiteCommand command = new SQLiteCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@RowId", _CodeItem.ID);
-                        command.Parameters.AddWithValue("@activateDate", _CodeItem.Activate_Datetime);
-                        command.Parameters.AddWithValue("@productionDate", _CodeItem.Production_Datetime);
-                        command.Parameters.AddWithValue("@UserName", Globalvariable.CurrentUser.Username);
+                        command.Parameters.AddWithValue("@RowId", productionCodeData.codeID);
+                        command.Parameters.AddWithValue("@activateDate", productionCodeData.Activate_Datetime);
+                        command.Parameters.AddWithValue("@productionDate", productionCodeData.Production_Datetime);
+                        command.Parameters.AddWithValue("@UserName", productionCodeData.Activate_User);
                         int rowsAffected = command.ExecuteNonQuery();
                     }
                 }
@@ -661,6 +662,7 @@ namespace MASAN_SERIALIZATION.Production
 	                                        ""ActivateDate""	TEXT NOT NULL DEFAULT 0,
 	                                        ""ProductionDate""	TEXT NOT NULL DEFAULT 0,
 	                                        ""ActivateUser""	TEXT NOT NULL DEFAULT 0,
+                                            ""SubCamera_ActivateDate""	TEXT NOT NULL DEFAULT 0,
 	                                        ""Send_Status""	TEXT NOT NULL DEFAULT pending,
 	                                        ""Recive_Status""	TEXT NOT NULL DEFAULT waiting,
 	                                        ""Send_Recive_Logs""	JSON,
@@ -814,7 +816,8 @@ namespace MASAN_SERIALIZATION.Production
         Editing,// đang chỉnh sửa thông tin sản xuất
         Editting_ProductionDate,//Đang chỉnh sửa ngày sản xuất
         Saving,// đang lưu thông tin sản xuất
-        Error// có lỗi xảy ra trong quá trình sản xuất
+        Error,// có lỗi xảy ra trong quá trình sản xuất
+        Pushing_to_Dic,//đang đẩy dữ liệu lên AWS
     }
 
     public enum e_Production_Status

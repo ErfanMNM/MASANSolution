@@ -33,11 +33,13 @@ namespace MASAN_SERIALIZATION
 
         // Biến toàn cục để lưu trữ trạng thái sản xuất
         public static bool APP_Ready { get; set; } = false;
+        public static bool Device_Ready { get; set; } = false; // Biến toàn cục để kiểm tra trạng thái thiết bị
 
         public static e_Camera_State CameraMain_State { get; set; } = e_Camera_State.DISCONNECTED;
         public static e_Camera_State CameraSub_State { get; set; } = e_Camera_State.DISCONNECTED;
 
         public static bool PLC_Connected { get; set; } = false; // Biến toàn cục để kiểm tra kết nối PLC
+        public static PLCCounter CameraMain_PLC_Counter { get; set; } = new PLCCounter(); // Biến toàn cục để lưu trữ thông tin đếm sản phẩm từ camera chính
     }
 
     public static class Globals_Database
@@ -54,13 +56,14 @@ namespace MASAN_SERIALIZATION
     public class ProductionCodeData
     {
         public string orderNo { get; set; } // Số đơn hàng
+        public string Code { get; set; } // Mã sản phẩm
+        public int codeID { get; set; } // mã id trong csdl
         public string cartonCode { get; set; } // Mã code thùng
+        public string Activate_User { get; set; } // Mã id thùng trong csdl
         public string Main_Camera_Status { get; set; } // 0: Chưa kích hoạt,Active là 1, reject là -1
-        public string Sub_Camera_Status { get; set; } // 0: Chưa kích hoạt,Active là 1, reject là -1
+        public string Sub_Camera_Activate_Datetime { get; set; } // 0: Chưa kích hoạt,Active là 1, reject là -1
         public string Activate_Datetime { get; set; } // Thời gian kích hoạt
         public string Production_Datetime { get; set; } // Thời gian sản xuất
-        public string SubCamera_Datetime { get; set; } // Thời gian qua camera phụ
-        public string Result_Camera_Main { get; set; } // Thời gian qua camera chính
     }
 
     public class ProductionCodeData_Record
@@ -70,6 +73,18 @@ namespace MASAN_SERIALIZATION
         public bool PLCStatus { get; set; } // Trạng thái PLC
         public string Activate_Datetime { get; set; } // Thời gian kích hoạt
         public string Production_Datetime { get; set; } // Thời gian sản xuất
+    }
+
+    #endregion
+
+    #region Các couter lưu tạm
+
+    public class PLCCounter
+    {
+        public int total { get; set; } = 0; // Tổng số sản phẩm đã sản xuất
+        public int total_pass { get; set; } = 0; // Tổng số sản phẩm đã sản xuất thành công
+        public int total_failed { get; set; } = 0; // Tổng số sản phẩm đã sản xuất thất bại
+        public int camera_read_fail { get; set; } = 0; // Số lượng sản phẩm không đọc được từ camera
     }
 
     #endregion

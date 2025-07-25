@@ -212,6 +212,8 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                             btnRUN.FillColor = Color.Red; //màu đỏ
                             //đổi symbol thành hình dừng
                             btnRUN.Symbol = 61509; //hình dừng
+
+                            btnRUN.Enabled = true; //bật nút RUN
                         });
                     }
                     break;
@@ -458,16 +460,26 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                         }
                         else
                         {
-                            Globals.Production_State = e_Production_State.Pushing_new_PO_to_PLC;
+                            Globals.Production_State = e_Production_State.Pushing_continue_PO_to_PLC;
                         }
 
                     });
                     break;
                 case e_Production_State.Running:
+                    if(Globals_Database.Insert_Product_To_Record_Queue.Count > 0 || Globals_Database.Update_Product_To_SQLite_Queue.Count >0)
+                    {
+                        //ghi log người dùng nhấn nút RUN
+                        Globals.Log.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.UserAction, "Người dùng nhấn nút dừng sản xuất khi đang còn Queue");
+                        this.ShowErrorDialog("Lỗi PP231: Đang có dữ liệu đang được ghi vào cơ sở dữ liệu, Vui lòng đợi trong giây lát.");
+                        break;
+                    }
                     //ghi log người dùng nhấn nút RUN
                     Globals.Log.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.UserAction, "Người dùng nhấn nút dừng sản xuất");
+                    btnPO_After_Running();
                     //quăng sang trạng thái Ready
                     Globals.Production_State = e_Production_State.Ready;
+
+                    //kiểm
                     break;
             }
         }

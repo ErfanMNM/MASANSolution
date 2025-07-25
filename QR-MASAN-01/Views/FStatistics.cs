@@ -23,6 +23,7 @@ namespace QR_MASAN_01.Views
     {
 
         Dictionary<PropertyInfo, panelS> bindings = new Dictionary<PropertyInfo, panelS>();
+        Dictionary<string, panelS> extraBindings = new Dictionary<string, panelS>();
         public OmronFinsUdp plc = new OmronFinsUdp();
         public FStatistics()
         {

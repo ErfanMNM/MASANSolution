@@ -172,6 +172,12 @@
     <Compile Include="Views\ProductionInfo\PPOInfo.Designer.cs">
       <DependentUpon>PPOInfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\SCADA\PStatictis.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\SCADA\PStatictis.Designer.cs">
+      <DependentUpon>PStatictis.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\Test\DemoPage.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -199,6 +205,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ProductionInfo\PPOInfo.resx">
       <DependentUpon>PPOInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SCADA\PStatictis.resx">
+      <DependentUpon>PStatictis.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Test\DemoPage.resx">
       <DependentUpon>DemoPage.cs</DependentUpon>
