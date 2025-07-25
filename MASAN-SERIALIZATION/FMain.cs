@@ -27,8 +27,8 @@ namespace MASAN_SERIALIZATION
         FDashboard _pDashboard = new FDashboard();// trang dashboard
         PPOInfo _pProduction = new PPOInfo(); // trang sản xuất
 
+        BackgroundWorker WK_Main_Proccess = new BackgroundWorker(); // BackgroundWorker để xử lý trạng thái ứng dụng
 
-        public CancellationTokenSource Task_Main_Process = new CancellationTokenSource(); //token cho task chính
 
         public FMain()
         {
@@ -53,7 +53,6 @@ namespace MASAN_SERIALIZATION
         }
 
         #region Các hàm INIT
-
         private void InitializeUI()
         {
             try
@@ -325,14 +324,14 @@ namespace MASAN_SERIALIZATION
         #endregion
 
         #region Luồng xử trạng thái ứng dụng
-        //tạo một task với token
-        private async Task Main_Process_Async()
-        {
 
+        //tạo một task với token
+        private void Main_Process_Async()
+        {
             // Bắt đầu nhiệm vụ
             try
             {
-                while (!Task_Main_Process.Token.IsCancellationRequested)
+                while (!WK_Main_Proccess.CancellationPending)
                 {
                     try
                     {
@@ -343,18 +342,23 @@ namespace MASAN_SERIALIZATION
                     catch (Exception ex)
                     {
                         // Ghi nhật ký lỗi
-                        await Globals.Log.WriteLogAsync("System", e_LogType.Error, $"Lỗi trong Main_Process_Async: {ex.Message}");
+                        Globals.Log.WriteLogAsync("System", e_LogType.Error, $"Lỗi trong Main_Process_Async: {ex.Message}");
                         // Hiển thị thông báo lỗi
                         this.ShowErrorTip($"Lỗi EM05 trong quá trình xử lý: {ex.Message}");
                     }
-                    await Task.Delay(100, Task_Main_Process.Token);
+                    Thread.Sleep(100); // Đợi 0.1 giây trước khi lặp lại
                 }
             }
             catch (TaskCanceledException) { }
         }
         private void Start_Main_Process_Task()
         {
-            Task.Run(Main_Process_Async, Task_Main_Process.Token);
+            WK_Main_Proccess.WorkerSupportsCancellation = true; // Hỗ trợ hủy bỏ
+            WK_Main_Proccess.DoWork += (s, e) =>
+            {
+                Main_Process_Async();
+            };
+            WK_Main_Proccess.RunWorkerAsync(); // Bắt đầu chạy nhiệm vụ
         }
         #endregion
 
@@ -362,7 +366,7 @@ namespace MASAN_SERIALIZATION
         private void btnAppClose_Click(object sender, EventArgs e)
         {
             // Dừng task chính
-            Task_Main_Process.Cancel();
+            WK_Main_Proccess.CancelAsync();
             //dừng task phụ nếu có
             _pProduction.Stop_Process_Task();
 

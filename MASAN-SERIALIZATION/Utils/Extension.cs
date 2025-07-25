@@ -36,9 +36,7 @@ namespace MASAN_SERIALIZATION.Utils
             }
         }
 
-        
     }
-
 
     public static class TreeViewExtensions
     {
@@ -75,4 +73,24 @@ namespace MASAN_SERIALIZATION.Utils
         }
 
     }
+
+    public static class ExtensionMethods
+    {
+        public static string ToHexString(this byte[] bytes)
+        {
+            if (bytes == null) return string.Empty;
+            return BitConverter.ToString(bytes).Replace("-", " ");
+        }
+        public static string ToHexString(this byte b)
+        {
+            return b.ToString("X2");
+        }
+
+        public static string ExceptionToJson(Exception ex)
+        {
+            return $"{{\"Message\":\"{ex.Message}\",\"StackTrace\":\"{ex.StackTrace}\",\"Source\":\"{ex.Source}\",\"Type\":\"{ex.GetType().FullName}\"}}";
+        }
+
+    }
+
 }

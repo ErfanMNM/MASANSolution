@@ -26,6 +26,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         //biến toàn cục để lưu trữ trạng thái ứng dụng
         public CancellationTokenSource poPage_Main_Process = new CancellationTokenSource(); //token cho task chính
+        private Task PPO_mainProcessTask;
         private Task _savingTask;
         public PPOInfo()
         {
@@ -268,7 +269,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             }
         }
 
-        private Task PPO_mainProcessTask;
+        
         private async Task Process_Async()
         {
             try

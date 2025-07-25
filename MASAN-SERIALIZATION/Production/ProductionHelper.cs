@@ -565,6 +565,33 @@ namespace MASAN_SERIALIZATION.Production
             }
         }
 
+        public PostDB setDB { get; set; } = new PostDB();
+        public class PostDB
+        {
+            public void Update_Active_Status(CodeData _CodeItem)
+            {
+                using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/{GV.Selected_PO.orderNo.ToString()}.db;Version=3;"))
+                {
+                    connection.Open();
+                    string query = "UPDATE `UniqueCodes` SET " +
+                                   "`Status` = '1', " +
+                                   "`ActivateDate` = @activateDate, " +
+                                   "`ProductionDate` = @productionDate,  " +
+                                   "`ActivateUser` = @UserName  " +
+                                   "WHERE `_rowid_` = @RowId";
+
+                    using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@RowId", _CodeItem.ID);
+                        command.Parameters.AddWithValue("@activateDate", _CodeItem.Activate_Datetime);
+                        command.Parameters.AddWithValue("@productionDate", _CodeItem.Production_Datetime);
+                        command.Parameters.AddWithValue("@UserName", Globalvariable.CurrentUser.Username);
+                        int rowsAffected = command.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region Các chức năng khác dùng nội bộ
@@ -794,10 +821,10 @@ namespace MASAN_SERIALIZATION.Production
     {
         Pass = 1, // thành công
         Fail = -1, // thất bại
-        Duplicate, // trùng lặp
-        ReadFail, // không đọc được
-        NotFound, // không tìm thấy
-        Error // lỗi khác
+        Duplicate = -3, // trùng lặp
+        ReadFail = -2, // không đọc được từ camera
+        NotFound = -4, // không tìm thấy
+        Error = -5 // lỗi khác
     }
 
     public enum e_AWS_Send_Status

@@ -14,6 +14,7 @@ namespace MASAN_SERIALIZATION.Configs
 
         [ConfigSection("APP")]
         public bool TwoFA_Enabled { get; set; } // Bật/Tắt tính năng xác thực hai yếu tố
+        [ConfigSection("SETUP")]
         public string Camera_Main_IP { get; set; } // Địa chỉ IP của camera chính
         public string Camera_Sub_IP { get; set; } // Địa chỉ IP của camera phụ
         public int Camera_Main_Port { get; set; } // Cổng kết nối của camera chính
