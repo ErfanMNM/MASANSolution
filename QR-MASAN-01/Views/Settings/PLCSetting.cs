@@ -404,11 +404,11 @@ namespace QR_MASAN_01.Views.Settings
 
             Uri uri = new Uri($"http://{Setting.Current.IP_Camera_02}/monitor");
             Uri uri1 = new Uri($"https://google.com");
-            webView21.Source = uri;
+           // webView21.Source = uri;
 
             Uri uri2 = new Uri($"http://{Setting.Current.IP_Camera_01}/monitor");
             Uri uri21 = new Uri($"https://google.com");
-            webView22.Source = uri2;
+           // webView22.Source = uri2;
         }   
         private void PLCSetting_Finalize(object sender, EventArgs e)
         {
@@ -416,8 +416,8 @@ namespace QR_MASAN_01.Views.Settings
             SystemLogs systemLogs = new SystemLogs(DateTime.Now.ToString("O"), DateTimeOffset.Now.ToUnixTimeSeconds(), SystemLogs.e_LogType.USER_ACTION, "Close PLC Setting", Globalvariable.CurrentUser.Username, "Người dùng đóng bảng PLC setting");
             SystemLogs.LogQueue.Enqueue(systemLogs);
             isOpen = false;
-            webView21.Source = new Uri("https://google.com");
-            webView22.Source = new Uri("https://google.com");
+          //  webView21.Source = new Uri("https://google.com");
+           // webView22.Source = new Uri("https://google.com");
         }
 
 

@@ -1,4 +1,5 @@
 ﻿using HslCommunication;
+using HslCommunication.Profinet.Inovance;
 using MASAN_SERIALIZATION.Configs;
 using MASAN_SERIALIZATION.Enums;
 using MASAN_SERIALIZATION.Production;
@@ -21,6 +22,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static MASAN_SERIALIZATION.Utils.ExtensionMethods;
 using static SPMS1.OmronPLC_Hsl;
+using static System.Net.WebRequestMethods;
 
 namespace MASAN_SERIALIZATION.Views.Dashboards
 {
@@ -115,7 +117,21 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     }
                     break;
                 case enumClient.RECEIVED:
-                    CameraSub_Process(data);
+                    if (Globals.Production_State != e_Production_State.Running)
+                    {
+                        //nếu không phải trạng thái sản xuất thì không xử lý dữ liệu
+                        this.InvokeIfRequired(() =>
+                        {
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Máy chưa bắt đầu sản xuất");
+                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                        });
+                        break;
+                    }
+
+                    Task.Run(() =>
+                    {
+                        CameraSub_Process(data);
+                    });
                     break;
                 case enumClient.RECONNECT:
                     if (Globals.CameraSub_State != e_Camera_State.RECONNECTING)
@@ -196,9 +212,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         _produtionCodeData.Activate_Datetime = DateTime.UtcNow.ToString("o");
                         _produtionCodeData.Production_Datetime = Globals.ProductionData.productionDate;
                         _produtionCodeData.cartonCode = "pending"; // Lưu mã sản phẩm vào thùng
-                                                                    // Cập nhật dữ liệu vào từ điển
-                       //Globals_Database.Dictionary_ProductionCode_Data[_data] = _produtionCodeData;
-                        // Gửi kết quả xử lý từ camera chính
+                        _produtionCodeData.Activate_User = Globals.CurrentUser.Username; // Lưu thông tin người dùng kích hoạt
+                                                                                         // Cập nhật dữ liệu vào từ điển
+                                                                                         //Globals_Database.Dictionary_ProductionCode_Data[_data] = _produtionCodeData;
+                                                                                         // Gửi kết quả xử lý từ camera chính
                         Send_Result_Content_CMain(e_Production_Status.Pass, _data);
 
                         //gửi vào hàng chờ thêm record
@@ -215,9 +232,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         _produtionCodeData.Activate_Datetime = DateTime.UtcNow.ToString("o");
                         _produtionCodeData.Production_Datetime = Globals.ProductionData.productionDate;
                         _produtionCodeData.cartonCode = "pending"; // Lưu mã sản phẩm vào thùng
-                         // Cập nhật dữ liệu vào từ điển
-                        Globals_Database.Dictionary_ProductionCode_Data[_data] = _produtionCodeData;
-                        // Gửi kết quả lỗi nếu không gửi được đến PLC
+                        _produtionCodeData.Activate_User = Globals.CurrentUser.Username; // Lưu thông tin người dùng kích hoạt
+                                                                                         // Cập nhật dữ liệu vào từ điển
+                                                                                         //Globals_Database.Dictionary_ProductionCode_Data[_data] = _produtionCodeData;
+                                                                                         // Gửi kết quả lỗi nếu không gửi được đến PLC
                         Send_Result_Content_CMain(e_Production_Status.Error, _data);
 
                         //gửi vào hàng chờ thêm record
@@ -260,8 +278,117 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
         private void CameraSub_Process(string _data)
         {
-            // Xử lý dữ liệu từ camera phụ
-            // Ví dụ: Cập nhật giao diện, lưu trữ dữ liệu, v.v.
+            Globals.productionData_Cs.counter.totalCount++; //tăng tổng số sản phẩm đã nhận
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: #{Globals.ProductionData.counter.totalCount} Camera sub nhận dữ liệu: {_data}");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+            //xử lý dữ liệu từ camera chính
+            if (_data.IsNullOrEmpty())
+            {
+                //loại sản phẩm ngay lập tức
+                bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
+                Send_Result_Content_CSub(e_Production_Status.Error, _data);
+                //gửi vào hàng chờ thêm record
+                Enqueue_Product_To_Record(_data, e_Production_Status.Error, stp, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
+                return;
+            }
+
+            if (_data == "FAIL")
+            {
+                //loại sản phẩm ngay lập tức
+                bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
+                Send_Result_Content_CSub(e_Production_Status.ReadFail, _data);
+                //gửi vào hàng chờ thêm record
+                Enqueue_Product_To_Record(_data, e_Production_Status.ReadFail, stp, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
+                return;
+            }
+            //đổi <GS> về đúng ký tự thật
+            _data = _data.Replace("<GS>", "\u001D").Replace("<RS>", "\u001E").Replace("<US>", "\u001F");
+
+            //kiểm tra mã có tồn tại hay không
+            if (Globals_Database.Dictionary_ProductionCode_Data.TryGetValue(_data, out ProductionCodeData _produtionCodeData))
+            {
+                //nếu chưa kích hoạt thì đá ra không cần quan tâm
+                ProductionCartonData cartonData = new ProductionCartonData();
+
+                int cache_CartonID = Globals.ProductionData.counter.cartonID; //lưu ID thùng hiện tại để gửi về PLC
+                int cache_CartonCount = Globals.ProductionData.counter.carton_Packing_Count; //lưu số lượng chai trong thùng hiện tại
+                if (_produtionCodeData.Main_Camera_Status == "0")
+                {
+                    bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
+                                                                         //gửi vào hàng chờ thêm record
+                    Enqueue_Product_To_Record(_data, e_Production_Status.ReadFail, stp, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
+                    return;
+                }
+                else
+                {
+                    //tăng số lượng chai trong thùng 
+                    //nếu số lượng chai trong thùng đã đủ thì tạo mã thùng mới
+                    if(Globals.ProductionData.counter.carton_Packing_Count == 2)
+                    {
+                        cache_CartonID++;
+                        cache_CartonCount = 0; //đặt lại số lượng chai trong thùng
+                    }
+                    string sendCode = "0";
+                    if(cache_CartonID %2 == 0)
+                    {
+                        sendCode = "1"; // Gửi dữ liệu mã thùng đến PLC
+
+                    }
+                    else
+                    {
+                        sendCode = "2"; // Gửi dữ liệu mã thùng đến PLC
+                    }
+
+                    if(Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), sendCode))
+                    {
+                        cache_CartonCount++; //tăng số lượng chai trong thùng
+                        Globals.ProductionData.counter.carton_Packing_Count = cache_CartonCount; //cập nhật số lượng chai trong thùng
+
+                        if(Globals.ProductionData.counter.cartonID < cache_CartonID)
+                        {
+                            cartonData = new ProductionCartonData
+                            {
+                                orderNo = Globals.ProductionData.orderNo,
+                                Start_Datetime = "0",
+                                cartonCode = "0",
+                                Activate_Datetime = "0",
+                                Activate_User = Globals.CurrentUser.Username // Lưu thông tin người dùng kích hoạt
+                            };
+                            Globals.ProductionData.counter.cartonID = cache_CartonID; //cập nhật ID thùng
+                            Enqueue_Product_To_Record_Carton(cartonData); //thêm vào hàng chờ thêm record thùng
+                        }
+                        
+
+                        _produtionCodeData.Sub_Camera_Activate_Datetime = DateTime.UtcNow.ToString("o"); // Cập nhật thời gian kích hoạt từ camera phụ
+
+                        Enqueue_Product_To_SQLite(_data, _produtionCodeData); //thêm vào hàng chờ lưu sqlite
+                        Enqueue_Product_To_Record(_data, e_Production_Status.Pass, true, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false, Globals.ProductionData.counter.cartonID);
+                    }
+                    else
+                    {
+                        //nếu gửi PLC thất bại
+                        //lưu record C phụ
+                        Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
+                        Send_Result_Content_CSub(e_Production_Status.Error, _data);
+                        return;
+                    }
+
+                    return;
+                }
+            }
+            //nếu không tồn tại thì đá ra, không cần quan tâm thêm
+            else
+            {
+                //loại sản phẩm ngay lập tức
+                Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
+                Send_Result_Content_CSub(e_Production_Status.NotFound, _data);
+                //gửi vào hàng chờ thêm record
+                Enqueue_Product_To_Record(_data, e_Production_Status.NotFound, true, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
+                return;
+            }
         }
 
         private void Send_Result_Content_CMain(e_Production_Status status, string data)
@@ -277,6 +404,12 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 case e_Production_Status.Pass:
                     //tăng tổng pass
                     Globals.ProductionData.counter.passCount++;
+
+                    if(Globals.ProductionData.counter.passCount == Globals.ProductionData.orderQty.ToInt32())
+                    {
+                        //Quăng về trạng thái kiểm Check_Queue
+                        Globals.Production_State = e_Production_State.Checking_Queue;
+                    }
                     break;
                 case e_Production_Status.Fail:
                     //tăng tổng fail
@@ -300,8 +433,45 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
         }
 
-        private void Enqueue_Product_To_Record(string code, e_Production_Status status, bool plcstatus, string activate_datetime, string production_datetime)
+        private void Send_Result_Content_CSub(e_Production_Status status, string data)
         {
+            //tăng tổng số sản phẩm đã nhận
+            //Globals.ProductionData.counter.totalCount++;
+            if (status != e_Production_Status.Pass)
+            {
+                Globals.productionData_Cs.counter.failCount++; //tăng tổng số sản phẩm lỗi
+            }
+            switch (status)
+            {
+                case e_Production_Status.Pass:
+                    //tăng tổng pass
+                    Globals.productionData_Cs.counter.passCount++;
+                    break;
+                case e_Production_Status.Fail:
+                    //tăng tổng fail
+                    break;
+                case e_Production_Status.Duplicate:
+                    //tăng tổng duplicate
+                    Globals.productionData_Cs.counter.duplicateCount++;
+                    break;
+                case e_Production_Status.NotFound:
+                    //tăng tổng not found
+                    Globals.productionData_Cs.counter.notfoundCount++;
+                    break;
+                case e_Production_Status.Error:
+                    //tăng tổng error
+                    Globals.productionData_Cs.counter.errorCount++;
+                    break;
+                case e_Production_Status.ReadFail:
+                    //tăng tổng read fail
+                    Globals.productionData_Cs.counter.readfailCount++;
+                    break;
+            }
+        }
+
+        private void Enqueue_Product_To_Record(string code, e_Production_Status status, bool plcstatus, string activate_datetime, string production_datetime, bool CameraMain = true, int cartonID = 0)
+        {
+            
             //tạo dữ liệu record
             ProductionCodeData_Record _produtionCodeData = new ProductionCodeData_Record
             {
@@ -309,16 +479,35 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 status = status,
                 PLCStatus = plcstatus,
                 Activate_Datetime = activate_datetime,
-                Production_Datetime = production_datetime
+                Production_Datetime = production_datetime,
+                cartonCode = "pending", // Mã code thùng tạm thời, sẽ cập nhật sau
+                Activate_User = Globals.CurrentUser.Username // Lưu thông tin người dùng kích hoạt
+
             };
-            //thêm vào hàng chờ thêm record
-            Globals_Database.Insert_Product_To_Record_Queue.Enqueue(_produtionCodeData);
+            if (!CameraMain)
+            {
+                _produtionCodeData.cartonID = cartonID;
+                //thêm vao hàng chờ thêm record cho camera phụ
+                Globals_Database.Insert_Product_To_Record_CS_Queue.Enqueue(_produtionCodeData);
+            }
+            else
+            {
+                //thêm vào hàng chờ thêm record
+                Globals_Database.Insert_Product_To_Record_Queue.Enqueue(_produtionCodeData);
+            }
+            
         }
 
         private void Enqueue_Product_To_SQLite(string code, ProductionCodeData productionCodeData, bool duplicate = false)
         {
             //thêm vào hàng chờ lưu sqlite
             Globals_Database.Update_Product_To_SQLite_Queue.Enqueue((code, productionCodeData, duplicate));
+        }
+
+        private void Enqueue_Product_To_Record_Carton(ProductionCartonData cartonData)
+        {
+            //thêm vào hàng chờ thêm record thùng
+            Globals_Database.Insert_Product_To_Record_Carton_Queue.Enqueue(cartonData);
         }
         #endregion
 
@@ -772,23 +961,45 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 try
                 {
-                    // Kiểm tra nếu hàng đợi có dữ liệu
+                    // Cập nhật trạng thái Active của DB chính
                     if (Globals_Database.Update_Product_To_SQLite_Queue.Count > 0)
                     {
                         //// Lấy dữ liệu từ hàng đợi
-                        //var item = Globals_Database.Update_Product_To_SQLite_Queue.Dequeue();
+                        var item = Globals_Database.Update_Product_To_SQLite_Queue.Dequeue();
 
-                        //string code = item.conten;
-                        //ProductionCodeData productionCodeData = item.data;
-                        //bool isDuplicate = item.duplicate;
+                        string code = item.conten;
+                        ProductionCodeData productionCodeData = item.data;
+                        bool isDuplicate = item.duplicate;
 
-                        ////Globals.ProductionData.setDB.Update_Active_Status(productionCodeData);
+                        Globals.ProductionData.setDB.Update_Active_Status(productionCodeData, Globals.ProductionData.orderNo);
 
                     }
+
+                    //thêm sao lưu cho C chính
                     if (Globals_Database.Insert_Product_To_Record_Queue.Count > 0)
                     {
                         // Lấy dữ liệu từ hàng đợi
-                        //var recordItem = Globals_Database.Insert_Product_To_Record_Queue.Dequeue();
+                        ProductionCodeData_Record recordItem = Globals_Database.Insert_Product_To_Record_Queue.Dequeue();
+
+                        Globals.ProductionData.setDB.Insert_Record(recordItem, Globals.ProductionData.orderNo);
+                    }
+
+
+                    //Xử lý camera phụ và phân thùng
+                    if (Globals_Database.Insert_Product_To_Record_CS_Queue.Count > 0)
+                    {
+                        // Lấy dữ liệu từ hàng đợi
+                        ProductionCodeData_Record recordItemCS = Globals_Database.Insert_Product_To_Record_CS_Queue.Dequeue();
+                        Globals.ProductionData.setDB.Insert_Record_Camera_Sub(recordItemCS, Globals.ProductionData.orderNo);
+                    }
+
+                    //thùng
+
+                    if (Globals_Database.Insert_Product_To_Record_Carton_Queue.Count > 0)
+                    {
+                        // Lấy dữ liệu từ hàng đợi
+                        ProductionCartonData cartonItem = Globals_Database.Insert_Product_To_Record_Carton_Queue.Dequeue();
+                        Globals.ProductionData.setDB.Insert_Carton(cartonItem, Globals.ProductionData.orderNo);
                     }
                 }
                 catch (Exception ex)

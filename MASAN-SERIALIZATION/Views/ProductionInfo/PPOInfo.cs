@@ -83,7 +83,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         public void TaskBody()
         {
             dem++;
-            switch (Globals.Production_State)
+            switch (Globals.Production_State) 
             {
                 case e_Production_State.NoSelectedPO:
                     //bật các phím chức năng
@@ -104,17 +104,17 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                         //gán vào selected po
                         Globals.ProductionData.orderNo = getLastPO.lastPO["orderNo"].ToString();
                         //kiểm tra orderNo có trong danh sách của server không
-                       var getPD = Globals.ProductionData.getfromMES.ProductionOrder_Detail(Globals.ProductionData.orderNo);
+                        var getPD = Globals.ProductionData.getfromMES.ProductionOrder_Detail(Globals.ProductionData.orderNo);
 
                         if (getPD.issucess)
                         {
                             //quăng qua loading nếu ipOrderNo có số lượng đơn hàng
 
-                            if(ipOrderNO.Items.Count > 0)
+                            if (ipOrderNO.Items.Count > 0)
                             {
                                 Globals.Production_State = e_Production_State.Loading;
                             }
-                            
+
                         }
                         else
                         {
@@ -190,7 +190,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 case e_Production_State.Pushing_continue_PO_to_PLC:
                     break;
                 case e_Production_State.Ready:
-                    if(dem > 10)
+                    if (dem > 10)
                     {
                         Task.Run(() =>
                         {
@@ -198,11 +198,61 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                         });
                         dem = 0; //reset biến đếm
                     }
-                    
+
+                    //kiểm tra đơn hàng đã chạy hay chưa
+                    if (Globals.ProductionData.counter.totalCount > 0)
+                    {
+                        //đã chạy rồi thì không cần làm gì cả
+                        this.InvokeIfRequired(() =>
+                        {
+                            opTer.Text = "Đơn hàng đang chạy, chỉ có thể chỉnh ngày sản xuất - Trong trường hợp muốn hủy PO vui lòng nhấn phần cài đặt -> hủy PO và làm theo hướng dẫn";
+                            opTer.ForeColor = Color.Red;
+                            opTer.Font = new Font("Tahoma", 14, FontStyle.Bold);
+                        });
+                        if (!btnProductionDate.Enabled)
+                        {
+                            this.InvokeIfRequired(() =>
+                            {
+                                //nếu nút chỉnh ngày sản xuất đang bật thì tắt nó đi
+                                btnProductionDate.Enabled = true;
+                                btnPO.Enabled = false; //bật nút PO
+                                btnTestMode.Enabled = false; //bật nút Test Mode});
+
+                            });
+                        }
+                    }
+
+                    //kiểm tra đơn hàng đã đủ hay chưa 
+                    if (Globals.ProductionData.counter.passCount == Globals.ProductionData.orderQty.ToInt32())
+                    {
+                        //đã đủ rồi thì không cần làm gì cả
+                        this.InvokeIfRequired(() =>
+                        {
+                            opTer.Text = "Đơn hàng đã đủ số lượng, Vui lòng chọn đơn hàng khác.";
+                            opTer.ForeColor = Color.Red;
+                            opTer.Font = new Font("Tahoma", 14, FontStyle.Bold);
+                        });
+                        if (!btnProductionDate.Enabled)
+                        {
+                            this.InvokeIfRequired(() =>
+                            {
+                                //nếu nút chỉnh ngày sản xuất đang bật thì tắt nó đi
+                                btnProductionDate.Enabled = false;
+                                btnPO.Enabled = true; //bật nút PO
+                                btnTestMode.Enabled = false; //bật nút Test Mode});
+                                //tắt nút RUN
+                                btnRUN.Enabled = false; //tắt nút RUN
+                            });
+                        }
+
+                        //quăng về trạng thái Completed
+                        Globals.Production_State = e_Production_State.Completed;
+                    }
+
                     break;
                 case e_Production_State.Running:
 
-                    if(!btnRUN.Enabled)
+                    if (!btnRUN.Enabled)
                     {
                         this.InvokeIfRequired(() =>
                         {
@@ -216,6 +266,13 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                             btnRUN.Enabled = true; //bật nút RUN
                         });
                     }
+
+                    if (Globals.ProductionData.counter.passCount == Globals.ProductionData.orderQty.ToInt32())
+                    {
+                        //Quăng về trạng thái kiểm Check_Queue
+                        Globals.Production_State = e_Production_State.Checking_Queue;
+                    }
+
                     break;
                 case e_Production_State.Completed:
                     break;
@@ -257,6 +314,15 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                         break;
                     }
 
+                    if (opOrderQty.Text.ToInt32()%24 > 0)
+                    {
+                        this.ShowErrorDialog("Lỗi PP998: Đơn hàng có vấn đề về OrderQty, Sản lượng không đóng đủ thùng. Vui lòng kiểm tra lại phía tạo dữ liệu sản xuất MES của nhà máy.");
+                        //quăng về trạng thái Edit 
+                        btnPO_Before_Edit();
+                        Globals.Production_State = e_Production_State.Editing;
+                        break;
+                    }
+
                     //saving dữ liệu
                     if (_savingTask == null || _savingTask.IsCompleted || _savingTask.IsCanceled || _savingTask.IsFaulted)
                     {
@@ -268,10 +334,33 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     }
 
                     break;
+                case e_Production_State.Pushing_to_Dic:
+                    break;
+                case e_Production_State.Checking_Queue:
+
+                    if (Globals_Database.Insert_Product_To_Record_Queue.Count > 0 || Globals_Database.Update_Product_To_SQLite_Queue.Count > 0)
+                    {
+                        this.InvokeIfRequired(() =>
+                        {
+                            opTer.Text = "Đang ghi dữ liệu vào cơ sở dữ liệu, Vui lòng đợi trong giây lát...";
+                            opTer.ForeColor = Color.Teal;
+                            opTer.Font = new Font("Tahoma", 14, FontStyle.Bold);
+                            this.ShowErrorDialog("Lỗi PP231: Đang có dữ liệu đang được ghi vào cơ sở dữ liệu, Vui lòng đợi trong giây lát.");
+                        });
+                        
+                        break;
+                    }
+                    else
+                    {
+                        //quăng về trạng thái Ready
+                        Globals.Production_State = e_Production_State.Ready;
+                    }
+
+                    break;
             }
         }
 
-        
+
         private async Task Process_Async()
         {
             try
@@ -285,7 +374,14 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     catch (Exception ex)
                     {
                         await Globals.Log.WriteLogAsync("System", e_LogType.Error, $"Lỗi trong Main_Process_Async: {ex.Message}");
-                        this.ShowErrorNotifier($"Lỗi EM05 trong quá trình xử lý: {ex.Message}");
+                        this.InvokeIfRequired(() =>
+                        {
+                            opTer.Text = "Đã xảy ra lỗi trong quá trình xử lý, Vui lòng kiểm tra nhật ký để biết thêm chi tiết.";
+                            opTer.ForeColor = Color.Red;
+                            opTer.Font = new Font("Tahoma", 14, FontStyle.Bold);
+                            this.ShowErrorNotifier($"Lỗi EM05 trong quá trình xử lý: {ex.Message}");
+                        });
+                        
                     }
                     await Task.Delay(500, poPage_Main_Process.Token);
                 }
@@ -448,6 +544,8 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                             //quăng về trạng thái NoSelectedPO
                             return;
                         }
+                        //reset counter
+                        Globals.ProductionData.counter.Reset();
                         //lấy lại các counter
                         GetCounter_2(recordsDatabase.Records);
                         //chuyển sang trạng thái run
@@ -466,20 +564,86 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     });
                     break;
                 case e_Production_State.Running:
-                    if(Globals_Database.Insert_Product_To_Record_Queue.Count > 0 || Globals_Database.Update_Product_To_SQLite_Queue.Count >0)
-                    {
-                        //ghi log người dùng nhấn nút RUN
-                        Globals.Log.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.UserAction, "Người dùng nhấn nút dừng sản xuất khi đang còn Queue");
-                        this.ShowErrorDialog("Lỗi PP231: Đang có dữ liệu đang được ghi vào cơ sở dữ liệu, Vui lòng đợi trong giây lát.");
-                        break;
-                    }
+                    
                     //ghi log người dùng nhấn nút RUN
                     Globals.Log.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.UserAction, "Người dùng nhấn nút dừng sản xuất");
                     btnPO_After_Running();
-                    //quăng sang trạng thái Ready
-                    Globals.Production_State = e_Production_State.Ready;
+                    //quăng sang trạng thái kiểm tra Queue
+                    Globals.Production_State = e_Production_State.Checking_Queue;
 
                     //kiểm
+                    break;
+            }
+        }
+
+        private void btnProductionDate_Click(object sender, EventArgs e)
+        {
+            btnProductionDate.Enabled = false;
+            //ghi log người dùng nhấn nút chỉnh ngày sản xuất
+            Globals.Log.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.UserAction, "Người dùng nhấn nút chỉnh ngày sản xuất");
+            switch (Globals.Production_State)
+            {
+                case e_Production_State.Ready:
+                    //kiểm tra xem đơn hàng đã chạy chưa
+                    if (Globals.ProductionData.counter.totalCount < 0)
+                    {
+                        //đã chạy rồi thì không thể chỉnh ngày sản xuất
+                        this.ShowErrorNotifier("Lỗi PP096: Đơn hàng chưa chạy, không thể chỉnh ngày sản xuất.");
+                        break;
+                    }
+
+                    
+                    //bật ipProductionDate
+                    ipProductionDate.ReadOnly = false;
+                    //đổi màu ipProductionDate thành màu vàng chữ đen
+                    ipProductionDate.FillColor = Color.Yellow; //màu vàng
+                    ipProductionDate.ForeColor = Color.Black; //màu đen
+                    //đổi tên nút thành "Đang chỉnh ngày sản xuất"
+                    btnProductionDate.Text = "Lưu lại";
+                    //đổi màu nút thành màu xanh lá
+                    btnProductionDate.FillColor = Color.Green; //màu xanh lá
+                    //đổi symbol thành hình lưu
+                    btnProductionDate.Symbol = 61508; //hình lưu
+                    //chuyển sang trạng thái Editting_ProductionDate
+                    Globals.Production_State = e_Production_State.Editting_ProductionDate;
+
+                    //bật nút chỉnh ngày sản xuất
+                    btnProductionDate.Enabled = true; //bật nút chỉnh ngày sản xuất
+                    break;
+                case e_Production_State.Running:
+                    this.ShowErrorNotifier("Lỗi PP098: Đang chạy sản xuất, không thể chỉnh ngày sản xuất.");
+                    break;
+
+                case e_Production_State.Editting_ProductionDate:
+                    //ghi log người dùng nhấn nút lưu ngày sản xuất
+                    Globals.Log.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.UserAction, "Người dùng nhấn nút lưu ngày sản xuất");
+                    //lưu lại ngày sản xuất
+                    var saveProductionDate = Globals.ProductionData.Save_PO(Globals.ProductionData.orderNo, ipProductionDate.Value.ToString("yyyy-MM-dd HH:mm:ss"), Globals.CurrentUser.Username);
+                    if (saveProductionDate.issucces)
+                    {
+                        this.ShowSuccessTip("Lưu ngày sản xuất thành công");
+                        
+                        //đổi tên nút thành "Chỉnh ngày sản xuất"
+                        btnProductionDate.Text = "Chỉnh ngày sản xuất";
+                        //đổi màu nút thành màu CornflowerBlue
+                        btnProductionDate.FillColor = Color.CornflowerBlue; //CornflowerBlue
+
+                        //đổi ipProductionDate về trạng thái không chỉnh sửa
+                        ipProductionDate.ReadOnly = true;
+                        ipProductionDate.FillColor = Color.CornflowerBlue; //màu CornflowerBlue
+                        ipProductionDate.ForeColor = Color.Black; //màu đen
+
+
+                    }
+                    else
+                    {
+                        this.ShowErrorNotifier($"Lỗi PP100: {saveProductionDate.message}");
+                        //ghi log thất bại
+                        POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lưu ngày sản xuất thất bại: {saveProductionDate.message}");
+                    }
+                    btnProductionDate.Enabled = true; //bật nút chỉnh ngày sản xuất
+                    //quăng về trạng thái Ready
+                    Globals.Production_State = e_Production_State.Ready;
                     break;
             }
         }
@@ -655,12 +819,29 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         public void GetCounter_2(DataTable dataTable)
         {
+            
+
             if (dataTable == null || dataTable.Rows.Count == 0)
             {
                 //nếu không có dữ liệu thì reset counter
                 Globals.ProductionData.counter.Reset();
                 Globals.ProductionData.awsSendCounter.Reset();
                 Globals.ProductionData.awsRecivedCounter.Reset();
+
+                var getmaxCartonID1 = Globals.ProductionData.getDataPO.Get_Max_Carton_ID(ipOrderNO.Text);
+
+                if (getmaxCartonID1.issucess)
+                {
+                    Globals.ProductionData.counter.cartonID = getmaxCartonID1.MaxCartonID;
+                }
+                else
+                {
+                    //ghi log thất bại
+                    POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng thùng lớn nhất thất bại: {getmaxCartonID1.message}");
+                    //hiển thị thông báo lỗi
+                    this.ShowErrorNotifier($"Lỗi PP15: {getmaxCartonID1.message}");
+                }
+
                 return;
             }
 
@@ -701,6 +882,22 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     Globals.ProductionData.counter.failCount++;
                 }
             }
+
+            //lấy id thùng lớn nhất
+            var getmaxCartonID = Globals.ProductionData.getDataPO.Get_Max_Carton_ID(ipOrderNO.Text);
+
+            if (getmaxCartonID.issucess)
+            {
+                Globals.ProductionData.counter.cartonID = getmaxCartonID.MaxCartonID;
+            }
+            else
+            {
+                //ghi log thất bại
+                POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng thùng lớn nhất thất bại: {getmaxCartonID.message}");
+                //hiển thị thông báo lỗi
+                this.ShowErrorNotifier($"Lỗi PP15: {getmaxCartonID.message}");
+            }
+
         }
 
         public void Saving()
@@ -898,5 +1095,11 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             });
         }
         #endregion
+
+        #region Hàm tính năng của btnProductionDate
+
+        #endregion
+
+
     }
 }

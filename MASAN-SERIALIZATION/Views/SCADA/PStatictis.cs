@@ -1,5 +1,6 @@
 ﻿using MASAN_SERIALIZATION.Production;
 using MASAN_SERIALIZATION.Utils;
+using SpT.DataSCADA;
 using SpT.Static;
 using Sunny.UI;
 using System;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -27,6 +29,7 @@ namespace MASAN_SERIALIZATION.Views.SCADA
         private BackgroundWorker WK_Update = new BackgroundWorker()
         {
             WorkerSupportsCancellation = true
+            
         };
         public PStatictis()
         {
@@ -37,9 +40,28 @@ namespace MASAN_SERIALIZATION.Views.SCADA
 
         public void INIT()
         {
+
             Render_MEM();
             WK_Update.DoWork += WK_Update_DoWork;
-            
+
+            try
+            {
+                string fileName = "Record_PO_001"; // tên file sqlite (không cần .sqlite)
+                var chart = new ChartHelper();
+                string html = chart.GenerateHtmlFromSQLite(fileName);
+
+                // Lưu file HTML tạm
+                string tempPath = Path.Combine(Path.GetTempPath(), "chart.html");
+                File.WriteAllText(tempPath, html, Encoding.UTF8);
+
+                // Load vào WebView2
+                webView21.Source = new Uri(tempPath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi ST001: " + ex.Message);
+            }
+
         }
 
         
@@ -75,7 +97,6 @@ namespace MASAN_SERIALIZATION.Views.SCADA
                 bindings[prop] = uc;
             }
         }
-
         #endregion
 
         #region Các luồng và hàm của nó
@@ -115,6 +136,8 @@ namespace MASAN_SERIALIZATION.Views.SCADA
                     uc.LabelValue = Globals_Database.Dictionary_ProductionCode_Data?.Count.ToString() ?? "0";
                 }
             }
+
+
         }
 
         private void Update_BindingProps()

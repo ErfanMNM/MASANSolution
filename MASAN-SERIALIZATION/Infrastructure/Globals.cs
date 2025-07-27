@@ -28,6 +28,8 @@ namespace MASAN_SERIALIZATION
 
         public static ProductionOrder ProductionData { get; set; } = new ProductionOrder();
 
+        public static ProductionOrder productionData_Cs { get; set; } = new ProductionOrder(); // Biến toàn cục để lưu trữ thông tin đơn hàng sản xuất hiện tại
+
         // Biến toàn cục để lưu trữ trạng thái sản xuất
         public static e_Production_State Production_State { get; set; } = e_Production_State.Start;
 
@@ -40,6 +42,8 @@ namespace MASAN_SERIALIZATION
 
         public static bool PLC_Connected { get; set; } = false; // Biến toàn cục để kiểm tra kết nối PLC
         public static PLCCounter CameraMain_PLC_Counter { get; set; } = new PLCCounter(); // Biến toàn cục để lưu trữ thông tin đếm sản phẩm từ camera chính
+
+        
     }
 
     public static class Globals_Database
@@ -48,7 +52,12 @@ namespace MASAN_SERIALIZATION
 
         public static Queue<(string conten, ProductionCodeData data, bool duplicate)> Update_Product_To_SQLite_Queue = new Queue<(string content, ProductionCodeData data, bool duplicate)>();
 
+
         public static Queue<ProductionCodeData_Record> Insert_Product_To_Record_Queue = new Queue<ProductionCodeData_Record>();
+
+        public static Queue<ProductionCodeData_Record> Insert_Product_To_Record_CS_Queue = new Queue<ProductionCodeData_Record>();
+
+        public static Queue<ProductionCartonData> Insert_Product_To_Record_Carton_Queue = new Queue<ProductionCartonData>();
     }
 
     #region Các lớp dữ liệu liên quan đến sản xuất
@@ -69,8 +78,22 @@ namespace MASAN_SERIALIZATION
     public class ProductionCodeData_Record
     {
         public string code { get; set; } // Mã sản xuất
+        public string cartonCode { get; set; } // Mã code thùng 
+
+        public int cartonID { get; set; } // Mã id thùng trong csdl
         public  e_Production_Status status { get; set; } // Trạng thái sản xuất
         public bool PLCStatus { get; set; } // Trạng thái PLC
+        public string Activate_Datetime { get; set; } // Thời gian kích hoạt
+        public string Activate_User { get; set; } // Người kích hoạt
+        public string Production_Datetime { get; set; } // Thời gian sản xuất
+    }
+
+    public class ProductionCartonData
+    {
+        public string orderNo { get; set; } // Số đơn hàng
+        public string cartonCode { get; set; } // Mã code thùng
+        public string Activate_User { get; set; } // Người kích hoạt
+        public string Start_Datetime { get; set; } // Thời gian kích hoạt
         public string Activate_Datetime { get; set; } // Thời gian kích hoạt
         public string Production_Datetime { get; set; } // Thời gian sản xuất
     }
@@ -86,6 +109,7 @@ namespace MASAN_SERIALIZATION
         public int total_failed { get; set; } = 0; // Tổng số sản phẩm đã sản xuất thất bại
         public int camera_read_fail { get; set; } = 0; // Số lượng sản phẩm không đọc được từ camera
     }
+
 
     #endregion
 }

@@ -70,7 +70,7 @@
             this.btnPO = new Sunny.UI.UISymbolButton();
             this.uiTableLayoutPanel8 = new Sunny.UI.UITableLayoutPanel();
             this.opAWSSentWating = new Sunny.UI.UIPanel();
-            this.opDuplicateCount = new Sunny.UI.UIPanel();
+            this.opCarton = new Sunny.UI.UIPanel();
             this.opAWSNotSent = new Sunny.UI.UIPanel();
             this.uiPanel16 = new Sunny.UI.UIPanel();
             this.uiPanel1 = new Sunny.UI.UIPanel();
@@ -815,6 +815,7 @@
             this.btnProductionDate.TabIndex = 1;
             this.btnProductionDate.Text = "Đổi Ngày Sản Xuất";
             this.btnProductionDate.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnProductionDate.Click += new System.EventHandler(this.btnProductionDate_Click);
             // 
             // btnPO
             // 
@@ -843,7 +844,7 @@
             this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.uiTableLayoutPanel8.Controls.Add(this.opAWSSentWating, 3, 2);
-            this.uiTableLayoutPanel8.Controls.Add(this.opDuplicateCount, 1, 2);
+            this.uiTableLayoutPanel8.Controls.Add(this.opCarton, 1, 2);
             this.uiTableLayoutPanel8.Controls.Add(this.opAWSNotSent, 3, 1);
             this.uiTableLayoutPanel8.Controls.Add(this.uiPanel16, 0, 1);
             this.uiTableLayoutPanel8.Controls.Add(this.uiPanel1, 0, 0);
@@ -881,20 +882,20 @@
             this.opAWSSentWating.Text = "-";
             this.opAWSSentWating.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // opDuplicateCount
+            // opCarton
             // 
-            this.opDuplicateCount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opDuplicateCount.FillColor = System.Drawing.Color.White;
-            this.opDuplicateCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.opDuplicateCount.Location = new System.Drawing.Point(209, 86);
-            this.opDuplicateCount.Margin = new System.Windows.Forms.Padding(2);
-            this.opDuplicateCount.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opDuplicateCount.Name = "opDuplicateCount";
-            this.opDuplicateCount.Radius = 1;
-            this.opDuplicateCount.Size = new System.Drawing.Size(203, 40);
-            this.opDuplicateCount.TabIndex = 86;
-            this.opDuplicateCount.Text = "-";
-            this.opDuplicateCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.opCarton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opCarton.FillColor = System.Drawing.Color.White;
+            this.opCarton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.opCarton.Location = new System.Drawing.Point(209, 86);
+            this.opCarton.Margin = new System.Windows.Forms.Padding(2);
+            this.opCarton.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opCarton.Name = "opCarton";
+            this.opCarton.Radius = 1;
+            this.opCarton.Size = new System.Drawing.Size(203, 40);
+            this.opCarton.TabIndex = 86;
+            this.opCarton.Text = "-";
+            this.opCarton.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opAWSNotSent
             // 
@@ -1010,7 +1011,7 @@
             this.uiPanel2.RectColor = System.Drawing.Color.MediumBlue;
             this.uiPanel2.Size = new System.Drawing.Size(203, 40);
             this.uiPanel2.TabIndex = 82;
-            this.uiPanel2.Text = "Thùng đã quét/ Tổng thùng";
+            this.uiPanel2.Text = "Chai / Thùng ID";
             this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opPassCount
@@ -1202,7 +1203,7 @@
         private Sunny.UI.UISymbolButton btnPO;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel8;
         private Sunny.UI.UIPanel opAWSSentWating;
-        private Sunny.UI.UIPanel opDuplicateCount;
+        private Sunny.UI.UIPanel opCarton;
         private Sunny.UI.UIPanel opAWSNotSent;
         private Sunny.UI.UIPanel uiPanel16;
         private Sunny.UI.UIPanel uiPanel1;

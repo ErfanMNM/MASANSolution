@@ -33,7 +33,7 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
             this.uiTitlePanel2 = new Sunny.UI.UITitlePanel();
-            this.webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
+            //this.webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
             this.uiTitlePanel1 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel3 = new Sunny.UI.UITableLayoutPanel();
@@ -58,7 +58,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.uiTableLayoutPanel4 = new Sunny.UI.UITableLayoutPanel();
             this.uiTitlePanel4 = new Sunny.UI.UITitlePanel();
-            this.webView22 = new Microsoft.Web.WebView2.WinForms.WebView2();
+           // this.webView22 = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.uiTableLayoutPanel5 = new Sunny.UI.UITableLayoutPanel();
             this.uiTitlePanel5 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel6 = new Sunny.UI.UITableLayoutPanel();
@@ -85,7 +85,7 @@
             this.tabPage1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTitlePanel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
+            //((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
             this.uiTableLayoutPanel2.SuspendLayout();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTableLayoutPanel3.SuspendLayout();
@@ -96,7 +96,7 @@
             this.tabPage2.SuspendLayout();
             this.uiTableLayoutPanel4.SuspendLayout();
             this.uiTitlePanel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.webView22)).BeginInit();
+           // ((System.ComponentModel.ISupportInitialize)(this.webView22)).BeginInit();
             this.uiTableLayoutPanel5.SuspendLayout();
             this.uiTitlePanel5.SuspendLayout();
             this.uiTableLayoutPanel6.SuspendLayout();
@@ -152,7 +152,7 @@
             // 
             // uiTitlePanel2
             // 
-            this.uiTitlePanel2.Controls.Add(this.webView21);
+           // this.uiTitlePanel2.Controls.Add(this.webView21);
             this.uiTitlePanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTitlePanel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.uiTitlePanel2.Location = new System.Drawing.Point(2, 2);
@@ -168,17 +168,17 @@
             // 
             // webView21
             // 
-            this.webView21.AllowExternalDrop = true;
-            this.webView21.BackColor = System.Drawing.Color.Red;
-            this.webView21.CreationProperties = null;
-            this.webView21.DefaultBackgroundColor = System.Drawing.Color.Red;
-            this.webView21.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webView21.Location = new System.Drawing.Point(1, 35);
-            this.webView21.Name = "webView21";
-            this.webView21.Size = new System.Drawing.Size(834, 409);
-            this.webView21.Source = new System.Uri("https://google.com", System.UriKind.Absolute);
-            this.webView21.TabIndex = 0;
-            this.webView21.ZoomFactor = 1D;
+            //this.webView21.AllowExternalDrop = true;
+            //this.webView21.BackColor = System.Drawing.Color.Red;
+            //this.webView21.CreationProperties = null;
+            //this.webView21.DefaultBackgroundColor = System.Drawing.Color.Red;
+            //this.webView21.Dock = System.Windows.Forms.DockStyle.Fill;
+            //this.webView21.Location = new System.Drawing.Point(1, 35);
+            //this.webView21.Name = "webView21";
+            //this.webView21.Size = new System.Drawing.Size(834, 409);
+            //this.webView21.Source = new System.Uri("https://google.com", System.UriKind.Absolute);
+            //this.webView21.TabIndex = 0;
+            //this.webView21.ZoomFactor = 1D;
             // 
             // uiTableLayoutPanel2
             // 
@@ -585,7 +585,7 @@
             // 
             // uiTitlePanel4
             // 
-            this.uiTitlePanel4.Controls.Add(this.webView22);
+           // this.uiTitlePanel4.Controls.Add(this.webView22);
             this.uiTitlePanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTitlePanel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.uiTitlePanel4.Location = new System.Drawing.Point(2, 2);
@@ -601,15 +601,15 @@
             // 
             // webView22
             // 
-            this.webView22.AllowExternalDrop = true;
-            this.webView22.CreationProperties = null;
-            this.webView22.DefaultBackgroundColor = System.Drawing.Color.White;
-            this.webView22.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webView22.Location = new System.Drawing.Point(1, 35);
-            this.webView22.Name = "webView22";
-            this.webView22.Size = new System.Drawing.Size(834, 409);
-            this.webView22.TabIndex = 0;
-            this.webView22.ZoomFactor = 1D;
+            //this.webView22.AllowExternalDrop = true;
+            //this.webView22.CreationProperties = null;
+            //this.webView22.DefaultBackgroundColor = System.Drawing.Color.White;
+            //this.webView22.Dock = System.Windows.Forms.DockStyle.Fill;
+            //this.webView22.Location = new System.Drawing.Point(1, 35);
+            //this.webView22.Name = "webView22";
+            //this.webView22.Size = new System.Drawing.Size(834, 409);
+            //this.webView22.TabIndex = 0;
+            //this.webView22.ZoomFactor = 1D;
             // 
             // uiTableLayoutPanel5
             // 
@@ -1010,7 +1010,7 @@
             this.tabPage1.ResumeLayout(false);
             this.uiTableLayoutPanel1.ResumeLayout(false);
             this.uiTitlePanel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.webView21)).EndInit();
+            //((System.ComponentModel.ISupportInitialize)(this.webView21)).EndInit();
             this.uiTableLayoutPanel2.ResumeLayout(false);
             this.uiTitlePanel1.ResumeLayout(false);
             this.uiTableLayoutPanel3.ResumeLayout(false);
@@ -1021,7 +1021,7 @@
             this.tabPage2.ResumeLayout(false);
             this.uiTableLayoutPanel4.ResumeLayout(false);
             this.uiTitlePanel4.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.webView22)).EndInit();
+            //((System.ComponentModel.ISupportInitialize)(this.webView22)).EndInit();
             this.uiTableLayoutPanel5.ResumeLayout(false);
             this.uiTitlePanel5.ResumeLayout(false);
             this.uiTableLayoutPanel6.ResumeLayout(false);
@@ -1061,11 +1061,11 @@
         private Sunny.UI.UITextBox opDelayTriger;
         private Sunny.UI.UITextBox opDelayReject;
         private Sunny.UI.UITextBox opRejectStreng;
-        private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
+        //private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
         private SPMS1.OmronPLC_Hsl omronPLC_Hsl1;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel4;
         private Sunny.UI.UITitlePanel uiTitlePanel4;
-        private Microsoft.Web.WebView2.WinForms.WebView2 webView22;
+       // private Microsoft.Web.WebView2.WinForms.WebView2 webView22;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel5;
         private Sunny.UI.UITitlePanel uiTitlePanel5;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel6;
