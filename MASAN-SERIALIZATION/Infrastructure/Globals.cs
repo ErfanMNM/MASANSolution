@@ -110,6 +110,14 @@ namespace MASAN_SERIALIZATION
         public int camera_read_fail { get; set; } = 0; // Số lượng sản phẩm không đọc được từ camera
     }
 
+    public static class CameraMain_HMI
+    {
+        public static string Camera_Content { get; set; } = string.Empty; // Nội dung camera chính
+        public static e_Production_Status Camera_Status { get; set; } = e_Production_Status.Fail; // Nội dung camera phụ
+        public static int ID { get; set; } = 0; // ID của sản phẩm
+
+    }
+
 
     #endregion
 }

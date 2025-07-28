@@ -76,7 +76,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         //nếu không phải trạng thái sản xuất thì không xử lý dữ liệu
                         this.InvokeIfRequired(() =>
                         {
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Máy chưa bắt đầu sản xuất");
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CM Máy chưa bắt đầu sản xuất");
                             ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                         });
                         break;
@@ -894,6 +894,22 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
         }
 
+        public void Update_Result_UI()
+        {
+            this.InvokeIfRequired(() =>
+            {
+                // Cập nhật các giá trị đếm từ PLC
+                GetCounterFromPLC();
+                // Cập nhật các giá trị đếm từ camera phụ
+                opTotal_Cs.Value = Globals.productionData_Cs.counter.totalCount; // Tổng số sản phẩm đã nhận từ camera phụ
+                opPass_Cs.Value = Globals.productionData_Cs.counter.passCount; // Số sản phẩm đã kích hoạt từ camera phụ
+                opFail_Cs.Value = Globals.productionData_Cs.counter.failCount; // Số sản phẩm đã loại bỏ từ camera phụ
+                opReadFail_Cs.Value = Globals.productionData_Cs.counter.readfailCount; // Số sản phẩm đã loại bỏ do không đọc được từ camera phụ
+                // Cập nhật trạng thái sản xuất
+                opProductionState.Text = Globals.Production_State.ToString();
+            });
+        }
+
         #endregion
 
         #region Các enum và class hỗ trợ
@@ -919,6 +935,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     UpdateDeviceState();
                     UpdateCounterUI(); // Cập nhật giao diện counter
                     Process_Production_State(); // Xử lý trạng thái sản xuất
+                    Update_Result_UI(); // Cập nhật giao diện kết quả
 
                     //xử lý thông tin chính 
                 }
@@ -1025,5 +1042,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         #region Các hàm xử lý Sqlite
 
         #endregion
+
     }
 }
