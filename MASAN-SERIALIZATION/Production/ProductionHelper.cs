@@ -513,6 +513,60 @@ namespace MASAN_SERIALIZATION.Production
                 }
             }
 
+            //lấy thông tin thùng từ mã
+            public (bool issucess, DataRow Carton, string message) Get_Carton_By_Code(string orderNo, string cartonCode)
+            {
+                try
+                {
+                    string czRunPath = $"{dataPath}/carton_{orderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return (false, null, "Cơ sở dữ liệu ghi không tồn tại.");
+                    }
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = "SELECT * FROM Carton WHERE cartonCode = @cartonCode";
+                        var command = new SQLiteCommand(query, conn);
+                        command.Parameters.AddWithValue("@cartonCode", cartonCode);
+                        var adapter = new SQLiteDataAdapter(command);
+                        var table = new DataTable();
+                        adapter.Fill(table);
+                        return (table.Rows.Count > 0) ? (true, table.Rows[0], "Lấy thông tin thùng thành công.") : (false, null, "Không tìm thấy thùng với mã: " + cartonCode);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return (false, null, $"Lỗi PH10 khi lấy thông tin thùng: {ex.Message}");
+                }
+            }
+
+            //lấy id thùng từ mã
+            public (bool issucess, int CartonID, string message) Get_Carton_ID_By_Code(string orderNo, string cartonCode)
+            {
+                try
+                {
+                    string czRunPath = $"{dataPath}/carton_{orderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return (false, 0, "Cơ sở dữ liệu ghi không tồn tại.");
+                    }
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = "SELECT ID FROM Carton WHERE Code = @cartonCode";
+                        var command = new SQLiteCommand(query, conn);
+                        command.Parameters.AddWithValue("@cartonCode", cartonCode);
+                        int cartonID = Convert.ToInt32(command.ExecuteScalar());
+                        return (true, cartonID, "Lấy ID thùng thành công.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return (false, 0, $"Lỗi PH10 khi lấy ID thùng từ mã: {ex.Message}");
+                }
+            }
+
             //lấy số lượng chai trong thùng theo id thùng
             public (bool issucess, int Count, string message) Get_Product_Carton_Count(string orderNo, int cartonID)
             {
@@ -536,6 +590,34 @@ namespace MASAN_SERIALIZATION.Production
                 catch (Exception ex)
                 {
                     return (false, 0, $"Lỗi PH10 khi lấy số lượng chai trong thùng: {ex.Message}");
+                }
+            }
+
+            //lấy tất cả các sp trong record camer sub có status = pass và carton id = 
+            public (bool issucess, DataTable Records, string message) Get_Product_Carton_Records(string orderNo, int cartonID)
+            {
+                try
+                {
+                    string czRunPath = $"{dataPath}/Record_CameraSub_{orderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return (false, null, "Cơ sở dữ liệu ghi không tồn tại.");
+                    }
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = "SELECT * FROM Records_CameraSub WHERE CartonID = @cartonID AND Status = 'Pass'";
+                        var command = new SQLiteCommand(query, conn);
+                        command.Parameters.AddWithValue("@cartonID", cartonID);
+                        var adapter = new SQLiteDataAdapter(command);
+                        var table = new DataTable();
+                        adapter.Fill(table);
+                        return (table.Rows.Count > 0) ? (true, table, "Lấy danh sách bản ghi thành công.") : (true, null, "Không có bản ghi nào trong cơ sở dữ liệu.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return (false, null, $"Lỗi PH11 khi lấy danh sách bản ghi: {ex.Message}");
                 }
             }
 
@@ -756,6 +838,37 @@ namespace MASAN_SERIALIZATION.Production
                 }
             }
 
+            //update thông tin của thùng carton
+
+            public void Update_Carton(ProductionCartonData productionCartonData, string orderNo)
+            {
+                try
+                {
+                    string czRunPath = $"{dataPath}/carton_{orderNo}.db";
+                    using (SQLiteConnection connection = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        connection.Open();
+                        string query = "UPDATE Carton SET cartonCode = @cartonCode, Start_Datetime = @startime, Activate_Datetime = @activatetime, ActivateUser = @ActivateUser, ProductionDate = @ProductionDate WHERE ID = @ID";
+                        using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@ID", productionCartonData.cartonID);
+                            command.Parameters.AddWithValue("@cartonCode", productionCartonData.cartonCode);
+                            command.Parameters.AddWithValue("@startime", productionCartonData.Start_Datetime);
+                            command.Parameters.AddWithValue("@activatetime", productionCartonData.Activate_Datetime);
+                            command.Parameters.AddWithValue("@ActivateUser", productionCartonData.Activate_User);
+                            command.Parameters.AddWithValue("@ProductionDate", productionCartonData.Production_Datetime);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Lỗi P08 khi cập nhật thông tin thùng carton: {ex.Message}");
+                }
+
+            }
+
+
             public void Insert_Record_Camera_Sub(ProductionCodeData_Record productionCodeData_Record, string orderNo)
             {
                 string czRunPath = $"{dataPath}/Record_CameraSub_{orderNo}.db";
@@ -942,15 +1055,15 @@ namespace MASAN_SERIALIZATION.Production
 
                     // Tạo bảng
                     string createTableQuery = @"
-        CREATE TABLE IF NOT EXISTS Carton (
-            ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-            cartonCode TEXT NOT NULL DEFAULT '0',
-            Start_Datetime TEXT NOT NULL DEFAULT '0',
-            Activate_Datetime TEXT NOT NULL DEFAULT 'FAIL',
-            ActivateUser TEXT NOT NULL DEFAULT '0',
-            ProductionDate TEXT NOT NULL DEFAULT '0'
-        );
-    ";
+                                                CREATE TABLE IF NOT EXISTS Carton (
+                                                    ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                                                    cartonCode TEXT NOT NULL DEFAULT '0',
+                                                    Start_Datetime TEXT NOT NULL DEFAULT '0',
+                                                    Activate_Datetime TEXT NOT NULL DEFAULT 'FAIL',
+                                                    ActivateUser TEXT NOT NULL DEFAULT '0',
+                                                    ProductionDate TEXT NOT NULL DEFAULT '0'
+                                                );
+                                            ";
 
                     using (var createCmd = new SQLiteCommand(createTableQuery, conn))
                     {
@@ -962,8 +1075,8 @@ namespace MASAN_SERIALIZATION.Production
 
                     using (var tran = conn.BeginTransaction())
                     using (var insertCmd = new SQLiteCommand(@"
-        INSERT INTO Carton (cartonCode, Start_Datetime, Activate_Datetime, ActivateUser, ProductionDate) 
-        VALUES ('0', '0', '0', 'System', '0');", conn, tran))
+                                                                INSERT INTO Carton (cartonCode, Start_Datetime, Activate_Datetime, ActivateUser, ProductionDate) 
+                                                                VALUES ('0', '0', '0', 'System', '0');", conn, tran))
                     {
                         for (int i = 0; i < orderCartonQty; i++)
                         {
@@ -1051,6 +1164,7 @@ namespace MASAN_SERIALIZATION.Production
         Error,// có lỗi xảy ra trong quá trình sản xuất
         Pushing_to_Dic,//đang đẩy dữ liệu lên AWS
         Checking_Queue,//đang kiểm tra Queue
+        Pause,// tạm dừng quá trình sản xuất
     }
 
     public enum e_Production_Status

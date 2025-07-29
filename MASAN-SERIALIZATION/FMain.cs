@@ -84,6 +84,7 @@ namespace MASAN_SERIALIZATION
             {
                 //nạp cấu hình từ file ini
                 AppConfigs.Current.Load();
+                //AppConfigs.Current.SetDefault(); //thiết lập cấu hình mặc định nếu chưa có
                // AppConfigs.Current.Save(); //lưu cấu hình nếu có thay đổi
 
                 //nạp cấu hình PLC

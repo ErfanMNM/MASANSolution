@@ -837,7 +837,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.tabPage3.Controls.Add(this.opHisCS);
             this.tabPage3.Location = new System.Drawing.Point(0, 40);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(459, 405);
+            this.tabPage3.Size = new System.Drawing.Size(200, 60);
             this.tabPage3.TabIndex = 4;
             this.tabPage3.Text = "Lịch sử phân làn";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -854,7 +854,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opHisCS.Name = "opHisCS";
             this.opHisCS.Padding = new System.Windows.Forms.Padding(2);
             this.opHisCS.ShowText = false;
-            this.opHisCS.Size = new System.Drawing.Size(459, 405);
+            this.opHisCS.Size = new System.Drawing.Size(200, 60);
             this.opHisCS.TabIndex = 1;
             this.opHisCS.Text = "uiListBox1";
             // 

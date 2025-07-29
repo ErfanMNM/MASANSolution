@@ -60,11 +60,9 @@ namespace MASAN_SERIALIZATION
 
         public static Queue<ProductionCodeData_Record> Insert_Product_To_Record_CS_Queue = new Queue<ProductionCodeData_Record>();
 
-        public static Queue<ProductionCartonData> Insert_Product_To_Record_Carton_Queue = new Queue<ProductionCartonData>();
+        public static Queue<ProductionCartonData> Update_Product_To_Record_Carton_Queue = new Queue<ProductionCartonData>();
 
-        public static Queue<ProductionCartonData> Hand_Carton_Code_Queue_01 = new Queue<ProductionCartonData>(); // Hàng đợi mã thùng sản xuất từ máy quét tay
-
-        public static Queue<ProductionCartonData> Hand_Carton_Code_Queue_02 = new Queue<ProductionCartonData>(); // Hàng đợi mã thùng sản xuất từ máy quét tay
+        public static Queue<string> Activate_Carton = new Queue<string>(); // Hàng đợi kích hoạt mã thùng sản xuất
     }
 
     #region Các lớp dữ liệu liên quan đến sản xuất

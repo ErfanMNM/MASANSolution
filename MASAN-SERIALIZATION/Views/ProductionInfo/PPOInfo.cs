@@ -833,7 +833,6 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
             });
         }
-
         public void GetAWSCounter()
         {
             Globals.ProductionData.awsSendCounter.pendingCount = Globals.ProductionData.getDataPO.Get_Record_Sent_Recive_Count(ipOrderNO.Text, e_AWS_Send_Status.Pending, e_AWS_Recive_Status.Waiting, "=", "AND Status != 0").Count;
@@ -846,11 +845,8 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
             Globals.ProductionData.awsRecivedCounter.recivedCount = Globals.ProductionData.getDataPO.Get_Record_Sent_Recive_Count(ipOrderNO.Text, e_AWS_Send_Status.Sent, e_AWS_Recive_Status.Waiting, "!=").Count;
         }
-
         public void GetCounter_2(DataTable dataTable)
         {
-            
-
             if (dataTable == null || dataTable.Rows.Count == 0)
             {
                 //nếu không có dữ liệu thì reset counter
@@ -858,19 +854,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 Globals.ProductionData.awsSendCounter.Reset();
                 Globals.ProductionData.awsRecivedCounter.Reset();
 
-                var getmaxCartonID1 = Globals.ProductionData.getDataPO.Get_Max_Carton_ID(ipOrderNO.Text);
-
-                if (getmaxCartonID1.issucess)
-                {
-                    Globals.ProductionData.counter.cartonID = getmaxCartonID1.MaxCartonID;
-                }
-                else
-                {
-                    //ghi log thất bại
-                    POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng thùng lớn nhất thất bại: {getmaxCartonID1.message}");
-                    //hiển thị thông báo lỗi
-                    this.ShowErrorNotifier($"Lỗi PP15: {getmaxCartonID1.message}");
-                }
+                Globals.ProductionData.counter.cartonID = 1;
 
                 return;
             }
@@ -913,21 +897,27 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 }
             }
 
-            //lấy id thùng lớn nhất
-            var getmaxCartonID = Globals.ProductionData.getDataPO.Get_Max_Carton_ID(ipOrderNO.Text);
-
-            if (getmaxCartonID.issucess)
+            //lấy id thùng lớn nhất = cách chia lấy dư số pass
+            if (Globals.ProductionData.counter.passCount == 0)
             {
-                Globals.ProductionData.counter.cartonID = getmaxCartonID.MaxCartonID;
+                Globals.ProductionData.counter.cartonID = 1; //nếu không có pass thì cartonID = 1
             }
             else
             {
-                //ghi log thất bại
-                POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng thùng lớn nhất thất bại: {getmaxCartonID.message}");
-                //hiển thị thông báo lỗi
-                this.ShowErrorNotifier($"Lỗi PP15: {getmaxCartonID.message}");
-            }
+                var a = Globals.ProductionData.counter.passCount % 24; //số chai trong thùng đang xếp dở dang
+                Globals.ProductionData.counter.carton_Packing_Count = a; //số chai trong thùng đang xếp dở dang
+                //nếu số đang xếp dở dang = 0 
+                if (a == 0)
+                {
+                    Globals.ProductionData.counter.cartonID = Globals.ProductionData.counter.passCount / 24; //số thùng đã xếp
+                }
+                else
+                {
+                    Globals.ProductionData.counter.cartonID = (Globals.ProductionData.counter.passCount / 24) + 1; //số thùng đã xếp + 1 thùng đang xếp dở dang
+                }
 
+            }
+            
         }
 
         public void Saving()
