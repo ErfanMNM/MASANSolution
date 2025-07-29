@@ -5,11 +5,6 @@ using System.Data;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.ComponentModel.Design.ObjectSelectorEditor;
-using System.Windows.Forms;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace MASAN_SERIALIZATION.Production
 {
@@ -829,7 +824,7 @@ namespace MASAN_SERIALIZATION.Production
         #endregion
 
         #region Các phương thức kiểm tra file
-        public (bool issucess, string message) Check_Database_File(string orderNo)
+        public (bool issucess, string message) Check_Database_File(string orderNo, string orderQty)
         {
             //try
             //{//tạo thư mục nếu chưa tồn tại
@@ -941,33 +936,49 @@ namespace MASAN_SERIALIZATION.Production
                 string CartonPath = $"{dataPath}/carton_{orderNo}.db";
                 if (!File.Exists(CartonPath))
                 {
-                    using (var conn = new SQLiteConnection($"Data Source={CartonPath};Version=3;"))
+                using (var conn = new SQLiteConnection($"Data Source={CartonPath};Version=3;"))
+                {
+                    conn.Open();
+
+                    // Tạo bảng
+                    string createTableQuery = @"
+        CREATE TABLE IF NOT EXISTS Carton (
+            ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            cartonCode TEXT NOT NULL DEFAULT '0',
+            Start_Datetime TEXT NOT NULL DEFAULT '0',
+            Activate_Datetime TEXT NOT NULL DEFAULT 'FAIL',
+            ActivateUser TEXT NOT NULL DEFAULT '0',
+            ProductionDate TEXT NOT NULL DEFAULT '0'
+        );
+    ";
+
+                    using (var createCmd = new SQLiteCommand(createTableQuery, conn))
                     {
-                        conn.Open();
-                        string createTableQuery = @"CREATE TABLE ""Carton"" (
-	                                            ""ID""	INTEGER NOT NULL UNIQUE,
-                                                ""cartonCode""	TEXT NOT NULL DEFAULT 0,
-	                                            ""Start_Datetime""	TEXT NOT NULL DEFAULT 0,
-	                                            ""Activate_Datetime""	TEXT NOT NULL DEFAULT 'FAIL',
-	                                            ""ActivateUser""	TEXT NOT NULL DEFAULT 0,
-	                                            ""ProductionDate""	TEXT NOT NULL DEFAULT 0,
-	                                            PRIMARY KEY(""ID"" AUTOINCREMENT)
-                                            );";
-
-                        //tạo 1 dòng đầu tiên với giá trị mặc định
-                        string createFirstRowQuery = @"INSERT INTO Carton (cartonCode, Start_Datetime, Activate_Datetime, ActivateUser, ProductionDate) VALUES ('0', '0', '0', 'System', '0');";
-
-                        var command = new SQLiteCommand(createTableQuery + createFirstRowQuery, conn);
-                        command.ExecuteNonQuery();
-
-                        
+                        createCmd.ExecuteNonQuery();
                     }
 
-                    
+                    // Tạo số thùng = orderQty / 24
+                    int orderCartonQty = orderQty.ToInt32() / 24;
+
+                    using (var tran = conn.BeginTransaction())
+                    using (var insertCmd = new SQLiteCommand(@"
+        INSERT INTO Carton (cartonCode, Start_Datetime, Activate_Datetime, ActivateUser, ProductionDate) 
+        VALUES ('0', '0', '0', 'System', '0');", conn, tran))
+                    {
+                        for (int i = 0; i < orderCartonQty; i++)
+                        {
+                            insertCmd.ExecuteNonQuery();
+                        }
+                        tran.Commit();
+                    }
                 }
 
-                //kiểm tra xem bảng ghi history tất cả các result của PO đã tồn tại hay chưa, nếu chưa thì tạo mới nếu chưa thì tạo mới
-                string recordAWS = $"{dataPath}/Send_AWS_Record_{orderNo}.db";
+
+
+            }
+
+            //kiểm tra xem bảng ghi history tất cả các result của PO đã tồn tại hay chưa, nếu chưa thì tạo mới nếu chưa thì tạo mới
+            string recordAWS = $"{dataPath}/Send_AWS_Record_{orderNo}.db";
                 if (!File.Exists(recordAWS))
                 {
                     using (var conn = new SQLiteConnection($"Data Source={recordAWS};Version=3;"))

@@ -25,9 +25,15 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         LogHelper<e_LogType> POPageLog;
 
         //biến toàn cục để lưu trữ trạng thái ứng dụng
-        public CancellationTokenSource poPage_Main_Process = new CancellationTokenSource(); //token cho task chính
-        private Task PPO_mainProcessTask;
-        private Task _savingTask;
+        private BackgroundWorker poPage_Main_Process = new BackgroundWorker()
+        {
+            WorkerSupportsCancellation = true
+        };
+
+        private BackgroundWorker _wkSaving = new BackgroundWorker()
+        {
+            WorkerSupportsCancellation = true
+        };
         public PPOInfo()
         {
             InitializeComponent();
@@ -41,8 +47,21 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             //render iporderNo
             iporderNo_Render();
             //khởi động nhiệm vụ chính
-            Start_Process_Task();
+            poPage_Main_Process.DoWork += (s, e) => Process_Async();
+            if (!poPage_Main_Process.IsBusy)
+            {
+                poPage_Main_Process.RunWorkerAsync();
+            }
+            else
+            {
+                this.ShowErrorDialog("Vui lòng không thao tác liên tiếp nhiều lần");
+            }
+
+            _wkSaving.DoWork += (s, e) => Saving();
         }
+
+        
+
         private void PPOInfo_Initialize(object sender, EventArgs e)
         {
             //ghi log khởi tạo giao diện
@@ -63,8 +82,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             var loadorderNO = Globals.ProductionData.getfromMES.MES_Load_OrderNo_ToComboBox(ipOrderNO);
             if (loadorderNO.issucess)
             {
-                //ghi log tạo thành công danh sách đơn hàng
-                POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Info, "Tạo thành công danh sách đơn hàng từ MES");
+
             }
             else
             {
@@ -264,6 +282,8 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                             btnRUN.Symbol = 61509; //hình dừng
 
                             btnRUN.Enabled = true; //bật nút RUN
+
+                            btnProductionDate.Enabled = false;
                         });
                     }
 
@@ -296,7 +316,15 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     //kiểm tra xem có hoàn thành chưa
                     if (Globals.ProductionData.getDataPO.Is_PO_Completed(ipOrderNO.SelectedText))
                     {
-                        this.ShowErrorNotifier("Lỗi PP03: Đơn hàng đã hoàn thành, Vui lòng chọn đơn hàng khác.");
+                        this.InvokeIfRequired(() =>
+                        {
+                            opTer.Text = "Đơn hàng đã hoàn thành, Vui lòng chọn đơn hàng khác.";
+                            opTer.ForeColor = Color.Red;
+                            opTer.Font = new Font("Tahoma", 14, FontStyle.Bold);
+
+                            this.ShowErrorNotifier("Lỗi PP03: Đơn hàng đã hoàn thành, Vui lòng chọn đơn hàng khác.");
+                        });
+                        
                         //quăng về trạng thái Edit 
                         btnPO_Before_Edit();
                         Globals.Production_State = e_Production_State.Editing;
@@ -306,7 +334,15 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     //kiểm tra xem mã cz có > orderQty không
                     if (opCZCodeCount.Text.ToInt32() < opOrderQty.Text.ToInt32())
                     {
-                        this.ShowErrorNotifier("Lỗi PP04: Số lượng mã MES gửi xuống chưa đủ");
+                        this.InvokeIfRequired(() =>
+                        {
+                            opTer.Text = "Số lượng mã CZ gửi xuống chưa đủ, Vui lòng kiểm tra lại.";
+                            opTer.ForeColor = Color.Red;
+                            opTer.Font = new Font("Tahoma", 14, FontStyle.Bold);
+
+                            this.ShowErrorNotifier("Lỗi PP04: Số lượng mã MES gửi xuống chưa đủ");
+                        });
+                        
                         //quăng về trạng thái Edit 
 
                         btnPO_Before_Edit();
@@ -314,23 +350,26 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                         break;
                     }
 
-                    if (opOrderQty.Text.ToInt32()%24 > 0)
-                    {
-                        this.ShowErrorDialog("Lỗi PP998: Đơn hàng có vấn đề về OrderQty, Sản lượng không đóng đủ thùng. Vui lòng kiểm tra lại phía tạo dữ liệu sản xuất MES của nhà máy.");
-                        //quăng về trạng thái Edit 
-                        btnPO_Before_Edit();
-                        Globals.Production_State = e_Production_State.Editing;
-                        break;
-                    }
+                    //if (opOrderQty.Text.ToInt32()%24 > 0)
+                    //{
+                    //    this.ShowErrorDialog("Lỗi PP998: Đơn hàng có vấn đề về OrderQty, Sản lượng không đóng đủ thùng. Vui lòng kiểm tra lại phía tạo dữ liệu sản xuất MES của nhà máy.");
+                    //    //quăng về trạng thái Edit 
+                    //    btnPO_Before_Edit();
+                    //    Globals.Production_State = e_Production_State.Editing;
+                    //    break;
+                    //}
 
                     //saving dữ liệu
-                    if (_savingTask == null || _savingTask.IsCompleted || _savingTask.IsCanceled || _savingTask.IsFaulted)
+                    if(!_wkSaving.IsBusy)
                     {
-                        _savingTask = Task.Run(() => Saving());
-                    }
-                    else
-                    {
-                        //nếu đang chạy thì không làm gì cả
+                        this.InvokeIfRequired(() =>
+                        {
+                            opTer.Text = "Đang lưu dữ liệu, Vui lòng đợi trong giây lát...";
+                            opTer.ForeColor = Color.Teal;
+                            opTer.Font = new Font("Tahoma", 14, FontStyle.Bold);
+                        });
+                        _wkSaving.RunWorkerAsync();
+                        break;
                     }
 
                     break;
@@ -361,11 +400,11 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         }
 
 
-        private async Task Process_Async()
+        private void Process_Async()
         {
             try
             {
-                while (!poPage_Main_Process.Token.IsCancellationRequested)
+                while (!poPage_Main_Process.CancellationPending)
                 {
                     try
                     {
@@ -373,7 +412,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     }
                     catch (Exception ex)
                     {
-                        await Globals.Log.WriteLogAsync("System", e_LogType.Error, $"Lỗi trong Main_Process_Async: {ex.Message}");
+                         Globals.Log.WriteLogAsync("System", e_LogType.Error, $"Lỗi trong Main_Process_Async: {ex.Message}");
                         this.InvokeIfRequired(() =>
                         {
                             opTer.Text = "Đã xảy ra lỗi trong quá trình xử lý, Vui lòng kiểm tra nhật ký để biết thêm chi tiết.";
@@ -383,31 +422,10 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                         });
                         
                     }
-                    await Task.Delay(500, poPage_Main_Process.Token);
+                    Thread.Sleep(500); // Đợi 100ms trước khi lặp lại
                 }
             }
             catch (TaskCanceledException) { }
-        }
-        public void Start_Process_Task()
-        {
-            if (PPO_mainProcessTask == null ||
-                PPO_mainProcessTask.IsCompleted ||
-                PPO_mainProcessTask.IsCanceled ||
-                PPO_mainProcessTask.IsFaulted)
-            {
-                PPO_mainProcessTask = Task.Run(Process_Async, poPage_Main_Process.Token);
-            }
-            else
-            {
-                //không thể khởi động lại nhiệm vụ nếu nó đã đang chạy
-            }
-        }
-        public void Stop_Process_Task()
-        {
-            if (poPage_Main_Process != null && !poPage_Main_Process.IsCancellationRequested)
-            {
-                poPage_Main_Process.Cancel();
-            }
         }
 
         #endregion
@@ -417,6 +435,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         {
             //ghi log người dùng nhấn nút chọn đơn hàng
             Globals.Log.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.UserAction, "Người dùng nhấn nút chọn đơn hàng");
+            btnPO.Enabled = false; //tắt nút PO
             switch (Globals.Production_State)
             {
                 case e_Production_State.NoSelectedPO:
@@ -533,6 +552,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     //lấy lại counter cho chắc
                     Task.Run(() =>
                     {
+                        Thread.Sleep(1000); //đợi 1 giây để tránh quá tải
                         var recordsDatabase = Globals.ProductionData.getDataPO.Get_Records(ipOrderNO.Text);
 
                         if (!recordsDatabase.issucess)
@@ -591,7 +611,6 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                         this.ShowErrorNotifier("Lỗi PP096: Đơn hàng chưa chạy, không thể chỉnh ngày sản xuất.");
                         break;
                     }
-
                     
                     //bật ipProductionDate
                     ipProductionDate.ReadOnly = false;
@@ -656,7 +675,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             if (getPOInfo.issucess)
             {
                 //kiểm tra file dư liệu có tồn tại không
-                if (!Globals.ProductionData.Check_Database_File(ipOrderNO.SelectedText).issucess)
+                if (!Globals.ProductionData.Check_Database_File(ipOrderNO.SelectedText, getPOInfo.PO.Rows[0]["orderQty"].ToString()).issucess)
                 {
                     //ghi log thất bại
                     POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Không tìm thấy dữ liệu đơn hàng: {ipOrderNO.SelectedText}");
@@ -721,86 +740,97 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             //tạo 1 task để lấy dữ liệu counter 1
             Task.Run(() =>
             {
-                //delay 1 giây để tránh quá tải
-                Task.Delay(1000).Wait();
-                var CZRunCount = Globals.ProductionData.getDataPO.Get_Record_Count(ipOrderNO.Text);
-                if (!CZRunCount.issucess)
+                try
                 {
-                    //ghi log thất bại
-                    POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng mã code thất bại: {CZRunCount.message}");
-                    //hiển thị thông báo lỗi
-                    this.ShowErrorNotifier($"Lỗi PP07: {CZRunCount.message}");
+                    //delay 1 giây để tránh quá tải
+                    Task.Delay(1000).Wait();
+                    var CZRunCount = Globals.ProductionData.getDataPO.Get_Record_Count(ipOrderNO.Text);
+                    if (!CZRunCount.issucess)
+                    {
+                        //ghi log thất bại
+                        POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng mã code thất bại: {CZRunCount.message}");
+                        //hiển thị thông báo lỗi
+                        this.ShowErrorNotifier($"Lỗi PP07: {CZRunCount.message}");
 
+                    }
+                    opCZRunCount.Text = CZRunCount.RecordCount.ToString();
+                    //lấy các counter cơ bản
+                    //lấy số record passed
+
+                    var PassCount = Globals.ProductionData.getDataPO.Get_Record_Count_By_Status(ipOrderNO.Text, e_Production_Status.Pass);
+                    if (!PassCount.issucess)
+                    {
+                        //ghi log thất bại
+                        POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng record passed thất bại: {PassCount.message}");
+                        //hiển thị thông báo lỗi
+                        this.ShowErrorNotifier($"Lỗi PP09: {PassCount.message}");
+                    }
+                    opPassCount.Text = PassCount.Count.ToString();
+
+                    //lấy số record failed
+                    var FailCount = Globals.ProductionData.getDataPO.Get_Record_Count_By_Status(ipOrderNO.Text, e_Production_Status.Fail);
+                    if (!FailCount.issucess)
+                    {
+                        //ghi log thất bại
+                        POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng record failed thất bại: {FailCount.message}");
+                        //hiển thị thông báo lỗi
+                        this.ShowErrorNotifier($"Lỗi PP10: {FailCount.message}");
+                    }
+                    opFailCount.Text = FailCount.Count.ToString();
+
+
+                    //lấy số record waiting
+                    var AWSFullOKCount = Globals.ProductionData.getDataPO.Get_Record_Sent_Recive_Count(ipOrderNO.Text, e_AWS_Send_Status.Sent, e_AWS_Recive_Status.Waiting, "!=");
+                    if (!AWSFullOKCount.issucess)
+                    {
+                        //ghi log thất bại
+                        POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng record waiting thất bại: {AWSFullOKCount.message}");
+                        //hiển thị thông báo lỗi
+                        this.ShowErrorNotifier($"Lỗi PP11: {AWSFullOKCount.message}");
+                    }
+                    opAWSFullOKCount.Text = AWSFullOKCount.Count.ToString();
+
+                    //lấy số record not sent
+                    var AWSNotSent = Globals.ProductionData.getDataPO.Get_Record_Sent_Recive_Count(ipOrderNO.Text, e_AWS_Send_Status.Pending, e_AWS_Recive_Status.Waiting, "=", "AND Status != 0");
+                    if (!AWSNotSent.issucess)
+                    {
+                        //ghi log thất bại
+                        POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng record not sent thất bại: {AWSNotSent.message}");
+                        //hiển thị thông báo lỗi
+                        this.ShowErrorNotifier($"Lỗi PP12: {AWSNotSent.message}");
+                    }
+
+                    //lấy số send failed
+                    var AWSSentFailed = Globals.ProductionData.getDataPO.Get_Record_Sent_Recive_Count(ipOrderNO.Text, e_AWS_Send_Status.Failed, e_AWS_Recive_Status.Waiting, "=", "AND Status != 0");
+                    if (!AWSSentFailed.issucess)
+                    {
+                        //ghi log thất bại
+                        POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng record sent failed thất bại: {AWSSentFailed.message}");
+                        //hiển thị thông báo lỗi
+                        this.ShowErrorNotifier($"Lỗi PP13: {AWSSentFailed.message}");
+                    }
+                    opAWSNotSent.Text = AWSNotSent.Count.ToString() + "/" + AWSSentFailed.Count.ToString();
+
+
+                    //lấy số record sent waiting
+                    var AWSSentWating = Globals.ProductionData.getDataPO.Get_Record_Sent_Recive_Count(ipOrderNO.Text, e_AWS_Send_Status.Sent, e_AWS_Recive_Status.Waiting, "=");
+                    if (!AWSSentWating.issucess)
+                    {
+                        //ghi log thất bại
+                        POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng record sent waiting thất bại: {AWSSentWating.message}");
+                        //hiển thị thông báo lỗi
+                        this.ShowErrorNotifier($"Lỗi PP14: {AWSSentWating.message}");
+                    }
+                    opAWSSentWating.Text = AWSSentWating.Count.ToString();
                 }
-                opCZRunCount.Text = CZRunCount.RecordCount.ToString();
-                //lấy các counter cơ bản
-                //lấy số record passed
-
-                var PassCount = Globals.ProductionData.getDataPO.Get_Record_Count_By_Status(ipOrderNO.Text, e_Production_Status.Pass);
-                if (!PassCount.issucess)
+                catch (Exception ex)
                 {
-                    //ghi log thất bại
-                    POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng record passed thất bại: {PassCount.message}");
+                    //ghi log lỗi
+                    POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lỗi trong GetCounter_1: {ex.Message}");
                     //hiển thị thông báo lỗi
-                    this.ShowErrorNotifier($"Lỗi PP09: {PassCount.message}");
-                }
-                opPassCount.Text = PassCount.Count.ToString();
-
-                //lấy số record failed
-                var FailCount = Globals.ProductionData.getDataPO.Get_Record_Count_By_Status(ipOrderNO.Text, e_Production_Status.Fail);
-                if (!FailCount.issucess)
-                {
-                    //ghi log thất bại
-                    POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng record failed thất bại: {FailCount.message}");
-                    //hiển thị thông báo lỗi
-                    this.ShowErrorNotifier($"Lỗi PP10: {FailCount.message}");
-                }
-                opFailCount.Text = FailCount.Count.ToString();
-
-
-                //lấy số record waiting
-                var AWSFullOKCount = Globals.ProductionData.getDataPO.Get_Record_Sent_Recive_Count(ipOrderNO.Text, e_AWS_Send_Status.Sent, e_AWS_Recive_Status.Waiting, "!=");
-                if (!AWSFullOKCount.issucess)
-                {
-                    //ghi log thất bại
-                    POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng record waiting thất bại: {AWSFullOKCount.message}");
-                    //hiển thị thông báo lỗi
-                    this.ShowErrorNotifier($"Lỗi PP11: {AWSFullOKCount.message}");
-                }
-                opAWSFullOKCount.Text = AWSFullOKCount.Count.ToString();
-
-                //lấy số record not sent
-                var AWSNotSent = Globals.ProductionData.getDataPO.Get_Record_Sent_Recive_Count(ipOrderNO.Text, e_AWS_Send_Status.Pending, e_AWS_Recive_Status.Waiting, "=", "AND Status != 0");
-                if (!AWSNotSent.issucess)
-                {
-                    //ghi log thất bại
-                    POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng record not sent thất bại: {AWSNotSent.message}");
-                    //hiển thị thông báo lỗi
-                    this.ShowErrorNotifier($"Lỗi PP12: {AWSNotSent.message}");
+                    this.ShowErrorNotifier($"Lỗi PP15: {ex.Message}");
                 }
 
-                //lấy số send failed
-                var AWSSentFailed = Globals.ProductionData.getDataPO.Get_Record_Sent_Recive_Count(ipOrderNO.Text, e_AWS_Send_Status.Failed, e_AWS_Recive_Status.Waiting, "=", "AND Status != 0");
-                if (!AWSSentFailed.issucess)
-                {
-                    //ghi log thất bại
-                    POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng record sent failed thất bại: {AWSSentFailed.message}");
-                    //hiển thị thông báo lỗi
-                    this.ShowErrorNotifier($"Lỗi PP13: {AWSSentFailed.message}");
-                }
-                opAWSNotSent.Text = AWSNotSent.Count.ToString() + "/" + AWSSentFailed.Count.ToString();
-
-
-                //lấy số record sent waiting
-                var AWSSentWating = Globals.ProductionData.getDataPO.Get_Record_Sent_Recive_Count(ipOrderNO.Text, e_AWS_Send_Status.Sent, e_AWS_Recive_Status.Waiting, "=");
-                if (!AWSSentWating.issucess)
-                {
-                    //ghi log thất bại
-                    POPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lấy thông tin số lượng record sent waiting thất bại: {AWSSentWating.message}");
-                    //hiển thị thông báo lỗi
-                    this.ShowErrorNotifier($"Lỗi PP14: {AWSSentWating.message}");
-                }
-                opAWSSentWating.Text = AWSSentWating.Count.ToString();
             });
         }
 

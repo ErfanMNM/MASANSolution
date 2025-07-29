@@ -82,11 +82,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.panelinfoCode = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel16 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel37 = new Sunny.UI.UITableLayoutPanel();
-            this.opContentC2 = new Sunny.UI.UIPanel();
             this.opResultPassFailC2 = new Sunny.UI.UIPanel();
+            this.opCameraMainConten = new Sunny.UI.UIRichTextBox();
             this.uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
-            this.opQueueSqlite = new Sunny.UI.UIPanel();
-            this.opQueueRecord = new Sunny.UI.UIPanel();
+            this.opErrCount = new Sunny.UI.UIPanel();
+            this.opsadfsdf = new Sunny.UI.UIPanel();
             this.Camera_Main = new SpT.Communications.TCP.TCPClient(this.components);
             this.Camera_Sub = new SpT.Communications.TCP.TCPClient(this.components);
             this.OMRON_PLC = new SPMS1.OmronPLC_Hsl(this.components);
@@ -662,7 +662,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opCameraSub.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opCameraSub.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.opCameraSub.IsBlinking = true;
-            this.opCameraSub.IsOn = false;
+            this.opCameraSub.IsOn = true;
             this.opCameraSub.Location = new System.Drawing.Point(120, 3);
             this.opCameraSub.MinimumSize = new System.Drawing.Size(1, 1);
             this.opCameraSub.Name = "opCameraSub";
@@ -682,7 +682,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opCameraMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opCameraMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.opCameraMain.IsBlinking = true;
-            this.opCameraMain.IsOn = false;
+            this.opCameraMain.IsOn = true;
             this.opCameraMain.Location = new System.Drawing.Point(3, 3);
             this.opCameraMain.MinimumSize = new System.Drawing.Size(1, 1);
             this.opCameraMain.Name = "opCameraMain";
@@ -702,7 +702,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opPLCState.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opPLCState.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.opPLCState.IsBlinking = true;
-            this.opPLCState.IsOn = false;
+            this.opPLCState.IsOn = true;
             this.opPLCState.Location = new System.Drawing.Point(240, 3);
             this.opPLCState.MinimumSize = new System.Drawing.Size(1, 1);
             this.opPLCState.Name = "opPLCState";
@@ -811,7 +811,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.tabPage2.Controls.Add(this.opHis2);
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(200, 60);
+            this.tabPage2.Size = new System.Drawing.Size(459, 405);
             this.tabPage2.TabIndex = 3;
             this.tabPage2.Text = "Lịch sử";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -828,7 +828,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opHis2.Name = "opHis2";
             this.opHis2.Padding = new System.Windows.Forms.Padding(2);
             this.opHis2.ShowText = false;
-            this.opHis2.Size = new System.Drawing.Size(200, 60);
+            this.opHis2.Size = new System.Drawing.Size(459, 405);
             this.opHis2.TabIndex = 0;
             this.opHis2.Text = "uiListBox1";
             // 
@@ -837,7 +837,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.tabPage3.Controls.Add(this.opHisCS);
             this.tabPage3.Location = new System.Drawing.Point(0, 40);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(200, 60);
+            this.tabPage3.Size = new System.Drawing.Size(459, 405);
             this.tabPage3.TabIndex = 4;
             this.tabPage3.Text = "Lịch sử phân làn";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -854,7 +854,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opHisCS.Name = "opHisCS";
             this.opHisCS.Padding = new System.Windows.Forms.Padding(2);
             this.opHisCS.ShowText = false;
-            this.opHisCS.Size = new System.Drawing.Size(200, 60);
+            this.opHisCS.Size = new System.Drawing.Size(459, 405);
             this.opHisCS.TabIndex = 1;
             this.opHisCS.Text = "uiListBox1";
             // 
@@ -912,8 +912,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel37.ColumnCount = 2;
             this.uiTableLayoutPanel37.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 26.81319F));
             this.uiTableLayoutPanel37.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 73.18681F));
-            this.uiTableLayoutPanel37.Controls.Add(this.opContentC2, 1, 0);
             this.uiTableLayoutPanel37.Controls.Add(this.opResultPassFailC2, 0, 0);
+            this.uiTableLayoutPanel37.Controls.Add(this.opCameraMainConten, 1, 0);
             this.uiTableLayoutPanel37.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTableLayoutPanel37.Location = new System.Drawing.Point(3, 3);
             this.uiTableLayoutPanel37.Name = "uiTableLayoutPanel37";
@@ -922,19 +922,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel37.Size = new System.Drawing.Size(461, 76);
             this.uiTableLayoutPanel37.TabIndex = 11;
             this.uiTableLayoutPanel37.TagString = null;
-            // 
-            // opContentC2
-            // 
-            this.opContentC2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opContentC2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opContentC2.Location = new System.Drawing.Point(125, 2);
-            this.opContentC2.Margin = new System.Windows.Forms.Padding(2);
-            this.opContentC2.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opContentC2.Name = "opContentC2";
-            this.opContentC2.Size = new System.Drawing.Size(334, 72);
-            this.opContentC2.TabIndex = 5;
-            this.opContentC2.Text = "-";
-            this.opContentC2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opResultPassFailC2
             // 
@@ -951,13 +938,29 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opResultPassFailC2.Text = "-";
             this.opResultPassFailC2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // opCameraMainConten
+            // 
+            this.opCameraMainConten.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opCameraMainConten.FillColor = System.Drawing.Color.White;
+            this.opCameraMainConten.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opCameraMainConten.Location = new System.Drawing.Point(125, 2);
+            this.opCameraMainConten.Margin = new System.Windows.Forms.Padding(2);
+            this.opCameraMainConten.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opCameraMainConten.Name = "opCameraMainConten";
+            this.opCameraMainConten.Padding = new System.Windows.Forms.Padding(2);
+            this.opCameraMainConten.ShowText = false;
+            this.opCameraMainConten.Size = new System.Drawing.Size(334, 72);
+            this.opCameraMainConten.TabIndex = 5;
+            this.opCameraMainConten.Text = "PASS";
+            this.opCameraMainConten.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // uiTableLayoutPanel1
             // 
             this.uiTableLayoutPanel1.ColumnCount = 2;
             this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 234F));
-            this.uiTableLayoutPanel1.Controls.Add(this.opQueueSqlite, 1, 0);
-            this.uiTableLayoutPanel1.Controls.Add(this.opQueueRecord, 0, 0);
+            this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 366F));
+            this.uiTableLayoutPanel1.Controls.Add(this.opErrCount, 1, 0);
+            this.uiTableLayoutPanel1.Controls.Add(this.opsadfsdf, 0, 0);
             this.uiTableLayoutPanel1.Location = new System.Drawing.Point(3, 126);
             this.uiTableLayoutPanel1.Name = "uiTableLayoutPanel1";
             this.uiTableLayoutPanel1.RowCount = 1;
@@ -966,31 +969,31 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel1.TabIndex = 7;
             this.uiTableLayoutPanel1.TagString = null;
             // 
-            // opQueueSqlite
+            // opErrCount
             // 
-            this.opQueueSqlite.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opQueueSqlite.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.opQueueSqlite.Location = new System.Drawing.Point(235, 2);
-            this.opQueueSqlite.Margin = new System.Windows.Forms.Padding(2);
-            this.opQueueSqlite.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opQueueSqlite.Name = "opQueueSqlite";
-            this.opQueueSqlite.Size = new System.Drawing.Size(230, 43);
-            this.opQueueSqlite.TabIndex = 28;
-            this.opQueueSqlite.Text = "...";
-            this.opQueueSqlite.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.opErrCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opErrCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.opErrCount.Location = new System.Drawing.Point(103, 2);
+            this.opErrCount.Margin = new System.Windows.Forms.Padding(2);
+            this.opErrCount.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opErrCount.Name = "opErrCount";
+            this.opErrCount.Size = new System.Drawing.Size(362, 43);
+            this.opErrCount.TabIndex = 28;
+            this.opErrCount.Text = "...";
+            this.opErrCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // opQueueRecord
+            // opsadfsdf
             // 
-            this.opQueueRecord.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opQueueRecord.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.opQueueRecord.Location = new System.Drawing.Point(2, 2);
-            this.opQueueRecord.Margin = new System.Windows.Forms.Padding(2);
-            this.opQueueRecord.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opQueueRecord.Name = "opQueueRecord";
-            this.opQueueRecord.Size = new System.Drawing.Size(229, 43);
-            this.opQueueRecord.TabIndex = 27;
-            this.opQueueRecord.Text = "...";
-            this.opQueueRecord.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.opsadfsdf.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opsadfsdf.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.opsadfsdf.Location = new System.Drawing.Point(2, 2);
+            this.opsadfsdf.Margin = new System.Windows.Forms.Padding(2);
+            this.opsadfsdf.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opsadfsdf.Name = "opsadfsdf";
+            this.opsadfsdf.Size = new System.Drawing.Size(97, 43);
+            this.opsadfsdf.TabIndex = 27;
+            this.opsadfsdf.Text = "Cảnh báo";
+            this.opsadfsdf.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Camera_Main
             // 
@@ -1100,7 +1103,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private Sunny.UI.UITitlePanel panelinfoCode;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel16;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel37;
-        private Sunny.UI.UIPanel opContentC2;
         private Sunny.UI.UIPanel opResultPassFailC2;
         private System.Windows.Forms.TabPage tabPage3;
         private Sunny.UI.UIListBox opHisCS;
@@ -1111,8 +1113,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private TeraUI.State.tuStatePanel opCameraSub;
         private TeraUI.State.tuStatePanel opCameraMain;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel1;
-        private Sunny.UI.UIPanel opQueueSqlite;
-        private Sunny.UI.UIPanel opQueueRecord;
+        private Sunny.UI.UIPanel opErrCount;
+        private Sunny.UI.UIPanel opsadfsdf;
         private System.ComponentModel.BackgroundWorker WK_Update_UI;
+        private Sunny.UI.UIRichTextBox opCameraMainConten;
     }
 }

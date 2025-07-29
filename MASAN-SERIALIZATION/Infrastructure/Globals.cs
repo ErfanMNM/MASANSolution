@@ -40,15 +40,18 @@ namespace MASAN_SERIALIZATION
         public static e_Camera_State CameraMain_State { get; set; } = e_Camera_State.DISCONNECTED;
         public static e_Camera_State CameraSub_State { get; set; } = e_Camera_State.DISCONNECTED;
 
+        public static bool HandScan01_Connected { get; set; } = false;
+        public static bool HandScan02_Connected { get; set; } = false;
+
         public static bool PLC_Connected { get; set; } = false; // Biến toàn cục để kiểm tra kết nối PLC
         public static PLCCounter CameraMain_PLC_Counter { get; set; } = new PLCCounter(); // Biến toàn cục để lưu trữ thông tin đếm sản phẩm từ camera chính
-
-        
     }
 
     public static class Globals_Database
     {
         public static Dictionary<string, ProductionCodeData> Dictionary_ProductionCode_Data { get; set; } = new Dictionary<string, ProductionCodeData>(); // Lưu trữ dữ liệu mã sản xuất
+
+        public static Dictionary<int, ProductionCartonData> Dictionary_ProductionCarton_Data { get; set; } = new Dictionary<int, ProductionCartonData>(); // Lưu trữ dữ liệu mã thùng sản xuất
 
         public static Queue<(string conten, ProductionCodeData data, bool duplicate)> Update_Product_To_SQLite_Queue = new Queue<(string content, ProductionCodeData data, bool duplicate)>();
 
@@ -58,6 +61,10 @@ namespace MASAN_SERIALIZATION
         public static Queue<ProductionCodeData_Record> Insert_Product_To_Record_CS_Queue = new Queue<ProductionCodeData_Record>();
 
         public static Queue<ProductionCartonData> Insert_Product_To_Record_Carton_Queue = new Queue<ProductionCartonData>();
+
+        public static Queue<ProductionCartonData> Hand_Carton_Code_Queue_01 = new Queue<ProductionCartonData>(); // Hàng đợi mã thùng sản xuất từ máy quét tay
+
+        public static Queue<ProductionCartonData> Hand_Carton_Code_Queue_02 = new Queue<ProductionCartonData>(); // Hàng đợi mã thùng sản xuất từ máy quét tay
     }
 
     #region Các lớp dữ liệu liên quan đến sản xuất
@@ -90,6 +97,7 @@ namespace MASAN_SERIALIZATION
 
     public class ProductionCartonData
     {
+        public int cartonID { get; set; } // Mã id thùng trong csdl
         public string orderNo { get; set; } // Số đơn hàng
         public string cartonCode { get; set; } // Mã code thùng
         public string Activate_User { get; set; } // Người kích hoạt
@@ -101,7 +109,6 @@ namespace MASAN_SERIALIZATION
     #endregion
 
     #region Các couter lưu tạm
-
     public class PLCCounter
     {
         public int total { get; set; } = 0; // Tổng số sản phẩm đã sản xuất
@@ -117,6 +124,13 @@ namespace MASAN_SERIALIZATION
         public static int ID { get; set; } = 0; // ID của sản phẩm
 
     }
+
+    public static class CameraSub_HMI
+    {
+        public static string Camera_Content { get; set; } = string.Empty; // Nội dung camera phụ
+        public static e_Production_Status Camera_Status { get; set; } = e_Production_Status.Fail; // Trạng thái sản phẩm từ camera phụ
+        public static int ID { get; set; } = 0; // ID của sản phẩm
+    } 
 
 
     #endregion

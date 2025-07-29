@@ -169,6 +169,12 @@
     <Compile Include="Views\Dashboards\FDashboard.Designer.cs">
       <DependentUpon>FDashboard.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\Dashboards\PCartonDashboard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Dashboards\PCartonDashboard.Designer.cs">
+      <DependentUpon>PCartonDashboard.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\Login\PLogin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -208,6 +214,9 @@
     </Compile>
     <EmbeddedResource Include="Views\Dashboards\FDashboard.resx">
       <DependentUpon>FDashboard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Dashboards\PCartonDashboard.resx">
+      <DependentUpon>PCartonDashboard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Login\PLogin.resx">
       <DependentUpon>PLogin.cs</DependentUpon>

@@ -28,6 +28,7 @@ namespace MASAN_SERIALIZATION
         private FDashboard _pDashboard = new FDashboard();// trang dashboard
         private PPOInfo _pProduction = new PPOInfo(); // trang sản xuất
         private PStatictis _pStatictis = new PStatictis(); // trang thống kê
+        private PCartonDashboard _pCartonDashboard = new PCartonDashboard(); // trang dashboard thùng carton
 
         private BackgroundWorker WK_Main_Proccess = new BackgroundWorker(); // BackgroundWorker để xử lý trạng thái ứng dụng
 
@@ -83,7 +84,7 @@ namespace MASAN_SERIALIZATION
             {
                 //nạp cấu hình từ file ini
                 AppConfigs.Current.Load();
-                //AppConfigs.Current.Save(); //lưu cấu hình nếu có thay đổi
+               // AppConfigs.Current.Save(); //lưu cấu hình nếu có thay đổi
 
                 //nạp cấu hình PLC
                 PLCAddress.Init(
@@ -110,6 +111,7 @@ namespace MASAN_SERIALIZATION
                 NavMenu.CreateNode(AddPage(_pDashboard, 1001));
                 NavMenu.CreateNode(AddPage(_pProduction, 1002)); // Thêm trang sản xuất
                 NavMenu.CreateNode(AddPage(_pStatictis, 1003)); // Thêm trang thống kê
+                NavMenu.CreateNode(AddPage(_pCartonDashboard, 1004)); // Thêm trang dashboard thùng carton
 
                 //Các trang chức năng phụ chạy từ 2001 - 2999
                 NavMenu.CreateNode(AddPage(_pLogin, 2001)); // Thêm trang đăng nhập
@@ -142,6 +144,7 @@ namespace MASAN_SERIALIZATION
                 _pLogin.INIT();
                 _pDashboard.STARTUP();
                 _pStatictis.INIT();
+                _pCartonDashboard.INIT();
             }
             catch (Exception ex)
             {
@@ -503,7 +506,7 @@ namespace MASAN_SERIALIZATION
             // Dừng task chính
             WK_Main_Proccess.CancelAsync();
             //dừng task phụ nếu có
-            _pProduction.Stop_Process_Task();
+
 
             // Ghi nhật ký hệ thống
             Globals.Log.WriteLogAsync("System", e_LogType.Info, "Ứng dụng MASAN-SERIALIZATION đã được đóng");

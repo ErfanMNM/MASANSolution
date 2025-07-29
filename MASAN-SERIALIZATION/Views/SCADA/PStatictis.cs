@@ -44,23 +44,23 @@ namespace MASAN_SERIALIZATION.Views.SCADA
             Render_MEM();
             WK_Update.DoWork += WK_Update_DoWork;
 
-            try
-            {
-                string fileName = "Record_PO_001"; // tên file sqlite (không cần .sqlite)
-                var chart = new ChartHelper();
-                string html = chart.GenerateHtmlFromSQLite(fileName);
+            //try
+            //{
+            //    string fileName = "Record_PO_001"; // tên file sqlite (không cần .sqlite)
+            //    var chart = new ChartHelper();
+            //    string html = chart.GenerateHtmlFromSQLite(fileName);
 
-                // Lưu file HTML tạm
-                string tempPath = Path.Combine(Path.GetTempPath(), "chart.html");
-                File.WriteAllText(tempPath, html, Encoding.UTF8);
+            //    // Lưu file HTML tạm
+            //    string tempPath = Path.Combine(Path.GetTempPath(), "chart.html");
+            //    File.WriteAllText(tempPath, html, Encoding.UTF8);
 
-                // Load vào WebView2
-                webView21.Source = new Uri(tempPath);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi ST001: " + ex.Message);
-            }
+            //    // Load vào WebView2
+            //    webView21.Source = new Uri(tempPath);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("Lỗi ST001: " + ex.Message);
+            //}
 
         }
 
@@ -88,6 +88,10 @@ namespace MASAN_SERIALIZATION.Views.SCADA
             var dicCountUc = new panelS() { LabelName = "Dictionary Count" };
             opMEMFlow.Controls.Add(dicCountUc);
             extraBindings["Dictionary Count"] = dicCountUc;
+
+            var dicCartonCountUc = new panelS() { LabelName = "DCarton Count" };
+            opMEMFlow.Controls.Add(dicCartonCountUc);
+            extraBindings["DCarton Count"] = dicCartonCountUc;
 
             Type type = typeof(Product_Counter);
             foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
@@ -135,9 +139,12 @@ namespace MASAN_SERIALIZATION.Views.SCADA
                 {
                     uc.LabelValue = Globals_Database.Dictionary_ProductionCode_Data?.Count.ToString() ?? "0";
                 }
+
+                if (key == "DCarton Count")
+                {
+                    uc.LabelValue = Globals_Database.Dictionary_ProductionCarton_Data?.Count.ToString() ?? "0";
+                }
             }
-
-
         }
 
         private void Update_BindingProps()
