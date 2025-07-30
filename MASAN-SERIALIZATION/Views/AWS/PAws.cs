@@ -1,6 +1,7 @@
 ﻿using MASAN_SERIALIZATION.Configs;
 using MASAN_SERIALIZATION.Enums;
 using MASAN_SERIALIZATION.Utils;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SpT.Logs;
 using Sunny.UI;
@@ -14,6 +15,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ZXing.QrCode.Internal;
+using static AwsIotClientHelper;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace MASAN_SERIALIZATION.Views.AWS
 {
@@ -90,13 +94,13 @@ namespace MASAN_SERIALIZATION.Views.AWS
             string messageId = jsonObject["message_id"]?.ToString();
             // Lấy giá trị của trường "error_message" từ JSON
             string errorMessage = jsonObject["error_message"]?.ToString();
-            //thêm vào queue
-            //GV.AWS_Response_Queue.Enqueue(new AWS_Response
-            //{
-            //    status = status,
-            //    message_id = messageId,
-            //    error_message = errorMessage
-            //});
+
+            this.InvokeIfRequired(() =>
+            {
+                //cập nhật giao diện
+                opReciveConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: Nhận dữ liệu từ AWS IoT Core: {e.Topic} - {e.Payload}");
+            });
+
 
         }
 
@@ -106,14 +110,12 @@ namespace MASAN_SERIALIZATION.Views.AWS
             {
                 case AwsIotClientHelper.e_awsIot_status.Connected:
                     // ghi log
-                    SafeInvoke(() =>
+                    //ghi log
+                    AWSLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Info, "Đã Kết nối AWS");
+                    this.InvokeIfRequired(() =>
                     {
-                        AWSLogs aWSLogs = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.CONNECT, "Connected", Globalvariable.CurrentUser.Username, "Kết nối thành công với AWS IoT Core");
-                        //thêm vào Queue để ghi log
-                        AWSLogsQueue.Enqueue(aWSLogs);
-
                         //cập nhật trạng thái kết nối
-                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Kết nối thành công với AWS IoT Core.");
+                        opConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Kết nối thành công với AWS IoT Core.");
                     });
 
                     string[] topicsToSub = new[]
@@ -125,73 +127,143 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
                     break;
                 case AwsIotClientHelper.e_awsIot_status.Disconnected:
-                    SafeInvoke(() =>
+                    //ghi log
+                    AWSLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Warning, "Đã Ngắt kết nối AWS");
+                    this.InvokeIfRequired(() =>
                     {
-                        //ghi log
-                        AWSLogs aWSLogs1 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.DISCONNECT, "Disconnect", Globalvariable.CurrentUser.Username, "Mất kết nối với AWS IoT Core");
-                        //thêm vào Queue để ghi log
-                        AWSLogsQueue.Enqueue(aWSLogs1);
-                        //cập nhật trạng thái kết nối
-                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Mất kết nối với AWS IoT Core.");
+                        opConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Đã ngắt kết nối AWS IoT Core. Đang thử kết nối lại...");
                     });
                     break;
                 case AwsIotClientHelper.e_awsIot_status.Connecting:
-                    SafeInvoke(() =>
+                    //ghi log
+                    AWSLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Info, "Đang kết nốilại AWS");
+                    this.InvokeIfRequired(() =>
                     {
-                        //ghi log
-                        AWSLogs aWSLogs2 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.CONNECT, "Connecting", Globalvariable.CurrentUser.Username, "Đang kết nối với AWS IoT Core");
-                        //thêm vào Queue để ghi log
-                        AWSLogsQueue.Enqueue(aWSLogs2);
                         //cập nhật trạng thái kết nối
-                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Đang kết nối với AWS IoT Core...");
+                        opConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Đang kết nối lại với AWS IoT Core...");
                     });
                     break;
                 case AwsIotClientHelper.e_awsIot_status.Error:
-                    SafeInvoke(() =>
+                    //ghi log
+                    AWSLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"Lỗi kết nối AWS: {e.Message}");
+                    this.InvokeIfRequired(() =>
                     {
-                        //ghi log
-                        AWSLogs aWSLogs3 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.ERROR, "Error", Globalvariable.CurrentUser.Username, $"Lỗi: {e.Message}");
-                        //thêm vào Queue để ghi log
-                        AWSLogsQueue.Enqueue(aWSLogs3);
                         //cập nhật trạng thái kết nối
-                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi: {e.Message}");
+                        opConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi kết nối AWS IoT Core: {e.Message}");
                     });
                     break;
                 case AwsIotClientHelper.e_awsIot_status.Subscribed:
-                    SafeInvoke(() =>
+                    //ghi log
+                    AWSLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Info, "Đã đăng ký các topic thành công");
+                    this.InvokeIfRequired(() =>
                     {
-                        //ghi log
-                        AWSLogs aWSLogs4 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.SUBSCRIBE, "Subscribed", Globalvariable.CurrentUser.Username, $"Đã đăng ký topic: {e.Message}");
-                        //thêm vào Queue để ghi log
-                        AWSLogsQueue.Enqueue(aWSLogs4);
                         //cập nhật trạng thái kết nối
-                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Đã đăng ký topic: {e.Message}");
+                        opConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Đã đăng ký các topic thành công.");
                     });
                     break;
                 case AwsIotClientHelper.e_awsIot_status.Unsubscribed:
-                    SafeInvoke(() =>
+                    //ghi log
+                    AWSLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Warning, "Đã hủy đăng ký các topic");
+                    this.InvokeIfRequired(() =>
                     {
-                        //ghi log
-                        AWSLogs aWSLogs5 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.SUBSCRIBE, "Unsubscribed", Globalvariable.CurrentUser.Username, "Đã hủy đăng ký các topic.");
-                        //thêm vào Queue để ghi log
-                        AWSLogsQueue.Enqueue(aWSLogs5);
                         //cập nhật trạng thái kết nối
-                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Đã hủy đăng ký các topic.");
+                        opConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Đã hủy đăng ký các topic.");
                     });
                     break;
                 case AwsIotClientHelper.e_awsIot_status.Published:
 
                     break;
                 case AwsIotClientHelper.e_awsIot_status.Unpublished:
-                    SafeInvoke(() =>
+                    //ghi log
+                    AWSLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Warning, "Không thể publish dữ liệu");
+                    this.InvokeIfRequired(() =>
                     {
-                        //ghi log
-                        AWSLogs aWSLogs7 = new AWSLogs(DateTime.Now.ToString("o"), DateTimeOffset.Now.ToUnixTimeSeconds(), e_AWSLogType.PUBLISH, "Unpublished", Globalvariable.CurrentUser.Username, $"Không thể publish: {e.Message}");
-                        //thêm vào Queue để ghi log
-                        AWSLogsQueue.Enqueue(aWSLogs7);
+                        //cập nhật trạng thái kết nối
+                        opConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Không thể publish dữ liệu, chưa kết nối.");
                     });
                     break;
             }
+        }
+
+        private void opReciveConsole_DoubleClick(object sender, EventArgs e)
+        {
+            this.ShowInfoDialog(opReciveConsole.SelectedItem?.ToString() ?? "Không có dữ liệu nào được chọn để hiển thị.");
+        }
+
+        private void btnConnect_Click(object sender, EventArgs e)
+        {
+            INIT();
+        }
+
+        DataTable SendCodes = new DataTable();
+        private void btnGetData_Click(object sender, EventArgs e)
+        {
+            var getCodeSend = Globals.ProductionData.getDataPO.Get_Codes_Send(Globals.ProductionData.orderNo);
+
+            this.InvokeIfRequired(() => {
+             opConsole.Items.Insert(0,getCodeSend.message);
+            });
+
+            SendCodes = getCodeSend.Codes;
+        }
+
+        private void btnSendOne_Click(object sender, EventArgs e)
+        {
+            string orderNO = Globals.ProductionData.orderNo;
+            string ID = SendCodes.Rows[0]["ID"].ToString();
+            string code = SendCodes.Rows[0]["Code"].ToString();
+            string Status = SendCodes.Rows[0]["Status"].ToString();
+            string activateDate = SendCodes.Rows[0]["ActivateDate"].ToString();
+            string productionDate = SendCodes.Rows[0]["ProductionDate"].ToString();
+            string cartonCode = SendCodes.Rows[0]["cartonCode"].ToString();
+            AWSSendPayload payload = new AWSSendPayload
+            {
+                message_id = $"{ID}-{orderNO}",
+                orderNo = orderNO,
+                uniqueCode = code,
+                cartonCode =cartonCode,
+                status = Status,
+                activate_datetime = activateDate,
+                production_date = productionDate,
+                thing_name = "MIPWP501"
+            };
+            string json = JsonConvert.SerializeObject(payload);
+            //show bảng thông tin hỏi trước khi gửi
+            var confirmResult = this.ShowYesNoDialog($"Bạn có chắc chắn muốn gửi dữ liệu này không?\n\n" +
+                $"payload: {json}");
+            if (confirmResult != DialogResult.Yes)
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    opConsole.Items.Insert(0, $"❌ [{DateTime.Now}] Đã hủy gửi dữ liệu: {json}");
+                });
+                return; // Nếu người dùng chọn "No", thoát khỏi phương thức
+            }
+                //publish dữ liệu
+                var rs = awsClient.Publish_V2("CZ/data", json);
+            if (rs.Issuccess)
+            {
+                //cập nhật trạng thái đã gửi
+                this.InvokeIfRequired(() =>
+                {
+                    opConsole.Items.Insert(0, $"✅ [{DateTime.Now}] Đã gửi dữ liệu thành công: {json}");
+                });
+            }
+            else
+            {
+                //ghi log lỗi không gửi được
+                this.InvokeIfRequired(() =>
+                {
+                    opConsole.Items.Insert(0, $"❌ [{DateTime.Now}] Lỗi gửi dữ liệu: {rs.msg}");
+                });
+            }
+        }
+        // Add the following method to the PAws class to resolve the CS1061 error.
+        // This method provides the missing definition for 'ShowYesNoDialog'.
+
+        private DialogResult ShowYesNoDialog(string message)
+        {
+            return MessageBox.Show(message, "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
         }
     }
 }

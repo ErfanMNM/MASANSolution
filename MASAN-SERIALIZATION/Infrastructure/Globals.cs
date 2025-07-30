@@ -45,6 +45,12 @@ namespace MASAN_SERIALIZATION
 
         public static bool PLC_Connected { get; set; } = false; // Biến toàn cục để kiểm tra kết nối PLC
         public static PLCCounter CameraMain_PLC_Counter { get; set; } = new PLCCounter(); // Biến toàn cục để lưu trữ thông tin đếm sản phẩm từ camera chính
+
+        public static  string Canhbao { get; set; } = string.Empty; // Biến toàn cục để lưu trữ cảnh báo từ camera chính
+
+        public static bool test { get; set; } = false; // Biến toàn cục để kiểm tra trạng thái test
+
+        public static int test2 { get; set; } = 0; // Biến toàn cục để kiểm tra trạng thái test 2
     }
 
     public static class Globals_Database

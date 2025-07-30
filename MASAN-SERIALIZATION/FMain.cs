@@ -1,6 +1,7 @@
 ﻿using MASAN_SERIALIZATION.Configs;
 using MASAN_SERIALIZATION.Enums;
 using MASAN_SERIALIZATION.Utils;
+using MASAN_SERIALIZATION.Views.AWS;
 using MASAN_SERIALIZATION.Views.Dashboards;
 using MASAN_SERIALIZATION.Views.Login;
 using MASAN_SERIALIZATION.Views.ProductionInfo;
@@ -29,6 +30,7 @@ namespace MASAN_SERIALIZATION
         private PPOInfo _pProduction = new PPOInfo(); // trang sản xuất
         private PStatictis _pStatictis = new PStatictis(); // trang thống kê
         private PCartonDashboard _pCartonDashboard = new PCartonDashboard(); // trang dashboard thùng carton
+        private PAws _pAws = new PAws(); // trang AWS (nếu cần thiết)
 
         private BackgroundWorker WK_Main_Proccess = new BackgroundWorker(); // BackgroundWorker để xử lý trạng thái ứng dụng
 
@@ -85,7 +87,7 @@ namespace MASAN_SERIALIZATION
                 //nạp cấu hình từ file ini
                 AppConfigs.Current.Load();
                 //AppConfigs.Current.SetDefault(); //thiết lập cấu hình mặc định nếu chưa có
-               // AppConfigs.Current.Save(); //lưu cấu hình nếu có thay đổi
+               //AppConfigs.Current.Save(); //lưu cấu hình nếu có thay đổi
 
                 //nạp cấu hình PLC
                 PLCAddress.Init(
@@ -113,6 +115,7 @@ namespace MASAN_SERIALIZATION
                 NavMenu.CreateNode(AddPage(_pProduction, 1002)); // Thêm trang sản xuất
                 NavMenu.CreateNode(AddPage(_pStatictis, 1003)); // Thêm trang thống kê
                 NavMenu.CreateNode(AddPage(_pCartonDashboard, 1004)); // Thêm trang dashboard thùng carton
+                NavMenu.CreateNode(AddPage(_pAws, 1005)); // Thêm trang AWS (nếu cần thiết)
 
                 //Các trang chức năng phụ chạy từ 2001 - 2999
                 NavMenu.CreateNode(AddPage(_pLogin, 2001)); // Thêm trang đăng nhập

@@ -64,35 +64,40 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
         }
 
+        string lastWarning = string.Empty;
         private void bw_update_ui(object sender, DoWorkEventArgs e)
         {
             while (!_bw_update_ui.CancellationPending)
             {
                 try
                 {
+                    int lastID = Globals.ProductionData.counter.cartonID - 1;
+                    int nextID = Globals.ProductionData.counter.cartonID + 1;
                     this.InvokeIfRequired(() =>
                     {
+                        uiLabel1.Text = Globals.test.ToString();
+                        uiLabel2.Text = Globals.test2.ToString();
+
                         opCartonMaxID.Text = Globals.ProductionData.counter.cartonID.ToString();
+                        opCartonCode.Text = Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonData) ? cartonData.cartonCode : "Chưa có mã thùng";
+                        opcartonPackCount.Text = Globals.ProductionData.counter.carton_Packing_Count.ToString();
+
+
+                        opLastActive.Text = Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID -1, out ProductionCartonData cartonData1) ? cartonData1.Activate_Datetime : "Chưa có thời gian kích hoạt";
+                        opLastID.Text = (Globals.ProductionData.counter.cartonID - 1).ToString();
+                        opLastCode.Text = Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID - 1, out ProductionCartonData cartonData2) ? cartonData2.cartonCode : "Chưa có mã thùng";
+
+                        opnextID.Text = (Globals.ProductionData.counter.cartonID + 1).ToString();
+                        opnextCode.Text = Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out ProductionCartonData cartonData3) ? cartonData3.cartonCode : "Chưa có mã thùng";
+                        opnextStart.Text = Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out ProductionCartonData cartonData4) ? cartonData4.Start_Datetime : "Chưa có thời gian kích hoạt";
+
+                        if(Globals.Canhbao != lastWarning)
+                        {
+                            lastWarning = Globals.Canhbao;
+                            opWarning.Items.Insert(0, Globals.Canhbao);
+                        }
                     });
-                    //xem thùng đang xếp là 01 hay 02
-                    if (Globals.ProductionData.counter.cartonID % 2 == 1)
-                    {
-                        //nếu thùng lẻ thì cập nhật thùng lẻ
-                        this.InvokeIfRequired(() =>
-                        {
-                            opCartonID_Lane01.Text = Globals.ProductionData.counter.cartonID.ToString();
-                            opCartonCode_Lane1.Text = Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonData) ? cartonData.cartonCode : "Chưa có mã thùng";
-                        });
-                    }
-                    else
-                    {
-                        //nếu thùng chẵn thì cập nhật thùng chẵn
-                        this.InvokeIfRequired(() =>
-                        {
-                            opCartonID_Lane02.Text = Globals.ProductionData.counter.cartonID.ToString();
-                            opCartonCode_Lane2.Text = Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonData) ? cartonData.cartonCode : "Chưa có mã thùng";
-                        });
-                    }
+                    
                 }
                 catch (Exception ex)
                 {
@@ -128,12 +133,12 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     //kiểm tra xem thùng đang chạy chẵn hay lẻ
                     if (Globals.ProductionData.counter.cartonID % 2 != 0)
                     {
-                        //thùng đang xếp là thùng chẵn lẻ
-                        //kiểm tra xem thùng xếp trước đó kết thúc chưa
+                        //thùng đang xếp là thùng lẻ
+                        //kiểm tra xem thùng xếp trước đó kết thúc chưa (thùng chẵn cũ)
                         if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID - 1, out ProductionCartonData cartonData))
                         {
                             //nếu thùng chưa kết thúc thì kết thúc
-                            if (cartonData.Activate_Datetime != "0")
+                            if (cartonData.Activate_Datetime == "0")
                             {
                                 //kiểm tra mã có trùng không
                                 if (s.Trim() != cartonData.cartonCode)
@@ -191,6 +196,38 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                             }
                         }
+                        else
+                        {
+                            //nếu thùng đã kết thúc thì kiểm tra thùng tiếp theo có mã chưa
+                            if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out ProductionCartonData nextCartonData))
+                            {
+                                //nếu thùng tiếp theo đã có mã thì cập nhật mã thùng mới
+                                if (nextCartonData.Start_Datetime != "0")
+                                {
+                                    //không làm gì cả
+                                }
+                                else
+                                {
+                                    //kiểm tra mã đã từng tồn tại chưa
+                                    if (Globals_Database.Dictionary_ProductionCarton_Data.Values.Any(x => x.cartonCode == s.Trim()))
+                                    {
+                                        this.InvokeIfRequired(() =>
+                                        {
+                                            this.ShowErrorNotifier("Mã thùng đã tồn tại. Vui lòng kiểm tra lại!", false, 5000);
+                                        });
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        //nếu chưa tồn tại thì cập nhật mã thùng mới
+                                        nextCartonData.cartonCode = s.Trim();
+                                        nextCartonData.Start_Datetime = DateTime.Now.ToString("o");
+                                        //thêm vào hàng chờ cập nhật
+                                        Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(nextCartonData);
+                                    }
+                                }
+                            }
+                        }
                     }
                     else
                     {
@@ -204,7 +241,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                                 this.InvokeIfRequired(() =>
                                 {
-                                    this.ShowErrorNotifier("Thùng đã kích hoạt và đang trong thời gian xếp, vui lòng thử lại", false, 5000);
+                                    this.ShowErrorNotifier("02 Thùng đã kích hoạt và đang trong thời gian xếp, vui lòng thử lại", false, 5000);
                                 });
                                 break;
 
@@ -270,8 +307,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         //kiểm tra xem thùng xếp trước đó kết thúc chưa
                         if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID - 1, out ProductionCartonData cartonData))
                         {
-                            //nếu thùng chưa kết thúc thì kết thúc
-                            if (cartonData.Activate_Datetime != "0")
+                            //nếu thùng chưa chốt
+                            if (cartonData.Activate_Datetime == "0")
                             {
                                 //kiểm tra mã có trùng không
                                 if (s.Trim() != cartonData.cartonCode)

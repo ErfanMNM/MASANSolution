@@ -1,4 +1,5 @@
-﻿using Sunny.UI;
+﻿using MASAN_SERIALIZATION.Configs;
+using Sunny.UI;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -411,7 +412,6 @@ namespace MASAN_SERIALIZATION.Production
 
             }
 
-
             public (bool issucess, DataTable Records, string message) Get_Records(string orderNo)
             {
                 try
@@ -488,6 +488,34 @@ namespace MASAN_SERIALIZATION.Production
                 }
             }
 
+            //lấy mã code với điều kiện status !=0, cartonCode != 0 và send_status = 'Pending'
+
+            public (bool issucess, DataTable Codes, string message) Get_Codes_Send(string orderNo)
+            {
+                try
+                {
+                    string czRunPath = $"{dataPath}/{orderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return (false, null, "Cơ sở dữ liệu ghi không tồn tại.");
+                    }
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = "SELECT * FROM UniqueCodes WHERE Status != 0 AND Send_Status !=0 AND cartonCode !=0";
+                       
+                        var command = new SQLiteCommand(query, conn);
+                        var adapter = new SQLiteDataAdapter(command);
+                        var table = new DataTable();
+                        adapter.Fill(table);
+                        return (table.Rows.Count > 0) ? (true, table, "Lấy danh sách mã code thành công. SL : " + table.Rows.Count.ToString()) : (true, null, "Không có mã code nào trong cơ sở dữ liệu.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return (false, null, $"Lỗi PH111 khi lấy danh sách mã code: {ex.Message}");
+                }
+            }
             //lấy mã thùng lớn nhất
             public (bool issucess, int MaxCartonID, string message) Get_Max_Carton_ID(string orderNo)
             {
@@ -1071,7 +1099,7 @@ namespace MASAN_SERIALIZATION.Production
                     }
 
                     // Tạo số thùng = orderQty / 24
-                    int orderCartonQty = orderQty.ToInt32() / 24;
+                    int orderCartonQty = orderQty.ToInt32() / AppConfigs.Current.cartonPack;
 
                     using (var tran = conn.BeginTransaction())
                     using (var insertCmd = new SQLiteCommand(@"

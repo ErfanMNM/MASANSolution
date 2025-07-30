@@ -43,7 +43,11 @@ namespace MASAN_SERIALIZATION.Views.SCADA
 
             Render_MEM();
             WK_Update.DoWork += WK_Update_DoWork;
+            // Lưu file HTML tạm
+            string tempPath = @"C:/chart.html";
 
+            // Load vào WebView2
+            webView21.Source = new Uri(tempPath);
             //try
             //{
             //    string fileName = "Record_PO_001"; // tên file sqlite (không cần .sqlite)
@@ -64,7 +68,7 @@ namespace MASAN_SERIALIZATION.Views.SCADA
 
         }
 
-        
+
 
         private void PStatictis_Initialize(object sender, EventArgs e)
         {

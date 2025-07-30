@@ -1,4 +1,5 @@
 ﻿using Google.Apis.Util;
+using MASAN_SERIALIZATION.Configs;
 using MASAN_SERIALIZATION.Enums;
 using MASAN_SERIALIZATION.Production;
 using MASAN_SERIALIZATION.Utils;
@@ -904,16 +905,16 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             }
             else
             {
-                var a = Globals.ProductionData.counter.passCount % 24; //số chai trong thùng đang xếp dở dang
+                var a = Globals.ProductionData.counter.passCount % AppConfigs.Current.cartonPack; //số chai trong thùng đang xếp dở dang
                 Globals.ProductionData.counter.carton_Packing_Count = a; //số chai trong thùng đang xếp dở dang
                 //nếu số đang xếp dở dang = 0 
                 if (a == 0)
                 {
-                    Globals.ProductionData.counter.cartonID = Globals.ProductionData.counter.passCount / 24; //số thùng đã xếp
+                    Globals.ProductionData.counter.cartonID = Globals.ProductionData.counter.passCount / AppConfigs.Current.cartonPack; //số thùng đã xếp
                 }
                 else
                 {
-                    Globals.ProductionData.counter.cartonID = (Globals.ProductionData.counter.passCount / 24) + 1; //số thùng đã xếp + 1 thùng đang xếp dở dang
+                    Globals.ProductionData.counter.cartonID = (Globals.ProductionData.counter.passCount / AppConfigs.Current.cartonPack) + 1; //số thùng đã xếp + 1 thùng đang xếp dở dang
                 }
 
             }

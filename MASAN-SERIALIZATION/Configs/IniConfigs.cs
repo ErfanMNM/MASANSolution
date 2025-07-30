@@ -14,7 +14,6 @@ namespace MASAN_SERIALIZATION.Configs
 
         [ConfigSection("APP")]
         public bool TwoFA_Enabled { get; set; } // Bật/Tắt tính năng xác thực hai yếu tố
-        [ConfigSection("SETUP")]
         public string Camera_Main_IP { get; set; } // Địa chỉ IP của camera chính
         public string Camera_Sub_IP { get; set; } // Địa chỉ IP của camera phụ
         public int Camera_Main_Port { get; set; } // Cổng kết nối của camera chính
@@ -27,6 +26,8 @@ namespace MASAN_SERIALIZATION.Configs
         public string pfxPath { get; set; } // Khóa bí mật AWS
         public string pfxPassword { get; set; } // Mật khẩu khóa bí mật AWS
         public string clientId { get; set; } // Điểm cuối AWS IoT
+        public int cartonPack { get; set; } // Đường dẫn đến chứng chỉ của client
+        public int cartonOfset { get; set; } // Số lượng sản phẩm trong một thùng carton
 
 
         public override void SetDefault()
@@ -46,6 +47,8 @@ namespace MASAN_SERIALIZATION.Configs
             host = "a22qv9bgjnbsae-ats.iot.ap-southeast-1.amazonaws.com"; // Default host address
             pfxPassword = "thuc"; // Default password for client certificate
             clientId = "MIPWP501"; // Default client ID
+            cartonPack = 12; // Default path for carton pack certificate
+            cartonOfset = 12; // Default path for carton offset certificate
         }
     }
 }

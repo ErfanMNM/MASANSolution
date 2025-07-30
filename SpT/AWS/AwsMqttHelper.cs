@@ -280,4 +280,25 @@ public class AwsIotClientHelper : IDisposable
     {
         return DateTime.Now.ToString("HH:mm:ss");
     }
+
+
+    public class AWS_Response
+    {
+        public string status { get; set; }
+        public string message_id { get; set; }
+        public string error_message { get; set; }
+    }
+
+    public class AWSSendPayload 
+    {
+       public string  message_id { get; set; }
+        public string orderNo { get; set; }
+        public string uniqueCode { get; set; }
+        public string cartonCode { get; set; }
+        public string status { get; set; }
+        public string activate_datetime { get; set; }
+        public string production_date { get; set; }
+        public string thing_name { get; set; }
+
+    }
 }
