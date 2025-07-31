@@ -148,6 +148,12 @@
   <ItemGroup>
     <Compile Include="Configs\IniConfigs.cs" />
     <Compile Include="Configs\PLCDMA.cs" />
+    <Compile Include="Dialogs\Entertext.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\Entertext.Designer.cs">
+      <DependentUpon>Entertext.cs</DependentUpon>
+    </Compile>
     <Compile Include="Enums\eData.cs" />
     <Compile Include="Enums\eResult.cs" />
     <Compile Include="Enums\eState.cs" />
@@ -199,12 +205,27 @@
     <Compile Include="Views\SCADA\PStatictis.Designer.cs">
       <DependentUpon>PStatictis.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\PLCSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Settings\PLCSetting.Designer.cs">
+      <DependentUpon>PLCSetting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\PSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Settings\PSettings.Designer.cs">
+      <DependentUpon>PSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\Test\DemoPage.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Views\Test\DemoPage.Designer.cs">
       <DependentUpon>DemoPage.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Dialogs\Entertext.resx">
+      <DependentUpon>Entertext.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FMain.resx">
       <DependentUpon>FMain.cs</DependentUpon>
     </EmbeddedResource>
@@ -235,6 +256,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\SCADA\PStatictis.resx">
       <DependentUpon>PStatictis.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Settings\PLCSetting.resx">
+      <DependentUpon>PLCSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Settings\PSettings.resx">
+      <DependentUpon>PSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Test\DemoPage.resx">
       <DependentUpon>DemoPage.cs</DependentUpon>

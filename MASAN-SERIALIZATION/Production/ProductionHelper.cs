@@ -169,14 +169,16 @@ namespace MASAN_SERIALIZATION.Production
 
             }
             //lấy thông tin chi tiết của một PO theo orderNo
-            public (bool issucess, string message, DataTable PO) ProductionOrder_Detail(string orderNo)
+            
+            public TResult ProductionOrder_Detail(string orderNo)
             {
                 string dbPath = $@"{poAPIServerPath}{poAPIServerFileName}";
                 try
                 {
                     if (!File.Exists(dbPath))
                     {
-                        return (false, "Cơ sở dữ liệu PO không tồn tại.", null);
+                        TResult result = new TResult (false, "Cơ sở dữ liệu PO không tồn tại.");
+                        return result;
                     }
                     using (var conn = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
                     {
@@ -187,16 +189,19 @@ namespace MASAN_SERIALIZATION.Production
                         var adapter = new SQLiteDataAdapter(cmd);
                         var table = new DataTable();
                         adapter.Fill(table);
-                        return (table.Rows.Count > 0) ? (true, "Lấy dữ liệu thành công.", table) : (false, "Không tìm thấy PO với orderNo: " + orderNo, null);
+
+                        return (table.Rows.Count > 0)
+                            ? new TResult(true, "Lấy thông tin chi tiết PO thành công.",0 , table)
+                            : new TResult(false, "Không có thông tin chi tiết cho orderNo: " + orderNo);
                     }
                 }
                 catch (Exception ex)
                 {
-                    return (false, $"Lỗi P02 khi lấy thông tin chi tiết PO: {ex.Message}", null);
+                    return new TResult(false, $"Lỗi P02 khi lấy thông tin chi tiết PO: {ex.Message}");
                 }
             }
             //lấy số count mã CZ nằm trong thư mục _codesPath/<orderNo>.db SELECT COUNT(*) FROM `UniqueCodes`;
-            public (bool issucess, string message, int CzCodeCount) Get_Unique_Code_MES_Count(string orderNo)
+            public TResult Get_Unique_Code_MES_Count(string orderNo)
             {
                 try
                 {
@@ -208,12 +213,14 @@ namespace MASAN_SERIALIZATION.Production
                         command.Parameters.AddWithValue("@orderNo", orderNo);
                         conn.Open();
                         int count = Convert.ToInt32(command.ExecuteScalar());
-                        return (true, "Lấy số lượng mã CZ thành công.", count);
+                        return (count > 0)
+                            ? new TResult(true, "Lấy số lượng mã CZ thành công.", count)
+                            : new TResult(false, "Không có mã CZ nào trong cơ sở dữ liệu.", 0);
                     }
                 }
                 catch (Exception ex)
                 {
-                    return (false, $"Lỗi P03 khi lấy số lượng mã CZ: {ex.Message}", 0);
+                    return new TResult(false, $"Lỗi P03 khi lấy số lượng mã CZ: {ex.Message}");
                 }
             }
 
@@ -283,7 +290,7 @@ namespace MASAN_SERIALIZATION.Production
         public class GetDataPO
         {
             //lấy PO dùng lần cuối từ cơ sở dữ liệu SQLite 
-            public (bool issucess, DataRow lastPO, string message) GetLastPO()
+            public TResult GetLastPO()
             {
                 try
                 {
@@ -298,17 +305,17 @@ namespace MASAN_SERIALIZATION.Production
                         adapter.Fill(table);
                         if (table.Rows.Count > 0)
                         {
-                            return (true, table.Rows[0], "Lấy PO thành công.");
+                            return new TResult(true, "Lấy PO thành công.", 0, table);
                         }
                         else
                         {
-                            return (false, null, "Không có dữ liệu PO nào.");
+                            return new TResult(true, "Không có PO nào trong cơ sở dữ liệu.");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    return (false, null, $"Lỗi P04 khi lấy PO: {ex.Message}");
+                    return new TResult(false, $"Lỗi P03 khi lấy PO: {ex.Message}");
                 }
             }
 
@@ -333,14 +340,14 @@ namespace MASAN_SERIALIZATION.Production
             }
 
             //lấy tổng số sản phẩm đã chạy
-            public (bool issucess, int RecordCount, string message) Get_Record_Count(string orderNO)
+            public TResult Get_Record_Count(string orderNO)
             {
                 try
                 {
                     string czRunPath = $"{dataPath}/Record_{orderNO}.db";
                     if (!File.Exists(czRunPath))
                     {
-                        return (false, 0, "Cơ sở dữ liệu ghi không tồn tại.");
+                        return new TResult(false, "Không có PO nào trong cơ sở dữ liệu.");
                     }
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
@@ -348,25 +355,27 @@ namespace MASAN_SERIALIZATION.Production
                         string query = "SELECT COUNT(*) FROM Records";
                         var command = new SQLiteCommand(query, conn);
                         int count = Convert.ToInt32(command.ExecuteScalar());
-                        return (true, count, "Lấy số lượng bản ghi thành công.");
+                        return (count > 0)
+                            ? new TResult(true, "Lấy số lượng bản ghi thành công.", count)
+                            : new TResult(true, "Không có bản ghi nào trong cơ sở dữ liệu.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    return (false, 0, $"Lỗi PH05 khi lấy số lượng bản ghi: {ex.Message}");
+                    return new TResult(false, $"Lỗi P03 khi lấy PO: {ex.Message}");
                 }
 
             }
 
             //lấy count theo trạng thái
-            public (bool issucess, int Count, string message) Get_Record_Count_By_Status(string orderNO, e_Production_Status Production_Status)
+            public TResult Get_Record_Count_By_Status(string orderNO, e_Production_Status Production_Status)
             {
                 try
                 {
                     string czRunPath = $"{dataPath}/Record_{orderNO}.db";
                     if (!File.Exists(czRunPath))
                     {
-                        return (false, 0, "Cơ sở dữ liệu ghi không tồn tại.");
+                       return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
                     }
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
@@ -375,24 +384,26 @@ namespace MASAN_SERIALIZATION.Production
                         var command = new SQLiteCommand(query, conn);
                         command.Parameters.AddWithValue("@Status", Production_Status.ToString());
                         int count = Convert.ToInt32(command.ExecuteScalar());
-                        return (true, count, $"Lấy số lượng bản ghi với trạng thái {Production_Status.ToString()} thành công.");
+                        return (count > 0)
+                            ? new TResult(true, "Lấy số lượng bản ghi theo trạng thái thành công.", count)
+                            : new TResult(true, "Không có bản ghi nào trong cơ sở dữ liệu với trạng thái: " + Production_Status.ToString());
                     }
                 }
                 catch (Exception ex)
                 {
-                    return (false, 0, $"Lỗi PH06 khi lấy số lượng bản ghi theo trạng thái: {ex.Message}");
+                    return new TResult(false, $"Lỗi P06 khi lấy số lượng bản ghi theo trạng thái: {ex.Message}");
                 }
             }
 
             //lấy số gửi AWS đã nhận recive
-            public (bool issucess, int Count, string message) Get_Record_Sent_Recive_Count(string orderNo, e_AWS_Send_Status Send, e_AWS_Recive_Status Recive, string Recive_Conditional = "=", string Conditional = "")
+            public TResult Get_Record_Sent_Recive_Count(string orderNo, e_AWS_Send_Status Send, e_AWS_Recive_Status Recive, string Recive_Conditional = "=", string Conditional = "")
             {
                 try
                 {   //tạo thư mục nếu chưa tồn tại
                     string czRunPath = $"{dataPath}/{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
-                        return (false, 0, "Cơ sở dữ liệu gửi AWS không tồn tại.");
+                        return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
                     }
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
@@ -402,24 +413,26 @@ namespace MASAN_SERIALIZATION.Production
                         command.Parameters.AddWithValue("@recive", Recive.ToString());
                         conn.Open();
                         int count = Convert.ToInt32(command.ExecuteScalar());
-                        return (true, count, "Lấy số lượng bản ghi AWS thành công.");
+                        return (count > 0)
+                            ? new TResult(true, "Lấy số lượng bản ghi gửi AWS thành công.", count)
+                            : new TResult(true, "Không có bản ghi nào trong cơ sở dữ liệu với trạng thái gửi: " + Send.ToString() + " và nhận: " + Recive.ToString());
                     }
                 }
                 catch (Exception ex)
                 {
-                    return (false, 0, $"Lỗi PH07 khi lấy số lượng bản ghi gửi AWS: {ex.Message}");
+                    return new TResult(false, $"Lỗi P07 khi lấy số lượng bản ghi gửi AWS: {ex.Message}");
                 }
 
             }
 
-            public (bool issucess, DataTable Records, string message) Get_Records(string orderNo)
+            public TResult Get_Records(string orderNo)
             {
                 try
                 {
                     string czRunPath = $"{dataPath}/Record_{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
-                        return (false, null, "Cơ sở dữ liệu ghi không tồn tại.");
+                        return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
                     }
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
@@ -428,12 +441,14 @@ namespace MASAN_SERIALIZATION.Production
                         var adapter = new SQLiteDataAdapter(query, conn);
                         var table = new DataTable();
                         adapter.Fill(table);
-                        return (table.Rows.Count > 0) ? (true, table, "Lấy danh sách bản ghi thành công.") : (true, null, "Không có bản ghi nào trong cơ sở dữ liệu.");
+                        return (table.Rows.Count > 0)
+                            ? new TResult(true, "Lấy danh sách bản ghi thành công.", 0, table)
+                            : new TResult(true, "Không có bản ghi nào trong cơ sở dữ liệu.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    return (false, null, $"Lỗi PH08 khi lấy danh sách bản ghi: {ex.Message}");
+                    return new TResult(false, $"Lỗi PH08 khi lấy danh sách bản ghi: {ex.Message}");
                 }
             }
 
@@ -1235,6 +1250,21 @@ namespace MASAN_SERIALIZATION.Production
         Update, // PO đang chờ xử lý
         UpdateProductionDate, // PO đang cập nhật ngày sản xuất
         Error // có lỗi xảy ra với PO
+    }
+
+    public class TResult
+    {
+        public bool issuccess { get; set; }
+        public string message { get; set; }
+        public DataTable data { get; set; }
+        public int count { get; set; }
+        public TResult(bool issuccess, string message, int count = 0, DataTable data = null)
+        {
+            this.issuccess = issuccess;
+            this.message = message;
+            this.data = data;
+            this.count = count;
+        }
     }
 
 

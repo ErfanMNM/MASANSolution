@@ -47,30 +47,30 @@
             this.uiPanel19 = new Sunny.UI.UIPanel();
             this.opCartonCode = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
-            this.uiPanel3 = new Sunny.UI.UIPanel();
             this.opcartonPackCount = new Sunny.UI.UIPanel();
+            this.uiPanel3 = new Sunny.UI.UIPanel();
             this.previousCartonGroup = new Sunny.UI.UIGroupBox();
             this.previousCartonContainer = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel12 = new Sunny.UI.UITableLayoutPanel();
-            this.uiPanel11 = new Sunny.UI.UIPanel();
             this.opLastID = new Sunny.UI.UIPanel();
+            this.uiPanel11 = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
-            this.uiPanel5 = new Sunny.UI.UIPanel();
             this.opLastCode = new Sunny.UI.UIPanel();
+            this.uiPanel5 = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel11 = new Sunny.UI.UITableLayoutPanel();
             this.uiPanel2 = new Sunny.UI.UIPanel();
             this.opLastActive = new Sunny.UI.UIPanel();
             this.nextCartonGroup = new Sunny.UI.UIGroupBox();
             this.nextCartonContainer = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel3 = new Sunny.UI.UITableLayoutPanel();
-            this.opnextID = new Sunny.UI.UIPanel();
             this.uiPanel7 = new Sunny.UI.UIPanel();
+            this.opnextID = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel5 = new Sunny.UI.UITableLayoutPanel();
-            this.opnextCode = new Sunny.UI.UIPanel();
             this.uiPanel12 = new Sunny.UI.UIPanel();
+            this.opnextCode = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel4 = new Sunny.UI.UITableLayoutPanel();
-            this.opnextStart = new Sunny.UI.UIPanel();
             this.uiPanel9 = new Sunny.UI.UIPanel();
+            this.opnextStart = new Sunny.UI.UIPanel();
             this.warningGroup = new Sunny.UI.UIGroupBox();
             this.opWarning = new Sunny.UI.UIListBox();
             this.debugGroup = new Sunny.UI.UIGroupBox();
@@ -138,7 +138,7 @@
             this.scannerGroup.Padding = new System.Windows.Forms.Padding(3, 32, 3, 3);
             this.scannerGroup.Size = new System.Drawing.Size(417, 461);
             this.scannerGroup.TabIndex = 0;
-            this.scannerGroup.Text = "📱 Scanner Lanes";
+            this.scannerGroup.Text = "📱 Lịch sử quét";
             this.scannerGroup.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // scannerContainer
@@ -169,7 +169,7 @@
             this.lane01Group.Padding = new System.Windows.Forms.Padding(3, 32, 3, 3);
             this.lane01Group.Size = new System.Drawing.Size(403, 203);
             this.lane01Group.TabIndex = 0;
-            this.lane01Group.Text = "🗜 Lane 01";
+            this.lane01Group.Text = "🗜Lịch sử làn 01";
             this.lane01Group.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // opLane01
@@ -200,7 +200,7 @@
             this.lane02Group.Padding = new System.Windows.Forms.Padding(3, 32, 3, 3);
             this.lane02Group.Size = new System.Drawing.Size(403, 203);
             this.lane02Group.TabIndex = 1;
-            this.lane02Group.Text = "🗜 Lane 02";
+            this.lane02Group.Text = "🗜Lịch sử làn 02";
             this.lane02Group.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // opLane02
@@ -231,7 +231,7 @@
             this.statusGroup.Padding = new System.Windows.Forms.Padding(3, 32, 3, 3);
             this.statusGroup.Size = new System.Drawing.Size(373, 461);
             this.statusGroup.TabIndex = 1;
-            this.statusGroup.Text = "📊 Carton Status";
+            this.statusGroup.Text = "📊 Trạng thái thùng";
             this.statusGroup.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // statusContainer
@@ -265,7 +265,7 @@
             this.currentCartonGroup.Padding = new System.Windows.Forms.Padding(3, 32, 3, 3);
             this.currentCartonGroup.Size = new System.Drawing.Size(359, 131);
             this.currentCartonGroup.TabIndex = 0;
-            this.currentCartonGroup.Text = "📦 Current Carton";
+            this.currentCartonGroup.Text = "📦 Thùng đang xếp";
             this.currentCartonGroup.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // currentCartonContainer
@@ -312,7 +312,7 @@
             this.uiPanel18.Name = "uiPanel18";
             this.uiPanel18.Size = new System.Drawing.Size(134, 21);
             this.uiPanel18.TabIndex = 0;
-            this.uiPanel18.Text = "🏷️ ID đang xếp:";
+            this.uiPanel18.Text = "🏷️ STT đang xếp:";
             this.uiPanel18.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // opCartonMaxID
@@ -392,19 +392,6 @@
             this.uiTableLayoutPanel1.TabIndex = 26;
             this.uiTableLayoutPanel1.TagString = null;
             // 
-            // uiPanel3
-            // 
-            this.uiPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel3.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel3.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel3.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel3.Name = "uiPanel3";
-            this.uiPanel3.Size = new System.Drawing.Size(134, 24);
-            this.uiPanel3.TabIndex = 0;
-            this.uiPanel3.Text = "🍾 Số chai:";
-            this.uiPanel3.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // opcartonPackCount
             // 
             this.opcartonPackCount.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -419,6 +406,19 @@
             this.opcartonPackCount.Text = "-";
             this.opcartonPackCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // uiPanel3
+            // 
+            this.uiPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
+            this.uiPanel3.Location = new System.Drawing.Point(2, 2);
+            this.uiPanel3.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel3.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel3.Name = "uiPanel3";
+            this.uiPanel3.Size = new System.Drawing.Size(134, 24);
+            this.uiPanel3.TabIndex = 0;
+            this.uiPanel3.Text = "🍾 Số chai:";
+            this.uiPanel3.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // previousCartonGroup
             // 
             this.previousCartonGroup.Controls.Add(this.previousCartonContainer);
@@ -432,7 +432,7 @@
             this.previousCartonGroup.Padding = new System.Windows.Forms.Padding(3, 32, 3, 3);
             this.previousCartonGroup.Size = new System.Drawing.Size(359, 131);
             this.previousCartonGroup.TabIndex = 1;
-            this.previousCartonGroup.Text = "📋 Previous Carton";
+            this.previousCartonGroup.Text = "📋 Thùng trước";
             this.previousCartonGroup.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // previousCartonContainer
@@ -473,19 +473,6 @@
             this.uiTableLayoutPanel12.TabIndex = 24;
             this.uiTableLayoutPanel12.TagString = null;
             // 
-            // uiPanel11
-            // 
-            this.uiPanel11.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel11.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel11.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel11.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel11.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel11.Name = "uiPanel11";
-            this.uiPanel11.Size = new System.Drawing.Size(134, 21);
-            this.uiPanel11.TabIndex = 5;
-            this.uiPanel11.Text = "ID trước đó";
-            this.uiPanel11.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // opLastID
             // 
             this.opLastID.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -499,6 +486,19 @@
             this.opLastID.TabIndex = 6;
             this.opLastID.Text = "-";
             this.opLastID.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiPanel11
+            // 
+            this.uiPanel11.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel11.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel11.Location = new System.Drawing.Point(2, 2);
+            this.uiPanel11.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel11.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel11.Name = "uiPanel11";
+            this.uiPanel11.Size = new System.Drawing.Size(134, 21);
+            this.uiPanel11.TabIndex = 5;
+            this.uiPanel11.Text = "STT trước đó";
+            this.uiPanel11.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiTableLayoutPanel2
             // 
@@ -520,19 +520,6 @@
             this.uiTableLayoutPanel2.TabIndex = 27;
             this.uiTableLayoutPanel2.TagString = null;
             // 
-            // uiPanel5
-            // 
-            this.uiPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel5.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel5.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel5.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel5.Name = "uiPanel5";
-            this.uiPanel5.Size = new System.Drawing.Size(134, 21);
-            this.uiPanel5.TabIndex = 5;
-            this.uiPanel5.Text = "Mã thùng";
-            this.uiPanel5.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // opLastCode
             // 
             this.opLastCode.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -546,6 +533,19 @@
             this.opLastCode.TabIndex = 6;
             this.opLastCode.Text = "-";
             this.opLastCode.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiPanel5
+            // 
+            this.uiPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel5.Location = new System.Drawing.Point(2, 2);
+            this.uiPanel5.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel5.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel5.Name = "uiPanel5";
+            this.uiPanel5.Size = new System.Drawing.Size(134, 21);
+            this.uiPanel5.TabIndex = 5;
+            this.uiPanel5.Text = "Mã thùng";
+            this.uiPanel5.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiTableLayoutPanel11
             // 
@@ -573,7 +573,7 @@
             this.uiPanel2.Name = "uiPanel2";
             this.uiPanel2.Size = new System.Drawing.Size(134, 24);
             this.uiPanel2.TabIndex = 5;
-            this.uiPanel2.Text = "Active";
+            this.uiPanel2.Text = "⏰ Kết thúc";
             this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opLastActive
@@ -603,7 +603,7 @@
             this.nextCartonGroup.Padding = new System.Windows.Forms.Padding(3, 32, 3, 3);
             this.nextCartonGroup.Size = new System.Drawing.Size(359, 134);
             this.nextCartonGroup.TabIndex = 2;
-            this.nextCartonGroup.Text = "🚀 Next Carton";
+            this.nextCartonGroup.Text = "🚀 Thùng sắp tới";
             this.nextCartonGroup.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // nextCartonContainer
@@ -644,6 +644,19 @@
             this.uiTableLayoutPanel3.TabIndex = 0;
             this.uiTableLayoutPanel3.TagString = null;
             // 
+            // uiPanel7
+            // 
+            this.uiPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
+            this.uiPanel7.Location = new System.Drawing.Point(2, 2);
+            this.uiPanel7.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel7.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel7.Name = "uiPanel7";
+            this.uiPanel7.Size = new System.Drawing.Size(121, 22);
+            this.uiPanel7.TabIndex = 0;
+            this.uiPanel7.Text = "🔜 STT tiếp theo:";
+            this.uiPanel7.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // opnextID
             // 
             this.opnextID.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -657,19 +670,6 @@
             this.opnextID.TabIndex = 1;
             this.opnextID.Text = "-";
             this.opnextID.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel7
-            // 
-            this.uiPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel7.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel7.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel7.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel7.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel7.Name = "uiPanel7";
-            this.uiPanel7.Size = new System.Drawing.Size(121, 22);
-            this.uiPanel7.TabIndex = 0;
-            this.uiPanel7.Text = "🔜 ID tiếp theo:";
-            this.uiPanel7.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // uiTableLayoutPanel5
             // 
@@ -691,6 +691,19 @@
             this.uiTableLayoutPanel5.TabIndex = 1;
             this.uiTableLayoutPanel5.TagString = null;
             // 
+            // uiPanel12
+            // 
+            this.uiPanel12.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
+            this.uiPanel12.Location = new System.Drawing.Point(2, 2);
+            this.uiPanel12.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel12.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel12.Name = "uiPanel12";
+            this.uiPanel12.Size = new System.Drawing.Size(121, 22);
+            this.uiPanel12.TabIndex = 0;
+            this.uiPanel12.Text = "📎 Mã thùng:";
+            this.uiPanel12.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // opnextCode
             // 
             this.opnextCode.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -704,19 +717,6 @@
             this.opnextCode.TabIndex = 1;
             this.opnextCode.Text = "-";
             this.opnextCode.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel12
-            // 
-            this.uiPanel12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel12.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel12.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel12.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel12.Name = "uiPanel12";
-            this.uiPanel12.Size = new System.Drawing.Size(121, 22);
-            this.uiPanel12.TabIndex = 0;
-            this.uiPanel12.Text = "📎 Mã thùng:";
-            this.uiPanel12.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // uiTableLayoutPanel4
             // 
@@ -738,6 +738,19 @@
             this.uiTableLayoutPanel4.TabIndex = 2;
             this.uiTableLayoutPanel4.TagString = null;
             // 
+            // uiPanel9
+            // 
+            this.uiPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
+            this.uiPanel9.Location = new System.Drawing.Point(2, 2);
+            this.uiPanel9.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel9.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel9.Name = "uiPanel9";
+            this.uiPanel9.Size = new System.Drawing.Size(121, 25);
+            this.uiPanel9.TabIndex = 0;
+            this.uiPanel9.Text = "⏰ Bắt đầu:";
+            this.uiPanel9.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // opnextStart
             // 
             this.opnextStart.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -752,19 +765,6 @@
             this.opnextStart.Text = "-";
             this.opnextStart.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // uiPanel9
-            // 
-            this.uiPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel9.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel9.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel9.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel9.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel9.Name = "uiPanel9";
-            this.uiPanel9.Size = new System.Drawing.Size(121, 25);
-            this.uiPanel9.TabIndex = 0;
-            this.uiPanel9.Text = "⏰ Start:";
-            this.uiPanel9.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // warningGroup
             // 
             this.warningGroup.Controls.Add(this.opWarning);
@@ -778,7 +778,7 @@
             this.warningGroup.Padding = new System.Windows.Forms.Padding(3, 32, 3, 3);
             this.warningGroup.Size = new System.Drawing.Size(417, 147);
             this.warningGroup.TabIndex = 2;
-            this.warningGroup.Text = "⚠️ Warnings";
+            this.warningGroup.Text = "⚠️ Các CẢNH BÁO";
             this.warningGroup.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // opWarning
@@ -810,7 +810,7 @@
             this.debugGroup.Padding = new System.Windows.Forms.Padding(3, 32, 3, 3);
             this.debugGroup.Size = new System.Drawing.Size(373, 147);
             this.debugGroup.TabIndex = 3;
-            this.debugGroup.Text = "🔧 Debug Info";
+            this.debugGroup.Text = "🔧 Thông tin debug";
             this.debugGroup.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // debugContainer

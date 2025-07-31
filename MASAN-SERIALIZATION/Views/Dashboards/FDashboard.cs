@@ -8,6 +8,7 @@ using SpT.Auth;
 using SpT.Communications.TCP;
 using SpT.Logs;
 using Sunny.UI;
+using Sunny.UI.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -275,22 +276,26 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private void CameraSub_Process(string _data)
         {
             Globals.productionData_Cs.counter.totalCount++; //tăng tổng số sản phẩm đã nhận
+
             this.InvokeIfRequired(() =>
             {
                 ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: #{Globals.ProductionData.counter.totalCount} Camera sub nhận dữ liệu: {_data}");
                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
             });
-            //xử lý dữ liệu từ camera phụ
+
+            //nếu dữ liệu rỗng
             if (_data.IsNullOrEmpty())
             {
                 //loại sản phẩm ngay lập tức
-                bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
+                bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
                 Send_Result_Content_CSub(e_Production_Status.Error, _data);
+
                 //gửi vào hàng chờ thêm record
                 Enqueue_Product_To_Record(_data, e_Production_Status.Error, stp, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
                 return;
             }
 
+            //nếu đọc không được
             if (_data == "FAIL")
             {
                 //loại sản phẩm ngay lập tức
@@ -470,6 +475,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 Enqueue_Product_To_Record(_data, e_Production_Status.NotFound, true, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
                 return;
             }
+        }
+
+        private void CameraMain_Process_Without_GS (OUTPUT_DEBUG_STRING_INFO _data)
+        {
+
         }
         private void Send_Result_Content_CMain(e_Production_Status status, string data)
         {
@@ -684,31 +694,39 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 if (Globals.CameraMain_State == e_Camera_State.CONNECTED)
                 {
-                    if (opCameraMain.Value != "Đã kết nối")
+                    if (opC1_State.Text != "Tốt")
                     {
-                        opCameraMain.IsBlinking = false;
-                        opCameraMain.Value = "Đã kết nối";
-                        opCameraMain.ONcolor = Color.Green;
-                        opCameraMain.IsOn = true; // Đặt trạng thái ON cho opCameraMain
+                        opLedC1.Blink = false;
+                        opC1_State.Text = "Tốt";
+                        opC1_State.FillColor = Color.White;
+                        opC1_State.RectColor = Color.Green; // Đặt trạng thái ON cho opCameraMain
+                        opLedC1.Color = Color.Green; // Đặt màu LED thành xanh lá cây
+                        opLedC1.On = true; // Đặt trạng thái ON cho opLedC1
                     }
 
                 }
                 else if (Globals.CameraMain_State == e_Camera_State.DISCONNECTED)
                 {
-                    if (opCameraMain.Value != "Mất kết nối")
+                    if (opC1_State.Text != "Lỗi")
                     {
-                        opCameraMain.IsBlinking = true;
-                        opCameraMain.Value = "Mất kết nối";
-                        opCameraMain.ONcolor = Color.Red;
+                        opLedC1.Blink = true;
+                        opC1_State.Text = "Lỗi";
+                        opC1_State.FillColor = Color.MistyRose;
+                        opC1_State.RectColor = Color.Red; // Đặt trạng thái ON cho opCameraMain
+                        opLedC1.Color = Color.Red; // Đặt màu LED thành xanh lá cây
+                        opLedC1.On = true; // Đặt trạng thái ON cho opLedC1
                     }
                 }
                 else if (Globals.CameraMain_State == e_Camera_State.RECONNECTING)
                 {
-                    if (opCameraMain.Value != "Kết nối lại")
+                    if (opC1_State.Text != "...")
                     {
-                        opCameraMain.IsBlinking = true;
-                        opCameraMain.Value = "Kết nối lại";
-                        opCameraMain.ONcolor = Color.Orange;
+                        opLedC1.Blink = true;
+                        opC1_State.Text = "...";
+                        opC1_State.FillColor = Color.Yellow;
+                        opC1_State.RectColor = Color.Red; // Đặt trạng thái ON cho opCameraMain
+                        opLedC1.Color = Color.Yellow; // Đặt màu LED thành xanh lá cây
+                        opLedC1.On = true; // Đặt trạng thái ON cho opLedC1
                     }
                 }
             });
@@ -1422,5 +1440,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
         #endregion
 
+        private void uiLedBulb1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

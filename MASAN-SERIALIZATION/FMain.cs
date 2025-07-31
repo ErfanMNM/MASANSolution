@@ -6,6 +6,7 @@ using MASAN_SERIALIZATION.Views.Dashboards;
 using MASAN_SERIALIZATION.Views.Login;
 using MASAN_SERIALIZATION.Views.ProductionInfo;
 using MASAN_SERIALIZATION.Views.SCADA;
+using MASAN_SERIALIZATION.Views.Settings;
 using SpT.Logs;
 using Sunny.UI;
 using System;
@@ -31,6 +32,8 @@ namespace MASAN_SERIALIZATION
         private PStatictis _pStatictis = new PStatictis(); // trang thống kê
         private PCartonDashboard _pCartonDashboard = new PCartonDashboard(); // trang dashboard thùng carton
         private PAws _pAws = new PAws(); // trang AWS (nếu cần thiết)
+        private PSettings _pSettings = new PSettings(); // trang cài đặt
+        private PLCSetting _pPLCSetting = new PLCSetting(); // trang cài đặt PLC (nếu cần thiết)
 
         private BackgroundWorker WK_Main_Proccess = new BackgroundWorker(); // BackgroundWorker để xử lý trạng thái ứng dụng
 
@@ -52,9 +55,9 @@ namespace MASAN_SERIALIZATION
         private void FMain_Load(object sender, EventArgs e)
         {
             RenderControlForm(); //khởi tạo giao diện điều khiển
-            InitializePage(); //khởi tạo các trang chức năng
             ToggleFullScreen();//bật fullscreen
             Start_Main_Process_Task(); //bắt đầu task chính xử lý trạng thái ứng dụng
+            InitializePage(); //khởi tạo các trang chức năng
         }
 
         #region Các hàm INIT
@@ -116,6 +119,8 @@ namespace MASAN_SERIALIZATION
                 NavMenu.CreateNode(AddPage(_pStatictis, 1003)); // Thêm trang thống kê
                 NavMenu.CreateNode(AddPage(_pCartonDashboard, 1004)); // Thêm trang dashboard thùng carton
                 NavMenu.CreateNode(AddPage(_pAws, 1005)); // Thêm trang AWS (nếu cần thiết)
+                NavMenu.CreateNode(AddPage(_pPLCSetting, 1006)); // Thêm trang cài đặt PLC (nếu cần thiết)
+                NavMenu.CreateNode(AddPage(_pSettings, 1007)); // Thêm trang cài đặt
 
                 //Các trang chức năng phụ chạy từ 2001 - 2999
                 NavMenu.CreateNode(AddPage(_pLogin, 2001)); // Thêm trang đăng nhập
@@ -129,8 +134,7 @@ namespace MASAN_SERIALIZATION
 
                 Globals.AppRenderState = e_App_Render_State.LOGIN; //đặt trạng thái render ban đầu là LOGIN
 
-                //INIT các trang chức năng
-                _pProduction.START(); //khởi tạo trang sản xuất
+                
             }
             catch (Exception ex)
             {
@@ -149,6 +153,9 @@ namespace MASAN_SERIALIZATION
                 _pDashboard.STARTUP();
                 _pStatictis.INIT();
                 _pCartonDashboard.INIT();
+                _pSettings.INIT();
+                _pPLCSetting.INIT();
+                _pProduction.START();
             }
             catch (Exception ex)
             {
