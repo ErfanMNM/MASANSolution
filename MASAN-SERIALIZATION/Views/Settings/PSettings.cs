@@ -535,5 +535,15 @@ namespace MASAN_SERIALIZATION.Views.Settings
                 uc_UserManager1.Enabled = false; // Ẩn quản lý người dùng nếu không phải Admin
             }
         }
+
+        private void uc_UserSetting1_OnUserAction(object sender, LoginActionEventArgs e)
+        {
+            this.ShowInfoNotifier($"{e.Message}");
+        }
+
+        private void uc_UserManager1_OnAction(object sender, LoginActionEventArgs e)
+        {
+            this.ShowInfoNotifier($"{e.Message}"); // Hiển thị thông báo khi có hành động từ quản lý người dùng
+        }
     }
 }

@@ -515,7 +515,6 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         private void HandleRunButtonInReadyState()
         {
             ConfigurePreparingMode();
-
             if (!Globals.APP_Ready)
             {
                 this.ShowErrorNotifier("Lỗi PP590: Ứng dụng chưa sẵn sàng, Vui lòng kiểm tra lại.", false, 5000);
@@ -523,6 +522,12 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 return;
             }
 
+            if (!Globals.Device_Ready)
+            {
+                this.ShowErrorDialog("Lỗi PP591: Thiết bị chưa sẵn sàng, Vui lòng kiểm tra lại.");
+                RestoreAfterRunning();
+                return;
+            }
             Task.Run(() => PrepareProductionData());
         }
 

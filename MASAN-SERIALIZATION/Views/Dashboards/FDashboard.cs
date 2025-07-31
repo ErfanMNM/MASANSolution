@@ -737,30 +737,38 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 if (Globals.CameraSub_State == e_Camera_State.CONNECTED)
                 {
-                    if (opCameraSub.Value != "Đã kết nối")
+                    if (opC2_State.Text != "Tốt")
                     {
-                        opCameraSub.IsBlinking = false;
-                        opCameraSub.Value = "Đã kết nối";
-                        opCameraSub.ONcolor = Color.Green;
-                        opCameraSub.IsOn = true; // Đặt trạng thái ON cho opCameraSub
+                        opLedC2.Blink = false;
+                        opC2_State.Text = "Tốt";
+                        opC2_State.FillColor = Color.White;
+                        opC2_State.RectColor = Color.Green; // Đặt trạng thái ON cho opCameraMain
+                        opLedC2.Color = Color.Green; // Đặt màu LED thành xanh lá cây
+                        opLedC2.On = true; // Đặt trạng thái ON cho opLedC1
                     }
                 }
                 else if (Globals.CameraSub_State == e_Camera_State.DISCONNECTED)
                 {
-                    if (opCameraSub.Value != "Mất kết nối")
+                    if (opC2_State.Text != "Lỗi")
                     {
-                        opCameraSub.IsBlinking = true;
-                        opCameraSub.Value = "Mất kết nối";
-                        opCameraSub.ONcolor = Color.Red;
+                        opLedC2.Blink = true;
+                        opC2_State.Text = "Lỗi";
+                        opC2_State.FillColor = Color.MistyRose;
+                        opC2_State.RectColor = Color.Red; // Đặt trạng thái ON cho opCameraMain
+                        opLedC2.Color = Color.Red; // Đặt màu LED thành xanh lá cây
+                        opLedC2.On = true; // Đặt trạng thái ON cho opLedC1
                     }
                 }
                 else if (Globals.CameraSub_State == e_Camera_State.RECONNECTING)
                 {
-                    if (opCameraSub.Value != "Kết nối lại")
+                    if (opC2_State.Text != "...")
                     {
-                        opCameraSub.IsBlinking = true;
-                        opCameraSub.Value = "Kết nối lại";
-                        opCameraSub.ONcolor = Color.Orange;
+                        opLedC2.Blink = true;
+                        opC2_State.Text = "...";
+                        opC2_State.FillColor = Color.Yellow;
+                        opC2_State.RectColor = Color.Red; // Đặt trạng thái ON cho opCameraMain
+                        opLedC2.Color = Color.Yellow; // Đặt màu LED thành xanh lá cây
+                        opLedC2.On = true; // Đặt trạng thái ON cho opLedC1
                     }
                 }
             });
@@ -769,21 +777,26 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.InvokeIfRequired(() => {
                 if (Globals.PLC_Connected)
                 {
-                    if (opPLCState.IsBlinking)
+                    if (opPLC_State.Text != "Tốt")
                     {
-                        opPLCState.IsBlinking = false;
-                        opPLCState.Value = "Đã kết nối";
-                        opPLCState.ONcolor = Color.Green;
-                        opPLCState.IsOn = true; // Đặt trạng thái ON cho opPLCState
+                        opLedPLC.Blink = false;
+                        opPLC_State.Text = "Tốt";
+                        opPLC_State.FillColor = Color.White;
+                        opPLC_State.RectColor = Color.Green; // Đặt trạng thái ON cho opCameraMain
+                        opLedPLC.Color = Color.Green; // Đặt màu LED thành xanh lá cây
+                        opLedPLC.On = true; // Đặt trạng thái ON cho opLedC1
                     }
                 }
                 else
                 {
-                    if (!opPLCState.IsBlinking)
+                    if (opPLC_State.Text != "Lỗi")
                     {
-                        opPLCState.IsBlinking = true;
-                        opPLCState.Value = "Mất kết nối";
-                        opPLCState.ONcolor = Color.Red;
+                        opLedPLC.Blink = true;
+                        opPLC_State.Text = "Lỗi";
+                        opPLC_State.FillColor = Color.MistyRose;
+                        opPLC_State.RectColor = Color.Red; // Đặt trạng thái ON cho opCameraMain
+                        opLedPLC.Color = Color.Red; // Đặt màu LED thành xanh lá cây
+                        opLedPLC.On = true; // Đặt trạng thái ON cho opLedC1
                     }
                 }
             });

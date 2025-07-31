@@ -30,31 +30,31 @@
         {
             this.uiTitlePanel1 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
-            this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
-            this.uiPanel2 = new Sunny.UI.UIPanel();
-            this.uiPanel1 = new Sunny.UI.UIPanel();
-            this.uiPanel3 = new Sunny.UI.UIPanel();
-            this.uiPanel4 = new Sunny.UI.UIPanel();
-            this.uiPanel5 = new Sunny.UI.UIPanel();
-            this.uiPanel6 = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel3 = new Sunny.UI.UITableLayoutPanel();
             this.btnSave = new Sunny.UI.UISymbolButton();
             this.opPanel2FA = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel5 = new Sunny.UI.UITableLayoutPanel();
             this.uiSymbolLabel3 = new Sunny.UI.UISymbolLabel();
             this.ipOTP = new Sunny.UI.UINumPadTextBox();
-            this.opRole = new Sunny.UI.UITextBox();
-            this.ipUserName = new Sunny.UI.UITextBox();
-            this.ipOldPassword = new Sunny.UI.UITextBox();
-            this.ipNewPassword = new Sunny.UI.UITextBox();
-            this.ipComfirmNewPassword = new Sunny.UI.UITextBox();
+            this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
             this.btn2FA = new Sunny.UI.UIPanel();
+            this.ipComfirmNewPassword = new Sunny.UI.UITextBox();
+            this.ipNewPassword = new Sunny.UI.UITextBox();
+            this.ipOldPassword = new Sunny.UI.UITextBox();
+            this.ipUserName = new Sunny.UI.UITextBox();
+            this.uiPanel2 = new Sunny.UI.UIPanel();
+            this.uiPanel1 = new Sunny.UI.UIPanel();
+            this.uiPanel3 = new Sunny.UI.UIPanel();
+            this.uiPanel4 = new Sunny.UI.UIPanel();
+            this.uiPanel5 = new Sunny.UI.UIPanel();
+            this.uiPanel6 = new Sunny.UI.UIPanel();
+            this.opRole = new Sunny.UI.UITextBox();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
-            this.uiTableLayoutPanel2.SuspendLayout();
             this.uiTableLayoutPanel3.SuspendLayout();
             this.opPanel2FA.SuspendLayout();
             this.uiTableLayoutPanel5.SuspendLayout();
+            this.uiTableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // uiTitlePanel1
@@ -89,117 +89,6 @@
             this.uiTableLayoutPanel1.Size = new System.Drawing.Size(490, 331);
             this.uiTableLayoutPanel1.TabIndex = 0;
             this.uiTableLayoutPanel1.TagString = null;
-            // 
-            // uiTableLayoutPanel2
-            // 
-            this.uiTableLayoutPanel2.BackColor = System.Drawing.Color.Transparent;
-            this.uiTableLayoutPanel2.ColumnCount = 2;
-            this.uiTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.33058F));
-            this.uiTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 64.66942F));
-            this.uiTableLayoutPanel2.Controls.Add(this.btn2FA, 1, 4);
-            this.uiTableLayoutPanel2.Controls.Add(this.ipComfirmNewPassword, 1, 3);
-            this.uiTableLayoutPanel2.Controls.Add(this.ipNewPassword, 1, 2);
-            this.uiTableLayoutPanel2.Controls.Add(this.ipOldPassword, 1, 1);
-            this.uiTableLayoutPanel2.Controls.Add(this.ipUserName, 1, 0);
-            this.uiTableLayoutPanel2.Controls.Add(this.uiPanel2, 0, 1);
-            this.uiTableLayoutPanel2.Controls.Add(this.uiPanel1, 0, 0);
-            this.uiTableLayoutPanel2.Controls.Add(this.uiPanel3, 0, 2);
-            this.uiTableLayoutPanel2.Controls.Add(this.uiPanel4, 0, 3);
-            this.uiTableLayoutPanel2.Controls.Add(this.uiPanel5, 0, 4);
-            this.uiTableLayoutPanel2.Controls.Add(this.uiPanel6, 0, 5);
-            this.uiTableLayoutPanel2.Controls.Add(this.opRole, 1, 5);
-            this.uiTableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
-            this.uiTableLayoutPanel2.Name = "uiTableLayoutPanel2";
-            this.uiTableLayoutPanel2.RowCount = 6;
-            this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.uiTableLayoutPanel2.Size = new System.Drawing.Size(484, 254);
-            this.uiTableLayoutPanel2.TabIndex = 1;
-            this.uiTableLayoutPanel2.TagString = null;
-            // 
-            // uiPanel2
-            // 
-            this.uiPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel2.Location = new System.Drawing.Point(2, 44);
-            this.uiPanel2.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel2.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel2.Name = "uiPanel2";
-            this.uiPanel2.Size = new System.Drawing.Size(167, 38);
-            this.uiPanel2.TabIndex = 1;
-            this.uiPanel2.Text = "Mật khẩu cũ";
-            this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel1
-            // 
-            this.uiPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel1.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel1.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel1.Name = "uiPanel1";
-            this.uiPanel1.Radius = 2;
-            this.uiPanel1.Size = new System.Drawing.Size(167, 38);
-            this.uiPanel1.TabIndex = 0;
-            this.uiPanel1.Text = "Tên tài khoản";
-            this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel3
-            // 
-            this.uiPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel3.Location = new System.Drawing.Point(2, 86);
-            this.uiPanel3.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel3.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel3.Name = "uiPanel3";
-            this.uiPanel3.Size = new System.Drawing.Size(167, 38);
-            this.uiPanel3.TabIndex = 2;
-            this.uiPanel3.Text = "Mật khẩu mới";
-            this.uiPanel3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel4
-            // 
-            this.uiPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel4.Location = new System.Drawing.Point(2, 128);
-            this.uiPanel4.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel4.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel4.Name = "uiPanel4";
-            this.uiPanel4.Size = new System.Drawing.Size(167, 38);
-            this.uiPanel4.TabIndex = 3;
-            this.uiPanel4.Text = "Nhập lại khẩu mới";
-            this.uiPanel4.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel5
-            // 
-            this.uiPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel5.Location = new System.Drawing.Point(2, 170);
-            this.uiPanel5.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel5.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel5.Name = "uiPanel5";
-            this.uiPanel5.Size = new System.Drawing.Size(167, 38);
-            this.uiPanel5.TabIndex = 4;
-            this.uiPanel5.Text = "QR 2FA";
-            this.uiPanel5.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel6
-            // 
-            this.uiPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel6.Location = new System.Drawing.Point(2, 212);
-            this.uiPanel6.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel6.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel6.Name = "uiPanel6";
-            this.uiPanel6.Size = new System.Drawing.Size(167, 40);
-            this.uiPanel6.TabIndex = 5;
-            this.uiPanel6.Text = "Cấp bậc";
-            this.uiPanel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiTableLayoutPanel3
             // 
@@ -303,23 +192,107 @@
             this.ipOTP.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipOTP.Watermark = "";
             // 
-            // opRole
+            // uiTableLayoutPanel2
             // 
-            this.opRole.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.opRole.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opRole.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opRole.Location = new System.Drawing.Point(173, 212);
-            this.opRole.Margin = new System.Windows.Forms.Padding(2);
-            this.opRole.MinimumSize = new System.Drawing.Size(1, 16);
-            this.opRole.Name = "opRole";
-            this.opRole.Padding = new System.Windows.Forms.Padding(5);
-            this.opRole.ReadOnly = true;
-            this.opRole.ShowText = false;
-            this.opRole.Size = new System.Drawing.Size(309, 40);
-            this.opRole.TabIndex = 6;
-            this.opRole.Text = "uiTextBox1";
-            this.opRole.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.opRole.Watermark = "";
+            this.uiTableLayoutPanel2.BackColor = System.Drawing.Color.Transparent;
+            this.uiTableLayoutPanel2.ColumnCount = 2;
+            this.uiTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.33058F));
+            this.uiTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 64.66942F));
+            this.uiTableLayoutPanel2.Controls.Add(this.btn2FA, 1, 4);
+            this.uiTableLayoutPanel2.Controls.Add(this.ipComfirmNewPassword, 1, 3);
+            this.uiTableLayoutPanel2.Controls.Add(this.ipNewPassword, 1, 2);
+            this.uiTableLayoutPanel2.Controls.Add(this.ipOldPassword, 1, 1);
+            this.uiTableLayoutPanel2.Controls.Add(this.ipUserName, 1, 0);
+            this.uiTableLayoutPanel2.Controls.Add(this.uiPanel2, 0, 1);
+            this.uiTableLayoutPanel2.Controls.Add(this.uiPanel1, 0, 0);
+            this.uiTableLayoutPanel2.Controls.Add(this.uiPanel3, 0, 2);
+            this.uiTableLayoutPanel2.Controls.Add(this.uiPanel4, 0, 3);
+            this.uiTableLayoutPanel2.Controls.Add(this.uiPanel5, 0, 4);
+            this.uiTableLayoutPanel2.Controls.Add(this.uiPanel6, 0, 5);
+            this.uiTableLayoutPanel2.Controls.Add(this.opRole, 1, 5);
+            this.uiTableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
+            this.uiTableLayoutPanel2.Name = "uiTableLayoutPanel2";
+            this.uiTableLayoutPanel2.RowCount = 6;
+            this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.uiTableLayoutPanel2.Size = new System.Drawing.Size(484, 254);
+            this.uiTableLayoutPanel2.TabIndex = 1;
+            this.uiTableLayoutPanel2.TagString = null;
+            // 
+            // btn2FA
+            // 
+            this.btn2FA.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn2FA.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btn2FA.Location = new System.Drawing.Point(173, 170);
+            this.btn2FA.Margin = new System.Windows.Forms.Padding(2);
+            this.btn2FA.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btn2FA.Name = "btn2FA";
+            this.btn2FA.Size = new System.Drawing.Size(309, 38);
+            this.btn2FA.TabIndex = 11;
+            this.btn2FA.Text = "Nhấn đúp để xem mã 2FA";
+            this.btn2FA.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // ipComfirmNewPassword
+            // 
+            this.ipComfirmNewPassword.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.ipComfirmNewPassword.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ipComfirmNewPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ipComfirmNewPassword.Location = new System.Drawing.Point(173, 128);
+            this.ipComfirmNewPassword.Margin = new System.Windows.Forms.Padding(2);
+            this.ipComfirmNewPassword.MinimumSize = new System.Drawing.Size(1, 16);
+            this.ipComfirmNewPassword.Name = "ipComfirmNewPassword";
+            this.ipComfirmNewPassword.Padding = new System.Windows.Forms.Padding(5);
+            this.ipComfirmNewPassword.PasswordChar = '*';
+            this.ipComfirmNewPassword.ShowText = false;
+            this.ipComfirmNewPassword.Size = new System.Drawing.Size(309, 38);
+            this.ipComfirmNewPassword.TabIndex = 10;
+            this.ipComfirmNewPassword.Text = "uiTextBox6";
+            this.ipComfirmNewPassword.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ipComfirmNewPassword.Watermark = "";
+            this.ipComfirmNewPassword.DoubleClick += new System.EventHandler(this.ipComfirmNewPassword_DoubleClick);
+            // 
+            // ipNewPassword
+            // 
+            this.ipNewPassword.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.ipNewPassword.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ipNewPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ipNewPassword.Location = new System.Drawing.Point(173, 86);
+            this.ipNewPassword.Margin = new System.Windows.Forms.Padding(2);
+            this.ipNewPassword.MinimumSize = new System.Drawing.Size(1, 16);
+            this.ipNewPassword.Name = "ipNewPassword";
+            this.ipNewPassword.Padding = new System.Windows.Forms.Padding(5);
+            this.ipNewPassword.PasswordChar = '*';
+            this.ipNewPassword.ShowText = false;
+            this.ipNewPassword.Size = new System.Drawing.Size(309, 38);
+            this.ipNewPassword.TabIndex = 9;
+            this.ipNewPassword.Text = "uiTextBox5";
+            this.ipNewPassword.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ipNewPassword.Watermark = "";
+            this.ipNewPassword.DoubleClick += new System.EventHandler(this.ipNewPassword_DoubleClick);
+            // 
+            // ipOldPassword
+            // 
+            this.ipOldPassword.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.ipOldPassword.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ipOldPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ipOldPassword.Location = new System.Drawing.Point(173, 44);
+            this.ipOldPassword.Margin = new System.Windows.Forms.Padding(2);
+            this.ipOldPassword.MinimumSize = new System.Drawing.Size(1, 16);
+            this.ipOldPassword.Name = "ipOldPassword";
+            this.ipOldPassword.Padding = new System.Windows.Forms.Padding(5);
+            this.ipOldPassword.PasswordChar = '*';
+            this.ipOldPassword.ShowText = false;
+            this.ipOldPassword.Size = new System.Drawing.Size(309, 38);
+            this.ipOldPassword.TabIndex = 8;
+            this.ipOldPassword.Text = "uiTextBox4";
+            this.ipOldPassword.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ipOldPassword.Watermark = "";
+            this.ipOldPassword.DoubleClick += new System.EventHandler(this.ipOldPassword_DoubleClick);
             // 
             // ipUserName
             // 
@@ -339,72 +312,102 @@
             this.ipUserName.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipUserName.Watermark = "";
             // 
-            // ipOldPassword
+            // uiPanel2
             // 
-            this.ipOldPassword.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.ipOldPassword.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ipOldPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.ipOldPassword.Location = new System.Drawing.Point(173, 44);
-            this.ipOldPassword.Margin = new System.Windows.Forms.Padding(2);
-            this.ipOldPassword.MinimumSize = new System.Drawing.Size(1, 16);
-            this.ipOldPassword.Name = "ipOldPassword";
-            this.ipOldPassword.Padding = new System.Windows.Forms.Padding(5);
-            this.ipOldPassword.PasswordChar = '*';
-            this.ipOldPassword.ShowText = false;
-            this.ipOldPassword.Size = new System.Drawing.Size(309, 38);
-            this.ipOldPassword.TabIndex = 8;
-            this.ipOldPassword.Text = "uiTextBox4";
-            this.ipOldPassword.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ipOldPassword.Watermark = "";
+            this.uiPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel2.Location = new System.Drawing.Point(2, 44);
+            this.uiPanel2.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel2.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel2.Name = "uiPanel2";
+            this.uiPanel2.Size = new System.Drawing.Size(167, 38);
+            this.uiPanel2.TabIndex = 1;
+            this.uiPanel2.Text = "Mật khẩu cũ";
+            this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // ipNewPassword
+            // uiPanel1
             // 
-            this.ipNewPassword.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.ipNewPassword.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ipNewPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.ipNewPassword.Location = new System.Drawing.Point(173, 86);
-            this.ipNewPassword.Margin = new System.Windows.Forms.Padding(2);
-            this.ipNewPassword.MinimumSize = new System.Drawing.Size(1, 16);
-            this.ipNewPassword.Name = "ipNewPassword";
-            this.ipNewPassword.Padding = new System.Windows.Forms.Padding(5);
-            this.ipNewPassword.PasswordChar = '*';
-            this.ipNewPassword.ShowText = false;
-            this.ipNewPassword.Size = new System.Drawing.Size(309, 38);
-            this.ipNewPassword.TabIndex = 9;
-            this.ipNewPassword.Text = "uiTextBox5";
-            this.ipNewPassword.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ipNewPassword.Watermark = "";
+            this.uiPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel1.Location = new System.Drawing.Point(2, 2);
+            this.uiPanel1.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel1.Name = "uiPanel1";
+            this.uiPanel1.Radius = 2;
+            this.uiPanel1.Size = new System.Drawing.Size(167, 38);
+            this.uiPanel1.TabIndex = 0;
+            this.uiPanel1.Text = "Tên tài khoản";
+            this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // ipComfirmNewPassword
+            // uiPanel3
             // 
-            this.ipComfirmNewPassword.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.ipComfirmNewPassword.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ipComfirmNewPassword.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.ipComfirmNewPassword.Location = new System.Drawing.Point(173, 128);
-            this.ipComfirmNewPassword.Margin = new System.Windows.Forms.Padding(2);
-            this.ipComfirmNewPassword.MinimumSize = new System.Drawing.Size(1, 16);
-            this.ipComfirmNewPassword.Name = "ipComfirmNewPassword";
-            this.ipComfirmNewPassword.Padding = new System.Windows.Forms.Padding(5);
-            this.ipComfirmNewPassword.PasswordChar = '*';
-            this.ipComfirmNewPassword.ShowText = false;
-            this.ipComfirmNewPassword.Size = new System.Drawing.Size(309, 38);
-            this.ipComfirmNewPassword.TabIndex = 10;
-            this.ipComfirmNewPassword.Text = "uiTextBox6";
-            this.ipComfirmNewPassword.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ipComfirmNewPassword.Watermark = "";
+            this.uiPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel3.Location = new System.Drawing.Point(2, 86);
+            this.uiPanel3.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel3.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel3.Name = "uiPanel3";
+            this.uiPanel3.Size = new System.Drawing.Size(167, 38);
+            this.uiPanel3.TabIndex = 2;
+            this.uiPanel3.Text = "Mật khẩu mới";
+            this.uiPanel3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // btn2FA
+            // uiPanel4
             // 
-            this.btn2FA.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn2FA.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btn2FA.Location = new System.Drawing.Point(173, 170);
-            this.btn2FA.Margin = new System.Windows.Forms.Padding(2);
-            this.btn2FA.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btn2FA.Name = "btn2FA";
-            this.btn2FA.Size = new System.Drawing.Size(309, 38);
-            this.btn2FA.TabIndex = 11;
-            this.btn2FA.Text = "Nhấn đúp để xem mã 2FA";
-            this.btn2FA.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.uiPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel4.Location = new System.Drawing.Point(2, 128);
+            this.uiPanel4.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel4.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel4.Name = "uiPanel4";
+            this.uiPanel4.Size = new System.Drawing.Size(167, 38);
+            this.uiPanel4.TabIndex = 3;
+            this.uiPanel4.Text = "Nhập lại khẩu mới";
+            this.uiPanel4.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiPanel5
+            // 
+            this.uiPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel5.Location = new System.Drawing.Point(2, 170);
+            this.uiPanel5.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel5.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel5.Name = "uiPanel5";
+            this.uiPanel5.Size = new System.Drawing.Size(167, 38);
+            this.uiPanel5.TabIndex = 4;
+            this.uiPanel5.Text = "QR 2FA";
+            this.uiPanel5.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiPanel6
+            // 
+            this.uiPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel6.Location = new System.Drawing.Point(2, 212);
+            this.uiPanel6.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel6.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel6.Name = "uiPanel6";
+            this.uiPanel6.Size = new System.Drawing.Size(167, 40);
+            this.uiPanel6.TabIndex = 5;
+            this.uiPanel6.Text = "Cấp bậc";
+            this.uiPanel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // opRole
+            // 
+            this.opRole.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.opRole.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opRole.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opRole.Location = new System.Drawing.Point(173, 212);
+            this.opRole.Margin = new System.Windows.Forms.Padding(2);
+            this.opRole.MinimumSize = new System.Drawing.Size(1, 16);
+            this.opRole.Name = "opRole";
+            this.opRole.Padding = new System.Windows.Forms.Padding(5);
+            this.opRole.ReadOnly = true;
+            this.opRole.ShowText = false;
+            this.opRole.Size = new System.Drawing.Size(309, 40);
+            this.opRole.TabIndex = 6;
+            this.opRole.Text = "uiTextBox1";
+            this.opRole.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.opRole.Watermark = "";
             // 
             // uc_UserSetting
             // 
@@ -414,10 +417,10 @@
             this.Size = new System.Drawing.Size(492, 367);
             this.uiTitlePanel1.ResumeLayout(false);
             this.uiTableLayoutPanel1.ResumeLayout(false);
-            this.uiTableLayoutPanel2.ResumeLayout(false);
             this.uiTableLayoutPanel3.ResumeLayout(false);
             this.opPanel2FA.ResumeLayout(false);
             this.uiTableLayoutPanel5.ResumeLayout(false);
+            this.uiTableLayoutPanel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

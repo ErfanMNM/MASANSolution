@@ -127,6 +127,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
             userData1.Salt = null;
             userData1.Username = "";
             this.uc_UserSetting1.userData = userData1;
+            this.uc_UserSetting1.OnUserAction += new System.EventHandler<SpT.Auth.LoginActionEventArgs>(this.uc_UserSetting1_OnUserAction);
             // 
             // uc_UserManager1
             // 
@@ -140,6 +141,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
             this.uc_UserManager1.TabIndex = 0;
             this.uc_UserManager1.Text = "uc_UserManager1";
             this.uc_UserManager1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.uc_UserManager1.OnAction += new System.EventHandler<SpT.Auth.LoginActionEventArgs>(this.uc_UserManager1_OnAction);
             // 
             // tabPageDynamic
             // 

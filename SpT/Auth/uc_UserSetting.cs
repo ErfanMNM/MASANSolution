@@ -1,4 +1,5 @@
-﻿using SpT.Logs;
+﻿using SpT.Diaglogs;
+using SpT.Logs;
 using Sunny.UI;
 using System;
 using System.Collections.Generic;
@@ -306,6 +307,48 @@ namespace SpT.Auth
                 btnSave.Text = "Lưu lại"; //đặt lại chữ trên nút Save
             }
             
+        }
+
+        private void ipOldPassword_DoubleClick(object sender, EventArgs e)
+        {
+            using (Entertext enterText = new Entertext())
+            {
+                enterText.TileText = "Nhập mật khẩu hiện tại";
+                enterText.TextValue = ipOldPassword.Text;
+                enterText.EnterClicked += (s, args) =>
+                {
+                    ipOldPassword.Text = enterText.TextValue;
+                };
+                enterText.ShowDialog();
+            }
+        }
+
+        private void ipNewPassword_DoubleClick(object sender, EventArgs e)
+        {
+            using (Entertext enterText = new Entertext())
+            {
+                enterText.TileText = "Nhập mật khẩu mới";
+                enterText.TextValue = ipNewPassword.Text;
+                enterText.EnterClicked += (s, args) =>
+                {
+                    ipNewPassword.Text = enterText.TextValue;
+                };
+                enterText.ShowDialog();
+            }
+        }
+
+        private void ipComfirmNewPassword_DoubleClick(object sender, EventArgs e)
+        {
+            using (Entertext enterText = new Entertext())
+            {
+                enterText.TileText = "Xác nhận mật khẩu mới";
+                enterText.TextValue = ipComfirmNewPassword.Text;
+                enterText.EnterClicked += (s, args) =>
+                {
+                    ipComfirmNewPassword.Text = enterText.TextValue;
+                };
+                enterText.ShowDialog();
+            }
         }
     }
 }

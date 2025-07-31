@@ -51,8 +51,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel7 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel15 = new Sunny.UI.UITableLayoutPanel();
             this.opCaseCount = new Sunny.UI.UIPanel();
-            this.uiPanel2 = new Sunny.UI.UIPanel();
-            this.opReQty = new Sunny.UI.UIPanel();
             this.uiPanel1 = new Sunny.UI.UIPanel();
             this.opGTIN = new Sunny.UI.UIPanel();
             this.uiPanel7 = new Sunny.UI.UIPanel();
@@ -431,9 +429,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel15.ColumnCount = 2;
             this.uiTableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 37.46479F));
             this.uiTableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 62.53521F));
-            this.uiTableLayoutPanel15.Controls.Add(this.opCaseCount, 1, 5);
-            this.uiTableLayoutPanel15.Controls.Add(this.uiPanel2, 0, 5);
-            this.uiTableLayoutPanel15.Controls.Add(this.opReQty, 1, 4);
+            this.uiTableLayoutPanel15.Controls.Add(this.opCaseCount, 1, 4);
             this.uiTableLayoutPanel15.Controls.Add(this.uiPanel1, 0, 4);
             this.uiTableLayoutPanel15.Controls.Add(this.opGTIN, 1, 3);
             this.uiTableLayoutPanel15.Controls.Add(this.uiPanel7, 0, 0);
@@ -462,40 +458,14 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             // 
             this.opCaseCount.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opCaseCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opCaseCount.Location = new System.Drawing.Point(135, 262);
+            this.opCaseCount.Location = new System.Drawing.Point(135, 210);
             this.opCaseCount.Margin = new System.Windows.Forms.Padding(2);
             this.opCaseCount.MinimumSize = new System.Drawing.Size(1, 1);
             this.opCaseCount.Name = "opCaseCount";
-            this.opCaseCount.Size = new System.Drawing.Size(218, 54);
-            this.opCaseCount.TabIndex = 33;
+            this.opCaseCount.Size = new System.Drawing.Size(218, 48);
+            this.opCaseCount.TabIndex = 31;
             this.opCaseCount.Text = "...";
             this.opCaseCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel2
-            // 
-            this.uiPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel2.Location = new System.Drawing.Point(2, 262);
-            this.uiPanel2.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel2.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel2.Name = "uiPanel2";
-            this.uiPanel2.Size = new System.Drawing.Size(129, 54);
-            this.uiPanel2.TabIndex = 32;
-            this.uiPanel2.Text = "CaseCount";
-            this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opReQty
-            // 
-            this.opReQty.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opReQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opReQty.Location = new System.Drawing.Point(135, 210);
-            this.opReQty.Margin = new System.Windows.Forms.Padding(2);
-            this.opReQty.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opReQty.Name = "opReQty";
-            this.opReQty.Size = new System.Drawing.Size(218, 48);
-            this.opReQty.TabIndex = 31;
-            this.opReQty.Text = "...";
-            this.opReQty.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiPanel1
             // 
@@ -507,7 +477,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiPanel1.Name = "uiPanel1";
             this.uiPanel1.Size = new System.Drawing.Size(129, 48);
             this.uiPanel1.TabIndex = 30;
-            this.uiPanel1.Text = "ReQty";
+            this.uiPanel1.Text = "Carton Count";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opGTIN
@@ -693,6 +663,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opLedC2.Location = new System.Drawing.Point(67, 2);
             this.opLedC2.Margin = new System.Windows.Forms.Padding(2);
             this.opLedC2.Name = "opLedC2";
+            this.opLedC2.On = false;
             this.opLedC2.Size = new System.Drawing.Size(40, 42);
             this.opLedC2.TabIndex = 0;
             this.opLedC2.Text = "uiLedBulb2";
@@ -753,7 +724,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opLedC1.Location = new System.Drawing.Point(67, 2);
             this.opLedC1.Margin = new System.Windows.Forms.Padding(2);
             this.opLedC1.Name = "opLedC1";
-            this.opLedC1.On = false;
             this.opLedC1.Size = new System.Drawing.Size(40, 42);
             this.opLedC1.TabIndex = 0;
             this.opLedC1.Text = "uiLedBulb1";
@@ -815,7 +785,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opLedPLC.Location = new System.Drawing.Point(67, 2);
             this.opLedPLC.Margin = new System.Windows.Forms.Padding(2);
             this.opLedPLC.Name = "opLedPLC";
-            this.opLedPLC.On = false;
             this.opLedPLC.Size = new System.Drawing.Size(40, 42);
             this.opLedPLC.TabIndex = 0;
             this.opLedPLC.Text = "uiLedBulb3";
@@ -1203,8 +1172,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel7;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel15;
         private Sunny.UI.UIPanel opCaseCount;
-        private Sunny.UI.UIPanel uiPanel2;
-        private Sunny.UI.UIPanel opReQty;
         private Sunny.UI.UIPanel uiPanel1;
         private Sunny.UI.UIPanel opGTIN;
         private Sunny.UI.UIPanel uiPanel7;

@@ -81,7 +81,6 @@ namespace MASAN_SERIALIZATION.Diaglogs
             button.ForeColor = Color.FromArgb(52, 73, 94);
             button.Radius = 8;
             button.RectSize = 1;
-            button.Click += Button_Click;
         }
         
         private void StyleSpecialButton(UIButton button, string text)
@@ -199,6 +198,7 @@ namespace MASAN_SERIALIZATION.Diaglogs
         private void Button_Click(object sender, EventArgs e)
         {
             int cursorPosition = textPadTextBox.SelectionStart; // Vị trí con trỏ
+
             if (sender is UIButton button)
             {
                 string key = button.Text;
