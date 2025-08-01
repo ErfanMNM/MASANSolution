@@ -974,8 +974,8 @@ namespace MASAN_SERIALIZATION.Production
 	                                        ""ProductionDate""	TEXT NOT NULL DEFAULT 0,
 	                                        ""ActivateUser""	TEXT NOT NULL DEFAULT 0,
                                             ""SubCamera_ActivateDate""	TEXT NOT NULL DEFAULT 0,
-	                                        ""Send_Status""	TEXT NOT NULL DEFAULT pending,
-	                                        ""Recive_Status""	TEXT NOT NULL DEFAULT waiting,
+	                                        ""Send_Status""	TEXT NOT NULL DEFAULT Pending,
+	                                        ""Recive_Status""	TEXT NOT NULL DEFAULT Pending,
 	                                        ""Send_Recive_Logs""	JSON,
 	                                        ""Duplicate""	JSON,
 	                                        PRIMARY KEY(""ID"" AUTOINCREMENT)
@@ -1229,7 +1229,8 @@ namespace MASAN_SERIALIZATION.Production
     public enum e_AWS_Recive_Status
     {
         Waiting = 0,
-        Recived = 200,
+        Pending,
+        Sent =200,
         Error = 2,
         Error_404 = 404,
         Error_500 = 500,
