@@ -40,14 +40,14 @@
             this.dataInputGroup = new Sunny.UI.UIGroupBox();
             this.dataInputContainer = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
-            this.uiPanel1 = new Sunny.UI.UIPanel();
-            this.ipmesageID = new Sunny.UI.UITextBox();
+            this.btnFilePath = new Sunny.UI.UIPanel();
+            this.ipfilePath = new Sunny.UI.UITextBox();
             this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
             this.uiPanel2 = new Sunny.UI.UIPanel();
             this.iporderNo = new Sunny.UI.UITextBox();
             this.uiTableLayoutPanel3 = new Sunny.UI.UITableLayoutPanel();
             this.uiPanel3 = new Sunny.UI.UIPanel();
-            this.ipuniqueCode = new Sunny.UI.UITextBox();
+            this.ipSendCount = new Sunny.UI.UITextBox();
             this.uiTableLayoutPanel4 = new Sunny.UI.UITableLayoutPanel();
             this.uiPanel4 = new Sunny.UI.UIPanel();
             this.ipcartonCode = new Sunny.UI.UITextBox();
@@ -56,14 +56,14 @@
             this.ipstatus = new Sunny.UI.UITextBox();
             this.uiTableLayoutPanel6 = new Sunny.UI.UITableLayoutPanel();
             this.uiPanel6 = new Sunny.UI.UIPanel();
-            this.uiDatetimePicker1 = new Sunny.UI.UIDatetimePicker();
+            this.ipProductionDate = new Sunny.UI.UIDatetimePicker();
             this.buttonContainer = new Sunny.UI.UITableLayoutPanel();
             this.btnConnect = new Sunny.UI.UISymbolButton();
             this.btnGetData = new Sunny.UI.UISymbolButton();
-            this.uiSymbolButton6 = new Sunny.UI.UISymbolButton();
-            this.uiSymbolButton5 = new Sunny.UI.UISymbolButton();
+            this.btnLoadPOInfo = new Sunny.UI.UISymbolButton();
+            this.btnSendTest = new Sunny.UI.UISymbolButton();
             this.btnSendOne = new Sunny.UI.UISymbolButton();
-            this.uiSymbolButton4 = new Sunny.UI.UISymbolButton();
+            this.btnSendAll = new Sunny.UI.UISymbolButton();
             this.mainContainer.SuspendLayout();
             this.consoleGroup.SuspendLayout();
             this.consoleContainer.SuspendLayout();
@@ -169,6 +169,7 @@
             this.opConsole.Size = new System.Drawing.Size(397, 327);
             this.opConsole.TabIndex = 2;
             this.opConsole.Text = "uiListBox1";
+            this.opConsole.DoubleClick += new System.EventHandler(this.opConsole_DoubleClick);
             // 
             // opReciveConsole
             // 
@@ -259,8 +260,8 @@
             // 
             this.uiTableLayoutPanel1.ColumnCount = 1;
             this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTableLayoutPanel1.Controls.Add(this.uiPanel1, 0, 0);
-            this.uiTableLayoutPanel1.Controls.Add(this.ipmesageID, 0, 1);
+            this.uiTableLayoutPanel1.Controls.Add(this.btnFilePath, 0, 0);
+            this.uiTableLayoutPanel1.Controls.Add(this.ipfilePath, 0, 1);
             this.uiTableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.uiTableLayoutPanel1.Name = "uiTableLayoutPanel1";
@@ -271,37 +272,38 @@
             this.uiTableLayoutPanel1.TabIndex = 0;
             this.uiTableLayoutPanel1.TagString = null;
             // 
-            // uiPanel1
+            // btnFilePath
             // 
-            this.uiPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel1.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel1.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel1.Name = "uiPanel1";
-            this.uiPanel1.Size = new System.Drawing.Size(174, 21);
-            this.uiPanel1.TabIndex = 0;
-            this.uiPanel1.Text = "🏷️ Message ID";
-            this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnFilePath.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnFilePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
+            this.btnFilePath.Location = new System.Drawing.Point(2, 2);
+            this.btnFilePath.Margin = new System.Windows.Forms.Padding(2);
+            this.btnFilePath.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnFilePath.Name = "btnFilePath";
+            this.btnFilePath.Size = new System.Drawing.Size(174, 21);
+            this.btnFilePath.TabIndex = 0;
+            this.btnFilePath.Text = "🏷️ File Path";
+            this.btnFilePath.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnFilePath.Click += new System.EventHandler(this.btnFilePath_Click);
             // 
-            // ipmesageID
+            // ipfilePath
             // 
-            this.ipmesageID.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.ipmesageID.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ipmesageID.DoubleValue = 6868D;
-            this.ipmesageID.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.ipmesageID.IntValue = 6868;
-            this.ipmesageID.Location = new System.Drawing.Point(2, 27);
-            this.ipmesageID.Margin = new System.Windows.Forms.Padding(2);
-            this.ipmesageID.MinimumSize = new System.Drawing.Size(1, 16);
-            this.ipmesageID.Name = "ipmesageID";
-            this.ipmesageID.Padding = new System.Windows.Forms.Padding(5);
-            this.ipmesageID.ShowText = false;
-            this.ipmesageID.Size = new System.Drawing.Size(174, 31);
-            this.ipmesageID.TabIndex = 1;
-            this.ipmesageID.Text = "6868";
-            this.ipmesageID.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ipmesageID.Watermark = "Nhập Message ID...";
+            this.ipfilePath.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.ipfilePath.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ipfilePath.DoubleValue = 6868D;
+            this.ipfilePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.ipfilePath.IntValue = 6868;
+            this.ipfilePath.Location = new System.Drawing.Point(2, 27);
+            this.ipfilePath.Margin = new System.Windows.Forms.Padding(2);
+            this.ipfilePath.MinimumSize = new System.Drawing.Size(1, 16);
+            this.ipfilePath.Name = "ipfilePath";
+            this.ipfilePath.Padding = new System.Windows.Forms.Padding(5);
+            this.ipfilePath.ShowText = false;
+            this.ipfilePath.Size = new System.Drawing.Size(174, 31);
+            this.ipfilePath.TabIndex = 1;
+            this.ipfilePath.Text = "6868";
+            this.ipfilePath.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ipfilePath.Watermark = "Nhập Message ID...";
             // 
             // uiTableLayoutPanel2
             // 
@@ -354,7 +356,7 @@
             this.uiTableLayoutPanel3.ColumnCount = 1;
             this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.uiTableLayoutPanel3.Controls.Add(this.uiPanel3, 0, 0);
-            this.uiTableLayoutPanel3.Controls.Add(this.ipuniqueCode, 0, 1);
+            this.uiTableLayoutPanel3.Controls.Add(this.ipSendCount, 0, 1);
             this.uiTableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTableLayoutPanel3.Location = new System.Drawing.Point(371, 3);
             this.uiTableLayoutPanel3.Name = "uiTableLayoutPanel3";
@@ -375,26 +377,28 @@
             this.uiPanel3.Name = "uiPanel3";
             this.uiPanel3.Size = new System.Drawing.Size(175, 21);
             this.uiPanel3.TabIndex = 0;
-            this.uiPanel3.Text = "🔑 Unique Code";
+            this.uiPanel3.Text = "🔑 Số lượng gửi";
             this.uiPanel3.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // ipuniqueCode
+            // ipSendCount
             // 
-            this.ipuniqueCode.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.ipuniqueCode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ipuniqueCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.ipuniqueCode.Location = new System.Drawing.Point(2, 27);
-            this.ipuniqueCode.Margin = new System.Windows.Forms.Padding(2);
-            this.ipuniqueCode.MinimumSize = new System.Drawing.Size(1, 16);
-            this.ipuniqueCode.Name = "ipuniqueCode";
-            this.ipuniqueCode.Padding = new System.Windows.Forms.Padding(5);
-            this.ipuniqueCode.Radius = 1;
-            this.ipuniqueCode.ShowText = false;
-            this.ipuniqueCode.Size = new System.Drawing.Size(175, 31);
-            this.ipuniqueCode.TabIndex = 1;
-            this.ipuniqueCode.Text = "PO_678";
-            this.ipuniqueCode.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ipuniqueCode.Watermark = "Nhập Unique Code...";
+            this.ipSendCount.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.ipSendCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ipSendCount.DoubleValue = 100D;
+            this.ipSendCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.ipSendCount.IntValue = 100;
+            this.ipSendCount.Location = new System.Drawing.Point(2, 27);
+            this.ipSendCount.Margin = new System.Windows.Forms.Padding(2);
+            this.ipSendCount.MinimumSize = new System.Drawing.Size(1, 16);
+            this.ipSendCount.Name = "ipSendCount";
+            this.ipSendCount.Padding = new System.Windows.Forms.Padding(5);
+            this.ipSendCount.Radius = 1;
+            this.ipSendCount.ShowText = false;
+            this.ipSendCount.Size = new System.Drawing.Size(175, 31);
+            this.ipSendCount.TabIndex = 1;
+            this.ipSendCount.Text = "100";
+            this.ipSendCount.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ipSendCount.Watermark = "Nhập Unique Code...";
             // 
             // uiTableLayoutPanel4
             // 
@@ -429,7 +433,9 @@
             // 
             this.ipcartonCode.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.ipcartonCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ipcartonCode.DoubleValue = 1234567890D;
             this.ipcartonCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.ipcartonCode.IntValue = 1234567890;
             this.ipcartonCode.Location = new System.Drawing.Point(2, 27);
             this.ipcartonCode.Margin = new System.Windows.Forms.Padding(2);
             this.ipcartonCode.MinimumSize = new System.Drawing.Size(1, 16);
@@ -438,7 +444,7 @@
             this.ipcartonCode.ShowText = false;
             this.ipcartonCode.Size = new System.Drawing.Size(174, 32);
             this.ipcartonCode.TabIndex = 1;
-            this.ipcartonCode.Text = "PO_678";
+            this.ipcartonCode.Text = "1234567890";
             this.ipcartonCode.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipcartonCode.Watermark = "Nhập Carton Code...";
             // 
@@ -475,7 +481,9 @@
             // 
             this.ipstatus.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.ipstatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ipstatus.DoubleValue = 1D;
             this.ipstatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.ipstatus.IntValue = 1;
             this.ipstatus.Location = new System.Drawing.Point(2, 27);
             this.ipstatus.Margin = new System.Windows.Forms.Padding(2);
             this.ipstatus.MinimumSize = new System.Drawing.Size(1, 16);
@@ -484,7 +492,7 @@
             this.ipstatus.ShowText = false;
             this.ipstatus.Size = new System.Drawing.Size(174, 32);
             this.ipstatus.TabIndex = 1;
-            this.ipstatus.Text = "PO_678";
+            this.ipstatus.Text = "1";
             this.ipstatus.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipstatus.Watermark = "Nhập Status...";
             // 
@@ -493,7 +501,7 @@
             this.uiTableLayoutPanel6.ColumnCount = 1;
             this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.uiTableLayoutPanel6.Controls.Add(this.uiPanel6, 0, 0);
-            this.uiTableLayoutPanel6.Controls.Add(this.uiDatetimePicker1, 0, 1);
+            this.uiTableLayoutPanel6.Controls.Add(this.ipProductionDate, 0, 1);
             this.uiTableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTableLayoutPanel6.Location = new System.Drawing.Point(371, 69);
             this.uiTableLayoutPanel6.Name = "uiTableLayoutPanel6";
@@ -517,26 +525,26 @@
             this.uiPanel6.Text = "📅 Production Date";
             this.uiPanel6.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // uiDatetimePicker1
+            // ipProductionDate
             // 
-            this.uiDatetimePicker1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiDatetimePicker1.FillColor = System.Drawing.Color.White;
-            this.uiDatetimePicker1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.uiDatetimePicker1.Location = new System.Drawing.Point(2, 27);
-            this.uiDatetimePicker1.Margin = new System.Windows.Forms.Padding(2);
-            this.uiDatetimePicker1.MaxLength = 19;
-            this.uiDatetimePicker1.MinimumSize = new System.Drawing.Size(63, 0);
-            this.uiDatetimePicker1.Name = "uiDatetimePicker1";
-            this.uiDatetimePicker1.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
-            this.uiDatetimePicker1.Size = new System.Drawing.Size(175, 32);
-            this.uiDatetimePicker1.SymbolDropDown = 61555;
-            this.uiDatetimePicker1.SymbolNormal = 61555;
-            this.uiDatetimePicker1.SymbolSize = 20;
-            this.uiDatetimePicker1.TabIndex = 1;
-            this.uiDatetimePicker1.Text = "2025-07-30 10:07:11";
-            this.uiDatetimePicker1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.uiDatetimePicker1.Value = new System.DateTime(2025, 7, 30, 10, 7, 11, 0);
-            this.uiDatetimePicker1.Watermark = "Chọn ngày sản xuất...";
+            this.ipProductionDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ipProductionDate.FillColor = System.Drawing.Color.White;
+            this.ipProductionDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.ipProductionDate.Location = new System.Drawing.Point(2, 27);
+            this.ipProductionDate.Margin = new System.Windows.Forms.Padding(2);
+            this.ipProductionDate.MaxLength = 19;
+            this.ipProductionDate.MinimumSize = new System.Drawing.Size(63, 0);
+            this.ipProductionDate.Name = "ipProductionDate";
+            this.ipProductionDate.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
+            this.ipProductionDate.Size = new System.Drawing.Size(175, 32);
+            this.ipProductionDate.SymbolDropDown = 61555;
+            this.ipProductionDate.SymbolNormal = 61555;
+            this.ipProductionDate.SymbolSize = 20;
+            this.ipProductionDate.TabIndex = 1;
+            this.ipProductionDate.Text = "2025-07-30 10:07:11";
+            this.ipProductionDate.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ipProductionDate.Value = new System.DateTime(2025, 7, 30, 10, 7, 11, 0);
+            this.ipProductionDate.Watermark = "Chọn ngày sản xuất...";
             // 
             // buttonContainer
             // 
@@ -544,10 +552,10 @@
             this.buttonContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.buttonContainer.Controls.Add(this.btnConnect, 0, 0);
             this.buttonContainer.Controls.Add(this.btnGetData, 0, 1);
-            this.buttonContainer.Controls.Add(this.uiSymbolButton6, 0, 2);
-            this.buttonContainer.Controls.Add(this.uiSymbolButton5, 0, 3);
+            this.buttonContainer.Controls.Add(this.btnLoadPOInfo, 0, 2);
+            this.buttonContainer.Controls.Add(this.btnSendTest, 0, 3);
             this.buttonContainer.Controls.Add(this.btnSendOne, 0, 4);
-            this.buttonContainer.Controls.Add(this.uiSymbolButton4, 0, 5);
+            this.buttonContainer.Controls.Add(this.btnSendAll, 0, 5);
             this.buttonContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.buttonContainer.Location = new System.Drawing.Point(570, 3);
             this.buttonContainer.Name = "buttonContainer";
@@ -592,33 +600,35 @@
             this.btnGetData.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnGetData.Click += new System.EventHandler(this.btnGetData_Click);
             // 
-            // uiSymbolButton6
+            // btnLoadPOInfo
             // 
-            this.uiSymbolButton6.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uiSymbolButton6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiSymbolButton6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.uiSymbolButton6.Location = new System.Drawing.Point(3, 59);
-            this.uiSymbolButton6.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiSymbolButton6.Name = "uiSymbolButton6";
-            this.uiSymbolButton6.Size = new System.Drawing.Size(231, 22);
-            this.uiSymbolButton6.Symbol = 61530;
-            this.uiSymbolButton6.TabIndex = 2;
-            this.uiSymbolButton6.Text = "Lấy thông tin";
-            this.uiSymbolButton6.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnLoadPOInfo.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnLoadPOInfo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnLoadPOInfo.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.btnLoadPOInfo.Location = new System.Drawing.Point(3, 59);
+            this.btnLoadPOInfo.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnLoadPOInfo.Name = "btnLoadPOInfo";
+            this.btnLoadPOInfo.Size = new System.Drawing.Size(231, 22);
+            this.btnLoadPOInfo.Symbol = 61530;
+            this.btnLoadPOInfo.TabIndex = 2;
+            this.btnLoadPOInfo.Text = "Lấy thông tin";
+            this.btnLoadPOInfo.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnLoadPOInfo.Click += new System.EventHandler(this.btnLoadPOInfo_Click);
             // 
-            // uiSymbolButton5
+            // btnSendTest
             // 
-            this.uiSymbolButton5.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uiSymbolButton5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiSymbolButton5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.uiSymbolButton5.Location = new System.Drawing.Point(3, 87);
-            this.uiSymbolButton5.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiSymbolButton5.Name = "uiSymbolButton5";
-            this.uiSymbolButton5.Size = new System.Drawing.Size(231, 22);
-            this.uiSymbolButton5.Symbol = 61956;
-            this.uiSymbolButton5.TabIndex = 3;
-            this.uiSymbolButton5.Text = "Gửi test";
-            this.uiSymbolButton5.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnSendTest.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSendTest.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnSendTest.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.btnSendTest.Location = new System.Drawing.Point(3, 87);
+            this.btnSendTest.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnSendTest.Name = "btnSendTest";
+            this.btnSendTest.Size = new System.Drawing.Size(231, 22);
+            this.btnSendTest.Symbol = 61956;
+            this.btnSendTest.TabIndex = 3;
+            this.btnSendTest.Text = "Gửi test";
+            this.btnSendTest.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnSendTest.Click += new System.EventHandler(this.btnSendTest_Click);
             // 
             // btnSendOne
             // 
@@ -635,19 +645,19 @@
             this.btnSendOne.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnSendOne.Click += new System.EventHandler(this.btnSendOne_Click);
             // 
-            // uiSymbolButton4
+            // btnSendAll
             // 
-            this.uiSymbolButton4.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uiSymbolButton4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiSymbolButton4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.uiSymbolButton4.Location = new System.Drawing.Point(3, 143);
-            this.uiSymbolButton4.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiSymbolButton4.Name = "uiSymbolButton4";
-            this.uiSymbolButton4.Size = new System.Drawing.Size(231, 26);
-            this.uiSymbolButton4.Symbol = 61547;
-            this.uiSymbolButton4.TabIndex = 5;
-            this.uiSymbolButton4.Text = "Gửi hết";
-            this.uiSymbolButton4.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnSendAll.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSendAll.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnSendAll.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.btnSendAll.Location = new System.Drawing.Point(3, 143);
+            this.btnSendAll.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnSendAll.Name = "btnSendAll";
+            this.btnSendAll.Size = new System.Drawing.Size(231, 26);
+            this.btnSendAll.Symbol = 61547;
+            this.btnSendAll.TabIndex = 5;
+            this.btnSendAll.Text = "Gửi hết";
+            this.btnSendAll.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             // 
             // PAws
             // 
@@ -689,13 +699,13 @@
         private Sunny.UI.UIGroupBox dataInputGroup;
         private Sunny.UI.UITableLayoutPanel dataInputContainer;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel1;
-        private Sunny.UI.UIPanel uiPanel1;
-        private Sunny.UI.UITextBox ipmesageID;
+        private Sunny.UI.UIPanel btnFilePath;
+        private Sunny.UI.UITextBox ipfilePath;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel2;
         private Sunny.UI.UITextBox iporderNo;
         private Sunny.UI.UIPanel uiPanel2;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel3;
-        private Sunny.UI.UITextBox ipuniqueCode;
+        private Sunny.UI.UITextBox ipSendCount;
         private Sunny.UI.UIPanel uiPanel3;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel4;
         private Sunny.UI.UITextBox ipcartonCode;
@@ -705,13 +715,13 @@
         private Sunny.UI.UIPanel uiPanel5;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel6;
         private Sunny.UI.UIPanel uiPanel6;
-        private Sunny.UI.UIDatetimePicker uiDatetimePicker1;
+        private Sunny.UI.UIDatetimePicker ipProductionDate;
         private Sunny.UI.UITableLayoutPanel buttonContainer;
         private Sunny.UI.UISymbolButton btnConnect;
         private Sunny.UI.UISymbolButton btnGetData;
-        private Sunny.UI.UISymbolButton uiSymbolButton6;
-        private Sunny.UI.UISymbolButton uiSymbolButton5;
+        private Sunny.UI.UISymbolButton btnLoadPOInfo;
+        private Sunny.UI.UISymbolButton btnSendTest;
         private Sunny.UI.UISymbolButton btnSendOne;
-        private Sunny.UI.UISymbolButton uiSymbolButton4;
+        private Sunny.UI.UISymbolButton btnSendAll;
     }
 }

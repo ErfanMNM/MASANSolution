@@ -1,4 +1,4 @@
-﻿using MASAN_SERIALIZATION.Configs;
+using MASAN_SERIALIZATION.Configs;
 using Sunny.UI;
 using System;
 using System.Collections.Generic;
@@ -11,24 +11,24 @@ namespace MASAN_SERIALIZATION.Production
 {
     public class ProductionOrder
     {
-        //vị trí thư mục lưu trữ thông tin po lấy từ MES
+        #region Private Fields & Constants
         private static string poAPIServerPath;
         private static string poAPIServerFileName;
-        //đường dẫn đến cơ sở dữ liệu PO log
-        private static string POLog_dbPath = @"C:\MasanSerialization\Databases\POLog.db"; //đường dẫn đến cơ sở dữ liệu log PO, nơi lưu trữ thông tin PO đã sử dụng trong quá trình sản xuất
-        //khởi tạo thông tin đường dẫn đến cơ sở dữ liệu PO
+        private static string POLog_dbPath = @"C:\MasanSerialization\Databases\POLog.db";
         private static string dataPath = $"C:/MasanSerialization/PODatabases";
         public static string orderNO { get; set; } = string.Empty;
+        #endregion
 
+        #region Constructor
         public ProductionOrder()
         {
-            //tao thư mục lưu trữ thông tin po lấy từ MES nằm trong thư mục cài đặt của ứng dụng ở C:\MasanSerialization\Server_Service\
             poAPIServerPath = @"C:\MasanSerialization\Server_Service\";
             poAPIServerFileName = "po.db";
             Create_POLogDatabases();
         }
+        #endregion
 
-        #region Các thuộc tính thông tin PO
+        #region Production Order Properties
         public string orderNo { get; set; } = "-";
         public string site { get; set; } = "-";
         public string factory { get; set; } = "-";
@@ -43,43 +43,36 @@ namespace MASAN_SERIALIZATION.Production
         public string customerOrderNo { get; set; } = "-";
         public string uom { get; set; } = "-";
         public string cartonSize { get; set; } = "-";
-        public string totalCZCode { get; set; } = "-"; //Tổng số mã CZ đã nhận từ MES
+        public string totalCZCode { get; set; } = "-";
         public Product_Counter counter { get; set; } = new Product_Counter();
-        public AWS_Send_Counter awsSendCounter { get; set; } = new AWS_Send_Counter(); //Thông tin bộ đếm gửi AWS
-        public AWS_Recived_Counter awsRecivedCounter { get; set; } = new AWS_Recived_Counter(); //Thông tin bộ đếm nhận AWS
-
+        public AWS_Send_Counter awsSendCounter { get; set; } = new AWS_Send_Counter();
+        public AWS_Recived_Counter awsRecivedCounter { get; set; } = new AWS_Recived_Counter();
         #endregion
 
-        #region Các chương trình kiểm soát thùng
-
-
-
+        #region Data Access Objects
+        public GetfromMES getfromMES { get; } = new GetfromMES();
+        public GetDataPO getDataPO { get; } = new GetDataPO();
+        public PostDB setDB { get; set; } = new PostDB();
         #endregion
 
-        #region Các thống kê
+        #region Counter Classes
         public class Product_Counter
         {
-            public int passCount { get; set; } = 0;//Pass
-            public int failCount { get; set; } = 0;//Lỗi
-            public int duplicateCount { get; set; } = 0;//Trùng lặp
-            public int readfailCount { get; set; } = 0;//Không đọc được
-            public int notfoundCount { get; set; } = 0;//Không tồn tại
-            public int errorCount { get; set; } = 0;//Tổng số lỗi khác (gửi PLC không được, timeout, v.v.)
-
-            public int totalCount { get; set; } = 0;//Tổng số mã đã quét
-
-
-            public int totalCartonCount { get; set; } = 0;//Tổng số thùng đã quét
-            public int activatedCartonCount { get; set; } = 0; //Tổng số thùng đã kích hoạt
-            public int errorCartonCount { get; set; } = 0; //Tổng số thùng lỗi (lỗi kích hoạt, lỗi gửi AWS, v.v.)
-
-            public  int cartonID { get; set; } = 0; // Biến toàn cục để lưu trữ ID của thùng carton hiện tại
-            public  string carton_Packing_Code { get; set; } = ""; // Biến toàn cục để lưu trữ mã code của thùng carton hiện tại
+            public int passCount { get; set; } = 0;
+            public int failCount { get; set; } = 0;
+            public int duplicateCount { get; set; } = 0;
+            public int readfailCount { get; set; } = 0;
+            public int notfoundCount { get; set; } = 0;
+            public int errorCount { get; set; } = 0;
+            public int totalCount { get; set; } = 0;
+            public int totalCartonCount { get; set; } = 0;
+            public int activatedCartonCount { get; set; } = 0;
+            public int errorCartonCount { get; set; } = 0;
+            public int cartonID { get; set; } = 0;
+            public string carton_Packing_Code { get; set; } = "";
             public int carton_Packing_ID { get; set; } = 0;
+            public int carton_Packing_Count { get; set; } = 0;
 
-            public int carton_Packing_Count { get; set; } = 0; // Biến toàn cục để lưu trữ số lượng thùng carton packing hiện tại
-
-            //hàm reset lại các bộ đếm
             public void Reset()
             {
                 passCount = 0;
@@ -92,26 +85,19 @@ namespace MASAN_SERIALIZATION.Production
                 totalCartonCount = 0;
                 activatedCartonCount = 0;
                 errorCartonCount = 0;
-
-                cartonID = 0; // Reset ID thùng carton
-                carton_Packing_Code = ""; // Reset mã code thùng carton
-                carton_Packing_ID = 0; // Reset ID thùng carton packing
-                carton_Packing_Count = 0; // Reset số lượng thùng carton packing
+                cartonID = 0;
+                carton_Packing_Code = "";
+                carton_Packing_ID = 0;
+                carton_Packing_Count = 0;
             }
-
         }
 
-        //thông tin bộ đếm gửi nhận aws
         public class AWS_Send_Counter
         {
-            //số chưa gửi (chưa kích hoạt)
-            public int pendingCount { get; set; } = 0; //Số mã chưa gửi
-            //số đã gửi
-            public int sentCount { get; set; } = 0; //Số mã đã gửi thành công
-            //số gửi lỗi
-            public int failedCount { get; set; } = 0; //Số mã gửi lỗi
+            public int pendingCount { get; set; } = 0;
+            public int sentCount { get; set; } = 0;
+            public int failedCount { get; set; } = 0;
 
-            //hàm reset lại các bộ đếm
             public void Reset()
             {
                 pendingCount = 0;
@@ -122,24 +108,18 @@ namespace MASAN_SERIALIZATION.Production
 
         public class AWS_Recived_Counter
         {
-            //số chưa gửi (chưa kích hoạt)
-            public int waitingCount { get; set; } = 0; //số mã đang chờ nhận
-            //số đã gửi
-            public int recivedCount { get; set; } = 0; //đã nhận thành công
+            public int waitingCount { get; set; } = 0;
+            public int recivedCount { get; set; } = 0;
 
-            //ham reset lại các bộ đếm
             public void Reset()
             {
                 waitingCount = 0;
                 recivedCount = 0;
             }
         }
-
         #endregion
 
-        #region Các phương thức lấy dữ liệu từ MES
-        public GetfromMES getfromMES { get; } = new GetfromMES();
-
+        #region MES Data Access
         public class GetfromMES
         {
             public (bool issucess, string message, DataTable PO) ProductionOrder_List()
@@ -159,17 +139,16 @@ namespace MASAN_SERIALIZATION.Production
                         var adapter = new SQLiteDataAdapter(query, conn);
                         var table = new DataTable();
                         adapter.Fill(table);
-                        return (table.Rows.Count > 0) ? (true, "Lấy dữ liệu thành công.", table) : (false, "Không có dữ liệu PO nào.", null);
+                        return (table.Rows.Count > 0) ? 
+                            (true, "Lấy dữ liệu thành công.", table) : 
+                            (false, "Không có dữ liệu PO nào.", null);
                     }
                 }
                 catch (Exception ex)
                 {
                     return (false, $"Lỗi P01 khi kiểm tra cơ sở dữ liệu PO: {ex.Message}", null);
                 }
-
             }
-            //lấy thông tin chi tiết của một PO theo orderNo
-            
             public TResult ProductionOrder_Detail(string orderNo)
             {
                 string dbPath = $@"{poAPIServerPath}{poAPIServerFileName}";
@@ -177,9 +156,9 @@ namespace MASAN_SERIALIZATION.Production
                 {
                     if (!File.Exists(dbPath))
                     {
-                        TResult result = new TResult (false, "Cơ sở dữ liệu PO không tồn tại.");
-                        return result;
+                        return new TResult(false, "Cơ sở dữ liệu PO không tồn tại.");
                     }
+                    
                     using (var conn = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
                     {
                         conn.Open();
@@ -191,7 +170,7 @@ namespace MASAN_SERIALIZATION.Production
                         adapter.Fill(table);
 
                         return (table.Rows.Count > 0)
-                            ? new TResult(true, "Lấy thông tin chi tiết PO thành công.",0 , table)
+                            ? new TResult(true, "Lấy thông tin chi tiết PO thành công.", 0, table)
                             : new TResult(false, "Không có thông tin chi tiết cho orderNo: " + orderNo);
                     }
                 }
@@ -200,7 +179,6 @@ namespace MASAN_SERIALIZATION.Production
                     return new TResult(false, $"Lỗi P02 khi lấy thông tin chi tiết PO: {ex.Message}");
                 }
             }
-            //lấy số count mã CZ nằm trong thư mục _codesPath/<orderNo>.db SELECT COUNT(*) FROM `UniqueCodes`;
             public TResult Get_Unique_Code_MES_Count(string orderNo)
             {
                 try
@@ -224,7 +202,6 @@ namespace MASAN_SERIALIZATION.Production
                 }
             }
 
-            //lấy danh sách mã CZ từ cơ sở dữ liệu SQLite
             public (bool issucess, string message, DataTable Data) Get_Unique_Codes_MES(string orderNo)
             {
                 try
@@ -234,24 +211,24 @@ namespace MASAN_SERIALIZATION.Production
                     {
                         return (false, "Cơ sở dữ liệu mã CZ không tồn tại.", null);
                     }
+                    
                     using (var conn = new SQLiteConnection($"Data Source={czpath};Version=3;"))
                     {
                         string query = "SELECT * FROM UniqueCodes";
                         var adapter = new SQLiteDataAdapter(query, conn);
                         var table = new DataTable();
                         adapter.Fill(table);
-                        return (table.Rows.Count > 0) ? (true, "Lấy danh sách mã CZ thành công.", table) : (false, "Không có mã CZ nào trong cơ sở dữ liệu.", null);
+                        return (table.Rows.Count > 0) ? 
+                            (true, "Lấy danh sách mã CZ thành công.", table) : 
+                            (false, "Không có mã CZ nào trong cơ sở dữ liệu.", null);
                     }
                 }
                 catch (Exception ex)
                 {
                     return (false, $"Lỗi P04 khi lấy danh sách mã CZ: {ex.Message}", null);
                 }
-
             }
 
-            //issucess: true nếu thành công, false nếu thất bại
-            //message: thông báo kết quả
             public (bool issucess, string message) MES_Load_OrderNo_ToComboBox(UIComboBox comboBox)
             {
                 try
@@ -262,13 +239,12 @@ namespace MASAN_SERIALIZATION.Production
                         string query = "SELECT DISTINCT orderNo FROM POInfo ORDER BY orderNo";
                         var adapter = new SQLiteDataAdapter(query, conn);
                         var table = new DataTable();
-
                         adapter.Fill(table);
-                        // Thêm một dòng rỗng vào đầu danh sách
+                        
                         DataRow emptyRow = table.NewRow();
-                        emptyRow["orderNo"] = "Chọn orderNO"; // Hoặc để trống
+                        emptyRow["orderNo"] = "Chọn orderNO";
                         table.Rows.InsertAt(emptyRow, 0);
-                        // Thiết lập DataSource cho ComboBox
+                        
                         comboBox.DataSource = table;
                         comboBox.DisplayMember = "orderNo";
                         comboBox.ValueMember = "orderNo";
@@ -285,16 +261,13 @@ namespace MASAN_SERIALIZATION.Production
 
         #endregion
 
-        #region Các phương thức lấy từ dữ liệu sản xuất (run)
-        public GetDataPO getDataPO { get; } = new GetDataPO();
+        #region Production Data Access
         public class GetDataPO
         {
-            //lấy PO dùng lần cuối từ cơ sở dữ liệu SQLite 
             public TResult GetLastPO()
             {
                 try
                 {
-
                     using (var conn = new SQLiteConnection($"Data Source={POLog_dbPath};Version=3;"))
                     {
                         conn.Open();
@@ -303,6 +276,7 @@ namespace MASAN_SERIALIZATION.Production
                         var adapter = new SQLiteDataAdapter(command);
                         var table = new DataTable();
                         adapter.Fill(table);
+                        
                         if (table.Rows.Count > 0)
                         {
                             return new TResult(true, "Lấy PO thành công.", 0, table);
@@ -330,7 +304,9 @@ namespace MASAN_SERIALIZATION.Production
                         adapter.SelectCommand.Parameters.AddWithValue("@orderNo", orderNo);
                         var table = new DataTable();
                         adapter.Fill(table);
-                        return (table.Rows.Count > 0) ? (true, table, "Lấy lịch sử PO thành công.") : (false, null, "Không có lịch sử PO nào cho orderNo: " + orderNo);
+                        return (table.Rows.Count > 0) ? 
+                            (true, table, "Lấy lịch sử PO thành công.") : 
+                            (false, null, "Không có lịch sử PO nào cho orderNo: " + orderNo);
                     }
                 }
                 catch (Exception ex)
@@ -339,7 +315,6 @@ namespace MASAN_SERIALIZATION.Production
                 }
             }
 
-            //lấy tổng số sản phẩm đã chạy
             public TResult Get_Record_Count(string orderNO)
             {
                 try
@@ -349,6 +324,7 @@ namespace MASAN_SERIALIZATION.Production
                     {
                         return new TResult(false, "Không có PO nào trong cơ sở dữ liệu.");
                     }
+                    
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         conn.Open();
@@ -364,10 +340,8 @@ namespace MASAN_SERIALIZATION.Production
                 {
                     return new TResult(false, $"Lỗi P03 khi lấy PO: {ex.Message}");
                 }
-
             }
 
-            //lấy count theo trạng thái
             public TResult Get_Record_Count_By_Status(string orderNO, e_Production_Status Production_Status)
             {
                 try
@@ -375,8 +349,9 @@ namespace MASAN_SERIALIZATION.Production
                     string czRunPath = $"{dataPath}/Record_{orderNO}.db";
                     if (!File.Exists(czRunPath))
                     {
-                       return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
+                        return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
                     }
+                    
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         conn.Open();
@@ -505,30 +480,33 @@ namespace MASAN_SERIALIZATION.Production
 
             //lấy mã code với điều kiện status !=0, cartonCode != 0 và send_status = 'Pending'
 
-            public (bool issucess, DataTable Codes, string message) Get_Codes_Send(string orderNo)
+            public TResult Get_Codes_Send(string orderNo)
             {
                 try
                 {
                     string czRunPath = $"{dataPath}/{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
-                        return (false, null, "Cơ sở dữ liệu ghi không tồn tại.");
+                        return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
                     }
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         conn.Open();
-                        string query = "SELECT * FROM UniqueCodes WHERE Status != 0 AND Send_Status !=0 AND cartonCode !=0";
+                        string query = "SELECT * FROM UniqueCodes WHERE Status != 0 AND Send_Status !=0 AND cartonCode != 'pending'";
                        
                         var command = new SQLiteCommand(query, conn);
                         var adapter = new SQLiteDataAdapter(command);
                         var table = new DataTable();
                         adapter.Fill(table);
-                        return (table.Rows.Count > 0) ? (true, table, "Lấy danh sách mã code thành công. SL : " + table.Rows.Count.ToString()) : (true, null, "Không có mã code nào trong cơ sở dữ liệu.");
+
+                        return (table.Rows.Count > 0)
+                            ? new TResult(true, "Lấy danh sách mã code thành công.", 0, table)
+                            : new TResult(false, "Không có mã code nào trong cơ sở dữ liệu.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    return (false, null, $"Lỗi PH111 khi lấy danh sách mã code: {ex.Message}");
+                    return new TResult(false, $"Lỗi PH11 khi lấy danh sách mã code: {ex.Message}");
                 }
             }
             //lấy mã thùng lớn nhất
@@ -782,8 +760,6 @@ namespace MASAN_SERIALIZATION.Production
                 return (false, $"Lỗi P06 khi ghi PO vào cơ sở dữ liệu: {ex.Message}");
             }
         }
-
-        public PostDB setDB { get; set; } = new PostDB();
         public class PostDB
         {
 
@@ -938,7 +914,7 @@ namespace MASAN_SERIALIZATION.Production
 
         #endregion
 
-        #region Các chức năng khác dùng nội bộ
+        #region Internal Helper Methods
         private static void Create_POLogDatabases()
         {
             if (!Directory.Exists(@"C:\MasanSerialization\Databases"))
@@ -952,34 +928,25 @@ namespace MASAN_SERIALIZATION.Production
                 {
                     conn.Open();
                     string createTableQuery = @"
-                        CREATE TABLE    ""PO"" (
-	                                    ""ID""	INTEGER NOT NULL UNIQUE,
-	                                    ""orderNO""	TEXT NOT NULL,
-	                                    ""productionDate""	TEXT NOT NULL,
-	                                    ""Action""	TEXT NOT NULL,
-	                                    ""UserName""	TEXT NOT NULL,
-	                                    ""Counter""	JSON NOT NULL,
-	                                    ""Timestamp""	TEXT NOT NULL,
-	                                    ""Timeunix""	INTEGER NOT NULL,
-	                                    PRIMARY KEY(""ID"" AUTOINCREMENT)
-                                    );";
+                        CREATE TABLE ""PO"" (
+                            ""ID"" INTEGER NOT NULL UNIQUE,
+                            ""orderNO"" TEXT NOT NULL,
+                            ""productionDate"" TEXT NOT NULL,
+                            ""Action"" TEXT NOT NULL,
+                            ""UserName"" TEXT NOT NULL,
+                            ""Counter"" JSON NOT NULL,
+                            ""Timestamp"" TEXT NOT NULL,
+                            ""Timeunix"" INTEGER NOT NULL,
+                            PRIMARY KEY(""ID"" AUTOINCREMENT)
+                        );";
                     var command = new SQLiteCommand(createTableQuery, conn);
                     command.ExecuteNonQuery();
                 }
             }
         }
-
-        public enum ActionType
-        {
-            Create,
-            Update,
-            Delete,
-            UpdateProductionDate
-        }
-
         #endregion
 
-        #region Các phương thức kiểm tra file
+        #region Database File Management
         public (bool issucess, string message) Check_Database_File(string orderNo, string orderQty)
         {
             //try
@@ -1012,7 +979,12 @@ namespace MASAN_SERIALIZATION.Production
 	                                        ""Send_Recive_Logs""	JSON,
 	                                        ""Duplicate""	JSON,
 	                                        PRIMARY KEY(""ID"" AUTOINCREMENT)
-                                        );";
+                                        );
+                                        PRAGMA journal_mode = WAL;
+                                        PRAGMA synchronous = NORMAL;
+                                        PRAGMA cache_size = 1000000;
+                                        PRAGMA temp_store = memory;
+                                        ";
                         var command = new SQLiteCommand(createTableQuery, conn);
                         command.ExecuteNonQuery();
                     }
@@ -1061,7 +1033,11 @@ namespace MASAN_SERIALIZATION.Production
 	                                            ""ActivateUser""	TEXT NOT NULL DEFAULT 0,
 	                                            ""ProductionDate""	TEXT NOT NULL DEFAULT 0,
 	                                            PRIMARY KEY(""ID"" AUTOINCREMENT)
-                                            );";
+                                            );
+                                        PRAGMA journal_mode = WAL;
+                                        PRAGMA synchronous = NORMAL;
+                                        PRAGMA cache_size = 1000000;
+                                        PRAGMA temp_store = memory;";
                         var command = new SQLiteCommand(createTableQuery, conn);
                         command.ExecuteNonQuery();
                     }
@@ -1083,7 +1059,11 @@ namespace MASAN_SERIALIZATION.Production
 	                                            ""ActivateUser""	TEXT NOT NULL DEFAULT 0,
 	                                            ""ProductionDate""	TEXT NOT NULL DEFAULT 0,
 	                                            PRIMARY KEY(""ID"" AUTOINCREMENT)
-                                            );";
+                                            );
+                                        PRAGMA journal_mode = WAL;
+                                        PRAGMA synchronous = NORMAL;
+                                        PRAGMA cache_size = 1000000;
+                                        PRAGMA temp_store = memory;";
                         var command = new SQLiteCommand(createTableQuery, conn);
                         command.ExecuteNonQuery();
                     }
@@ -1106,6 +1086,10 @@ namespace MASAN_SERIALIZATION.Production
                                                     ActivateUser TEXT NOT NULL DEFAULT '0',
                                                     ProductionDate TEXT NOT NULL DEFAULT '0'
                                                 );
+                                        PRAGMA journal_mode = WAL;
+                                        PRAGMA synchronous = NORMAL;
+                                        PRAGMA cache_size = 1000000;
+                                        PRAGMA temp_store = memory;
                                             ";
 
                     using (var createCmd = new SQLiteCommand(createTableQuery, conn))
@@ -1151,7 +1135,11 @@ namespace MASAN_SERIALIZATION.Production
                                                 ""thing_name""	TEXT NOT NULL DEFAULT 0, 
                                                 ""send_datetime""	TEXT NOT NULL DEFAULT 0,
 	                                            PRIMARY KEY(""ID"" AUTOINCREMENT)
-                                            );";
+                                            );
+                                        PRAGMA journal_mode = WAL;
+                                        PRAGMA synchronous = NORMAL;
+                                        PRAGMA cache_size = 1000000;
+                                        PRAGMA temp_store = memory;";
                         var command = new SQLiteCommand(createTableQuery, conn);
                         command.ExecuteNonQuery();
                     }
@@ -1171,7 +1159,11 @@ namespace MASAN_SERIALIZATION.Production
 	                                            ""error_message""	TEXT NOT NULL DEFAULT '0',
 	                                            ""recive_datetime""	TEXT NOT NULL DEFAULT 0,
 	                                            PRIMARY KEY(""ID"" AUTOINCREMENT)
-                                            );";
+                                            );
+                                        PRAGMA journal_mode = WAL;
+                                        PRAGMA synchronous = NORMAL;
+                                        PRAGMA cache_size = 1000000;
+                                        PRAGMA temp_store = memory;";
                         var command = new SQLiteCommand(createTableQuery, conn);
                         command.ExecuteNonQuery();
                     }
@@ -1187,69 +1179,76 @@ namespace MASAN_SERIALIZATION.Production
         #endregion
     }
 
-    #region Các enum dùng chung
+    #region Enums & Data Models
+    public enum ActionType
+    {
+        Create,
+        Update,
+        Delete,
+        UpdateProductionDate
+    }
 
     public enum e_Production_State
     {
-        NoSelectedPO,// không có PO nào được chọn
-        Start,// bắt đầu quá trình sản xuất
-        Checking_PO_Info, //kiểm tra thông tin PO đã đầy đủ chưa
-        Loading,//đang tải thông tin PO từ MES
-        Camera_Processing,//đang xử lý camera
-        Pushing_new_PO_to_PLC,//đẩy số liệu mới xuống PLC để bắt đầu sản xuất
-        Pushing_continue_PO_to_PLC,//đẩy số liệu xuống PLC để tiếp tục sản xuất
-        Ready,//trạng thái sẵn sàng để bắt đầu sản xuất
-        Running,//trạng thái đang sản xuất
-        Completed,// quá trình sản xuất đã hoàn thành
-        Editing,// đang chỉnh sửa thông tin sản xuất
-        Editting_ProductionDate,//Đang chỉnh sửa ngày sản xuất
-        Saving,// đang lưu thông tin sản xuất
-        Error,// có lỗi xảy ra trong quá trình sản xuất
-        Pushing_to_Dic,//đang đẩy dữ liệu lên AWS
-        Checking_Queue,//đang kiểm tra Queue
-        Pause,// tạm dừng quá trình sản xuất
+        NoSelectedPO,
+        Start,
+        Checking_PO_Info,
+        Loading,
+        Camera_Processing,
+        Pushing_new_PO_to_PLC,
+        Pushing_continue_PO_to_PLC,
+        Ready,
+        Running,
+        Completed,
+        Editing,
+        Editting_ProductionDate,
+        Saving,
+        Error,
+        Pushing_to_Dic,
+        Checking_Queue,
+        Pause,
     }
 
     public enum e_Production_Status
     {
-        Pass = 1, // thành công
-        Fail = -1, // thất bại
-        Duplicate = -3, // trùng lặp
-        ReadFail = -2, // không đọc được từ camera
-        NotFound = -4, // không tìm thấy
-        Error = -5 // lỗi khác
+        Pass = 1,
+        Fail = -1,
+        Duplicate = -3,
+        ReadFail = -2,
+        NotFound = -4,
+        Error = -5
     }
 
     public enum e_AWS_Send_Status
     {
-        Pending, // chưa gửi
-        Sent, // đã gửi thành công
-        Failed // gửi lỗi
+        Pending,
+        Sent,
+        Failed
     }
 
     public enum e_AWS_Recive_Status
     {
-        Waiting = 0, // đang chờ nhận
-        Recived = 200, // đã nhận thành công
-        Error = 2, // lỗi khi nhận
-        Error_404 = 404,// không tìm thấy
-        Error_500 = 500, // lỗi máy chủ
-        Error_400 = 400, // lỗi yêu cầu không hợp lệ
-        Error_401 = 401, // lỗi xác thực
-        Error_403 = 403, // lỗi quyền truy cập
-        Error_408 = 408, // lỗi timeout
-        Error_409 = 409, // lỗi xung đột
-        Error_402 = 402 // yêu cầu thanh toán
+        Waiting = 0,
+        Recived = 200,
+        Error = 2,
+        Error_404 = 404,
+        Error_500 = 500,
+        Error_400 = 400,
+        Error_401 = 401,
+        Error_403 = 403,
+        Error_408 = 408,
+        Error_409 = 409,
+        Error_402 = 402
     }
 
     public enum e_Production_Order_Log_Type
     {
-        Deleted, // PO đã bị xóa
-        Completed, // PO đã hoàn thành
-        Create, // PO đang chạy
-        Update, // PO đang chờ xử lý
-        UpdateProductionDate, // PO đang cập nhật ngày sản xuất
-        Error // có lỗi xảy ra với PO
+        Deleted,
+        Completed,
+        Create,
+        Update,
+        UpdateProductionDate,
+        Error
     }
 
     public class TResult
@@ -1258,6 +1257,7 @@ namespace MASAN_SERIALIZATION.Production
         public string message { get; set; }
         public DataTable data { get; set; }
         public int count { get; set; }
+        
         public TResult(bool issuccess, string message, int count = 0, DataTable data = null)
         {
             this.issuccess = issuccess;
@@ -1266,8 +1266,5 @@ namespace MASAN_SERIALIZATION.Production
             this.count = count;
         }
     }
-
-
     #endregion
-
 }

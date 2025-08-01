@@ -460,6 +460,16 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 return;
             }
 
+            Globals.ProductionData.getfromMES.MES_Load_OrderNo_ToComboBox(ipOrderNO);
+
+            if (ipOrderNO.Items.Count == 0)
+            {
+                this.ShowErrorNotifier("Lỗi PP042: Không có đơn hàng nào trong hệ thống MES, Vui lòng liên hệ quản trị viên.");
+                SetEditMode();
+                Globals.Production_State = e_Production_State.Editing;
+                return;
+            }
+
             SetEditMode();
             Globals.Production_State = e_Production_State.Editing;
         }
@@ -705,6 +715,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 opFactory.Text = row["factory"].ToString();
                 opSite.Text = row["site"].ToString();
                 opUOM.Text = row["uom"].ToString();
+                ipProductionDate.Value = DateTime.Parse(row["productionDate"].ToString());
             });
         }
 
@@ -795,7 +806,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private TResult GetAWSRecordCount(e_AWS_Send_Status sendStatus, e_AWS_Recive_Status receiveStatus, string condition, string additionalCondition = "")
         {
-            TResult result = Globals.ProductionData.getDataPO.Get_Record_Sent_Recive_Count(ipOrderNO.Text, sendStatus, receiveStatus, condition, additionalCondition);
+            TResult result = Globals.ProductionData.getDataPO.Get_Record_Sent_Recive_Count(ipOrderNO.Text, sendStatus, receiveStatus,condition,additionalCondition);
             if (!result.issuccess)
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 

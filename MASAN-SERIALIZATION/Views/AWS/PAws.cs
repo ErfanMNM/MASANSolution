@@ -1,5 +1,7 @@
-﻿using MASAN_SERIALIZATION.Configs;
+﻿using HslCommunication.Profinet.Siemens.S7PlusHelper;
+using MASAN_SERIALIZATION.Configs;
 using MASAN_SERIALIZATION.Enums;
+using MASAN_SERIALIZATION.Production;
 using MASAN_SERIALIZATION.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -70,20 +72,19 @@ namespace MASAN_SERIALIZATION.Views.AWS
                     }
                     catch (Exception ex)
                     {
-                        AWSLog.WriteLogAsync(Globals.CurrentUser.Username,e_LogType.Error, $"🔴 [{DateTime.Now}] Lỗi kết nối AWS: {ex.Message}");
+                        AWSLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"🔴 [{DateTime.Now}] Lỗi kết nối AWS: {ex.Message}");
                         this.InvokeIfRequired(() =>
                         {
-                           
+
                             opConsole.Items.Insert(0, $"🔴 [{DateTime.Now}] Lỗi kết nối AWS: {ex.Message}");
 
                         });
 
-            }
+                    }
                 });
             }
 
         }
-
 
         private void AWS_Status_OnReceive(object sender, AwsIotClientHelper.AWSStatusReceiveEventArgs e)
         {
@@ -104,7 +105,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
         }
 
-        private void AWS_Status_Onchange(object sender, AwsIotClientHelper.AWSStatusEventArgs e)
+        private void AWS_Status_Onchange(object sender, AWSStatusEventArgs e)
         {
             switch (e.Status)
             {
@@ -198,13 +199,14 @@ namespace MASAN_SERIALIZATION.Views.AWS
         DataTable SendCodes = new DataTable();
         private void btnGetData_Click(object sender, EventArgs e)
         {
-            var getCodeSend = Globals.ProductionData.getDataPO.Get_Codes_Send(Globals.ProductionData.orderNo);
+            TResult getCodeSend = Globals.ProductionData.getDataPO.Get_Codes_Send(Globals.ProductionData.orderNo);
 
-            this.InvokeIfRequired(() => {
-             opConsole.Items.Insert(0,getCodeSend.message);
+            this.InvokeIfRequired(() =>
+            {
+                opConsole.Items.Insert(0, getCodeSend.message);
             });
 
-            SendCodes = getCodeSend.Codes;
+            SendCodes = getCodeSend.data;
         }
 
         private void btnSendOne_Click(object sender, EventArgs e)
@@ -221,8 +223,8 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 message_id = $"{ID}-{orderNO}",
                 orderNo = orderNO,
                 uniqueCode = code,
-                cartonCode =cartonCode,
-                status = Status,
+                cartonCode = cartonCode,
+                status = Status.ToInt32(),
                 activate_datetime = activateDate,
                 production_date = productionDate,
                 thing_name = "MIPWP501"
@@ -239,8 +241,8 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 });
                 return; // Nếu người dùng chọn "No", thoát khỏi phương thức
             }
-                //publish dữ liệu
-                var rs = awsClient.Publish_V2("CZ/data", json);
+            //publish dữ liệu
+            var rs = awsClient.Publish_V2("CZ/data", json);
             if (rs.Issuccess)
             {
                 //cập nhật trạng thái đã gửi
@@ -264,6 +266,145 @@ namespace MASAN_SERIALIZATION.Views.AWS
         private DialogResult ShowYesNoDialog(string message)
         {
             return MessageBox.Show(message, "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        }
+
+        private void btnLoadPOInfo_Click(object sender, EventArgs e)
+        {
+            if (Globals.Production_State == e_Production_State.NoSelectedPO)
+            {
+                this.ShowWarningDialog("Vui lòng chọn đơn hàng trước khi tải thông tin.");
+                return;
+            }
+
+            iporderNo.Text = Globals.ProductionData.orderNo;
+            ipProductionDate.Text = Globals.ProductionData.productionDate;
+        }
+
+        int lines = 1;
+        private void btnSendTest_Click(object sender, EventArgs e)
+        {
+            lines++;
+
+            string filePath = ipfilePath.Text;
+            List<string> values = new List<string>();
+
+            using (var reader = new StreamReader(filePath))
+            {
+                while (!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine();
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+
+                    // Tách bằng dấu phẩy, lấy cột đầu tiên
+                    string[] parts = line.Split(',');
+                    if (parts.Length > 0)
+                    {
+                        values.Add(parts[0].Trim());
+                    }
+                }
+            }
+
+            // Sử dụng trong vòng lặp
+            Task.Run(() =>
+            {
+                try
+                {
+                    this.InvokeIfRequired(() =>
+                    {
+                        opConsole.Items.Insert(0, $"✅ [{DateTime.Now}] Đã đọc {values.Count} mã từ file CSV: {filePath}");
+                    });
+                    foreach (var val in values)
+                    {
+                        AWSSendPayload payload = new AWSSendPayload
+                        {
+                            message_id = $"{iporderNo.Text}",
+                            orderNo = iporderNo.Text,
+                            uniqueCode = val,
+                            cartonCode = ipcartonCode.Text,
+                            status = 1,
+                            activate_datetime = DateTime.UtcNow.ToString("o"),
+                            production_date = ipProductionDate.Value.ToString("o"),
+                            thing_name = "MIPWP501"
+                        };
+
+                        string json = JsonConvert.SerializeObject(payload);
+
+                        //gưi dữ liệu
+                        var rs = awsClient.Publish_V2("CZ/data", json);
+                    }
+                    Task.Delay(100).Wait(); // Giả lập thời gian gửi dữ liệu
+                    this.InvokeIfRequired(() =>
+                    {
+                        opConsole.Items.Insert(0, $"✅ [{DateTime.Now}] Đã gửi {values.Count} mã thành công từ file CSV: {filePath}");
+                    });
+                }
+                catch (Exception ex)
+                {
+                    this.InvokeIfRequired(() =>
+                    {
+                        opConsole.Items.Insert(0, $"❌ [{DateTime.Now}] Lỗi đọc file CSV: {ex.Message}");
+                    });
+                }
+            });
+        }
+
+        private void opConsole_DoubleClick(object sender, EventArgs e)
+        {
+            this.ShowInfoDialog(opConsole.SelectedItem?.ToString() ?? "Không có dữ liệu nào được chọn để hiển thị.");
+        }
+
+        private void btnFilePath_Click(object sender, EventArgs e)
+        {
+            //mở file csv
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                openFileDialog.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+                openFileDialog.RestoreDirectory = true;
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Lấy đường dẫn file đã chọn
+                    string filePath = openFileDialog.FileName;
+                    ipfilePath.Text = filePath;
+                }
+            }
+        }
+
+
+        public string ReadCsvGetLineCol(string filePath, int lines)
+        {
+            try
+            {
+                using (var reader = new StreamReader(filePath))
+                {
+                    int currentLine = 0;
+                    while (!reader.EndOfStream)
+                    {
+                        var line = reader.ReadLine();
+                        currentLine++;
+
+                        if (currentLine == lines) // dòng thứ 2
+                        {
+                            var parts = line.Split(',');
+
+                            if (parts.Length >= 3)
+                            {
+                                return parts[2].Trim(); // cột thứ 3
+                            }
+                            else
+                            {
+                                throw new Exception("❌ File không đủ cột.");
+                            }
+                        }
+                    }
+
+                    throw new Exception("❌ File không đủ dòng.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"❌ Lỗi: {ex.Message}";
+            }
         }
     }
 }

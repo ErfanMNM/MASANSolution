@@ -295,7 +295,7 @@ public class AwsIotClientHelper : IDisposable
         public string orderNo { get; set; }
         public string uniqueCode { get; set; }
         public string cartonCode { get; set; }
-        public string status { get; set; }
+        public int status { get; set; }
         public string activate_datetime { get; set; }
         public string production_date { get; set; }
         public string thing_name { get; set; }

@@ -4,6 +4,7 @@ const multer = require('multer');
 const fs = require('fs-extra');
 const path = require('path');
 const crypto = require('crypto');
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -79,23 +80,97 @@ app.post('/upload-sqlite', upload.single('sqliteFile'), async (req, res) => {
     }
 });
 
-// Route để lấy dữ liệu từ bảng cụ thể
+// Route để lấy dữ liệu từ bảng cụ thể với filter
 app.get('/table/:fileId/:tableName', async (req, res) => {
     try {
         const { fileId, tableName } = req.params;
         const limit = parseInt(req.query.limit) || 100;
         const offset = parseInt(req.query.offset) || 0;
+        const filter = req.query.filter || '';
+        const sortColumn = req.query.sortColumn || '';
+        const sortOrder = req.query.sortOrder || 'ASC';
 
         const filePath = findFileById(fileId);
         if (!filePath) {
             return res.status(404).json({ error: 'File không tồn tại' });
         }
 
-        const data = await getTableData(filePath, tableName, limit, offset);
+        const data = await getTableData(filePath, tableName, limit, offset, filter, sortColumn, sortOrder);
         res.json(data);
 
     } catch (error) {
         console.error('Lỗi khi đọc dữ liệu bảng:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Route để xuất dữ liệu CSV
+app.get('/export/:fileId/:tableName/csv', async (req, res) => {
+    try {
+        const { fileId, tableName } = req.params;
+        const filter = req.query.filter || '';
+        const sortColumn = req.query.sortColumn || '';
+        const sortOrder = req.query.sortOrder || 'ASC';
+
+        const filePath = findFileById(fileId);
+        if (!filePath) {
+            return res.status(404).json({ error: 'File không tồn tại' });
+        }
+
+        const data = await getAllTableData(filePath, tableName, filter, sortColumn, sortOrder);
+
+        if (data.length === 0) {
+            return res.status(404).json({ error: 'Không có dữ liệu để xuất' });
+        }
+
+        // Tạo file CSV tạm thời
+        const csvFileName = `${tableName}_${Date.now()}.csv`;
+        const csvFilePath = path.join(TEMP_DIR, csvFileName);
+
+        const columns = Object.keys(data[0]);
+        const csvWriter = createCsvWriter({
+            path: csvFilePath,
+            header: columns.map(col => ({ id: col, title: col }))
+        });
+
+        await csvWriter.writeRecords(data);
+
+        // Gửi file CSV về client
+        res.download(csvFilePath, `${tableName}.csv`, (err) => {
+            if (err) {
+                console.error('Lỗi khi gửi file CSV:', err);
+            }
+            // Xóa file tạm thời sau khi gửi
+            fs.remove(csvFilePath).catch(console.error);
+        });
+
+    } catch (error) {
+        console.error('Lỗi khi xuất CSV:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Route để xuất dữ liệu JSON
+app.get('/export/:fileId/:tableName/json', async (req, res) => {
+    try {
+        const { fileId, tableName } = req.params;
+        const filter = req.query.filter || '';
+        const sortColumn = req.query.sortColumn || '';
+        const sortOrder = req.query.sortOrder || 'ASC';
+
+        const filePath = findFileById(fileId);
+        if (!filePath) {
+            return res.status(404).json({ error: 'File không tồn tại' });
+        }
+
+        const data = await getAllTableData(filePath, tableName, filter, sortColumn, sortOrder);
+
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Content-Disposition', `attachment; filename="${tableName}.json"`);
+        res.json(data);
+
+    } catch (error) {
+        console.error('Lỗi khi xuất JSON:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -220,34 +295,135 @@ function analyzeSQLiteFile(filePath) {
     });
 }
 
-function getTableData(filePath, tableName, limit = 100, offset = 0) {
+function getTableData(filePath, tableName, limit = 100, offset = 0, filter = '', sortColumn = '', sortOrder = 'ASC') {
     return new Promise((resolve, reject) => {
         const db = new sqlite3.Database(filePath, sqlite3.OPEN_READONLY);
 
-        const sql = `SELECT * FROM "${tableName}" LIMIT ? OFFSET ?`;
-        db.all(sql, [limit, offset], (err, rows) => {
-            if (err) {
-                db.close();
-                reject(err);
-                return;
+        let sql = `SELECT * FROM "${tableName}"`;
+        let countSql = `SELECT COUNT(*) as total FROM "${tableName}"`;
+        let params = [];
+        let countParams = [];
+
+        // Thêm filter nếu có
+        if (filter) {
+            // Lấy danh sách cột trước
+            db.all(`PRAGMA table_info("${tableName}")`, (err, columns) => {
+                if (err) {
+                    db.close();
+                    reject(err);
+                    return;
+                }
+
+                const columnNames = columns.map(col => col.name);
+                const whereConditions = columnNames.map(col => `"${col}" LIKE ?`).join(' OR ');
+                const filterValue = `%${filter}%`;
+                const filterParams = columnNames.map(() => filterValue);
+
+                sql += ` WHERE ${whereConditions}`;
+                countSql += ` WHERE ${whereConditions}`;
+                params = [...filterParams];
+                countParams = [...filterParams];
+
+                // Thêm sorting nếu có
+                if (sortColumn && columns.some(col => col.name === sortColumn)) {
+                    sql += ` ORDER BY "${sortColumn}" ${sortOrder}`;
+                }
+
+                sql += ` LIMIT ? OFFSET ?`;
+                params.push(limit, offset);
+
+                executeQuery();
+            });
+        } else {
+            // Thêm sorting nếu có
+            if (sortColumn) {
+                sql += ` ORDER BY "${sortColumn}" ${sortOrder}`;
             }
 
-            // Lấy tổng số dòng
-            db.get(`SELECT COUNT(*) as total FROM "${tableName}"`, (err, countResult) => {
+            sql += ` LIMIT ? OFFSET ?`;
+            params = [limit, offset];
+
+            executeQuery();
+        }
+
+        function executeQuery() {
+            db.all(sql, params, (err, rows) => {
+                if (err) {
+                    db.close();
+                    reject(err);
+                    return;
+                }
+
+                // Lấy tổng số dòng
+                db.get(countSql, countParams, (err, countResult) => {
+                    db.close();
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+
+                    resolve({
+                        data: rows,
+                        total: countResult.total,
+                        limit: limit,
+                        offset: offset,
+                        filter: filter
+                    });
+                });
+            });
+        }
+    });
+}
+
+function getAllTableData(filePath, tableName, filter = '', sortColumn = '', sortOrder = 'ASC') {
+    return new Promise((resolve, reject) => {
+        const db = new sqlite3.Database(filePath, sqlite3.OPEN_READONLY);
+
+        let sql = `SELECT * FROM "${tableName}"`;
+        let params = [];
+
+        // Thêm filter nếu có
+        if (filter) {
+            db.all(`PRAGMA table_info("${tableName}")`, (err, columns) => {
+                if (err) {
+                    db.close();
+                    reject(err);
+                    return;
+                }
+
+                const columnNames = columns.map(col => col.name);
+                const whereConditions = columnNames.map(col => `"${col}" LIKE ?`).join(' OR ');
+                const filterValue = `%${filter}%`;
+                params = columnNames.map(() => filterValue);
+
+                sql += ` WHERE ${whereConditions}`;
+
+                // Thêm sorting nếu có
+                if (sortColumn && columns.some(col => col.name === sortColumn)) {
+                    sql += ` ORDER BY "${sortColumn}" ${sortOrder}`;
+                }
+
+                executeQuery();
+            });
+        } else {
+            // Thêm sorting nếu có
+            if (sortColumn) {
+                sql += ` ORDER BY "${sortColumn}" ${sortOrder}`;
+            }
+
+            executeQuery();
+        }
+
+        function executeQuery() {
+            db.all(sql, params, (err, rows) => {
                 db.close();
                 if (err) {
                     reject(err);
                     return;
                 }
-
-                resolve({
-                    data: rows,
-                    total: countResult.total,
-                    limit: limit,
-                    offset: offset
-                });
+                resolve(rows);
             });
-        });
+        }
     });
 }
 

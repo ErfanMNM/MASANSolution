@@ -28,7 +28,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
         /// </summary>
         private void InitializeComponent()
         {
-            SpT.Auth.UserData userData1 = new SpT.Auth.UserData();
+            SpT.Auth.UserData userData2 = new SpT.Auth.UserData();
             this.btnSave = new Sunny.UI.UIButton();
             this.btnReset = new Sunny.UI.UIButton();
             this.uiPanel1 = new Sunny.UI.UIPanel();
@@ -117,16 +117,16 @@ namespace MASAN_SERIALIZATION.Views.Settings
             this.uc_UserSetting1.Location = new System.Drawing.Point(430, 3);
             this.uc_UserSetting1.MinimumSize = new System.Drawing.Size(1, 1);
             this.uc_UserSetting1.Name = "uc_UserSetting1";
-            this.uc_UserSetting1.Size = new System.Drawing.Size(407, 334);
+            this.uc_UserSetting1.Size = new System.Drawing.Size(407, 348);
             this.uc_UserSetting1.TabIndex = 1;
             this.uc_UserSetting1.Text = "uc_UserSetting1";
             this.uc_UserSetting1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            userData1.Key2FA = null;
-            userData1.Password = null;
-            userData1.Role = null;
-            userData1.Salt = null;
-            userData1.Username = "";
-            this.uc_UserSetting1.userData = userData1;
+            userData2.Key2FA = null;
+            userData2.Password = null;
+            userData2.Role = null;
+            userData2.Salt = null;
+            userData2.Username = "";
+            this.uc_UserSetting1.userData = userData2;
             this.uc_UserSetting1.OnUserAction += new System.EventHandler<SpT.Auth.LoginActionEventArgs>(this.uc_UserSetting1_OnUserAction);
             // 
             // uc_UserManager1
@@ -134,10 +134,10 @@ namespace MASAN_SERIALIZATION.Views.Settings
             this.uc_UserManager1.CurrentUserName = "";
             this.uc_UserManager1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.uc_UserManager1.IS2FAEnabled = false;
-            this.uc_UserManager1.Location = new System.Drawing.Point(3, 3);
+            this.uc_UserManager1.Location = new System.Drawing.Point(3, 0);
             this.uc_UserManager1.MinimumSize = new System.Drawing.Size(1, 1);
             this.uc_UserManager1.Name = "uc_UserManager1";
-            this.uc_UserManager1.Size = new System.Drawing.Size(428, 334);
+            this.uc_UserManager1.Size = new System.Drawing.Size(428, 351);
             this.uc_UserManager1.TabIndex = 0;
             this.uc_UserManager1.Text = "uc_UserManager1";
             this.uc_UserManager1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;

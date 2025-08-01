@@ -1,4 +1,4 @@
-﻿using HslCommunication;
+using HslCommunication;
 using HslCommunication.Profinet.Inovance;
 using MASAN_SERIALIZATION.Configs;
 using MASAN_SERIALIZATION.Enums;
@@ -29,19 +29,24 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 {
     public partial class FDashboard : UIPage
     {
-
+        #region Private Fields
         private static LogHelper<e_Dash_LogType> DashboardPageLog;
+        private int lastvisibleCount = 0;
+        private static bool offThread = false;
+        private Thread threadQueue;
+        #endregion
 
+        #region Constructor
         public FDashboard()
         {
             InitializeComponent();
-            //tạo log ở Appdata/Local/MasanSerialization/Logs/Dashboard
-            //khởi tạo biến toàn cục để ghi nhật ký cho giao diện này
-            DashboardPageLog = new LogHelper<e_Dash_LogType>(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MASAN-SERIALIZATION", "Logs", "Pages", "PDAlog.ptl"));
+            DashboardPageLog = new LogHelper<e_Dash_LogType>(Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
+                "MASAN-SERIALIZATION", "Logs", "Pages", "PDAlog.ptl"));
         }
+        #endregion
 
-        #region Sự kiện khởi tạo giao diện
-
+        #region Startup Methods
         public void STARTUP()
         {
             InitializeDevices();
@@ -50,31 +55,28 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         }
         #endregion
 
-        #region Sự kiện camera trả về của thiết bị
-
+        #region Camera Event Handlers
         private void CameraMain_ClientCallBack(enumClient state, string data)
         {
             switch (state)
             {
                 case enumClient.CONNECTED:
-
                     if (Globals.CameraMain_State != e_Camera_State.CONNECTED)
                     {
                         Globals.CameraMain_State = e_Camera_State.CONNECTED;
                     }
                     break;
-                case enumClient.DISCONNECTED:
 
+                case enumClient.DISCONNECTED:
                     if (Globals.CameraMain_State != e_Camera_State.DISCONNECTED)
                     {
                         Globals.CameraMain_State = e_Camera_State.DISCONNECTED;
                     }
                     break;
-                case enumClient.RECEIVED:
 
-                    if(Globals.Production_State != e_Production_State.Running)
+                case enumClient.RECEIVED:
+                    if (Globals.Production_State != e_Production_State.Running)
                     {
-                        //nếu không phải trạng thái sản xuất thì không xử lý dữ liệu
                         this.InvokeIfRequired(() =>
                         {
                             ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CM Máy chưa bắt đầu sản xuất");
@@ -82,14 +84,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         });
                         break;
                     }
-                    Task.Run(() =>
-                    {
-                        CameraMain_Process(data);
-                    });
-                    
+                    Task.Run(() => CameraMain_Process(data));
                     break;
-                case enumClient.RECONNECT:
 
+                case enumClient.RECONNECT:
                     if (Globals.CameraMain_State != e_Camera_State.RECONNECTING)
                     {
                         Globals.CameraMain_State = e_Camera_State.RECONNECTING;
@@ -108,16 +106,17 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         Globals.CameraSub_State = e_Camera_State.CONNECTED;
                     }
                     break;
+
                 case enumClient.DISCONNECTED:
                     if (Globals.CameraSub_State != e_Camera_State.DISCONNECTED)
                     {
                         Globals.CameraSub_State = e_Camera_State.DISCONNECTED;
                     }
                     break;
+
                 case enumClient.RECEIVED:
                     if (Globals.Production_State != e_Production_State.Running)
                     {
-                        //nếu không phải trạng thái sản xuất thì không xử lý dữ liệu
                         this.InvokeIfRequired(() =>
                         {
                             ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Máy chưa bắt đầu sản xuất");
@@ -125,12 +124,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         });
                         break;
                     }
-
-                    Task.Run(() =>
-                    {
-                        CameraSub_Process(data);
-                    });
+                    Task.Run(() => CameraSub_Process(data));
                     break;
+
                 case enumClient.RECONNECT:
                     if (Globals.CameraSub_State != e_Camera_State.RECONNECTING)
                     {
@@ -163,119 +159,84 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
         #endregion
 
-        #region Xử lý dữ liệu camera
+        #region Camera Data Processing
         private void CameraMain_Process(string _data)
         {
-            Globals.ProductionData.counter.totalCount++; //tăng tổng số sản phẩm đã nhận
+            Globals.ProductionData.counter.totalCount++;
             this.InvokeIfRequired(() =>
-                {
-                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: #{Globals.ProductionData.counter.totalCount} Camera chính nhận dữ liệu: {_data}");
-                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                });
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: #{Globals.ProductionData.counter.totalCount} Camera chính nhận dữ liệu: {_data}");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
 
-            //xử lý dữ liệu từ camera chính
             if (_data.IsNullOrEmpty())
             {
-                //loại sản phẩm ngay lập tức
-                bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"),"0"); // Gửi dữ liệu loại sản phẩm đến PLC
+                bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
                 Send_Result_Content_CMain(e_Production_Status.Error, _data);
-                //gửi vào hàng chờ thêm record
                 Enqueue_Product_To_Record(_data, e_Production_Status.Error, stp, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate);
                 return;
             }
+
             if (_data == "FAIL")
             {
-                //loại sản phẩm ngay lập tức
-                bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
+                bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
                 Send_Result_Content_CMain(e_Production_Status.ReadFail, _data);
-                //gửi vào hàng chờ thêm record
                 Enqueue_Product_To_Record(_data, e_Production_Status.ReadFail, stp, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate);
                 return;
             }
-            //đổi <GS> về đúng ký tự thật
+
             _data = _data.Replace("<GS>", "\u001D").Replace("<RS>", "\u001E").Replace("<US>", "\u001F");
 
-            //kiểm tra mã có tồn tại hay không
             if (Globals_Database.Dictionary_ProductionCode_Data.TryGetValue(_data, out ProductionCodeData _produtionCodeData))
             {
-                //nếu chưa kích hoạt thì kích hoạt
                 if (_produtionCodeData.Main_Camera_Status == "0")
                 {
-
-                    // Gửi dữ liệu đến PLC
                     if (Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "1"))
                     {
-                        // kích hoạt mã sản phẩm
-                        _produtionCodeData.Main_Camera_Status = "1"; // Đánh dấu là đã kích hoạt
+                        _produtionCodeData.Main_Camera_Status = "1";
                         _produtionCodeData.Activate_Datetime = DateTime.UtcNow.ToString("o");
                         _produtionCodeData.Production_Datetime = Globals.ProductionData.productionDate;
-                        _produtionCodeData.cartonCode = "pending"; // Lưu mã sản phẩm vào thùng
-                        _produtionCodeData.Activate_User = Globals.CurrentUser.Username; // Lưu thông tin người dùng kích hoạt
-                                                                                         // Cập nhật dữ liệu vào từ điển
-                                                                                         //Globals_Database.Dictionary_ProductionCode_Data[_data] = _produtionCodeData;
-                                                                                         // Gửi kết quả xử lý từ camera chính
+                        _produtionCodeData.cartonCode = "pending";
+                        _produtionCodeData.Activate_User = Globals.CurrentUser.Username;
+
                         Send_Result_Content_CMain(e_Production_Status.Pass, _data);
-
-                        //gửi vào hàng chờ thêm record
                         Enqueue_Product_To_Record(_data, e_Production_Status.Pass, true, _produtionCodeData.Activate_Datetime, _produtionCodeData.Production_Datetime);
-                        //thêm vào hàng chờ lưu sqlite
                         Enqueue_Product_To_SQLite(_data, _produtionCodeData);
-
-
                     }
                     else
                     {
-                        // kích hoạt mã sản phẩm
-                        _produtionCodeData.Main_Camera_Status = "-1"; // Đánh dấu là đã kích hoạt
+                        _produtionCodeData.Main_Camera_Status = "-1";
                         _produtionCodeData.Activate_Datetime = DateTime.UtcNow.ToString("o");
                         _produtionCodeData.Production_Datetime = Globals.ProductionData.productionDate;
-                        _produtionCodeData.cartonCode = "pending"; // Lưu mã sản phẩm vào thùng
-                        _produtionCodeData.Activate_User = Globals.CurrentUser.Username; // Lưu thông tin người dùng kích hoạt
-                                                                                         // Cập nhật dữ liệu vào từ điển
-                                                                                         //Globals_Database.Dictionary_ProductionCode_Data[_data] = _produtionCodeData;
-                                                                                         // Gửi kết quả lỗi nếu không gửi được đến PLC
-                        Send_Result_Content_CMain(e_Production_Status.Error, _data);
+                        _produtionCodeData.cartonCode = "pending";
+                        _produtionCodeData.Activate_User = Globals.CurrentUser.Username;
 
-                        //gửi vào hàng chờ thêm record
+                        Send_Result_Content_CMain(e_Production_Status.Error, _data);
                         Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, _produtionCodeData.Activate_Datetime, _produtionCodeData.Production_Datetime);
-                        //thêm vào hàng chờ lưu sqlite
                         Enqueue_Product_To_SQLite(_data, _produtionCodeData);
                     }
                     return;
                 }
-                //nếu đã kích hoạt
                 else
                 {
-                    //send dữ liệu đến PLC để loại sản phẩm
-                    Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
-                    //thêm vào thùng, cập nhật lại mã thùng
+                    Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
                     Send_Result_Content_CMain(e_Production_Status.Duplicate, _data);
-
-                    //gửi vào hàng chờ thêm record
                     Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, true, _produtionCodeData.Activate_Datetime, _produtionCodeData.Production_Datetime);
-
-                    //thêm vào hàng chờ lưu sqlite cập nhật trùng
                     Enqueue_Product_To_SQLite(_data, _produtionCodeData, true);
-
                     return;
                 }
             }
-            //nếu không tồn tại thì đá ra, không cần quan tâm thêm
             else
             {
-                //loại sản phẩm ngay lập tức
-                Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
+                Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
                 Send_Result_Content_CMain(e_Production_Status.NotFound, _data);
-
-                //gửi vào hàng chờ thêm record
                 Enqueue_Product_To_Record(_data, e_Production_Status.NotFound, true, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate);
-
                 return;
             }
         }
         private void CameraSub_Process(string _data)
         {
-            Globals.productionData_Cs.counter.totalCount++; //tăng tổng số sản phẩm đã nhận
+            Globals.productionData_Cs.counter.totalCount++;
 
             this.InvokeIfRequired(() =>
             {
@@ -283,29 +244,22 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
             });
 
-            //nếu dữ liệu rỗng
             if (_data.IsNullOrEmpty())
             {
-                //loại sản phẩm ngay lập tức
                 bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
                 Send_Result_Content_CSub(e_Production_Status.Error, _data);
-
-                //gửi vào hàng chờ thêm record
                 Enqueue_Product_To_Record(_data, e_Production_Status.Error, stp, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
                 return;
             }
 
-            //nếu đọc không được
             if (_data == "FAIL")
             {
-                //loại sản phẩm ngay lập tức
-                bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
+                bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
                 Send_Result_Content_CSub(e_Production_Status.ReadFail, _data);
-                //gửi vào hàng chờ thêm record
                 Enqueue_Product_To_Record(_data, e_Production_Status.ReadFail, stp, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
                 return;
             }
-            //đổi <GS> về đúng ký tự thật
+
             _data = _data.Replace("<GS>", "\u001D").Replace("<RS>", "\u001E").Replace("<US>", "\u001F");
 
             //kiểm tra mã có tồn tại hay không
@@ -477,91 +431,70 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
         }
 
-        private void CameraMain_Process_Without_GS (OUTPUT_DEBUG_STRING_INFO _data)
+        private void CameraMain_Process_Without_GS(OUTPUT_DEBUG_STRING_INFO _data)
         {
-
+            // TODO: Implement without GS processing
         }
         private void Send_Result_Content_CMain(e_Production_Status status, string data)
         {
-            //tăng tổng số sản phẩm đã nhận
-            //Globals.ProductionData.counter.totalCount++;
             if (status != e_Production_Status.Pass)
             {
-               Globals.ProductionData.counter.failCount++; //tăng tổng số sản phẩm lỗi
+                Globals.ProductionData.counter.failCount++;
             }
 
-            CameraMain_HMI.Camera_Status = status; // Cập nhật trạng thái camera chính
-            CameraMain_HMI.ID = Globals.ProductionData.counter.totalCount; // Cập nhật ID sản phẩm
-            CameraMain_HMI.Camera_Content = data; // Cập nhật dữ liệu sản phẩm
+            CameraMain_HMI.Camera_Status = status;
+            CameraMain_HMI.ID = Globals.ProductionData.counter.totalCount;
+            CameraMain_HMI.Camera_Content = data;
+            
             switch (status)
             {
                 case e_Production_Status.Pass:
-                    //tăng tổng pass
                     Globals.ProductionData.counter.passCount++;
-
-                    if(Globals.ProductionData.counter.passCount == Globals.ProductionData.orderQty.ToInt32())
+                    if (Globals.ProductionData.counter.passCount == Globals.ProductionData.orderQty.ToInt32())
                     {
-                        //Quăng về trạng thái kiểm Check_Queue
                         Globals.Production_State = e_Production_State.Checking_Queue;
                     }
                     break;
-                case e_Production_Status.Fail:
-                    //tăng tổng fail
-                    break;
                 case e_Production_Status.Duplicate:
-                    //tăng tổng duplicate
                     Globals.ProductionData.counter.duplicateCount++;
                     break;
                 case e_Production_Status.NotFound:
-                    //tăng tổng not found
                     Globals.ProductionData.counter.notfoundCount++;
                     break;
                 case e_Production_Status.Error:
-                    //tăng tổng error
                     Globals.ProductionData.counter.errorCount++;
                     break;
                 case e_Production_Status.ReadFail:
-                    //tăng tổng read fail
                     Globals.ProductionData.counter.readfailCount++;
                     break;
             }
         }
         private void Send_Result_Content_CSub(e_Production_Status status, string data)
         {
-            //tăng tổng số sản phẩm đã nhận
-            //Globals.ProductionData.counter.totalCount++;
             if (status != e_Production_Status.Pass)
             {
-                Globals.productionData_Cs.counter.failCount++; //tăng tổng số sản phẩm lỗi
+                Globals.productionData_Cs.counter.failCount++;
             }
 
-            CameraSub_HMI.Camera_Status = status; // Cập nhật trạng thái camera phụ
-            CameraSub_HMI.ID = Globals.productionData_Cs.counter.totalCount; // Cập nhật ID sản phẩm
-            CameraSub_HMI.Camera_Content = data; // Cập nhật dữ liệu sản phẩm
+            CameraSub_HMI.Camera_Status = status;
+            CameraSub_HMI.ID = Globals.productionData_Cs.counter.totalCount;
+            CameraSub_HMI.Camera_Content = data;
 
             switch (status)
             {
                 case e_Production_Status.Pass:
-                    //tăng tổng pass
                     Globals.productionData_Cs.counter.passCount++;
                     break;
-                case e_Production_Status.Fail:
-                    //tăng tổng fail
-                    break;
                 case e_Production_Status.Duplicate:
-                    //tăng tổng duplicate
                     Globals.productionData_Cs.counter.duplicateCount++;
                     break;
                 case e_Production_Status.NotFound:
-                    //tăng tổng not found
                     Globals.productionData_Cs.counter.notfoundCount++;
                     break;
                 case e_Production_Status.Error:
-                    //tăng tổng error
                     Globals.productionData_Cs.counter.errorCount++;
                     break;
                 case e_Production_Status.ReadFail:
-                    //tăng tổng read fail
                     Globals.productionData_Cs.counter.readfailCount++;
                     break;
             }
@@ -569,8 +502,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
         private void Enqueue_Product_To_Record(string code, e_Production_Status status, bool plcstatus, string activate_datetime, string production_datetime, bool CameraMain = true, int cartonID = 0)
         {
-            
-            //tạo dữ liệu record
             ProductionCodeData_Record _produtionCodeData = new ProductionCodeData_Record
             {
                 code = code,
@@ -578,34 +509,29 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 PLCStatus = plcstatus,
                 Activate_Datetime = activate_datetime,
                 Production_Datetime = production_datetime,
-                cartonCode = "pending", // Mã code thùng tạm thời, sẽ cập nhật sau
-                Activate_User = Globals.CurrentUser.Username // Lưu thông tin người dùng kích hoạt
-
+                cartonCode = "pending",
+                Activate_User = Globals.CurrentUser.Username
             };
+            
             if (!CameraMain)
             {
                 _produtionCodeData.cartonID = cartonID;
-                //thêm vao hàng chờ thêm record cho camera phụ
                 Globals_Database.Insert_Product_To_Record_CS_Queue.Enqueue(_produtionCodeData);
             }
             else
             {
-                //thêm vào hàng chờ thêm record
                 Globals_Database.Insert_Product_To_Record_Queue.Enqueue(_produtionCodeData);
             }
-            
         }
 
         private void Enqueue_Product_To_SQLite(string code, ProductionCodeData productionCodeData, bool duplicate = false)
         {
-            //thêm vào hàng chờ lưu sqlite
             Globals_Database.Update_Product_To_SQLite_Queue.Enqueue((code, productionCodeData, duplicate));
         }
 
         #endregion
 
-        #region Các hàm gửi PLC
-
+        #region PLC Communication
         public bool Send_To_PLC(string DM, string _data)
         {
             try
@@ -617,70 +543,58 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 }
                 else
                 {
-                    //ghi log lỗi
                     DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.PlcError, "Lỗi D022 khi gửi dữ liệu đến PLC", write.Message);
                     return false;
                 }
             }
             catch (Exception ex)
-            {   
-                
-                //ghi log lỗi
-                DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username,e_Dash_LogType.PlcError, "Lỗi D023 khi gửi dữ liệu đến PLC",ExceptionToJson(ex));
+            {
+                DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.PlcError, "Lỗi D023 khi gửi dữ liệu đến PLC", ExceptionToJson(ex));
                 return false;
-                
             }
         }
-
         #endregion
 
-        #region Các hàm khởi tạo
-
+        #region Initialization
         public void InitializeDevices()
         {
             try
             {
-                // Khởi tạo camera chính
                 Camera_Main.IP = AppConfigs.Current.Camera_Main_IP;
                 Camera_Main.Port = AppConfigs.Current.Camera_Main_Port;
                 Camera_Main.Connect();
-                // Khởi tạo camera phụ
+                
                 Camera_Sub.IP = AppConfigs.Current.Camera_Sub_IP;
                 Camera_Sub.Port = AppConfigs.Current.Camera_Sub_Port;
                 Camera_Sub.Connect();
 
-                // PLC
                 OMRON_PLC.PLC_IP = PLCAddress.Get("PLC_IP");
                 OMRON_PLC.PLC_PORT = PLCAddress.Get("PLC_PORT").ToInt32();
                 OMRON_PLC.PLC_Ready_DM = PLCAddress.Get("PLC_Ready_DM");
-                OMRON_PLC.Time_Update = 1000; // Thời gian cập nhật PLC 1000ms
+                OMRON_PLC.Time_Update = 1000;
                 OMRON_PLC.InitPLC();
-
             }
             catch (Exception ex)
             {
-               this.ShowErrorNotifier("Lỗi D001 khi khởi tạo thiết bị: " + ex.Message);
+                this.ShowErrorNotifier("Lỗi D001 khi khởi tạo thiết bị: " + ex.Message);
             }
         }
 
-        //khởi tạo task
         public void InitializeTasks()
         {
             try
             {
-                WK_Update_UI.RunWorkerAsync(); // Bắt đầu task cập nhật giao diện
+                WK_Update_UI.RunWorkerAsync();
                 WK_Update_UI.DoWork += WK_Update_UI_DoWork;
-
             }
             catch (Exception ex)
             {
                 this.ShowErrorNotifier("Lỗi D002 khi khởi tạo task: " + ex.Message);
             }
         }
-
         #endregion
 
-        #region Các hàm cập nhật giao diện và xử lý chương trinhf
+        #region UI Update Methods
         public void UpdateDeviceState()
         {
             UpdateCameraMainState();
@@ -692,42 +606,43 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         {
             this.InvokeIfRequired(() =>
             {
-                if (Globals.CameraMain_State == e_Camera_State.CONNECTED)
+                switch (Globals.CameraMain_State)
                 {
-                    if (opC1_State.Text != "Tốt")
-                    {
-                        opLedC1.Blink = false;
-                        opC1_State.Text = "Tốt";
-                        opC1_State.FillColor = Color.White;
-                        opC1_State.RectColor = Color.Green; // Đặt trạng thái ON cho opCameraMain
-                        opLedC1.Color = Color.Green; // Đặt màu LED thành xanh lá cây
-                        opLedC1.On = true; // Đặt trạng thái ON cho opLedC1
-                    }
-
-                }
-                else if (Globals.CameraMain_State == e_Camera_State.DISCONNECTED)
-                {
-                    if (opC1_State.Text != "Lỗi")
-                    {
-                        opLedC1.Blink = true;
-                        opC1_State.Text = "Lỗi";
-                        opC1_State.FillColor = Color.MistyRose;
-                        opC1_State.RectColor = Color.Red; // Đặt trạng thái ON cho opCameraMain
-                        opLedC1.Color = Color.Red; // Đặt màu LED thành xanh lá cây
-                        opLedC1.On = true; // Đặt trạng thái ON cho opLedC1
-                    }
-                }
-                else if (Globals.CameraMain_State == e_Camera_State.RECONNECTING)
-                {
-                    if (opC1_State.Text != "...")
-                    {
-                        opLedC1.Blink = true;
-                        opC1_State.Text = "...";
-                        opC1_State.FillColor = Color.Yellow;
-                        opC1_State.RectColor = Color.Red; // Đặt trạng thái ON cho opCameraMain
-                        opLedC1.Color = Color.Yellow; // Đặt màu LED thành xanh lá cây
-                        opLedC1.On = true; // Đặt trạng thái ON cho opLedC1
-                    }
+                    case e_Camera_State.CONNECTED:
+                        if (opC1_State.Text != "Tốt")
+                        {
+                            opLedC1.Blink = false;
+                            opC1_State.Text = "Tốt";
+                            opC1_State.FillColor = Color.White;
+                            opC1_State.RectColor = Color.Green;
+                            opLedC1.Color = Color.Green;
+                            opLedC1.On = true;
+                        }
+                        break;
+                        
+                    case e_Camera_State.DISCONNECTED:
+                        if (opC1_State.Text != "Lỗi")
+                        {
+                            opLedC1.Blink = true;
+                            opC1_State.Text = "Lỗi";
+                            opC1_State.FillColor = Color.MistyRose;
+                            opC1_State.RectColor = Color.Red;
+                            opLedC1.Color = Color.Red;
+                            opLedC1.On = true;
+                        }
+                        break;
+                        
+                    case e_Camera_State.RECONNECTING:
+                        if (opC1_State.Text != "...")
+                        {
+                            opLedC1.Blink = true;
+                            opC1_State.Text = "...";
+                            opC1_State.FillColor = Color.Yellow;
+                            opC1_State.RectColor = Color.Red;
+                            opLedC1.Color = Color.Yellow;
+                            opLedC1.On = true;
+                        }
+                        break;
                 }
             });
         }
@@ -735,46 +650,50 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         {
             this.InvokeIfRequired(() =>
             {
-                if (Globals.CameraSub_State == e_Camera_State.CONNECTED)
+                switch (Globals.CameraSub_State)
                 {
-                    if (opC2_State.Text != "Tốt")
-                    {
-                        opLedC2.Blink = false;
-                        opC2_State.Text = "Tốt";
-                        opC2_State.FillColor = Color.White;
-                        opC2_State.RectColor = Color.Green; // Đặt trạng thái ON cho opCameraMain
-                        opLedC2.Color = Color.Green; // Đặt màu LED thành xanh lá cây
-                        opLedC2.On = true; // Đặt trạng thái ON cho opLedC1
-                    }
-                }
-                else if (Globals.CameraSub_State == e_Camera_State.DISCONNECTED)
-                {
-                    if (opC2_State.Text != "Lỗi")
-                    {
-                        opLedC2.Blink = true;
-                        opC2_State.Text = "Lỗi";
-                        opC2_State.FillColor = Color.MistyRose;
-                        opC2_State.RectColor = Color.Red; // Đặt trạng thái ON cho opCameraMain
-                        opLedC2.Color = Color.Red; // Đặt màu LED thành xanh lá cây
-                        opLedC2.On = true; // Đặt trạng thái ON cho opLedC1
-                    }
-                }
-                else if (Globals.CameraSub_State == e_Camera_State.RECONNECTING)
-                {
-                    if (opC2_State.Text != "...")
-                    {
-                        opLedC2.Blink = true;
-                        opC2_State.Text = "...";
-                        opC2_State.FillColor = Color.Yellow;
-                        opC2_State.RectColor = Color.Red; // Đặt trạng thái ON cho opCameraMain
-                        opLedC2.Color = Color.Yellow; // Đặt màu LED thành xanh lá cây
-                        opLedC2.On = true; // Đặt trạng thái ON cho opLedC1
-                    }
+                    case e_Camera_State.CONNECTED:
+                        if (opC2_State.Text != "Tốt")
+                        {
+                            opLedC2.Blink = false;
+                            opC2_State.Text = "Tốt";
+                            opC2_State.FillColor = Color.White;
+                            opC2_State.RectColor = Color.Green;
+                            opLedC2.Color = Color.Green;
+                            opLedC2.On = true;
+                        }
+                        break;
+                        
+                    case e_Camera_State.DISCONNECTED:
+                        if (opC2_State.Text != "Lỗi")
+                        {
+                            opLedC2.Blink = true;
+                            opC2_State.Text = "Lỗi";
+                            opC2_State.FillColor = Color.MistyRose;
+                            opC2_State.RectColor = Color.Red;
+                            opLedC2.Color = Color.Red;
+                            opLedC2.On = true;
+                        }
+                        break;
+                        
+                    case e_Camera_State.RECONNECTING:
+                        if (opC2_State.Text != "...")
+                        {
+                            opLedC2.Blink = true;
+                            opC2_State.Text = "...";
+                            opC2_State.FillColor = Color.Yellow;
+                            opC2_State.RectColor = Color.Red;
+                            opLedC2.Color = Color.Yellow;
+                            opLedC2.On = true;
+                        }
+                        break;
                 }
             });
         }
-        public void UpdatePLCState() {
-            this.InvokeIfRequired(() => {
+        public void UpdatePLCState()
+        {
+            this.InvokeIfRequired(() =>
+            {
                 if (Globals.PLC_Connected)
                 {
                     if (opPLC_State.Text != "Tốt")
@@ -782,9 +701,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         opLedPLC.Blink = false;
                         opPLC_State.Text = "Tốt";
                         opPLC_State.FillColor = Color.White;
-                        opPLC_State.RectColor = Color.Green; // Đặt trạng thái ON cho opCameraMain
-                        opLedPLC.Color = Color.Green; // Đặt màu LED thành xanh lá cây
-                        opLedPLC.On = true; // Đặt trạng thái ON cho opLedC1
+                        opPLC_State.RectColor = Color.Green;
+                        opLedPLC.Color = Color.Green;
+                        opLedPLC.On = true;
                     }
                 }
                 else
@@ -794,9 +713,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         opLedPLC.Blink = true;
                         opPLC_State.Text = "Lỗi";
                         opPLC_State.FillColor = Color.MistyRose;
-                        opPLC_State.RectColor = Color.Red; // Đặt trạng thái ON cho opCameraMain
-                        opLedPLC.Color = Color.Red; // Đặt màu LED thành xanh lá cây
-                        opLedPLC.On = true; // Đặt trạng thái ON cho opLedC1
+                        opPLC_State.RectColor = Color.Red;
+                        opLedPLC.Color = Color.Red;
+                        opLedPLC.On = true;
                     }
                 }
             });
@@ -1225,14 +1144,14 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
         }
 
-        int lastvisibleCount = 0; // Biến để lưu số lượng sản phẩm đã hiển thị
+        int lastvisibleCount1 = 0; // Biến để lưu số lượng sản phẩm đã hiển thị
         public void Update_Result_UI()
         {
             this.InvokeIfRequired(() =>
             {
-                if(lastvisibleCount != CameraMain_HMI.ID)
+                if(lastvisibleCount1 != CameraMain_HMI.ID)
                 {
-                    lastvisibleCount = CameraMain_HMI.ID; // Cập nhật số lượng sản phẩm đã hiển thị
+                    lastvisibleCount1 = CameraMain_HMI.ID; // Cập nhật số lượng sản phẩm đã hiển thị
                     opCameraMainConten.Text = CameraMain_HMI.Camera_Content; // Cập nhật nội dung camera chính
                     //opResultPassFailC2.Text = CameraMain_HMI.Camera_Status.ToString(); // Cập nhật trạng thái camera
                     opHis2.Items.Insert(0, $"#{CameraMain_HMI.ID} : {CameraMain_HMI.Camera_Status} - {CameraMain_HMI.Camera_Content}"); // Thêm mục mới vào danh sách lịch sử
@@ -1283,20 +1202,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
         #endregion
 
-        #region Các enum và class hỗ trợ
-
-        private enum e_Dash_LogType
-        {
-            Info,
-            Warning,
-            Error,
-            PlcError,
-            CameraError,
-        }
-
-        #endregion
-
-        #region Các luồng
+        #region Background Workers & Threading
         private void WK_Update_UI_DoWork(object sender, DoWorkEventArgs e)
         {
             while (!WK_Update_UI.CancellationPending)
@@ -1304,11 +1210,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 try
                 {
                     UpdateDeviceState();
-                    UpdateCounterUI(); // Cập nhật giao diện counter
-                    Process_Production_State(); // Xử lý trạng thái sản xuất
-                    Update_Result_UI(); // Cập nhật giao diện kết quả
-
-                    //xử lý thông tin chính 
+                    UpdateCounterUI();
+                    Process_Production_State();
+                    Update_Result_UI();
                 }
                 catch (Exception ex)
                 {
@@ -1317,32 +1221,20 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 }
                 Thread.Sleep(100);
             }
-           
         }
 
-        public static bool offThread = false;
-        Thread threadQueue;
         public void Start_Queue_Process()
         {
             if (threadQueue == null || !threadQueue.IsAlive)
             {
-
                 threadQueue = new Thread(Queue_Proccess);
                 threadQueue.Start();
-                threadQueue.IsBackground = true; // Đặt luồng là nền để nó không chặn ứng dụng thoát
-            }
-            else
-            {
-                //không thể khởi động lại nhiệm vụ nếu nó đã đang chạy
+                threadQueue.IsBackground = true;
             }
         }
-
         #endregion
 
-        #region Các hàm xử lý Queue
-
-        // Biến toàn cục để kiểm soát việc tắt luồng
-
+        #region Queue Processing
         public static void Queue_Proccess()
         {
             while(!offThread)
@@ -1441,21 +1333,27 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         
         #endregion
 
-        #region Test
+        #region Event Handlers
         private void oporderNO_Click(object sender, EventArgs e)
         {
-            offThread = !offThread; // Chuyển đổi trạng thái offThread
+            offThread = !offThread;
         }
-
-        #endregion
-
-        #region Các hàm xử lý Sqlite
-
-        #endregion
 
         private void uiLedBulb1_Click(object sender, EventArgs e)
         {
-
+            // TODO: Implement LED bulb click handler
         }
+        #endregion
+
+        #region Enums & Support Classes
+        private enum e_Dash_LogType
+        {
+            Info,
+            Warning,
+            Error,
+            PlcError,
+            CameraError,
+        }
+        #endregion
     }
 }

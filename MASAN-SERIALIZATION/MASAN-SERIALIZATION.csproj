@@ -175,6 +175,12 @@
     <Compile Include="Views\AWS\PAws.Designer.cs">
       <DependentUpon>PAws.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\AWS\PAwsIot.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\AWS\PAwsIot.Designer.cs">
+      <DependentUpon>PAwsIot.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\Dashboards\FDashboard.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -223,6 +229,12 @@
     <Compile Include="Views\Test\DemoPage.Designer.cs">
       <DependentUpon>DemoPage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\Test\FormTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Test\FormTest.Designer.cs">
+      <DependentUpon>FormTest.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Dialogs\Entertext.resx">
       <DependentUpon>Entertext.cs</DependentUpon>
     </EmbeddedResource>
@@ -241,6 +253,9 @@
     </Compile>
     <EmbeddedResource Include="Views\AWS\PAws.resx">
       <DependentUpon>PAws.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\AWS\PAwsIot.resx">
+      <DependentUpon>PAwsIot.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Dashboards\FDashboard.resx">
       <DependentUpon>FDashboard.cs</DependentUpon>
@@ -265,6 +280,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Test\DemoPage.resx">
       <DependentUpon>DemoPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Test\FormTest.resx">
+      <DependentUpon>FormTest.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
