@@ -400,6 +400,36 @@ namespace MASAN_SERIALIZATION.Production
 
             }
 
+            public TResult Get_Record_Sent_Recive(string orderNo, e_AWS_Send_Status Send, e_AWS_Recive_Status Recive, string Recive_Conditional = "=", string Conditional = "")
+            {
+                try
+                {
+                    string czRunPath = $"{dataPath}/{orderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
+                    }
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        string query = $"SELECT * FROM UniqueCodes WHERE Send_Status =@send AND Recive_Status {Recive_Conditional} @recive {Conditional}; ";
+                        var command = new SQLiteCommand(query, conn);
+                        command.Parameters.AddWithValue("@send", Send.ToString());
+                        command.Parameters.AddWithValue("@recive", Recive.ToString());
+                        var adapter = new SQLiteDataAdapter(command);
+                        var table = new DataTable();
+                        adapter.Fill(table);
+                        return (table.Rows.Count > 0)
+                            ? new TResult(true, "Lấy danh sách bản ghi gửi AWS thành công.", 0, table)
+                            : new TResult(true, "Không có bản ghi nào trong cơ sở dữ liệu với trạng thái gửi: " + Send.ToString() + " và nhận: " + Recive.ToString());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new TResult(false, $"Lỗi P08 khi lấy danh sách bản ghi gửi AWS: {ex.Message}");
+                }
+
+            }
+
             public TResult Get_Records(string orderNo)
             {
                 try
@@ -492,7 +522,7 @@ namespace MASAN_SERIALIZATION.Production
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         conn.Open();
-                        string query = "SELECT * FROM UniqueCodes WHERE Status != 0 AND Send_Status !=0 AND cartonCode != 'pending'";
+                        string query = "SELECT * FROM UniqueCodes WHERE Status != 0 AND Send_Status != 'Sent' AND cartonCode != 'pending'";
                        
                         var command = new SQLiteCommand(query, conn);
                         var adapter = new SQLiteDataAdapter(command);

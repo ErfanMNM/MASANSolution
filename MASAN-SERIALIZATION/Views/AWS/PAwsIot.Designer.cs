@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.opNotiboard = new Sunny.UI.UIListBox();
-            this.uiSymbolButton1 = new Sunny.UI.UISymbolButton();
-            this.uiSymbolButton2 = new Sunny.UI.UISymbolButton();
-            this.uiSymbolButton3 = new Sunny.UI.UISymbolButton();
+            this.opNotiboardAndSend = new Sunny.UI.UIListBox();
+            this.btnGetSendPending = new Sunny.UI.UISymbolButton();
+            this.btnConnect = new Sunny.UI.UISymbolButton();
+            this.btnSendFailed = new Sunny.UI.UISymbolButton();
             this.uiTitlePanel1 = new Sunny.UI.UITitlePanel();
             this.uiLabel1 = new Sunny.UI.UILabel();
             this.uiTitlePanel2 = new Sunny.UI.UITitlePanel();
@@ -46,6 +46,8 @@
             this.uiLabel6 = new Sunny.UI.UILabel();
             this.uiTitlePanel7 = new Sunny.UI.UITitlePanel();
             this.uiLabel7 = new Sunny.UI.UILabel();
+            this.opRecive = new Sunny.UI.UIListBox();
+            this.btnSend = new Sunny.UI.UISymbolButton();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTitlePanel2.SuspendLayout();
             this.uiTitlePanel3.SuspendLayout();
@@ -55,56 +57,59 @@
             this.uiTitlePanel7.SuspendLayout();
             this.SuspendLayout();
             // 
-            // opNotiboard
+            // opNotiboardAndSend
             // 
-            this.opNotiboard.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opNotiboard.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
-            this.opNotiboard.ItemSelectForeColor = System.Drawing.Color.White;
-            this.opNotiboard.Location = new System.Drawing.Point(13, 14);
-            this.opNotiboard.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.opNotiboard.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opNotiboard.Name = "opNotiboard";
-            this.opNotiboard.Padding = new System.Windows.Forms.Padding(2);
-            this.opNotiboard.ShowText = false;
-            this.opNotiboard.Size = new System.Drawing.Size(814, 240);
-            this.opNotiboard.TabIndex = 0;
-            this.opNotiboard.Text = "uiListBox1";
+            this.opNotiboardAndSend.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opNotiboardAndSend.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
+            this.opNotiboardAndSend.ItemSelectForeColor = System.Drawing.Color.White;
+            this.opNotiboardAndSend.Location = new System.Drawing.Point(13, 5);
+            this.opNotiboardAndSend.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.opNotiboardAndSend.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opNotiboardAndSend.Name = "opNotiboardAndSend";
+            this.opNotiboardAndSend.Padding = new System.Windows.Forms.Padding(2);
+            this.opNotiboardAndSend.ShowText = false;
+            this.opNotiboardAndSend.Size = new System.Drawing.Size(402, 240);
+            this.opNotiboardAndSend.TabIndex = 0;
+            this.opNotiboardAndSend.Text = "uiListBox1";
             // 
-            // uiSymbolButton1
+            // btnGetSendPending
             // 
-            this.uiSymbolButton1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uiSymbolButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiSymbolButton1.Location = new System.Drawing.Point(644, 297);
-            this.uiSymbolButton1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiSymbolButton1.Name = "uiSymbolButton1";
-            this.uiSymbolButton1.Size = new System.Drawing.Size(184, 61);
-            this.uiSymbolButton1.TabIndex = 1;
-            this.uiSymbolButton1.Text = "Lấy mã có thể gửi";
-            this.uiSymbolButton1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnGetSendPending.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnGetSendPending.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnGetSendPending.Location = new System.Drawing.Point(644, 297);
+            this.btnGetSendPending.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnGetSendPending.Name = "btnGetSendPending";
+            this.btnGetSendPending.Size = new System.Drawing.Size(184, 61);
+            this.btnGetSendPending.TabIndex = 1;
+            this.btnGetSendPending.Text = "Lấy mã có thể gửi";
+            this.btnGetSendPending.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnGetSendPending.Click += new System.EventHandler(this.btnGetSendPending_Click);
             // 
-            // uiSymbolButton2
+            // btnConnect
             // 
-            this.uiSymbolButton2.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uiSymbolButton2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiSymbolButton2.Location = new System.Drawing.Point(644, 431);
-            this.uiSymbolButton2.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiSymbolButton2.Name = "uiSymbolButton2";
-            this.uiSymbolButton2.Size = new System.Drawing.Size(184, 61);
-            this.uiSymbolButton2.TabIndex = 2;
-            this.uiSymbolButton2.Text = "Kết nối";
-            this.uiSymbolButton2.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnConnect.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnConnect.Location = new System.Drawing.Point(644, 431);
+            this.btnConnect.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnConnect.Name = "btnConnect";
+            this.btnConnect.Size = new System.Drawing.Size(184, 61);
+            this.btnConnect.TabIndex = 2;
+            this.btnConnect.Text = "Kết nối";
+            this.btnConnect.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
             // 
-            // uiSymbolButton3
+            // btnSendFailed
             // 
-            this.uiSymbolButton3.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uiSymbolButton3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiSymbolButton3.Location = new System.Drawing.Point(644, 364);
-            this.uiSymbolButton3.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiSymbolButton3.Name = "uiSymbolButton3";
-            this.uiSymbolButton3.Size = new System.Drawing.Size(184, 61);
-            this.uiSymbolButton3.TabIndex = 3;
-            this.uiSymbolButton3.Text = "Lấy mã gửi lỗi";
-            this.uiSymbolButton3.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnSendFailed.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSendFailed.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnSendFailed.Location = new System.Drawing.Point(644, 364);
+            this.btnSendFailed.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnSendFailed.Name = "btnSendFailed";
+            this.btnSendFailed.Size = new System.Drawing.Size(184, 61);
+            this.btnSendFailed.TabIndex = 3;
+            this.btnSendFailed.Text = "Lấy mã gửi lỗi";
+            this.btnSendFailed.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnSendFailed.Click += new System.EventHandler(this.btnSendFailed_Click);
             // 
             // uiTitlePanel1
             // 
@@ -245,13 +250,13 @@
             // 
             this.uiTitlePanel6.Controls.Add(this.uiLabel6);
             this.uiTitlePanel6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiTitlePanel6.Location = new System.Drawing.Point(174, 466);
+            this.uiTitlePanel6.Location = new System.Drawing.Point(335, 365);
             this.uiTitlePanel6.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.uiTitlePanel6.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiTitlePanel6.Name = "uiTitlePanel6";
             this.uiTitlePanel6.Padding = new System.Windows.Forms.Padding(1, 35, 1, 1);
             this.uiTitlePanel6.ShowText = false;
-            this.uiTitlePanel6.Size = new System.Drawing.Size(155, 97);
+            this.uiTitlePanel6.Size = new System.Drawing.Size(154, 97);
             this.uiTitlePanel6.TabIndex = 9;
             this.uiTitlePanel6.Text = "Số mã 409";
             this.uiTitlePanel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -263,7 +268,7 @@
             this.uiLabel6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
             this.uiLabel6.Location = new System.Drawing.Point(1, 35);
             this.uiLabel6.Name = "uiLabel6";
-            this.uiLabel6.Size = new System.Drawing.Size(153, 61);
+            this.uiLabel6.Size = new System.Drawing.Size(152, 61);
             this.uiLabel6.TabIndex = 0;
             this.uiLabel6.Text = "uiLabel6";
             this.uiLabel6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -272,7 +277,7 @@
             // 
             this.uiTitlePanel7.Controls.Add(this.uiLabel7);
             this.uiTitlePanel7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiTitlePanel7.Location = new System.Drawing.Point(337, 264);
+            this.uiTitlePanel7.Location = new System.Drawing.Point(335, 264);
             this.uiTitlePanel7.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.uiTitlePanel7.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiTitlePanel7.Name = "uiTitlePanel7";
@@ -295,10 +300,40 @@
             this.uiLabel7.Text = "uiLabel7";
             this.uiLabel7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // opRecive
+            // 
+            this.opRecive.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opRecive.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
+            this.opRecive.ItemSelectForeColor = System.Drawing.Color.White;
+            this.opRecive.Location = new System.Drawing.Point(426, 5);
+            this.opRecive.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.opRecive.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opRecive.Name = "opRecive";
+            this.opRecive.Padding = new System.Windows.Forms.Padding(2);
+            this.opRecive.ShowText = false;
+            this.opRecive.Size = new System.Drawing.Size(402, 240);
+            this.opRecive.TabIndex = 10;
+            this.opRecive.Text = "uiListBox1";
+            // 
+            // btnSend
+            // 
+            this.btnSend.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSend.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnSend.Location = new System.Drawing.Point(644, 498);
+            this.btnSend.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnSend.Name = "btnSend";
+            this.btnSend.Size = new System.Drawing.Size(184, 61);
+            this.btnSend.TabIndex = 11;
+            this.btnSend.Text = "Gửi";
+            this.btnSend.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
+            // 
             // PAwsIot
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(840, 674);
+            this.Controls.Add(this.btnSend);
+            this.Controls.Add(this.opRecive);
             this.Controls.Add(this.uiTitlePanel7);
             this.Controls.Add(this.uiTitlePanel6);
             this.Controls.Add(this.uiTitlePanel5);
@@ -306,10 +341,10 @@
             this.Controls.Add(this.uiTitlePanel3);
             this.Controls.Add(this.uiTitlePanel2);
             this.Controls.Add(this.uiTitlePanel1);
-            this.Controls.Add(this.uiSymbolButton3);
-            this.Controls.Add(this.uiSymbolButton2);
-            this.Controls.Add(this.uiSymbolButton1);
-            this.Controls.Add(this.opNotiboard);
+            this.Controls.Add(this.btnSendFailed);
+            this.Controls.Add(this.btnConnect);
+            this.Controls.Add(this.btnGetSendPending);
+            this.Controls.Add(this.opNotiboardAndSend);
             this.Name = "PAwsIot";
             this.Symbol = 162325;
             this.Text = "AWS IOT";
@@ -326,10 +361,10 @@
 
         #endregion
 
-        private Sunny.UI.UIListBox opNotiboard;
-        private Sunny.UI.UISymbolButton uiSymbolButton1;
-        private Sunny.UI.UISymbolButton uiSymbolButton2;
-        private Sunny.UI.UISymbolButton uiSymbolButton3;
+        private Sunny.UI.UIListBox opNotiboardAndSend;
+        private Sunny.UI.UISymbolButton btnGetSendPending;
+        private Sunny.UI.UISymbolButton btnConnect;
+        private Sunny.UI.UISymbolButton btnSendFailed;
         private Sunny.UI.UITitlePanel uiTitlePanel1;
         private Sunny.UI.UILabel uiLabel1;
         private Sunny.UI.UITitlePanel uiTitlePanel2;
@@ -344,5 +379,7 @@
         private Sunny.UI.UILabel uiLabel6;
         private Sunny.UI.UITitlePanel uiTitlePanel7;
         private Sunny.UI.UILabel uiLabel7;
+        private Sunny.UI.UIListBox opRecive;
+        private Sunny.UI.UISymbolButton btnSend;
     }
 }

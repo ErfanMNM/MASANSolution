@@ -33,7 +33,8 @@ namespace MASAN_SERIALIZATION
         private PPOInfo _pProduction = new PPOInfo();
         private PStatictis _pStatictis = new PStatictis();
         private PCartonDashboard _pCartonDashboard = new PCartonDashboard();
-        private PAws _pAws = new PAws();
+        //private PAws _pAws = new PAws();
+        private PAwsIot _pAws = new PAwsIot();
         private PSettings _pSettings = new PSettings();
         private PLCSetting _pPLCSetting = new PLCSetting();
         #endregion
