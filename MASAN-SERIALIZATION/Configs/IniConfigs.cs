@@ -28,6 +28,8 @@ namespace MASAN_SERIALIZATION.Configs
         public string clientId { get; set; } // Điểm cuối AWS IoT
         public int cartonPack { get; set; } // Đường dẫn đến chứng chỉ của client
         public int cartonOfset { get; set; } // Số lượng sản phẩm trong một thùng carton
+        public bool Auto_Send_AWS { get; set; } // Tự động gửi dữ liệu lên AWS
+        public int APP_Mode { get; set; } // Chế độ ứng dụng (0: Normal, 1: Test, 2: Debug)
 
 
         public override void SetDefault()
@@ -49,6 +51,8 @@ namespace MASAN_SERIALIZATION.Configs
             clientId = "MIPWP501"; // Default client ID
             cartonPack = 12; // Default path for carton pack certificate
             cartonOfset = 12; // Default path for carton offset certificate
+            Auto_Send_AWS = false; // Mặc định tự động gửi dữ liệu lên AWS
+            APP_Mode = 0; // Mặc định chế độ ứng dụng là Normal (0)
         }
     }
 }

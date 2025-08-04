@@ -406,5 +406,10 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 return $"❌ Lỗi: {ex.Message}";
             }
         }
+
+        private void btnSendAll_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

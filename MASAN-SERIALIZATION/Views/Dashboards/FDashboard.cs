@@ -1289,7 +1289,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         string cartonCode = Globals_Database.Activate_Carton.Dequeue();
 
                         //lấy id thùng từ mã thùng 
-                        DataRow cartonData = Globals.ProductionData.getDataPO.Get_Carton_By_Code(Globals.ProductionData.orderNo,cartonCode).Carton;
+                        DataRow cartonData = Globals.ProductionData.getDataPO.Get_Carton_By_Code(Globals.ProductionData.orderNo, cartonCode).Carton;
 
                         ProductionCartonData productionCartonData = new ProductionCartonData
                         {
@@ -1320,6 +1320,23 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         //cập nhật lại thùng trong db
                         Globals.ProductionData.setDB.Update_Carton(productionCartonData, Globals.ProductionData.orderNo);
                     }
+
+                    if (Globals_Database.aWS_Send_Datas.Count > 0)
+                    {
+                        // Lấy dữ liệu từ hàng đợi
+                        AWS_Send_Data itemAWS = Globals_Database.aWS_Send_Datas.Dequeue();
+                        Globals.ProductionData.setDB.Update_Active_Status_With_KV_where_KV("Send_Status", itemAWS.send_Status, "ID", itemAWS.ID.ToString(), Globals.ProductionData.orderNo);
+                    }
+
+                    //cập nhật trạng thái AWS
+                    if (Globals_Database.aWS_Recive_Datas.Count > 0)
+                    {
+                        // Lấy dữ liệu từ hàng đợi
+                        AWS_Recive_Data itemAWS = Globals_Database.aWS_Recive_Datas.Dequeue();
+                        Globals.ProductionData.setDB.Update_Active_Status_With_KV_where_KV("Recive_Status", itemAWS.recive_Status, "ID", itemAWS.ID.ToString(), Globals.ProductionData.orderNo);
+                    }
+
+                    
                 }
                 catch (Exception ex)
                 {

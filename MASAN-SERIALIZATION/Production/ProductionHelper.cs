@@ -522,8 +522,38 @@ namespace MASAN_SERIALIZATION.Production
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         conn.Open();
-                        string query = "SELECT * FROM UniqueCodes WHERE Status != 0 AND Send_Status != 'Sent' AND cartonCode != 'pending'";
+                        string query = "SELECT * FROM UniqueCodes WHERE Status != 0 AND Send_Status != 'Sent' AND cartonCode != 'pending' AND cartonCode != '0' ";
                        
+                        var command = new SQLiteCommand(query, conn);
+                        var adapter = new SQLiteDataAdapter(command);
+                        var table = new DataTable();
+                        adapter.Fill(table);
+
+                        return (table.Rows.Count > 0)
+                            ? new TResult(true, "Lấy danh sách mã code thành công.", table.Rows.Count, table)
+                            : new TResult(false, "Không có mã code nào trong cơ sở dữ liệu.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new TResult(false, $"Lỗi PH11 khi lấy danh sách mã code: {ex.Message}");
+                }
+            }
+
+            public TResult Get_Codes_Send_Failed(string orderNo)
+            {
+                try
+                {
+                    string czRunPath = $"{dataPath}/{orderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
+                    }
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = $"SELECT * FROM UniqueCodes WHERE Status != 0 AND Send_Status == 'Failed' AND cartonCode != 'pending'";
+
                         var command = new SQLiteCommand(query, conn);
                         var adapter = new SQLiteDataAdapter(command);
                         var table = new DataTable();
@@ -536,7 +566,7 @@ namespace MASAN_SERIALIZATION.Production
                 }
                 catch (Exception ex)
                 {
-                    return new TResult(false, $"Lỗi PH11 khi lấy danh sách mã code: {ex.Message}");
+                    return new TResult(false, $"Lỗi PH1123 khi lấy danh sách mã code: {ex.Message}");
                 }
             }
             //lấy mã thùng lớn nhất

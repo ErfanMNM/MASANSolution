@@ -50,15 +50,14 @@ namespace MASAN_SERIALIZATION
             
             Globals.Log = new LogHelper<e_LogType>(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MASAN-SERIALIZATION", "Logs", "applog.tl"));
             Globals.Log.WriteLogAsync("System", e_LogType.Info, "Ứng dụng MASAN-SERIALIZATION đã được khởi động");
-            
-            InitializeUI();
-            InitializeConfigs();
         }
         #endregion
 
         #region Form Events
         private void FMain_Load(object sender, EventArgs e)
         {
+            InitializeUI();
+            InitializeConfigs();
             RenderControlForm();
             ToggleFullScreen();
             Start_Main_Process_Task();

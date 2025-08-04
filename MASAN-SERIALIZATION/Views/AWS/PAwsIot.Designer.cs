@@ -71,12 +71,13 @@
             this.opNotiboardAndSend.Size = new System.Drawing.Size(402, 240);
             this.opNotiboardAndSend.TabIndex = 0;
             this.opNotiboardAndSend.Text = "uiListBox1";
+            this.opNotiboardAndSend.DoubleClick += new System.EventHandler(this.opNotiboardAndSend_DoubleClick);
             // 
             // btnGetSendPending
             // 
             this.btnGetSendPending.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnGetSendPending.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnGetSendPending.Location = new System.Drawing.Point(644, 297);
+            this.btnGetSendPending.Location = new System.Drawing.Point(495, 264);
             this.btnGetSendPending.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnGetSendPending.Name = "btnGetSendPending";
             this.btnGetSendPending.Size = new System.Drawing.Size(184, 61);
@@ -89,7 +90,7 @@
             // 
             this.btnConnect.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnConnect.Location = new System.Drawing.Point(644, 431);
+            this.btnConnect.Location = new System.Drawing.Point(497, 398);
             this.btnConnect.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnConnect.Name = "btnConnect";
             this.btnConnect.Size = new System.Drawing.Size(184, 61);
@@ -102,7 +103,7 @@
             // 
             this.btnSendFailed.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSendFailed.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnSendFailed.Location = new System.Drawing.Point(644, 364);
+            this.btnSendFailed.Location = new System.Drawing.Point(497, 331);
             this.btnSendFailed.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnSendFailed.Name = "btnSendFailed";
             this.btnSendFailed.Size = new System.Drawing.Size(184, 61);
@@ -223,7 +224,7 @@
             // 
             this.uiTitlePanel5.Controls.Add(this.uiLabel5);
             this.uiTitlePanel5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiTitlePanel5.Location = new System.Drawing.Point(13, 466);
+            this.uiTitlePanel5.Location = new System.Drawing.Point(12, 466);
             this.uiTitlePanel5.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.uiTitlePanel5.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiTitlePanel5.Name = "uiTitlePanel5";
@@ -319,10 +320,10 @@
             // 
             this.btnSend.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSend.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnSend.Location = new System.Drawing.Point(644, 498);
+            this.btnSend.Location = new System.Drawing.Point(495, 466);
             this.btnSend.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnSend.Name = "btnSend";
-            this.btnSend.Size = new System.Drawing.Size(184, 61);
+            this.btnSend.Size = new System.Drawing.Size(186, 61);
             this.btnSend.TabIndex = 11;
             this.btnSend.Text = "Gửi";
             this.btnSend.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -348,6 +349,8 @@
             this.Name = "PAwsIot";
             this.Symbol = 162325;
             this.Text = "AWS IOT";
+            this.Initialize += new System.EventHandler(this.PAwsIot_Initialize);
+            this.Load += new System.EventHandler(this.PAwsIot_Load);
             this.uiTitlePanel1.ResumeLayout(false);
             this.uiTitlePanel2.ResumeLayout(false);
             this.uiTitlePanel3.ResumeLayout(false);

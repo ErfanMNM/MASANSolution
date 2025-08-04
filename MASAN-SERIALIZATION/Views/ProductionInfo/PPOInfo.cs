@@ -772,7 +772,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             TResult passCountResult = GetRecordCountByStatus(e_Production_Status.Pass);
             TResult failCountResult = GetRecordCountByStatus(e_Production_Status.Fail);
             TResult awsFullOKResult = GetAWSRecordCount(e_AWS_Send_Status.Sent, e_AWS_Recive_Status.Waiting, "!=");
-            TResult awsNotSentResult = GetAWSRecordCount(e_AWS_Send_Status.Pending, e_AWS_Recive_Status.Pending, "=", "AND Status != 0");
+            TResult awsNotSentResult = GetAWSRecordCount(e_AWS_Send_Status.Pending, e_AWS_Recive_Status.Pending, "=", "AND Status != 0 AND cartonCode != 'pending' AND cartonCode != '0' ");
             TResult awsSentFailedResult = GetAWSRecordCount(e_AWS_Send_Status.Failed, e_AWS_Recive_Status.Waiting, "=", "AND Status != 0");
             TResult awsSentWaitingResult = GetAWSRecordCount(e_AWS_Send_Status.Sent, e_AWS_Recive_Status.Waiting, "=");
 

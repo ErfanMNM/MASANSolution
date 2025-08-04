@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static AwsIotClientHelper;
 
 namespace MASAN_SERIALIZATION
 {
@@ -51,6 +52,8 @@ namespace MASAN_SERIALIZATION
         public static bool test { get; set; } = false; // Biến toàn cục để kiểm tra trạng thái test
 
         public static int test2 { get; set; } = 0; // Biến toàn cục để kiểm tra trạng thái test 2
+
+        public static e_awsIot_status AWS_IoT_Status { get; set; } = e_awsIot_status.Disconnected; // Biến toàn cục để kiểm tra trạng thái kết nối AWS IoT
     }
 
     public static class Globals_Database
@@ -61,7 +64,6 @@ namespace MASAN_SERIALIZATION
 
         public static Queue<(string conten, ProductionCodeData data, bool duplicate)> Update_Product_To_SQLite_Queue = new Queue<(string content, ProductionCodeData data, bool duplicate)>();
 
-
         public static Queue<ProductionCodeData_Record> Insert_Product_To_Record_Queue = new Queue<ProductionCodeData_Record>();
 
         public static Queue<ProductionCodeData_Record> Insert_Product_To_Record_CS_Queue = new Queue<ProductionCodeData_Record>();
@@ -69,6 +71,9 @@ namespace MASAN_SERIALIZATION
         public static Queue<ProductionCartonData> Update_Product_To_Record_Carton_Queue = new Queue<ProductionCartonData>();
 
         public static Queue<string> Activate_Carton = new Queue<string>(); // Hàng đợi kích hoạt mã thùng sản xuất
+
+        public static Queue<AWS_Recive_Data> aWS_Recive_Datas = new Queue<AWS_Recive_Data>(); // Hàng đợi dữ liệu AWS IoT
+        public static Queue<AWS_Send_Data> aWS_Send_Datas = new Queue<AWS_Send_Data>(); // Hàng đợi dữ liệu AWS IoT
     }
 
     #region Các lớp dữ liệu liên quan đến sản xuất
@@ -134,8 +139,18 @@ namespace MASAN_SERIALIZATION
         public static string Camera_Content { get; set; } = string.Empty; // Nội dung camera phụ
         public static e_Production_Status Camera_Status { get; set; } = e_Production_Status.Fail; // Trạng thái sản phẩm từ camera phụ
         public static int ID { get; set; } = 0; // ID của sản phẩm
-    } 
+    }
 
+    public class AWS_Recive_Data
+    {
+        public int ID { get; set; } // Chủ đề của AWS IoT
+        public string recive_Status { get; set; } // Thông báo lỗi nếu có
+    }
 
+    public class AWS_Send_Data
+    {
+        public int ID { get; set; } // Chủ đề của AWS IoT
+        public string send_Status { get; set; } // Thông báo lỗi nếu có
+    }
     #endregion
 }

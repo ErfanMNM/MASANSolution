@@ -658,6 +658,7 @@
             this.btnSendAll.TabIndex = 5;
             this.btnSendAll.Text = "Gửi hết";
             this.btnSendAll.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnSendAll.Click += new System.EventHandler(this.btnSendAll_Click);
             // 
             // PAws
             // 
