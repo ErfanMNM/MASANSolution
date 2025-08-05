@@ -97,6 +97,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.Camera_Sub = new SpT.Communications.TCP.TCPClient(this.components);
             this.OMRON_PLC = new SPMS1.OmronPLC_Hsl(this.components);
             this.WK_Update_UI = new System.ComponentModel.BackgroundWorker();
+            this.btnClearPLC = new Sunny.UI.UISymbolButton();
+            this.btnClearNoti = new Sunny.UI.UISymbolButton();
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTitlePanel5.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -427,8 +429,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             // 
             this.uiTableLayoutPanel15.BackColor = System.Drawing.Color.LightBlue;
             this.uiTableLayoutPanel15.ColumnCount = 2;
-            this.uiTableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 37.46479F));
-            this.uiTableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 62.53521F));
+            this.uiTableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40.28169F));
+            this.uiTableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 59.71831F));
+            this.uiTableLayoutPanel15.Controls.Add(this.btnClearNoti, 0, 5);
             this.uiTableLayoutPanel15.Controls.Add(this.opCaseCount, 1, 4);
             this.uiTableLayoutPanel15.Controls.Add(this.uiPanel1, 0, 4);
             this.uiTableLayoutPanel15.Controls.Add(this.opGTIN, 1, 3);
@@ -439,6 +442,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel15.Controls.Add(this.oporderQty, 1, 2);
             this.uiTableLayoutPanel15.Controls.Add(this.uiPanel11, 0, 2);
             this.uiTableLayoutPanel15.Controls.Add(this.uiPanel13, 0, 3);
+            this.uiTableLayoutPanel15.Controls.Add(this.btnClearPLC, 1, 5);
             this.uiTableLayoutPanel15.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTableLayoutPanel15.Location = new System.Drawing.Point(2, 2);
             this.uiTableLayoutPanel15.Margin = new System.Windows.Forms.Padding(2);
@@ -458,11 +462,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             // 
             this.opCaseCount.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opCaseCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opCaseCount.Location = new System.Drawing.Point(135, 210);
+            this.opCaseCount.Location = new System.Drawing.Point(144, 210);
             this.opCaseCount.Margin = new System.Windows.Forms.Padding(2);
             this.opCaseCount.MinimumSize = new System.Drawing.Size(1, 1);
             this.opCaseCount.Name = "opCaseCount";
-            this.opCaseCount.Size = new System.Drawing.Size(218, 48);
+            this.opCaseCount.Size = new System.Drawing.Size(209, 48);
             this.opCaseCount.TabIndex = 31;
             this.opCaseCount.Text = "...";
             this.opCaseCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -475,7 +479,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel1.Name = "uiPanel1";
-            this.uiPanel1.Size = new System.Drawing.Size(129, 48);
+            this.uiPanel1.Size = new System.Drawing.Size(138, 48);
             this.uiPanel1.TabIndex = 30;
             this.uiPanel1.Text = "Carton Count";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -484,11 +488,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             // 
             this.opGTIN.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opGTIN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opGTIN.Location = new System.Drawing.Point(135, 158);
+            this.opGTIN.Location = new System.Drawing.Point(144, 158);
             this.opGTIN.Margin = new System.Windows.Forms.Padding(2);
             this.opGTIN.MinimumSize = new System.Drawing.Size(1, 1);
             this.opGTIN.Name = "opGTIN";
-            this.opGTIN.Size = new System.Drawing.Size(218, 48);
+            this.opGTIN.Size = new System.Drawing.Size(209, 48);
             this.opGTIN.TabIndex = 29;
             this.opGTIN.Text = "...";
             this.opGTIN.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -501,7 +505,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiPanel7.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel7.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel7.Name = "uiPanel7";
-            this.uiPanel7.Size = new System.Drawing.Size(129, 48);
+            this.uiPanel7.Size = new System.Drawing.Size(138, 48);
             this.uiPanel7.TabIndex = 4;
             this.uiPanel7.Text = "orderNo";
             this.uiPanel7.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -510,11 +514,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             // 
             this.oporderNO.Dock = System.Windows.Forms.DockStyle.Fill;
             this.oporderNO.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.oporderNO.Location = new System.Drawing.Point(135, 2);
+            this.oporderNO.Location = new System.Drawing.Point(144, 2);
             this.oporderNO.Margin = new System.Windows.Forms.Padding(2);
             this.oporderNO.MinimumSize = new System.Drawing.Size(1, 1);
             this.oporderNO.Name = "oporderNO";
-            this.oporderNO.Size = new System.Drawing.Size(218, 48);
+            this.oporderNO.Size = new System.Drawing.Size(209, 48);
             this.oporderNO.TabIndex = 26;
             this.oporderNO.Text = "...";
             this.oporderNO.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -529,7 +533,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiPanel10.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel10.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel10.Name = "uiPanel10";
-            this.uiPanel10.Size = new System.Drawing.Size(129, 48);
+            this.uiPanel10.Size = new System.Drawing.Size(138, 48);
             this.uiPanel10.TabIndex = 3;
             this.uiPanel10.Text = "productionDate";
             this.uiPanel10.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -539,11 +543,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opproductionDate.BackColor = System.Drawing.Color.LightBlue;
             this.opproductionDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opproductionDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opproductionDate.Location = new System.Drawing.Point(135, 54);
+            this.opproductionDate.Location = new System.Drawing.Point(144, 54);
             this.opproductionDate.Margin = new System.Windows.Forms.Padding(2);
             this.opproductionDate.MinimumSize = new System.Drawing.Size(1, 1);
             this.opproductionDate.Name = "opproductionDate";
-            this.opproductionDate.Size = new System.Drawing.Size(218, 48);
+            this.opproductionDate.Size = new System.Drawing.Size(209, 48);
             this.opproductionDate.TabIndex = 27;
             this.opproductionDate.Text = "...";
             this.opproductionDate.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -552,11 +556,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             // 
             this.oporderQty.Dock = System.Windows.Forms.DockStyle.Fill;
             this.oporderQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.oporderQty.Location = new System.Drawing.Point(135, 106);
+            this.oporderQty.Location = new System.Drawing.Point(144, 106);
             this.oporderQty.Margin = new System.Windows.Forms.Padding(2);
             this.oporderQty.MinimumSize = new System.Drawing.Size(1, 1);
             this.oporderQty.Name = "oporderQty";
-            this.oporderQty.Size = new System.Drawing.Size(218, 48);
+            this.oporderQty.Size = new System.Drawing.Size(209, 48);
             this.oporderQty.TabIndex = 28;
             this.oporderQty.Text = "...";
             this.oporderQty.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -569,7 +573,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiPanel11.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel11.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel11.Name = "uiPanel11";
-            this.uiPanel11.Size = new System.Drawing.Size(129, 48);
+            this.uiPanel11.Size = new System.Drawing.Size(138, 48);
             this.uiPanel11.TabIndex = 16;
             this.uiPanel11.Text = "orderQty";
             this.uiPanel11.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -582,7 +586,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiPanel13.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel13.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel13.Name = "uiPanel13";
-            this.uiPanel13.Size = new System.Drawing.Size(129, 48);
+            this.uiPanel13.Size = new System.Drawing.Size(138, 48);
             this.uiPanel13.TabIndex = 5;
             this.uiPanel13.Text = "GTIN";
             this.uiPanel13.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -663,7 +667,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opLedC2.Location = new System.Drawing.Point(67, 2);
             this.opLedC2.Margin = new System.Windows.Forms.Padding(2);
             this.opLedC2.Name = "opLedC2";
-            this.opLedC2.On = false;
             this.opLedC2.Size = new System.Drawing.Size(40, 42);
             this.opLedC2.TabIndex = 0;
             this.opLedC2.Text = "uiLedBulb2";
@@ -724,6 +727,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opLedC1.Location = new System.Drawing.Point(67, 2);
             this.opLedC1.Margin = new System.Windows.Forms.Padding(2);
             this.opLedC1.Name = "opLedC1";
+            this.opLedC1.On = false;
             this.opLedC1.Size = new System.Drawing.Size(40, 42);
             this.opLedC1.TabIndex = 0;
             this.opLedC1.Text = "uiLedBulb1";
@@ -785,6 +789,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opLedPLC.Location = new System.Drawing.Point(67, 2);
             this.opLedPLC.Margin = new System.Windows.Forms.Padding(2);
             this.opLedPLC.Name = "opLedPLC";
+            this.opLedPLC.On = false;
             this.opLedPLC.Size = new System.Drawing.Size(40, 42);
             this.opLedPLC.TabIndex = 0;
             this.opLedPLC.Text = "uiLedBulb3";
@@ -1048,7 +1053,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             // 
             this.uiTableLayoutPanel1.ColumnCount = 2;
             this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 366F));
+            this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 341F));
             this.uiTableLayoutPanel1.Controls.Add(this.opErrCount, 1, 0);
             this.uiTableLayoutPanel1.Controls.Add(this.opsadfsdf, 0, 0);
             this.uiTableLayoutPanel1.Location = new System.Drawing.Point(3, 126);
@@ -1063,11 +1068,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             // 
             this.opErrCount.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opErrCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.opErrCount.Location = new System.Drawing.Point(103, 2);
+            this.opErrCount.Location = new System.Drawing.Point(128, 2);
             this.opErrCount.Margin = new System.Windows.Forms.Padding(2);
             this.opErrCount.MinimumSize = new System.Drawing.Size(1, 1);
             this.opErrCount.Name = "opErrCount";
-            this.opErrCount.Size = new System.Drawing.Size(362, 43);
+            this.opErrCount.Size = new System.Drawing.Size(337, 43);
             this.opErrCount.TabIndex = 28;
             this.opErrCount.Text = "...";
             this.opErrCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1080,7 +1085,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opsadfsdf.Margin = new System.Windows.Forms.Padding(2);
             this.opsadfsdf.MinimumSize = new System.Drawing.Size(1, 1);
             this.opsadfsdf.Name = "opsadfsdf";
-            this.opsadfsdf.Size = new System.Drawing.Size(97, 43);
+            this.opsadfsdf.Size = new System.Drawing.Size(122, 43);
             this.opsadfsdf.TabIndex = 27;
             this.opsadfsdf.Text = "Cảnh báo";
             this.opsadfsdf.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1110,6 +1115,32 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             // WK_Update_UI
             // 
             this.WK_Update_UI.WorkerSupportsCancellation = true;
+            // 
+            // btnClearPLC
+            // 
+            this.btnClearPLC.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnClearPLC.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnClearPLC.Location = new System.Drawing.Point(145, 263);
+            this.btnClearPLC.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnClearPLC.Name = "btnClearPLC";
+            this.btnClearPLC.Size = new System.Drawing.Size(207, 52);
+            this.btnClearPLC.Symbol = 362171;
+            this.btnClearPLC.TabIndex = 32;
+            this.btnClearPLC.Text = "Xóa Lỗi PLC";
+            this.btnClearPLC.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            // 
+            // btnClearNoti
+            // 
+            this.btnClearNoti.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnClearNoti.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnClearNoti.Location = new System.Drawing.Point(3, 263);
+            this.btnClearNoti.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnClearNoti.Name = "btnClearNoti";
+            this.btnClearNoti.Size = new System.Drawing.Size(136, 52);
+            this.btnClearNoti.Symbol = 557528;
+            this.btnClearNoti.TabIndex = 33;
+            this.btnClearNoti.Text = "Xóa bảng";
+            this.btnClearNoti.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             // 
             // FDashboard
             // 
@@ -1218,5 +1249,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel6;
         private Sunny.UI.UILedBulb opLedC1;
         private Sunny.UI.UIPanel opC1_State;
+        private Sunny.UI.UISymbolButton btnClearNoti;
+        private Sunny.UI.UISymbolButton btnClearPLC;
     }
 }

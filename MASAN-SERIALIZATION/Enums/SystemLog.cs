@@ -34,7 +34,9 @@ namespace MASAN_SERIALIZATION.Enums
         Maintenance = 7,
 
         [Description("Thay đổi dữ liệu")]
-        DataChange = 8
+        DataChange = 8,
+
+        Critical = 9
     }
 
 }

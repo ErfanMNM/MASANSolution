@@ -168,7 +168,10 @@
     <Compile Include="Production\ProductionHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\ErrorCodes.cs" />
+    <Compile Include="Utils\ErrorMigrationHelper.cs" />
     <Compile Include="Utils\Extension.cs" />
+    <Compile Include="Utils\LogExtensions.cs" />
     <Compile Include="Views\AWS\PAws.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -309,10 +312,6 @@
     <ProjectReference Include="..\SpT\SpT.csproj">
       <Project>{eb745670-e877-411c-ab3f-253e16c30d82}</Project>
       <Name>SpT</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TeraUI\TeraUI.csproj">
-      <Project>{c975c83d-e9f6-4599-b742-2a9737bdaa63}</Project>
-      <Name>TeraUI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

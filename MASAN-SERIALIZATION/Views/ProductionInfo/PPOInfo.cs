@@ -23,10 +23,10 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
     public partial class PPOInfo : UIPage
     {
         #region Private Fields
-        
+
         private LogHelper<e_LogType> _pageLogger;
         private int _processCounter = 10;
-        
+
         private readonly BackgroundWorker _mainProcessWorker = new BackgroundWorker()
         {
             WorkerSupportsCancellation = true
@@ -36,11 +36,11 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         {
             WorkerSupportsCancellation = true
         };
-        
+
         #endregion
 
         #region Constructor and Initialization
-        
+
         public PPOInfo()
         {
             InitializeComponent();
@@ -69,7 +69,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             if (!loadResult.issucess)
             {
                 string errorResponse = $"{{\"error\":\"{loadResult.message}\"}}";
-                _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
+                _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
                     "Tạo thất bại danh sách đơn hàng từ MES", errorResponse);
             }
         }
@@ -115,7 +115,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 {
                     //try
                     //{
-                        ProcessProductionState();
+                    ProcessProductionState();
                     //}
                     //catch (Exception ex)
                     //{
@@ -130,7 +130,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         private void ProcessProductionState()
         {
             _processCounter++;
-            
+
             switch (Globals.Production_State)
             {
                 case e_Production_State.NoSelectedPO:
@@ -178,10 +178,10 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         {
             if (!btnPO.Enabled)
             {
-                this.InvokeIfRequired ( () => {
-                btnPO.Enabled = true;
-                btnTestMode.Enabled = true;
-                     });
+                this.InvokeIfRequired(() => {
+                    btnPO.Enabled = true;
+                    btnTestMode.Enabled = true;
+                });
             }
         }
 
@@ -347,7 +347,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         {
             btnRUN.Text = "Dừng sản xuất";
             btnRUN.FillColor = Color.Red;
-            btnRUN.Symbol = 61509;
+            btnRUN.Symbol = 61517;
             btnRUN.Enabled = true;
         }
 
@@ -402,7 +402,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void HandleCheckingQueueState()
         {
-            if (Globals_Database.Insert_Product_To_Record_Queue.Count > 0 || Globals_Database.Update_Product_To_SQLite_Queue.Count > 0)
+            if (Globals_Database.Insert_Product_To_Record_Queue.Count > 0 || Globals_Database.Update_Product_To_SQLite_Queue.Count > 0 || Globals_Database.Insert_Product_To_Record_CS_Queue.Count > 0 || Globals_Database.Update_Product_To_Record_Carton_Queue.Count > 0 ||Globals_Database.aWS_Recive_Datas.Count > 0 || Globals_Database.Activate_Carton.Count > 0 || Globals_Database.aWS_Send_Datas.Count > 0)
             {
                 this.InvokeIfRequired(() =>
                 {
@@ -518,6 +518,9 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
                 case e_Production_State.Running:
                     HandleRunButtonInRunningState();
+                    break;
+                case e_Production_State.Pause:
+                    this.ShowErrorNotifier("Lỗi PP443: Vui lòng hoàn tất các sự kiện trước khi dừng sản xuất");
                     break;
             }
         }
@@ -925,7 +928,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         {
             Globals.ProductionData.orderNo = ipOrderNO.SelectedText;
             Globals.ProductionData.productionLine = opProductionLine.Text;
-            Globals.ProductionData.uom = dfdsf.Text;
+            Globals.ProductionData.uom = opUOM.Text;
             Globals.ProductionData.orderQty = opOrderQty.Text;
             Globals.ProductionData.customerOrderNo = opCustomerOrderNO.Text;
             Globals.ProductionData.productName = opProductName.Text;
@@ -1073,7 +1076,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 if (Globals.ProductionData.counter.totalCount <= 0)
                 {
                     btnPO.Enabled = true;
-                    btnPO.FillColor = Color.FromArgb(0, 192, 0);
+                    btnPO.FillColor = Color.FromArgb(52, 152, 219);
                     btnPO.Text = "Chọn PO";
                     btnPO.Symbol = 61508;
                     btnTestMode.Enabled = true;
@@ -1089,7 +1092,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 btnRUN.Enabled = true;
                 btnRUN.FillColor = Color.FromArgb(0, 192, 0);
                 btnRUN.Text = "Bắt đầu sản xuất";
-                btnRUN.Symbol = 61508;
+                btnRUN.Symbol = 61515;
             });
         }
 

@@ -1,0 +1,211 @@
+<!--
+	THIS EXAMPLE WAS DOWNLOADED FROM https://echarts.apache.org/examples/en/editor.html?c=bar-label-rotation&code=MYewdgzgLgBADiCAZAltGBeGBtAUDGAcgBsBTAMykIBp8iAnFAcwAsraDCoQ4a7CARiCjcAtn04pIKACakJRKRFmkAKjwWElKpBXb9tcgErM2mw6QBCwseelz1cXZTvKHPE632T7VmyFFnb0VfaxEAzzNcAF0AblwAQzg4ADpQMHJmAAUE-gTRUihSeghMGABvOnphBKKALgq6AlEpBoBaAE4ABg4CGFEEgA8G7roAX16E4mYwBsq-mB4oFHAIOaa-skoGkj0FBeBSMCL6HcPj4v2-xi8dm6iFsfHegDdi5eApgEFpplnGhZLFaQdYLAjcOA7CFXZqyGRkHYtGTw-S9BZCcKiHYY2wbJ4ECZ0BDKZbgUF9IGrBrE1DQFL0UgyACuhwAFOQmWBgKSwDBWQM4NR4IgAJQAsEC7DE6JlYnxMEwBlQJn0XkC-V9CYVMYi550GRoKAJLmkcmw_49DYDYYwACMXS641wY3iSVS6UyTDK80VNXqMG6k1-_12Lle7xQn2IPxmiLhZAUxJQPJ2FjCtl6BugxsODVtAFZeuAAMIsY1MU0wDlcnl8sU-gjpdDEBICUjEADycFrWAb1z9lbdaXAnvpA7RfSmsZgQ49zBSU7-E4Ib3oH2-wYas5H89X6-jweXwpJwK3yWHGXnSZ5R6zRpNZ_dO6YKTvOdIeI1zQAnqXclAUggQoux5Vk-wIIDGFINYcA2BZwLBFs22IBokPbEDgTgzUjwIBCFjQlCYAIjDwCwgkcPFBUCAI1DW3Q7tMKomBCSYvDNjowjiIY0imPxMFojxEUNSeF1cCbWAuJ7cUIBYEAAHcGigegmVIXpr1PGdzznF91PATNDXfR8L1HN8TSDadt0vF9FzAcM10jDcLK058Uj3ByDxmXpqiNf1LNHbzalUuhyBAegBhEYodnKYAxlwsB8lIAAfcoEjGMYFBC44AGUUAAL0rW0ADZekyqAADF8hQYhvwaAAiL5GCmWqvMjFgzRgeKCjmPiRPiSleV7OhuBAYhlkhSiYCU5gK1OIghjQK55ogLIQCkE52vBb84ErQgZISGR5MIPE9Wo0gKzAGR2pkWoEgabBCFUQBVvDAJgaCIVRAEW8dgiCQEBAEK8FBCAE8ihpAEahBtPsZPkxTlKCwEoOOHY3KjK4tigO5TGCcEeDOI4TiuchSFqFVKwQgZ6AAazmGBoYUya4eY28boANRQUh6fKWnZPppSVKFBl9o7MBqoacgpiApmsIGJhI1ULaye5mGGf5yaFbukgpFRIgBFyN7dqNYBKaBqWFQZaBQsVunYZU02wQgBI3i-CAAEkZatnmbdIZjjpBghBi-QY0DujYEKgdWiE-IomFC78YRnIOIFUSNqYqJX6fF4hJZYsFrqNDXbTqB19YAJiLrp9YAZnL_WABYa6FQh8xr4HNToaJem_QPg9g-CsPD7bkamFSjsedvekg9mYLwPuFU6nanpe-OB523X6HjteAHEkgaS0FRooiOJI2ysNIUQ4DLZQYLYkLgCZGDduKKfR7BHOFjz26cErkuehgSvv6FJXLotpAGV1roA7orc_Z9AQvPHYn1sZ9BXtiPWR4D6SWBEeM-F8EhXw2n0W-98diT2gi_R4zN844BLj_IUtoAAcJdaEdBATAEuYChQl0gXiCcsCEo7F-gDZeEdBCoKwugo-3ET4KmwZfHuN8QB3wfiQiAZDsJYQ_ndAsv82GMNYcA2h-ZwF2i4WPAgAkXRAA
+	⚠ Please be aware that this chart is not an official demo of Apache ECharts but is made by user-generated code.
+-->
+<!DOCTYPE html>
+<html lang="en" style="height: 100%">
+<head>
+  <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+  <div id="container" style="height: 100%"></div>
+
+  
+  <script type="text/javascript" src="node_modules/echarts/dist/echarts.min.js"></script>
+  
+  <!-- Uncomment this line if you want to dataTool extension
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5/dist/extension/dataTool.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to use gl extension
+  <script type="text/javascript" src="https://echarts.apache.org/en/js/vendors/echarts-gl/dist/echarts-gl.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to echarts-stat extension
+  <script type="text/javascript" src="https://echarts.apache.org/en/js/vendors/echarts-stat/dist/ecStat.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to echarts-graph-modularity extension
+  <script type="text/javascript" src="https://echarts.apache.org/en/js/vendors/echarts-graph-modularity/dist/echarts-graph-modularity.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to use map
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@4.9.0/map/js/world.js"></script>
+  -->
+  <!-- Uncomment these two lines if you want to use bmap extension
+  <script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=YOUR_API_KEY"></script>
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5/dist/extension/bmap.min.js"></script>
+  -->
+
+  <script type="text/javascript">
+    var dom = document.getElementById('container');
+    var myChart = echarts.init(dom, null, {
+      renderer: 'canvas',
+      useDirtyRect: false
+    });
+    var app = {};
+    
+    var option;
+
+    const posList = [
+  'left',
+  'right',
+  'top',
+  'bottom',
+  'inside',
+  'insideTop',
+  'insideLeft',
+  'insideRight',
+  'insideBottom',
+  'insideTopLeft',
+  'insideTopRight',
+  'insideBottomLeft',
+  'insideBottomRight'
+];
+app.configParameters = {
+  rotate: {
+    min: -90,
+    max: 90
+  },
+  align: {
+    options: {
+      left: 'left',
+      center: 'center',
+      right: 'right'
+    }
+  },
+  verticalAlign: {
+    options: {
+      top: 'top',
+      middle: 'middle',
+      bottom: 'bottom'
+    }
+  },
+  position: {
+    options: posList.reduce(function (map, pos) {
+      map[pos] = pos;
+      return map;
+    }, {})
+  },
+  distance: {
+    min: 0,
+    max: 100
+  }
+};
+app.config = {
+  rotate: 90,
+  align: 'left',
+  verticalAlign: 'middle',
+  position: 'insideBottom',
+  distance: 15,
+  onChange: function () {
+    const labelOption = {
+      rotate: app.config.rotate,
+      align: app.config.align,
+      verticalAlign: app.config.verticalAlign,
+      position: app.config.position,
+      distance: app.config.distance
+    };
+    myChart.setOption({
+      series: [
+        {
+          label: labelOption
+        },
+        {
+          label: labelOption
+        },
+        {
+          label: labelOption
+        },
+        {
+          label: labelOption
+        }
+      ]
+    });
+  }
+};
+const labelOption = {
+  show: true,
+  position: app.config.position,
+  distance: app.config.distance,
+  align: app.config.align,
+  verticalAlign: app.config.verticalAlign,
+  rotate: app.config.rotate,
+  formatter: '{c}  {name|{a}}',
+  fontSize: 16,
+  fontFamily: "Arial",
+  rich: {
+    name: {}
+  }
+};
+option = {
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'shadow'
+    }
+  },
+  legend: {
+    data: ['Tổng', 'Tốt', 'Loại']
+  },
+  toolbox: {
+    show: true,
+    orient: 'vertical',
+    left: 'right',
+    top: 'center',
+    feature: {
+      mark: { show: true },
+      dataView: { show: true, readOnly: false },
+      magicType: { show: true, type: ['line', 'bar', 'stack'] },
+      restore: { show: true },
+      saveAsImage: { show: true }
+    }
+  },
+  xAxis: [
+    {
+      type: 'category',
+      axisTick: { show: false },
+      data: ['1:00', '2:00', '3:00', '4:00', '5:00']
+    }
+  ],
+  yAxis: [
+    {
+      type: 'value'
+    }
+  ],
+  series: [
+    {
+      name: 'Tổng',
+      type: 'bar',
+      barGap: 0,
+      label: labelOption,
+      emphasis: {
+        focus: 'series'
+      },
+      data: [320, 332, 301, 334, 390]
+    },
+    {
+      name: 'Tốt',
+      type: 'bar',
+      label: labelOption,
+      emphasis: {
+        focus: 'series'
+      },
+      data: [220, 182, 191, 234, 290]
+    },
+    {
+      name: 'Loại',
+      type: 'bar',
+      label: labelOption,
+      emphasis: {
+        focus: 'series'
+      },
+      data: [150, 232, 201, 154, 190]
+    }
+  ]
+};
+
+    if (option && typeof option === 'object') {
+      myChart.setOption(option);
+    }
+
+    window.addEventListener('resize', myChart.resize);
+  </script>
+</body>
+</html>

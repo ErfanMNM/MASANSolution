@@ -53,7 +53,6 @@ namespace MASAN_SERIALIZATION.Views.Settings
             
             int yPos = 20;
             int groupSpacing = 15;
-            int itemSpacing = 8;
 
             foreach (var category in categories)
             {
@@ -142,6 +141,8 @@ namespace MASAN_SERIALIZATION.Views.Settings
         {
             if (propertyName.Contains("TwoFA"))
                 return "🔐 Bảo mật";
+            if (propertyName.Contains("APP"))
+                return "⚙️ Cấu hình ứng dụng";
             if (propertyName.Contains("Camera"))
                 return "📹 Camera";
             if (propertyName.Contains("HandScan") || propertyName.Contains("COM"))
@@ -150,7 +151,6 @@ namespace MASAN_SERIALIZATION.Views.Settings
                 return "☁️ AWS Cloud";
             if (propertyName.Contains("carton"))
                 return "📦 Carton";
-            
             return "⚙️ Cài đặt chung";
         }
         
@@ -294,8 +294,11 @@ namespace MASAN_SERIALIZATION.Views.Settings
                 { "pfxPath", "Đường dẫn PFX" },
                 { "pfxPassword", "Mật khẩu PFX" },
                 { "clientId", "Client ID" },
-                { "cartonPack", "Carton Pack" },
-                { "cartonOfset", "Carton Offset" }
+                { "cartonPack", "Số sản phẩm 1 thùng" },
+                { "cartonOfset", "Carton Offset" },
+                { "Auto_Send_AWS", "Tự động gửi AWS" },
+                { "APP_Mode", "Chế độ ứng dụng" },
+                { "cartonAutoStart", "Chỉ quét thùng 1 lần" }
             };
 
             return displayNames.ContainsKey(propertyName) ? displayNames[propertyName] : propertyName;

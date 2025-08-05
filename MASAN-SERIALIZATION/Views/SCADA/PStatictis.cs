@@ -31,9 +31,9 @@ namespace MASAN_SERIALIZATION.Views.SCADA
         Dictionary<string, string> friendlyNames = new Dictionary<string, string>()
         {
             // Queue Counts
-            {"Dictionary Count", "📊 Số lượng mã sản phẩm"},
-            {"DCarton Count", "📦 Số lượng mã thùng"},
-            {"Update Product Queue Count", "⏳ Hàng đợi cập nhật SP"},
+            {"Dictionary Count", "Số mã RAM"},
+            {"DCarton Count", "Số thùng RAM"},
+            {"Update Product Queue Count", "Hàng chờ cập nhật"},
             {"Insert Record Queue Count", "📝 Hàng đợi ghi bản ghi"},
             {"Insert Record CS Queue Count", "📝 Hàng đợi ghi CS"},
             {"Update Carton Queue Count", "📦 Hàng đợi cập nhật thùng"},
@@ -147,26 +147,8 @@ namespace MASAN_SERIALIZATION.Views.SCADA
             WK_Update.DoWork += WK_Update_DoWork;
             // Lưu file HTML tạm
             string tempPath = @"C:/chart.html";
-
-            // Load vào WebView2
             webView21.Source = new Uri(tempPath);
-            //try
-            //{
-            //    string fileName = "Record_PO_001"; // tên file sqlite (không cần .sqlite)
-            //    var chart = new ChartHelper();
-            //    string html = chart.GenerateHtmlFromSQLite(fileName);
-
-            //    // Lưu file HTML tạm
-            //    string tempPath = Path.Combine(Path.GetTempPath(), "chart.html");
-            //    File.WriteAllText(tempPath, html, Encoding.UTF8);
-
-            //    // Load vào WebView2
-            //    webView21.Source = new Uri(tempPath);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show("Lỗi ST001: " + ex.Message);
-            //}
+            
 
         }
 

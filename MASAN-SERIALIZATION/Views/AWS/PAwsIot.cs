@@ -328,7 +328,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
         private void PAwsIot_Initialize(object sender, EventArgs e)
         {
            //ghi log bật page
-           Globals.Log.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Info, $"🔵 [{DateTime.Now}] Đã mở trang AWS IoT");
+           Globals.Log.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.UserAction, $"🔵 [{DateTime.Now}] Đã mở trang AWS IoT");
         }
 
         private void PAwsIot_Load(object sender, EventArgs e)

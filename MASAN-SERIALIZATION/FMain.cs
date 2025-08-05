@@ -50,18 +50,20 @@ namespace MASAN_SERIALIZATION
             
             Globals.Log = new LogHelper<e_LogType>(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MASAN-SERIALIZATION", "Logs", "applog.tl"));
             Globals.Log.WriteLogAsync("System", e_LogType.Info, "Ứng dụng MASAN-SERIALIZATION đã được khởi động");
-        }
-        #endregion
 
-        #region Form Events
-        private void FMain_Load(object sender, EventArgs e)
-        {
             InitializeUI();
             InitializeConfigs();
             RenderControlForm();
             ToggleFullScreen();
             Start_Main_Process_Task();
             InitializePage();
+        }
+        #endregion
+
+        #region Form Events
+        private void FMain_Load(object sender, EventArgs e)
+        {
+            
         }
 
         private void btnAppClose_Click(object sender, EventArgs e)
@@ -91,8 +93,8 @@ namespace MASAN_SERIALIZATION
             }
             catch (Exception ex)
             {
-                Globals.Log.WriteLogAsync("System", e_LogType.Error, $"Lỗi khởi tạo giao diện: {ex.Message}");
-                this.ShowErrorTip($"Lỗi EM01 khởi tạo giao diện: {ex.Message}");
+                Globals.Log.WriteLogAsync("System", e_LogType.Error, ErrorCodes.Main.INIT_UI_FAILED + ex);
+                this.ShowErrorTip($"[{ErrorCodes.Main.INIT_UI_FAILED}] {ErrorCodes.GetErrorDescription(ErrorCodes.Main.INIT_UI_FAILED)}: {ex.Message}");
             }
         }
 
@@ -110,8 +112,8 @@ namespace MASAN_SERIALIZATION
             }
             catch (Exception ex)
             {
-                Globals.Log.WriteLogAsync("System", e_LogType.Error, $"Lỗi khởi tạo cấu hình: {ex.Message}");
-                this.ShowErrorDialog($"Lỗi EM02 khởi tạo cấu hình: {ex.Message}");
+                Globals.Log.WriteLogAsync("System", e_LogType.Error, ErrorCodes.Main.INIT_CONFIG_FAILED + ex);
+                this.ShowErrorDialog($"[{ErrorCodes.Main.INIT_CONFIG_FAILED}] {ErrorCodes.GetErrorDescription(ErrorCodes.Main.INIT_CONFIG_FAILED)}: {ex.Message}");
             }
         }
 
@@ -140,8 +142,8 @@ namespace MASAN_SERIALIZATION
             }
             catch (Exception ex)
             {
-                Globals.Log.WriteLogAsync("System", e_LogType.Error, $"Lỗi khởi tạo giao diện: {ex.Message}");
-                this.ShowErrorTip($"Lỗi EM03 khởi tạo giao diện: {ex.Message}");
+                Globals.Log.WriteLogAsync("System", e_LogType.Error, ErrorCodes.Main.INIT_CONTROLS_FAILED + ex);
+                this.ShowErrorTip($"[{ErrorCodes.Main.INIT_CONTROLS_FAILED}] {ErrorCodes.GetErrorDescription(ErrorCodes.Main.INIT_CONTROLS_FAILED)}: {ex.Message}");
             }
         }
 
@@ -159,8 +161,8 @@ namespace MASAN_SERIALIZATION
             }
             catch (Exception ex)
             {
-                Globals.Log.WriteLogAsync("System", e_LogType.Error, $"Lỗi khởi tạo ứng dụng: {ex.Message}");
-                this.ShowErrorTip($"Lỗi EM04 khởi tạo ứng dụng: {ex.Message}");
+                Globals.Log.WriteLogAsync("System", e_LogType.Error, ErrorCodes.Main.INIT_PAGES_FAILED + ex);
+                this.ShowErrorTip($"[{ErrorCodes.Main.INIT_PAGES_FAILED}] {ErrorCodes.GetErrorDescription(ErrorCodes.Main.INIT_PAGES_FAILED)}: {ex.Message}");
             }
         }
         #endregion
@@ -413,8 +415,8 @@ namespace MASAN_SERIALIZATION
                     }
                     catch (Exception ex)
                     {
-                        Globals.Log.WriteLogAsync("System", e_LogType.Error, $"Lỗi trong Main_Process_Async: {ex.Message}");
-                        this.ShowErrorTip($"Lỗi EM05 trong quá trình xử lý: {ex.Message}");
+                        Globals.Log.WriteLogAsync("System", e_LogType.Error, ErrorCodes.Main.MAIN_PROCESS_ERROR + ex);
+                        this.ShowErrorTip($"[{ErrorCodes.Main.MAIN_PROCESS_ERROR}] {ErrorCodes.GetErrorDescription(ErrorCodes.Main.MAIN_PROCESS_ERROR)}: {ex.Message}");
                     }
                     Thread.Sleep(100);
                 }

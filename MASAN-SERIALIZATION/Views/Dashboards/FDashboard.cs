@@ -720,7 +720,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 }
             });
         }
-
         public void UpdateCounterUI()
         {
             // Cập nhật các giá trị đếm từ PLC
@@ -791,12 +790,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             switch (Globals.Production_State)
             {
                 case e_Production_State.NoSelectedPO:
-                    break;
-                case e_Production_State.Start:
-                    break;
-                case e_Production_State.Checking_PO_Info:
-                    break;
-                case e_Production_State.Loading:
                     break;
                 case e_Production_State.Camera_Processing:
 
@@ -972,6 +965,16 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     //kiểm tra liên tục xem thùng hiện tại có mã start chưa
                     if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonData))
                     {
+                        if (AppConfigs.Current.cartonAutoStart)
+                        {
+                            //nếu chưa tồn tại thì cập nhật mã thùng mới
+                            cartonData.cartonCode = "Demo";
+                            cartonData.Start_Datetime = DateTime.Now.ToString("o");
+                            //thêm vào hàng chờ cập nhật
+                            Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData);
+                            break; //nếu thùng chưa có mã thì không xử lý tiếp
+                        }
+
                         if (cartonData.Start_Datetime == "0")
                         {
                             //Quăng về pause
@@ -1014,6 +1017,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     }
 
                     //kiểm tra thùng tiếp theo có mã chưa
+                    
                     if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out ProductionCartonData cartonData2))
                     {
                         Globals.test = true;
@@ -1021,6 +1025,16 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                         if (Globals.ProductionData.counter.carton_Packing_Count >= Globals.test2)
                         {
+                            //trong trường hợp mode Only_Scan_Confirm thì tự sinh mã
+                            if (AppConfigs.Current.cartonAutoStart)
+                            {
+                                //nếu chưa tồn tại thì cập nhật mã thùng mới
+                                cartonData2.cartonCode = "Demo";
+                                cartonData2.Start_Datetime = DateTime.Now.ToString("o");
+                                //thêm vào hàng chờ cập nhật
+                                Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData2);
+                                break;
+                            }
                             if (cartonData2.Start_Datetime == "0")
                             {
                                 //Quăng về pause
@@ -1041,20 +1055,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     }
 
                     break;
-                case e_Production_State.Completed:
-                    break;
-                case e_Production_State.Editing:
-                    break;
-                case e_Production_State.Editting_ProductionDate:
-                    break;
-                case e_Production_State.Saving:
-                    break;
-                case e_Production_State.Error:
-                    break;
-                case e_Production_State.Pushing_to_Dic:
-                    break;
-                case e_Production_State.Checking_Queue:
-                    break;
                 case e_Production_State.Pause:
                     Globals.test = false;
                     bool isCartonReady = false; // Biến để kiểm tra trạng thái thùng
@@ -1065,6 +1065,14 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     //kiểm tra liên tục xem thùng hiện tại có mã start chưa
                     if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonData4))
                     {
+                        if (AppConfigs.Current.cartonAutoStart)
+                        {
+                            //nếu chưa tồn tại thì cập nhật mã thùng mới
+                            cartonData4.cartonCode = "Demo";
+                            cartonData4.Start_Datetime = DateTime.Now.ToString("o");
+                            //thêm vào hàng chờ cập nhật
+                            Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData4);
+                        }
                         if (cartonData4.Start_Datetime != "0")
                         {
                             this.InvokeIfRequired(() =>
@@ -1112,6 +1120,14 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     //Kiểm tra thùng tiếp theo có mã chưa
                     if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out ProductionCartonData cartonData5))
                     {
+                        if (AppConfigs.Current.cartonAutoStart)
+                        {
+                            //nếu chưa tồn tại thì cập nhật mã thùng mới
+                            cartonData5.cartonCode = "Demo";
+                            cartonData5.Start_Datetime = DateTime.Now.ToString("o");
+                            //thêm vào hàng chờ cập nhật
+                            Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData5);
+                        }
                         if (Globals.ProductionData.counter.carton_Packing_Count >= AppConfigs.Current.cartonPack - AppConfigs.Current.cartonOfset)
                         {
                             if (cartonData5.Start_Datetime != "0")

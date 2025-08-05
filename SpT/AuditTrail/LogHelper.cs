@@ -15,6 +15,7 @@ namespace SpT.Logs
         public string TimeISO { get; set; }
         public long TimestampMs { get; set; }
         public string User { get; set; }
+        public string Code { get; set; }
         public TAction Action { get; set; }
         public string Description { get; set; }
         public string JsonParams { get; set; }
@@ -71,6 +72,7 @@ namespace SpT.Logs
                             TimeISO TEXT,
                             TimestampMs INTEGER,
                             User TEXT,
+                            Code TEXT NOT NULL DEFAULT 0,
                             Action TEXT,
                             Description TEXT,
                             JsonParams TEXT
@@ -80,7 +82,7 @@ namespace SpT.Logs
             }
         }
 
-        public Task WriteLogAsync(string user, TAction action, string description, string jsonParams = "")
+        public Task WriteLogAsync(string user, TAction action , string description, string jsonParams = "", string Code = "SE001")
         {
             var now = DateTime.UtcNow;
             var timestampMs = (long)(now - new DateTime(1970, 1, 1)).TotalMilliseconds;
@@ -91,6 +93,7 @@ namespace SpT.Logs
                 TimeISO = timeISO,
                 TimestampMs = timestampMs,
                 User = user,
+                Code = Code,
                 Action = action,
                 Description = description,
                 JsonParams = jsonParams ?? ""
@@ -122,6 +125,7 @@ namespace SpT.Logs
                             cmd.Parameters.AddWithValue("@TimeISO", entry.TimeISO);
                             cmd.Parameters.AddWithValue("@TimestampMs", entry.TimestampMs);
                             cmd.Parameters.AddWithValue("@User", entry.User);
+                            cmd.Parameters.AddWithValue("@Code", entry.Code);
                             cmd.Parameters.AddWithValue("@Action", entry.Action.ToString());
                             cmd.Parameters.AddWithValue("@Description", entry.Description);
                             cmd.Parameters.AddWithValue("@JsonParams", entry.JsonParams ?? "");

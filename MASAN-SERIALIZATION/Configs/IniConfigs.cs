@@ -30,6 +30,7 @@ namespace MASAN_SERIALIZATION.Configs
         public int cartonOfset { get; set; } // Số lượng sản phẩm trong một thùng carton
         public bool Auto_Send_AWS { get; set; } // Tự động gửi dữ liệu lên AWS
         public int APP_Mode { get; set; } // Chế độ ứng dụng (0: Normal, 1: Test, 2: Debug)
+        public bool cartonAutoStart { get; set; } // Tự động kích hoạt mã thùng carton
 
 
         public override void SetDefault()
@@ -49,10 +50,11 @@ namespace MASAN_SERIALIZATION.Configs
             host = "a22qv9bgjnbsae-ats.iot.ap-southeast-1.amazonaws.com"; // Default host address
             pfxPassword = "thuc"; // Default password for client certificate
             clientId = "MIPWP501"; // Default client ID
-            cartonPack = 12; // Default path for carton pack certificate
-            cartonOfset = 12; // Default path for carton offset certificate
+            cartonPack = 24; // Default path for carton pack certificate
+            cartonOfset = 2; // Default path for carton offset certificate
             Auto_Send_AWS = false; // Mặc định tự động gửi dữ liệu lên AWS
             APP_Mode = 0; // Mặc định chế độ ứng dụng là Normal (0)
+            cartonAutoStart = false; // Mặc định tự động kích hoạt mã thùng carton
         }
     }
 }

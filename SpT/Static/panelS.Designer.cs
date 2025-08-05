@@ -48,7 +48,7 @@
             this.uiTableLayoutPanel38.RowCount = 2;
             this.uiTableLayoutPanel38.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.uiTableLayoutPanel38.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
-            this.uiTableLayoutPanel38.Size = new System.Drawing.Size(154, 88);
+            this.uiTableLayoutPanel38.Size = new System.Drawing.Size(255, 88);
             this.uiTableLayoutPanel38.TabIndex = 12;
             this.uiTableLayoutPanel38.TagString = null;
             // 
@@ -63,7 +63,7 @@
             this.opName.Name = "opName";
             this.opName.Radius = 1;
             this.opName.RectColor = System.Drawing.Color.Teal;
-            this.opName.Size = new System.Drawing.Size(150, 31);
+            this.opName.Size = new System.Drawing.Size(251, 31);
             this.opName.TabIndex = 1;
             this.opName.Text = "Camera trả về";
             this.opName.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -77,7 +77,7 @@
             this.opValue.MinimumSize = new System.Drawing.Size(1, 1);
             this.opValue.Name = "opValue";
             this.opValue.Radius = 1;
-            this.opValue.Size = new System.Drawing.Size(150, 49);
+            this.opValue.Size = new System.Drawing.Size(251, 49);
             this.opValue.TabIndex = 2;
             this.opValue.Text = "-";
             this.opValue.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -88,7 +88,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.uiTableLayoutPanel38);
             this.Name = "panelS";
-            this.Size = new System.Drawing.Size(154, 88);
+            this.Size = new System.Drawing.Size(255, 88);
             this.uiTableLayoutPanel38.ResumeLayout(false);
             this.ResumeLayout(false);
 

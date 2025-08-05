@@ -77,10 +77,10 @@
             // 
             this.btnGetSendPending.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnGetSendPending.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnGetSendPending.Location = new System.Drawing.Point(495, 264);
+            this.btnGetSendPending.Location = new System.Drawing.Point(335, 513);
             this.btnGetSendPending.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnGetSendPending.Name = "btnGetSendPending";
-            this.btnGetSendPending.Size = new System.Drawing.Size(184, 61);
+            this.btnGetSendPending.Size = new System.Drawing.Size(155, 49);
             this.btnGetSendPending.TabIndex = 1;
             this.btnGetSendPending.Text = "Lấy mã có thể gửi";
             this.btnGetSendPending.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -90,10 +90,10 @@
             // 
             this.btnConnect.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnConnect.Location = new System.Drawing.Point(497, 398);
+            this.btnConnect.Location = new System.Drawing.Point(335, 466);
             this.btnConnect.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(184, 61);
+            this.btnConnect.Size = new System.Drawing.Size(155, 41);
             this.btnConnect.TabIndex = 2;
             this.btnConnect.Text = "Kết nối";
             this.btnConnect.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -103,10 +103,10 @@
             // 
             this.btnSendFailed.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSendFailed.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnSendFailed.Location = new System.Drawing.Point(497, 331);
+            this.btnSendFailed.Location = new System.Drawing.Point(172, 513);
             this.btnSendFailed.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnSendFailed.Name = "btnSendFailed";
-            this.btnSendFailed.Size = new System.Drawing.Size(184, 61);
+            this.btnSendFailed.Size = new System.Drawing.Size(157, 49);
             this.btnSendFailed.TabIndex = 3;
             this.btnSendFailed.Text = "Lấy mã gửi lỗi";
             this.btnSendFailed.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -320,10 +320,10 @@
             // 
             this.btnSend.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSend.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnSend.Location = new System.Drawing.Point(495, 466);
+            this.btnSend.Location = new System.Drawing.Point(172, 466);
             this.btnSend.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnSend.Name = "btnSend";
-            this.btnSend.Size = new System.Drawing.Size(186, 61);
+            this.btnSend.Size = new System.Drawing.Size(157, 41);
             this.btnSend.TabIndex = 11;
             this.btnSend.Text = "Gửi";
             this.btnSend.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
