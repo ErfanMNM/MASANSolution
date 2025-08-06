@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%">
+<head>
+  <meta charset="utf-8">
+  <title>Line Chart Template - Offline</title>
+</head>
+<body style="height: 100%; margin: 0">
+  <div id="container" style="height: 100%"></div>
+
+  <!-- Using offline ECharts from node_modules -->
+  <script type="text/javascript" src="node_modules/echarts/dist/echarts.min.js"></script>
+  
+  <script type="text/javascript">
+    var dom = document.getElementById('container');
+    var myChart = echarts.init(dom, null, {
+      renderer: 'canvas',
+      useDirtyRect: false
+    });
+    var app = {};
+    
+    var option;
+
+    // Default template option - will be replaced by C#
+    option = {
+      title: {
+        text: 'Line Chart Template',
+        left: 'center'
+      },
+      tooltip: {
+        trigger: 'axis'
+      },
+      legend: {
+        data: ['Series 1', 'Series 2', 'Series 3']
+      },
+      toolbox: {
+        show: true,
+        orient: 'vertical',
+        left: 'right',
+        top: 'center',
+        feature: {
+          mark: { show: true },
+          dataView: { show: true, readOnly: false },
+          magicType: { show: true, type: ['line', 'bar'] },
+          restore: { show: true },
+          saveAsImage: { show: true }
+        }
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: [
+        {
+          type: 'category',
+          boundaryGap: false,
+          data: ['Cat1', 'Cat2', 'Cat3', 'Cat4', 'Cat5']
+        }
+      ],
+      yAxis: [
+        {
+          type: 'value'
+        }
+      ],
+      series: [
+        {
+          name: 'Series 1',
+          type: 'line',
+          stack: 'Total',
+          areaStyle: {},
+          emphasis: {
+            focus: 'series'
+          },
+          data: [320, 332, 301, 334, 390],
+          itemStyle: {
+            color: '#5470c6'
+          }
+        },
+        {
+          name: 'Series 2',
+          type: 'line',
+          stack: 'Total',
+          areaStyle: {},
+          emphasis: {
+            focus: 'series'
+          },
+          data: [220, 182, 191, 234, 290],
+          itemStyle: {
+            color: '#91cc75'
+          }
+        },
+        {
+          name: 'Series 3',
+          type: 'line',
+          stack: 'Total',
+          areaStyle: {},
+          emphasis: {
+            focus: 'series'
+          },
+          data: [150, 232, 201, 154, 190],
+          itemStyle: {
+            color: '#fac858'
+          }
+        }
+      ]
+    };
+
+    if (option && typeof option === 'object') {
+      myChart.setOption(option);
+    }
+
+    window.addEventListener('resize', myChart.resize);
+    
+    // Global functions for C# interaction
+    window.updateChart = function(newOption) {
+      if (myChart) {
+        myChart.setOption(newOption, true);
+      }
+    };
+    
+    window.getChartOption = function() {
+      return myChart ? myChart.getOption() : null;
+    };
+    
+    window.exportChart = function(type) {
+      return myChart ? myChart.getDataURL({
+        type: type || 'png',
+        pixelRatio: 2,
+        backgroundColor: '#fff'
+      }) : null;
+    };
+    
+    // Notify parent that chart is ready
+    window.chartReady = true;
+    console.log('Line Chart initialized successfully');
+  </script>
+</body>
+</html>
