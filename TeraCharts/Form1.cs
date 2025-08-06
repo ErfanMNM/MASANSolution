@@ -29,6 +29,11 @@ namespace TeraCharts
         private void LoadTemplates()
         {
             cmbTemplate.Items.Clear();
+            
+            // Add new offline templates first
+            cmbTemplate.Items.Add("bar-chart-offline.html");
+            cmbTemplate.Items.Add("line-chart-offline.html");
+            cmbTemplate.Items.Add("pie-chart-offline.html");
             cmbTemplate.Items.Add("bar-label-rotation.html");
             
             string chartPath = Path.Combine(Application.StartupPath, "ChartCS");
@@ -36,7 +41,7 @@ namespace TeraCharts
             {
                 var htmlFiles = Directory.GetFiles(chartPath, "*.html")
                     .Select(f => Path.GetFileName(f))
-                    .Where(f => f != "bar-label-rotation.html");
+                    .Where(f => !cmbTemplate.Items.Contains(f));
                 
                 foreach (var file in htmlFiles)
                 {
@@ -46,7 +51,7 @@ namespace TeraCharts
             
             if (cmbTemplate.Items.Count > 0)
             {
-                cmbTemplate.SelectedIndex = 0;
+                cmbTemplate.SelectedIndex = 0; // Default to bar-chart-offline.html
             }
         }
 

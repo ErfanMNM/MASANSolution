@@ -1,5 +1,6 @@
 ﻿using MASAN_SERIALIZATION.Production;
 using MASAN_SERIALIZATION.Utils;
+using Newtonsoft.Json;
 using SpT.DataSCADA;
 using SpT.Static;
 using Sunny.UI;
@@ -142,17 +143,113 @@ namespace MASAN_SERIALIZATION.Views.SCADA
 
         public void INIT()
         {
+            var labelOption = new
+            {
+                show = true,
+                position = "inside",
+                fontSize = 12
+            };
+
+            var option = new
+            {
+                tooltip = new
+                {
+                    trigger = "axis",
+                    axisPointer = new { type = "shadow" }
+                },
+                legend = new { data = new[] { "Tổng", "Tốt", "Loại" } },
+                toolbox = new
+                {
+                    show = true,
+                    orient = "vertical",
+                    left = "right",
+                    top = "center",
+                    feature = new
+                    {
+                        mark = new { show = true },
+                        dataView = new { show = true, readOnly = false },
+                        magicType = new { show = true, type = new[] { "line", "bar", "stack" } },
+                        restore = new { show = true },
+                        saveAsImage = new { show = true }
+                    }
+                },
+                xAxis = new object[]
+                {
+        new
+        {
+            type = "category",
+            axisTick = new { show = false },
+            data = new[] { "1:00", "2:00", "3:00", "4:00", "5:00" }
+        }
+                },
+                yAxis = new object[]
+                {
+        new { type = "value" }
+                },
+                series = new object[]
+                {
+        new
+        {
+            name = "Tổng",
+            type = "bar",
+            barGap = 0,
+            label = labelOption,
+            emphasis = new { focus = "series" },
+            data = new[] { 320, 332, 301, 334, 390 }
+        },
+        new
+        {
+            name = "Tốt",
+            type = "bar",
+            label = labelOption,
+            emphasis = new { focus = "series" },
+            data = new[] { 220, 182, 191, 234, 290 }
+        },
+        new
+        {
+            name = "Loại",
+            type = "bar",
+            label = labelOption,
+            emphasis = new { focus = "series" },
+            data = new[] { 150, 232, 201, 154, 190 }
+        }
+                }
+            };
+
+
+            string templatePath = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\TeraCharts\ChartCS\bar-label-rotation.html";
+            string templatePatho = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\TeraCharts\ChartCS\bar-label-rotation-out.html";
+            InjectOptionToHtml(templatePath, templatePatho, option);
+
 
             Render_MEM();
             WK_Update.DoWork += WK_Update_DoWork;
             // Lưu file HTML tạm
-            string tempPath = @"C:/chart.html";
-            webView21.Source = new Uri(tempPath);
+            //string folderPath = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\TeraCharts\ChartCS";
+            
+            
+            webView21.Source = new Uri(templatePatho);
             
 
         }
 
+        public static void InjectOptionToHtml(string templatePath, string outputPath, object option)
+        {
+            // Đọc template HTML
+            string html = File.ReadAllText(templatePath, Encoding.UTF8);
 
+            // Serialize object option thành JSON
+            string json = JsonConvert.SerializeObject(option, Formatting.Indented);
+
+            // Escape JSON để đảm bảo không bị lỗi script
+            string safeJson = json.Replace("</script>", "</scr\" + \"ipt>");
+
+            // Inject JSON vào placeholder
+            html = html.Replace("{{ECHARTS_OPTION}}", safeJson);
+
+            // Ghi ra file output
+            File.WriteAllText(outputPath, html, Encoding.UTF8);
+        }
 
         private void PStatictis_Initialize(object sender, EventArgs e)
         {

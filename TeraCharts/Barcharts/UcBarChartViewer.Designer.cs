@@ -10,36 +10,37 @@ namespace TeraCharts.Barcharts
 
         private void InitializeComponent()
         {
-            this.webView22 = new Microsoft.Web.WebView2.WinForms.WebView2();
-            ((System.ComponentModel.ISupportInitialize)(this.webView22)).BeginInit();
+            this.webView = new Microsoft.Web.WebView2.WinForms.WebView2();
+            ((System.ComponentModel.ISupportInitialize)(this.webView)).BeginInit();
             this.SuspendLayout();
             // 
-            // webView22
+            // webView
             // 
-            this.webView22.AllowExternalDrop = true;
-            this.webView22.CreationProperties = null;
-            this.webView22.DefaultBackgroundColor = System.Drawing.Color.White;
-            this.webView22.Location = new System.Drawing.Point(3, 3);
-            this.webView22.Name = "webView22";
-            this.webView22.Size = new System.Drawing.Size(594, 482);
-            this.webView22.TabIndex = 1;
-            this.webView22.ZoomFactor = 1D;
+            this.webView.AllowExternalDrop = true;
+            this.webView.CreationProperties = null;
+            this.webView.DefaultBackgroundColor = System.Drawing.Color.White;
+            this.webView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webView.Location = new System.Drawing.Point(0, 0);
+            this.webView.Name = "webView";
+            this.webView.Size = new System.Drawing.Size(600, 488);
+            this.webView.TabIndex = 0;
+            this.webView.ZoomFactor = 1D;
             // 
             // UcBarChartViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.webView22);
+            this.Controls.Add(this.webView);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "UcBarChartViewer";
             this.Size = new System.Drawing.Size(600, 488);
-            ((System.ComponentModel.ISupportInitialize)(this.webView22)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.webView)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private Microsoft.Web.WebView2.WinForms.WebView2 webView22;
+        private Microsoft.Web.WebView2.WinForms.WebView2 webView;
     }
 }

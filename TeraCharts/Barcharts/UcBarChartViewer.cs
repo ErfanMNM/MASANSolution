@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -12,7 +13,6 @@ namespace TeraCharts.Barcharts
 {
     public partial class UcBarChartViewer : UserControl
     {
-        private WebView2 webView;
         private string _chartTitle = "Bar Chart";
         private List<string> _categories = new List<string> { "Category 1", "Category 2", "Category 3", "Category 4", "Category 5" };
         private List<SeriesData> _seriesData = new List<SeriesData>();
@@ -22,7 +22,7 @@ namespace TeraCharts.Barcharts
         public UcBarChartViewer()
         {
             InitializeComponent();
-            InitializeWebView();
+            InitializeWebViewEvents();
             InitializeDemoData();
         }
 
@@ -80,15 +80,8 @@ namespace TeraCharts.Barcharts
             }
         }
 
-        private void InitializeWebView()
+        private void InitializeWebViewEvents()
         {
-            webView = new WebView2
-            {
-                Dock = DockStyle.Fill
-            };
-
-            this.Controls.Add(webView);
-
             webView.NavigationCompleted += WebView_NavigationCompleted;
         }
 
@@ -151,7 +144,7 @@ namespace TeraCharts.Barcharts
         private string GetTemplatePath()
         {
             string appPath = Application.StartupPath;
-            return Path.Combine(appPath, "ChartCS", _templateFile);
+            return Path.Combine("C:\\Users\\THUC\\source\\repos\\ErfanMNM\\MASANSolution\\TeraCharts", "ChartCS", _templateFile);
         }
 
         private string ProcessTemplate(string htmlContent)
@@ -177,61 +170,142 @@ namespace TeraCharts.Barcharts
 
         private object CreateChartOption()
         {
-            return new
+            // Detect chart type from template file name
+            string chartType = "bar";
+            if (_templateFile.Contains("line"))
+                chartType = "line";
+            else if (_templateFile.Contains("pie"))
+                chartType = "pie";
+
+            if (chartType == "pie")
             {
-                title = new { text = _chartTitle, left = "center" },
-                tooltip = new
+                // Pie chart format
+                return new
                 {
-                    trigger = "axis",
-                    axisPointer = new { type = "shadow" }
-                },
-                legend = new
-                {
-                    data = _seriesData.ConvertAll(s => s.Name)
-                },
-                toolbox = new
-                {
-                    show = true,
-                    orient = "vertical",
-                    left = "right",
-                    top = "center",
-                    feature = new
+                    title = new { text = _chartTitle, left = "center" },
+                    tooltip = new
                     {
-                        mark = new { show = true },
-                        dataView = new { show = true, readOnly = false },
-                        magicType = new { show = true, type = new[] { "line", "bar", "stack" } },
-                        restore = new { show = true },
-                        saveAsImage = new { show = true }
-                    }
-                },
-                xAxis = new[]
-                {
-                    new
+                        trigger = "item",
+                        formatter = "{a} <br/>{b}: {c} ({d}%)"
+                    },
+                    legend = new
                     {
-                        type = "category",
-                        axisTick = new { show = false },
-                        data = _categories
-                    }
-                },
-                yAxis = new[]
-                {
-                    new { type = "value" }
-                },
-                series = _seriesData.ConvertAll(s => new
-                {
-                    name = s.Name,
-                    type = "bar",
-                    data = s.Data,
-                    itemStyle = new { color = s.Color },
-                    label = new
+                        orient = "vertical",
+                        left = "left",
+                        data = _seriesData.ConvertAll(s => s.Name)
+                    },
+                    toolbox = new
                     {
                         show = true,
-                        position = "top",
-                        formatter = "{c}"
+                        orient = "vertical",
+                        left = "right",
+                        top = "center",
+                        feature = new
+                        {
+                            mark = new { show = true },
+                            dataView = new { show = true, readOnly = false },
+                            restore = new { show = true },
+                            saveAsImage = new { show = true }
+                        }
                     },
-                    emphasis = new { focus = "series" }
-                })
-            };
+                    series = new[]
+                    {
+                        new
+                        {
+                            name = "Data",
+                            type = "pie",
+                            radius = "50%",
+                            center = new[] { "50%", "60%" },
+                            data = _seriesData.SelectMany((s, index) => 
+                                s.Data.Select((value, i) => new
+                                {
+                                    value = value,
+                                    name = $"{s.Name} - {(i < _categories.Count ? _categories[i] : $"Item {i + 1}")}"
+                                })).Take(10).ToArray(), // Limit pie chart items
+                            emphasis = new
+                            {
+                                itemStyle = new
+                                {
+                                    shadowBlur = 10,
+                                    shadowOffsetX = 0,
+                                    shadowColor = "rgba(0, 0, 0, 0.5)"
+                                }
+                            }
+                        }
+                    }
+                };
+            }
+            else
+            {
+                // Bar/Line chart format
+                var baseOption = new
+                {
+                    title = new { text = _chartTitle, left = "center" },
+                    tooltip = new
+                    {
+                        trigger = "axis",
+                        axisPointer = chartType == "line" ? null : new { type = "shadow" }
+                    },
+                    legend = new
+                    {
+                        data = _seriesData.ConvertAll(s => s.Name)
+                    },
+                    toolbox = new
+                    {
+                        show = true,
+                        orient = "vertical",
+                        left = "right",
+                        top = "center",
+                        feature = new
+                        {
+                            mark = new { show = true },
+                            dataView = new { show = true, readOnly = false },
+                            magicType = new { show = true, type = new[] { "line", "bar", "stack" } },
+                            restore = new { show = true },
+                            saveAsImage = new { show = true }
+                        }
+                    },
+                    grid = chartType == "line" ? new
+                    {
+                        left = "3%",
+                        right = "4%",
+                        bottom = "3%",
+                        containLabel = true
+                    } : null,
+                    xAxis = new[]
+                    {
+                        new
+                        {
+                            type = "category",
+                            axisTick = new { show = false },
+                            boundaryGap = chartType != "line",
+                            data = _categories
+                        }
+                    },
+                    yAxis = new[]
+                    {
+                        new { type = "value" }
+                    },
+                    series = _seriesData.ConvertAll(s => new
+                    {
+                        name = s.Name,
+                        type = chartType,
+                        stack = chartType == "line" ? "Total" : (string)null,
+                        areaStyle = chartType == "line" ? new { } : null,
+                        data = s.Data,
+                        itemStyle = new { color = s.Color },
+                        label = chartType == "bar" ? new
+                        {
+                            show = true,
+                            position = "top",
+                            formatter = "{c}"
+                        } : null,
+                        emphasis = new { focus = "series" }
+                    })
+                };
+
+                return baseOption;
+            }
         }
 
         private async System.Threading.Tasks.Task UpdateChart()
