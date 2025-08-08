@@ -32,6 +32,8 @@ namespace MASAN_SERIALIZATION.Configs
         public int APP_Mode { get; set; } // Chế độ ứng dụng (0: Normal, 1: Test, 2: Debug)
         public bool cartonAutoStart { get; set; } // Tự động kích hoạt mã thùng carton
 
+        public bool PLC_Test_Mode { get; set; } // Biến để kiểm tra kết nối PLC, mặc định là false
+
 
         public override void SetDefault()
         {
@@ -55,6 +57,7 @@ namespace MASAN_SERIALIZATION.Configs
             Auto_Send_AWS = false; // Mặc định tự động gửi dữ liệu lên AWS
             APP_Mode = 0; // Mặc định chế độ ứng dụng là Normal (0)
             cartonAutoStart = false; // Mặc định tự động kích hoạt mã thùng carton
+            PLC_Test_Mode = true; // Mặc định kiểm tra kết nối PLC là false
         }
     }
 }

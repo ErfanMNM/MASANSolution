@@ -403,13 +403,13 @@ namespace MASAN_SERIALIZATION.Views.Settings
             if (e.Result is OperateResult operateResult)
             {
                 if (!operateResult.IsSuccess)
-                    this.ShowErrorNotifier($"Lỗi khi ghi vào PLC: {operateResult.Message}");
+                    this.ShowErrorDialog($"Lỗi khi ghi vào PLC: {operateResult.Message}");
                 else
-                    this.ShowSuccessNotifier("Cập nhật thành công!");
+                    this.ShowSuccessDialog("Cập nhật thành công!");
             }
             else if (e.Result is Exception ex)
             {
-                this.ShowErrorNotifier($"Lỗi khi cập nhật: {ex.Message}");
+                this.ShowErrorDialog($"Lỗi khi cập nhật: {ex.Message}");
             }
         }
 
@@ -430,7 +430,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
                 {
                     if (File.Exists($"PLC_RECIPEs/{enterText.TextValue}.rplc"))
                     {
-                        this.ShowErrorNotifier("Tên Recipe đã tồn tại, vui lòng chọn tên khác.");
+                        this.ShowErrorDialog("Tên Recipe đã tồn tại, vui lòng chọn tên khác.");
                         return;
                     }
                     PLC_Parameter newRecipe = new PLC_Parameter
@@ -446,7 +446,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
                     ipRecipe.Items.Add(enterText.TextValue);
                     SelectRecipeName = enterText.TextValue + ".rplc";
                     ipRecipe.SelectedItem = SelectRecipeName;
-                    this.ShowSuccessNotifier($"Đã tạo Recipe mới: {enterText.TextValue}");
+                    this.ShowSuccessDialog($"Đã tạo Recipe mới: {enterText.TextValue}");
                 };
                 enterText.ShowDialog();
             }
@@ -456,7 +456,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
         {
             if (string.IsNullOrEmpty(SelectRecipeName) || SelectRecipeName == "Default.rplc")
             {
-                this.ShowErrorNotifier("Không thể xóa Recipe mặc định.");
+                this.ShowErrorDialog("Không thể xóa Recipe mặc định.");
                 return;
             }
             string filePath = $"PLC_RECIPEs/{SelectRecipeName}";
@@ -472,16 +472,16 @@ namespace MASAN_SERIALIZATION.Views.Settings
                     PLC_Parameter_On_PC.DelayReject = defaultConfig.DelayReject;
                     PLC_Parameter_On_PC.RejectStreng = defaultConfig.DelayReject;
                     AddLogRecipe(SelectRecipeName, "N/A", "DELETE", Globals.CurrentUser.Username);
-                    this.ShowSuccessNotifier($"Đã xóa Recipe: {SelectRecipeName}");
+                    this.ShowSuccessDialog($"Đã xóa Recipe: {SelectRecipeName}");
                 }
                 catch (Exception ex)
                 {
-                    this.ShowErrorNotifier($"Lỗi khi xóa Recipe: {ex.Message}");
+                    this.ShowErrorDialog($"Lỗi khi xóa Recipe: {ex.Message}");
                 }
             }
             else
             {
-                this.ShowErrorNotifier("Recipe không tồn tại.");
+                this.ShowErrorDialog("Recipe không tồn tại.");
             }
         }
 
@@ -630,13 +630,13 @@ namespace MASAN_SERIALIZATION.Views.Settings
             if (e.Result is OperateResult operateResult)
             {
                 if (!operateResult.IsSuccess)
-                    this.ShowErrorNotifier($"Lỗi khi ghi vào PLC: {operateResult.Message}");
+                    this.ShowErrorDialog($"Lỗi khi ghi vào PLC: {operateResult.Message}");
                 else
-                    this.ShowSuccessNotifier("Cập nhật Camera Sau thành công!");
+                    this.ShowSuccessDialog("Cập nhật Camera Sau thành công!");
             }
             else if (e.Result is Exception ex)
             {
-                this.ShowErrorNotifier($"Lỗi khi cập nhật Camera Sau: {ex.Message}");
+                this.ShowErrorDialog($"Lỗi khi cập nhật Camera Sau: {ex.Message}");
             }
         }
 
@@ -650,7 +650,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
                 {
                     if (File.Exists($"PLC_RECIPEs_CS/{enterText.TextValue}.rplc"))
                     {
-                        this.ShowErrorNotifier("Tên Recipe đã tồn tại, vui lòng chọn tên khác.");
+                        this.ShowErrorDialog("Tên Recipe đã tồn tại, vui lòng chọn tên khác.");
                         return;
                     }
                     PLC_Parameter newRecipe = new PLC_Parameter
@@ -666,7 +666,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
                     ipRecipe_CS.Items.Add(enterText.TextValue);
                     SelectRecipeName_CS = enterText.TextValue + ".rplc";
                     ipRecipe_CS.SelectedItem = SelectRecipeName;
-                    this.ShowSuccessNotifier($"Đã tạo Recipe mới: {enterText.TextValue}");
+                    this.ShowSuccessDialog($"Đã tạo Recipe mới: {enterText.TextValue}");
                 };
                 enterText.ShowDialog();
             }

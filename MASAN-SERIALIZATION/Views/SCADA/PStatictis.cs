@@ -143,51 +143,53 @@ namespace MASAN_SERIALIZATION.Views.SCADA
 
         public void INIT()
         {
-            var labelOption = new
+            try
             {
-                show = true,
-                position = "inside",
-                fontSize = 12
-            };
-
-            var option = new
-            {
-                tooltip = new
-                {
-                    trigger = "axis",
-                    axisPointer = new { type = "shadow" }
-                },
-                legend = new { data = new[] { "Tổng", "Tốt", "Loại" } },
-                toolbox = new
+                var labelOption = new
                 {
                     show = true,
-                    orient = "vertical",
-                    left = "right",
-                    top = "center",
-                    feature = new
-                    {
-                        mark = new { show = true },
-                        dataView = new { show = true, readOnly = false },
-                        magicType = new { show = true, type = new[] { "line", "bar", "stack" } },
-                        restore = new { show = true },
-                        saveAsImage = new { show = true }
-                    }
-                },
-                xAxis = new object[]
+                    position = "inside",
+                    fontSize = 12
+                };
+
+                var option = new
                 {
+                    tooltip = new
+                    {
+                        trigger = "axis",
+                        axisPointer = new { type = "shadow" }
+                    },
+                    legend = new { data = new[] { "Tổng", "Tốt", "Loại" } },
+                    toolbox = new
+                    {
+                        show = true,
+                        orient = "vertical",
+                        left = "right",
+                        top = "center",
+                        feature = new
+                        {
+                            mark = new { show = true },
+                            dataView = new { show = true, readOnly = false },
+                            magicType = new { show = true, type = new[] { "line", "bar", "stack" } },
+                            restore = new { show = true },
+                            saveAsImage = new { show = true }
+                        }
+                    },
+                    xAxis = new object[]
+                    {
         new
         {
             type = "category",
             axisTick = new { show = false },
             data = new[] { "1:00", "2:00", "3:00", "4:00", "5:00" }
         }
-                },
-                yAxis = new object[]
-                {
+                    },
+                    yAxis = new object[]
+                    {
         new { type = "value" }
-                },
-                series = new object[]
-                {
+                    },
+                    series = new object[]
+                    {
         new
         {
             name = "Tổng",
@@ -213,25 +215,31 @@ namespace MASAN_SERIALIZATION.Views.SCADA
             emphasis = new { focus = "series" },
             data = new[] { 150, 232, 201, 154, 190 }
         }
-                }
-            };
+                    }
+                };
 
 
-            string templatePath = @"C:\test\bar-label-rotation.html";
-            string templatePatho = @"C:\test\bar-label-rotation-out.html";
-            InjectOptionToHtml(templatePath, templatePatho, option);
+                string templatePath = @"C:\test\bar-label-rotation.html";
+                string templatePatho = @"C:\test\bar-label-rotation-out.html";
+                InjectOptionToHtml(templatePath, templatePatho, option);
 
 
-            Render_MEM();
-            WK_Update.DoWork += WK_Update_DoWork;
-            // Lưu file HTML tạm
-            //string folderPath = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\TeraCharts\ChartCS";
-            
-            
-            webView21.Source = new Uri(templatePatho);
-            webView22.Source =  new Uri(@"C:\test\b2.html");
-            webView23.Source = new Uri(@"C:\test\b3.html");
-            webView24.Source = new Uri(@"C:\test\b4.html");
+                Render_MEM();
+                WK_Update.DoWork += WK_Update_DoWork;
+                // Lưu file HTML tạm
+                //string folderPath = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\TeraCharts\ChartCS";
+
+
+                webView21.Source = new Uri(templatePatho);
+                webView22.Source = new Uri(@"C:\test\b2.html");
+                webView23.Source = new Uri(@"C:\test\b3.html");
+                webView24.Source = new Uri(@"C:\test\b4.html");
+            }
+            catch (Exception ex)
+            {
+                this.ShowErrorNotifier($"Lỗi khởi tạo PStatictis: {ex.Message}");
+            }
+                
 
 
         }

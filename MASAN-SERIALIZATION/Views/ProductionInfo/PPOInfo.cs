@@ -113,14 +113,19 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 while (!_mainProcessWorker.CancellationPending)
                 {
-                    //try
-                    //{
-                    ProcessProductionState();
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    HandleProcessError(ex);
-                    //}
+                    try
+                    {
+                        ProcessProductionState();
+                    }
+                    catch (Exception ex)
+                    {
+                        this.InvokeIfRequired(() =>
+                        {
+                            UpdateStatusMessage("Đã xảy ra lỗi trong quá trình xử lý, Vui lòng kiểm tra nhật ký để biết thêm chi tiết.", Color.Red);
+                            this.ShowErrorDialog($"Lỗi EM0523 trong quá trình xử lý: {ex.Message}");
+                        });
+                        HandleProcessError(ex);
+                    }
                     Thread.Sleep(500);
                 }
             }
@@ -137,7 +142,10 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     HandleNoSelectedPOState();
                     break;
                 case e_Production_State.Start:
-                    HandleStartState();
+                    if(Globals.CurrentUser.Username.Length > 1)
+                    {
+                        HandleStartState();
+                    }
                     break;
                 case e_Production_State.Loading:
                     HandleLoadingState();

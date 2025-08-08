@@ -21,6 +21,7 @@ namespace TestApp
         #region Private Fields - Page Controls
 
         COMV COMVPage = new COMV();
+        CameraSimulatorForm CameraSimulatorPage = new CameraSimulatorForm();
 
         #endregion
 
@@ -77,6 +78,7 @@ namespace TestApp
         {
             NavMenu.Nodes.Clear();
             NavMenu.CreateNode(AddPage(COMVPage, 1001));
+            NavMenu.CreateNode(AddPage(CameraSimulatorPage, 1002));
         }
         #endregion
 

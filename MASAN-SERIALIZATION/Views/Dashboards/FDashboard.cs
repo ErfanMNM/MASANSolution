@@ -23,7 +23,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static MASAN_SERIALIZATION.Utils.ExtensionMethods;
 using static SPMS1.OmronPLC_Hsl;
-using static System.Net.WebRequestMethods;
 
 namespace MASAN_SERIALIZATION.Views.Dashboards
 {
@@ -31,7 +30,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
     {
         #region Private Fields
         private static LogHelper<e_Dash_LogType> DashboardPageLog;
-        private int lastvisibleCount = 0;
         private static bool offThread = false;
         private Thread threadQueue;
         #endregion
@@ -569,6 +567,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 Camera_Sub.Connect();
 
                 OMRON_PLC.PLC_IP = PLCAddress.Get("PLC_IP");
+
+                if(AppConfigs.Current.PLC_Test_Mode)
+                {
+                    OMRON_PLC.PLC_IP = "127.0.0.1";
+                }
                 OMRON_PLC.PLC_PORT = PLCAddress.Get("PLC_PORT").ToInt32();
                 OMRON_PLC.PLC_Ready_DM = PLCAddress.Get("PLC_Ready_DM");
                 OMRON_PLC.Time_Update = 1000;
@@ -1436,6 +1439,24 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             offThread = !offThread;
         }
 
+        private void btnClearPLC_Click(object sender, EventArgs e)
+        {
+            btnClearPLC.Enabled = false; // Vô hiệu hóa nút để tránh nhấn nhiều lần
+            btnClearPLC.Text = "Đang xóa..."; // Cập nhật văn bản nút để hiển thị trạng thái đang reset
+            Task task = Task.Run(() =>
+            {
+                Thread.Sleep(5000); // Đợi 1 giây để PLC xử lý lệnh
+                OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Clear_DM"), 1); // Gửi lệnh reset counter về 0
+                this.InvokeIfRequired(() =>
+                {
+                    btnClearPLC.Enabled = true; // Kích hoạt lại nút sau khi hoàn thành
+                    btnClearPLC.Text = "Xóa lỗi PLC"; // Cập nhật văn bản nút về trạng thái ban đầu
+                });
+
+            });
+            
+        }
+
         private void uiLedBulb1_Click(object sender, EventArgs e)
         {
             // TODO: Implement LED bulb click handler
@@ -1452,5 +1473,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             CameraError,
         }
         #endregion
+
+        
     }
 }
