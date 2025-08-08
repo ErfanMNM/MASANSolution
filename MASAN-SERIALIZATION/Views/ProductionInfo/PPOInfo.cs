@@ -166,7 +166,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             this.InvokeIfRequired(() =>
             {
                 UpdateStatusMessage("Đã xảy ra lỗi trong quá trình xử lý, Vui lòng kiểm tra nhật ký để biết thêm chi tiết.", Color.Red);
-                this.ShowErrorNotifier($"Lỗi EM05 trong quá trình xử lý: {ex.Message}");
+                this.ShowErrorDialog($"Lỗi EM05 trong quá trình xử lý: {ex.Message}");
             });
         }
 
@@ -227,7 +227,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         {
             this.InvokeIfRequired(() =>
             {
-                this.ShowErrorNotifier($"Lỗi PP404: {errorMessage}");
+                this.ShowErrorDialog($"Lỗi PP404: {errorMessage}");
                 UpdateStatusMessage("Không tìm thấy đơn hàng trong hệ thống MES, Vui lòng chọn đơn hàng khác.", Color.Red);
             });
             Globals.Production_State = e_Production_State.NoSelectedPO;
@@ -261,7 +261,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void HandleOrderNotInList()
         {
-            this.ShowErrorNotifier("Lỗi PP041: Đơn hàng không tồn tại trong danh sách, Vui lòng chọn đơn hàng khác.");
+            this.ShowErrorDialog("Lỗi PP041: Đơn hàng không tồn tại trong danh sách, Vui lòng chọn đơn hàng khác.");
             _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, "Đơn hàng không tồn tại trong danh sách");
             SetEditMode();
             Globals.Production_State = e_Production_State.NoSelectedPO;
@@ -367,7 +367,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         {
             if (Globals.ProductionData.getDataPO.Is_PO_Deleted(ipOrderNO.SelectedText))
             {
-                this.ShowErrorNotifier("Lỗi PP02: Đơn hàng đã bị xóa, Vui lòng chọn đơn hàng khác.");
+                this.ShowErrorDialog("Lỗi PP02: Đơn hàng đã bị xóa, Vui lòng chọn đơn hàng khác.");
                 SetEditMode();
                 Globals.Production_State = e_Production_State.Editing;
                 return false;
@@ -378,7 +378,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 this.InvokeIfRequired(() =>
                 {
                     UpdateStatusMessage("Đơn hàng đã hoàn thành, Vui lòng chọn đơn hàng khác.", Color.Red);
-                    this.ShowErrorNotifier("Lỗi PP03: Đơn hàng đã hoàn thành, Vui lòng chọn đơn hàng khác.");
+                    this.ShowErrorDialog("Lỗi PP03: Đơn hàng đã hoàn thành, Vui lòng chọn đơn hàng khác.");
                 });
                 SetEditMode();
                 Globals.Production_State = e_Production_State.Editing;
@@ -390,7 +390,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 this.InvokeIfRequired(() =>
                 {
                     UpdateStatusMessage("Số lượng mã CZ gửi xuống chưa đủ, Vui lòng kiểm tra lại.", Color.Red);
-                    this.ShowErrorNotifier("Lỗi PP04: Số lượng mã MES gửi xuống chưa đủ");
+                    this.ShowErrorDialog("Lỗi PP04: Số lượng mã MES gửi xuống chưa đủ");
                 });
                 SetEditMode();
                 Globals.Production_State = e_Production_State.Editing;
@@ -449,14 +449,14 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                     $"Lấy thông tin số lượng mã code thất bại: {recordCountResult.message}");
-                this.ShowErrorNotifier($"Lỗi PP07: {recordCountResult.message}");
+                this.ShowErrorDialog($"Lỗi PP07: {recordCountResult.message}");
             }
 
             opCZRunCount.Text = recordCountResult.count.ToString();
 
             if (recordCountResult.count > 0 || Globals.ProductionData.counter.totalCount > 0)
             {
-                this.ShowErrorNotifier("Lỗi PP097: Đơn hàng đã sản xuất, không thể đổi đơn khác.");
+                this.ShowErrorDialog("Lỗi PP097: Đơn hàng đã sản xuất, không thể đổi đơn khác.");
                 return;
             }
 
@@ -464,7 +464,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
             if (ipOrderNO.Items.Count == 0)
             {
-                this.ShowErrorNotifier("Lỗi PP042: Không có đơn hàng nào trong hệ thống MES, Vui lòng liên hệ quản trị viên.");
+                this.ShowErrorDialog("Lỗi PP042: Không có đơn hàng nào trong hệ thống MES, Vui lòng liên hệ quản trị viên.");
                 SetEditMode();
                 Globals.Production_State = e_Production_State.Editing;
                 return;
@@ -520,7 +520,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     HandleRunButtonInRunningState();
                     break;
                 case e_Production_State.Pause:
-                    this.ShowErrorNotifier("Lỗi PP443: Vui lòng hoàn tất các sự kiện trước khi dừng sản xuất");
+                    this.ShowErrorDialog("Lỗi PP443: Vui lòng hoàn tất các sự kiện trước khi dừng sản xuất");
                     break;
             }
         }
@@ -530,7 +530,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             ConfigurePreparingMode();
             if (!Globals.APP_Ready)
             {
-                this.ShowErrorNotifier("Lỗi PP590: Ứng dụng chưa sẵn sàng, Vui lòng kiểm tra lại.", false, 5000);
+                this.ShowErrorDialog("Lỗi PP590: Ứng dụng chưa sẵn sàng, Vui lòng kiểm tra lại.", false, 5000);
                 RestoreAfterRunning();
                 return;
             }
@@ -553,7 +553,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                     $"Lấy dữ liệu đơn hàng thất bại: {recordsResult.message}");
-                this.ShowErrorNotifier($"Lỗi PP05: {recordsResult.message}");
+                this.ShowErrorDialog($"Lỗi PP05: {recordsResult.message}");
                 return;
             }
 
@@ -589,7 +589,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     break;
 
                 case e_Production_State.Running:
-                    this.ShowErrorNotifier("Lỗi PP098: Đang chạy sản xuất, không thể chỉnh ngày sản xuất.");
+                    this.ShowErrorDialog("Lỗi PP098: Đang chạy sản xuất, không thể chỉnh ngày sản xuất.");
                     break;
 
                 case e_Production_State.Editting_ProductionDate:
@@ -602,7 +602,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         {
             if (Globals.ProductionData.counter.totalCount < 0)
             {
-                this.ShowErrorNotifier("Lỗi PP096: Đơn hàng chưa chạy, không thể chỉnh ngày sản xuất.");
+                this.ShowErrorDialog("Lỗi PP096: Đơn hàng chưa chạy, không thể chỉnh ngày sản xuất.");
                 return;
             }
 
@@ -635,7 +635,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             }
             else
             {
-                this.ShowErrorNotifier($"Lỗi PP100: {saveResult.message}");
+                this.ShowErrorDialog($"Lỗi PP100: {saveResult.message}");
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                     $"Lưu ngày sản xuất thất bại: {saveResult.message}");
             }
@@ -665,7 +665,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                     $"Lấy thông tin đơn hàng thất bại: {orderInfoResult.message}");
-                this.ShowErrorNotifier($"Lỗi PP06: {orderInfoResult.message}");
+                this.ShowErrorDialog($"Lỗi PP06: {orderInfoResult.message}");
                 return;
             }
 
@@ -685,7 +685,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                     $"Không tìm thấy dữ liệu đơn hàng: {ipOrderNO.SelectedText}");
-                this.ShowErrorNotifier($"Lỗi EA001, Vui lòng liên hệ nhà cung cấp để kiểm tra lỗi này, Đây là lỗi VÔ CÙNG NGHIÊM TRỌNG");
+                this.ShowErrorDialog($"Lỗi EA001, Vui lòng liên hệ nhà cung cấp để kiểm tra lỗi này, Đây là lỗi VÔ CÙNG NGHIÊM TRỌNG");
             }
         }
 
@@ -696,7 +696,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                     $"Lấy thông tin số lượng mã code thất bại: {codeCountResult.message}");
-                this.ShowErrorNotifier($"Lỗi PP08: {codeCountResult.message}");
+                this.ShowErrorDialog($"Lỗi PP08: {codeCountResult.message}");
             }
             return codeCountResult;
         }
@@ -740,7 +740,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 //{
                 //    _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                 //        $"Lỗi trong GetCounter_1: {ex.Message}");
-                //    this.ShowErrorNotifier($"Lỗi PP15: {ex.Message}");
+                //    this.ShowErrorDialog($"Lỗi PP15: {ex.Message}");
                 //}
             });
         }
@@ -790,7 +790,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                     $"Lấy thông tin số lượng mã code thất bại: {result.message}");
-                //this.ShowErrorNotifier($"Lỗi PP07: {result.message}");
+                //this.ShowErrorDialog($"Lỗi PP07: {result.message}");
             }
             return result;
         }
@@ -802,7 +802,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                     $"Lấy thông tin số lượng record {status} thất bại: {result.message}");
-                this.ShowErrorNotifier($"Lỗi PP09-14: {result.message}");
+                this.ShowErrorDialog($"Lỗi PP09-14: {result.message}");
             }
             return result;
         }
@@ -814,7 +814,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                     $"Lấy thông tin AWS record thất bại: {result.message}");
-                this.ShowErrorNotifier($"Lỗi PP11-14: {result.message}");
+                this.ShowErrorDialog($"Lỗi PP11-14: {result.message}");
             }
             return result;
         }
@@ -918,7 +918,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
                     $"Lỗi khi lưu thông tin đơn hàng: {ex.Message}");
-                this.ShowErrorNotifier($"Lỗi PP088: {ex.Message}");
+                this.ShowErrorDialog($"Lỗi PP088: {ex.Message}");
             }
 
             
@@ -949,7 +949,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                     $"Lấy dữ liệu đơn hàng thất bại: {result.message}");
-                this.ShowErrorNotifier($"Lỗi PP05: {result.message}");
+                this.ShowErrorDialog($"Lỗi PP05: {result.message}");
                 Globals.Production_State = e_Production_State.NoSelectedPO;
             }
             return result;
@@ -1008,7 +1008,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         {
             _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                 $"Lưu đơn hàng thất bại: {message}");
-            this.ShowErrorNotifier($"Lỗi PP909: {message}");
+            this.ShowErrorDialog($"Lỗi PP909: {message}");
             Globals.Production_State = e_Production_State.NoSelectedPO;
         }
 
@@ -1016,7 +1016,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         {
             _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                 $"Lỗi khi lưu đơn hàng: {ex.Message}");
-            this.ShowErrorNotifier($"Lỗi PP088: {ex.Message}");
+            this.ShowErrorDialog($"Lỗi PP088: {ex.Message}");
         }
 
         #endregion

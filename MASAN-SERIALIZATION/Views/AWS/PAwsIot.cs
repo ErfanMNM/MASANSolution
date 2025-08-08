@@ -19,6 +19,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static AwsIotClientHelper;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace MASAN_SERIALIZATION.Views.AWS
 {
@@ -286,6 +287,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 };
                 string json = JsonConvert.SerializeObject(payload);
                 var rs = awsClient.Publish_V2("CZ/data", json);
+
                 if (rs.Issuccess)
                 {
                     AWS_Send_Data aWS_Send_Data = new AWS_Send_Data
@@ -294,6 +296,8 @@ namespace MASAN_SERIALIZATION.Views.AWS
                         send_Status = e_AWS_Send_Status.Sent.ToString(),
                     };
                     Globals_Database.aWS_Send_Datas.Enqueue(aWS_Send_Data);
+                    //cập vào csdl
+
                     //cập nhật trạng thái đã gửi
                     this.InvokeIfRequired(() =>
                     {
@@ -315,8 +319,6 @@ namespace MASAN_SERIALIZATION.Views.AWS
                         opNotiboardAndSend.Items.Insert(0, $"❌ [{DateTime.Now}] Lỗi gửi dữ liệu: {rs.msg}");
                     });
                 }
-                //thêm vào hàng đợi gửi dữ liệu
-                //Globals_Database.aWS_Send_Datas.Enqueue(aWS_Send_Data);
             }
         }
 
@@ -383,6 +385,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 {
                     //cập nhật giao diện
                     opNotiboardAndSend.Items.Insert(0, $"🔄 [{DateTime.Now}] Đã kiểm tra dữ liệu gửi AWS.");
+                    opAWSMode.Text = AppConfigs.Current.Auto_Send_AWS.ToString();
 
                     if (opNotiboardAndSend.Items.Count > 50)
                     {
@@ -401,5 +404,21 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 Thread.Sleep(10000); // Giữ cho vòng lặp chạy liên tục
             }
         }
+
+        //hàm thêm 1 record 
+        //        CREATE TABLE "Records" (
+        //	"ID"	INTEGER NOT NULL UNIQUE,
+        //	"message_id"	TEXT NOT NULL UNIQUE,
+        //	"orderNo"	TEXT NOT NULL DEFAULT 0,
+        //	"uniqueCode"	TEXT NOT NULL DEFAULT 'FAIL',
+        //	"status"	TEXT NOT NULL DEFAULT 0,
+        //	"activate_datetime"	TEXT NOT NULL DEFAULT 0,
+        //	"production_date"	TEXT NOT NULL DEFAULT 0,
+        //	"thing_name"	TEXT NOT NULL DEFAULT 0,
+        //	"send_datetime"	TEXT NOT NULL DEFAULT 0,
+        //    PRIMARY KEY("ID" AUTOINCREMENT)
+        //);
+
+        //public void 
     }
 }

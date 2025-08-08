@@ -30,17 +30,31 @@
         {
             this.uiTabControl1 = new Sunny.UI.UITabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.uiTitlePanel2 = new Sunny.UI.UITitlePanel();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.uiTitlePanel1 = new Sunny.UI.UITitlePanel();
             this.opMEMFlow = new System.Windows.Forms.FlowLayoutPanel();
+            this.uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
+            this.uiTitlePanel2 = new Sunny.UI.UITitlePanel();
             this.webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
+            this.uiTitlePanel3 = new Sunny.UI.UITitlePanel();
+            this.webView22 = new Microsoft.Web.WebView2.WinForms.WebView2();
+            this.uiTitlePanel4 = new Sunny.UI.UITitlePanel();
+            this.webView23 = new Microsoft.Web.WebView2.WinForms.WebView2();
+            this.uiTitlePanel5 = new Sunny.UI.UITitlePanel();
+            this.webView24 = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.uiTabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.uiTitlePanel2.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.uiTitlePanel1.SuspendLayout();
+            this.uiTableLayoutPanel1.SuspendLayout();
+            this.uiTitlePanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
+            this.uiTitlePanel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.webView22)).BeginInit();
+            this.uiTitlePanel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.webView23)).BeginInit();
+            this.uiTitlePanel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.webView24)).BeginInit();
             this.SuspendLayout();
             // 
             // uiTabControl1
@@ -62,29 +76,13 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.uiTitlePanel2);
+            this.tabPage1.Controls.Add(this.uiTableLayoutPanel1);
             this.tabPage1.Location = new System.Drawing.Point(0, 40);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Size = new System.Drawing.Size(840, 634);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Biểu đồ";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // uiTitlePanel2
-            // 
-            this.uiTitlePanel2.Controls.Add(this.webView21);
-            this.uiTitlePanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTitlePanel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiTitlePanel2.Location = new System.Drawing.Point(0, 0);
-            this.uiTitlePanel2.Margin = new System.Windows.Forms.Padding(2);
-            this.uiTitlePanel2.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiTitlePanel2.Name = "uiTitlePanel2";
-            this.uiTitlePanel2.Padding = new System.Windows.Forms.Padding(1, 35, 1, 1);
-            this.uiTitlePanel2.ShowText = false;
-            this.uiTitlePanel2.Size = new System.Drawing.Size(840, 634);
-            this.uiTitlePanel2.TabIndex = 3;
-            this.uiTitlePanel2.Text = "Biểu đồ sản lượng";
-            this.uiTitlePanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tabPage2
             // 
@@ -122,6 +120,40 @@
             this.opMEMFlow.Size = new System.Drawing.Size(838, 598);
             this.opMEMFlow.TabIndex = 0;
             // 
+            // uiTableLayoutPanel1
+            // 
+            this.uiTableLayoutPanel1.ColumnCount = 2;
+            this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel1.Controls.Add(this.uiTitlePanel5, 1, 1);
+            this.uiTableLayoutPanel1.Controls.Add(this.uiTitlePanel4, 0, 1);
+            this.uiTableLayoutPanel1.Controls.Add(this.uiTitlePanel3, 1, 0);
+            this.uiTableLayoutPanel1.Controls.Add(this.uiTitlePanel2, 0, 0);
+            this.uiTableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.uiTableLayoutPanel1.Name = "uiTableLayoutPanel1";
+            this.uiTableLayoutPanel1.RowCount = 2;
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel1.Size = new System.Drawing.Size(840, 634);
+            this.uiTableLayoutPanel1.TabIndex = 0;
+            this.uiTableLayoutPanel1.TagString = null;
+            // 
+            // uiTitlePanel2
+            // 
+            this.uiTitlePanel2.Controls.Add(this.webView21);
+            this.uiTitlePanel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTitlePanel2.Location = new System.Drawing.Point(2, 2);
+            this.uiTitlePanel2.Margin = new System.Windows.Forms.Padding(2);
+            this.uiTitlePanel2.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiTitlePanel2.Name = "uiTitlePanel2";
+            this.uiTitlePanel2.Padding = new System.Windows.Forms.Padding(1, 35, 1, 1);
+            this.uiTitlePanel2.ShowText = false;
+            this.uiTitlePanel2.Size = new System.Drawing.Size(416, 313);
+            this.uiTitlePanel2.TabIndex = 4;
+            this.uiTitlePanel2.Text = "Biểu đồ sản lượng";
+            this.uiTitlePanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // webView21
             // 
             this.webView21.AllowExternalDrop = true;
@@ -130,9 +162,90 @@
             this.webView21.Dock = System.Windows.Forms.DockStyle.Fill;
             this.webView21.Location = new System.Drawing.Point(1, 35);
             this.webView21.Name = "webView21";
-            this.webView21.Size = new System.Drawing.Size(838, 598);
+            this.webView21.Size = new System.Drawing.Size(414, 277);
             this.webView21.TabIndex = 1;
             this.webView21.ZoomFactor = 1D;
+            // 
+            // uiTitlePanel3
+            // 
+            this.uiTitlePanel3.Controls.Add(this.webView22);
+            this.uiTitlePanel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTitlePanel3.Location = new System.Drawing.Point(422, 2);
+            this.uiTitlePanel3.Margin = new System.Windows.Forms.Padding(2);
+            this.uiTitlePanel3.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiTitlePanel3.Name = "uiTitlePanel3";
+            this.uiTitlePanel3.Padding = new System.Windows.Forms.Padding(1, 35, 1, 1);
+            this.uiTitlePanel3.ShowText = false;
+            this.uiTitlePanel3.Size = new System.Drawing.Size(416, 313);
+            this.uiTitlePanel3.TabIndex = 5;
+            this.uiTitlePanel3.Text = "Biểu đồ chất lượng";
+            this.uiTitlePanel3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // webView22
+            // 
+            this.webView22.AllowExternalDrop = true;
+            this.webView22.CreationProperties = null;
+            this.webView22.DefaultBackgroundColor = System.Drawing.Color.White;
+            this.webView22.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webView22.Location = new System.Drawing.Point(1, 35);
+            this.webView22.Name = "webView22";
+            this.webView22.Size = new System.Drawing.Size(414, 277);
+            this.webView22.TabIndex = 1;
+            this.webView22.ZoomFactor = 1D;
+            // 
+            // uiTitlePanel4
+            // 
+            this.uiTitlePanel4.Controls.Add(this.webView23);
+            this.uiTitlePanel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTitlePanel4.Location = new System.Drawing.Point(2, 319);
+            this.uiTitlePanel4.Margin = new System.Windows.Forms.Padding(2);
+            this.uiTitlePanel4.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiTitlePanel4.Name = "uiTitlePanel4";
+            this.uiTitlePanel4.Padding = new System.Windows.Forms.Padding(1, 35, 1, 1);
+            this.uiTitlePanel4.ShowText = false;
+            this.uiTitlePanel4.Size = new System.Drawing.Size(416, 313);
+            this.uiTitlePanel4.TabIndex = 6;
+            this.uiTitlePanel4.Text = "Biểu đồ sản lượng";
+            this.uiTitlePanel4.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // webView23
+            // 
+            this.webView23.AllowExternalDrop = true;
+            this.webView23.CreationProperties = null;
+            this.webView23.DefaultBackgroundColor = System.Drawing.Color.White;
+            this.webView23.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webView23.Location = new System.Drawing.Point(1, 35);
+            this.webView23.Name = "webView23";
+            this.webView23.Size = new System.Drawing.Size(414, 277);
+            this.webView23.TabIndex = 1;
+            this.webView23.ZoomFactor = 1D;
+            // 
+            // uiTitlePanel5
+            // 
+            this.uiTitlePanel5.Controls.Add(this.webView24);
+            this.uiTitlePanel5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTitlePanel5.Location = new System.Drawing.Point(422, 319);
+            this.uiTitlePanel5.Margin = new System.Windows.Forms.Padding(2);
+            this.uiTitlePanel5.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiTitlePanel5.Name = "uiTitlePanel5";
+            this.uiTitlePanel5.Padding = new System.Windows.Forms.Padding(1, 35, 1, 1);
+            this.uiTitlePanel5.ShowText = false;
+            this.uiTitlePanel5.Size = new System.Drawing.Size(416, 313);
+            this.uiTitlePanel5.TabIndex = 7;
+            this.uiTitlePanel5.Text = "Biểu đồ sản lượng";
+            this.uiTitlePanel5.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // webView24
+            // 
+            this.webView24.AllowExternalDrop = true;
+            this.webView24.CreationProperties = null;
+            this.webView24.DefaultBackgroundColor = System.Drawing.Color.White;
+            this.webView24.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webView24.Location = new System.Drawing.Point(1, 35);
+            this.webView24.Name = "webView24";
+            this.webView24.Size = new System.Drawing.Size(414, 277);
+            this.webView24.TabIndex = 1;
+            this.webView24.ZoomFactor = 1D;
             // 
             // PStatictis
             // 
@@ -146,11 +259,18 @@
             this.Finalize += new System.EventHandler(this.PStatictis_Finalize);
             this.uiTabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            this.uiTitlePanel2.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.uiTitlePanel1.ResumeLayout(false);
             this.uiTitlePanel1.PerformLayout();
+            this.uiTableLayoutPanel1.ResumeLayout(false);
+            this.uiTitlePanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.webView21)).EndInit();
+            this.uiTitlePanel3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.webView22)).EndInit();
+            this.uiTitlePanel4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.webView23)).EndInit();
+            this.uiTitlePanel5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.webView24)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -159,10 +279,17 @@
 
         private Sunny.UI.UITabControl uiTabControl1;
         private System.Windows.Forms.TabPage tabPage1;
-        private Sunny.UI.UITitlePanel uiTitlePanel2;
-        private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
         private System.Windows.Forms.TabPage tabPage2;
         private Sunny.UI.UITitlePanel uiTitlePanel1;
         private System.Windows.Forms.FlowLayoutPanel opMEMFlow;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel1;
+        private Sunny.UI.UITitlePanel uiTitlePanel2;
+        private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
+        private Sunny.UI.UITitlePanel uiTitlePanel5;
+        private Microsoft.Web.WebView2.WinForms.WebView2 webView24;
+        private Sunny.UI.UITitlePanel uiTitlePanel4;
+        private Microsoft.Web.WebView2.WinForms.WebView2 webView23;
+        private Sunny.UI.UITitlePanel uiTitlePanel3;
+        private Microsoft.Web.WebView2.WinForms.WebView2 webView22;
     }
 }

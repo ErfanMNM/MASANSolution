@@ -48,6 +48,8 @@
             this.uiLabel7 = new Sunny.UI.UILabel();
             this.opRecive = new Sunny.UI.UIListBox();
             this.btnSend = new Sunny.UI.UISymbolButton();
+            this.uiTitlePanel8 = new Sunny.UI.UITitlePanel();
+            this.opAWSMode = new Sunny.UI.UILabel();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTitlePanel2.SuspendLayout();
             this.uiTitlePanel3.SuspendLayout();
@@ -55,6 +57,7 @@
             this.uiTitlePanel5.SuspendLayout();
             this.uiTitlePanel6.SuspendLayout();
             this.uiTitlePanel7.SuspendLayout();
+            this.uiTitlePanel8.SuspendLayout();
             this.SuspendLayout();
             // 
             // opNotiboardAndSend
@@ -329,10 +332,38 @@
             this.btnSend.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
             // 
+            // uiTitlePanel8
+            // 
+            this.uiTitlePanel8.Controls.Add(this.opAWSMode);
+            this.uiTitlePanel8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTitlePanel8.Location = new System.Drawing.Point(672, 264);
+            this.uiTitlePanel8.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiTitlePanel8.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiTitlePanel8.Name = "uiTitlePanel8";
+            this.uiTitlePanel8.Padding = new System.Windows.Forms.Padding(1, 35, 1, 1);
+            this.uiTitlePanel8.ShowText = false;
+            this.uiTitlePanel8.Size = new System.Drawing.Size(155, 97);
+            this.uiTitlePanel8.TabIndex = 6;
+            this.uiTitlePanel8.Text = "Chế độ";
+            this.uiTitlePanel8.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // opAWSMode
+            // 
+            this.opAWSMode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opAWSMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opAWSMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            this.opAWSMode.Location = new System.Drawing.Point(1, 35);
+            this.opAWSMode.Name = "opAWSMode";
+            this.opAWSMode.Size = new System.Drawing.Size(153, 61);
+            this.opAWSMode.TabIndex = 0;
+            this.opAWSMode.Text = "uiLabel8";
+            this.opAWSMode.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // PAwsIot
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(840, 674);
+            this.Controls.Add(this.uiTitlePanel8);
             this.Controls.Add(this.btnSend);
             this.Controls.Add(this.opRecive);
             this.Controls.Add(this.uiTitlePanel7);
@@ -358,6 +389,7 @@
             this.uiTitlePanel5.ResumeLayout(false);
             this.uiTitlePanel6.ResumeLayout(false);
             this.uiTitlePanel7.ResumeLayout(false);
+            this.uiTitlePanel8.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -384,5 +416,7 @@
         private Sunny.UI.UILabel uiLabel7;
         private Sunny.UI.UIListBox opRecive;
         private Sunny.UI.UISymbolButton btnSend;
+        private Sunny.UI.UITitlePanel uiTitlePanel8;
+        private Sunny.UI.UILabel opAWSMode;
     }
 }

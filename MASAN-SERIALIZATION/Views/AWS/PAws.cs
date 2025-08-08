@@ -280,10 +280,11 @@ namespace MASAN_SERIALIZATION.Views.AWS
             ipProductionDate.Text = Globals.ProductionData.productionDate;
         }
 
-        int lines = 1;
+        int lines = 0;
+        int lastLine = 0; // Biến để theo dõi dòng cuối cùng đã đọc
         private void btnSendTest_Click(object sender, EventArgs e)
         {
-            lines++;
+            
 
             string filePath = ipfilePath.Text;
             List<string> values = new List<string>();
@@ -292,15 +293,35 @@ namespace MASAN_SERIALIZATION.Views.AWS
             {
                 while (!reader.EndOfStream)
                 {
-                    string line = reader.ReadLine();
-                    if (string.IsNullOrWhiteSpace(line)) continue;
-
-                    // Tách bằng dấu phẩy, lấy cột đầu tiên
-                    string[] parts = line.Split(',');
-                    if (parts.Length > 0)
+                    lines++;
+                    if (lines > lastLine)
                     {
-                        values.Add(parts[0].Trim());
+                        if (lines >= ipSendCount.Text.ToInt32())
+                        {
+                            this.InvokeIfRequired(() =>
+                            {
+                                opConsole.Items.Insert(0, $"✅ [{DateTime.Now}] Đã đạt đến số lượng gửi: {ipSendCount.Text}");
+                            });
+                            lastLine = lines-1; // Cập nhật dòng cuối cùng đã đọc
+                            break; // Dừng đọc nếu đã đạt đến số lượng gửi
+                        }
+
+                        string line = reader.ReadLine();
+                        if (string.IsNullOrWhiteSpace(line)) continue;
+
+                        // Tách bằng dấu phẩy, lấy cột đầu tiên
+                        string[] parts = line.Split(',');
+                        if (parts.Length > 0)
+                        {
+                            values.Add(parts[0].Trim());
+                            this.InvokeIfRequired(() =>
+                            {
+                                opConsole.Items.Insert(0, $"✅ [{DateTime.Now}] Đang đọc xx dòng {parts[0].Trim()} từ file CSV: {filePath}");
+                            });
+                        }
                     }
+
+                    
                 }
             }
 
@@ -313,11 +334,13 @@ namespace MASAN_SERIALIZATION.Views.AWS
                     {
                         opConsole.Items.Insert(0, $"✅ [{DateTime.Now}] Đã đọc {values.Count} mã từ file CSV: {filePath}");
                     });
+                    int index = 0;
                     foreach (var val in values)
                     {
+                        index++;
                         AWSSendPayload payload = new AWSSendPayload
                         {
-                            message_id = $"{iporderNo.Text}",
+                            message_id = $"{index}-{iporderNo.Text}-{DateTime.UtcNow.ToString("O")}",
                             orderNo = iporderNo.Text,
                             uniqueCode = val,
                             cartonCode = ipcartonCode.Text,

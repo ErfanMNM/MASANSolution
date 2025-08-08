@@ -217,8 +217,8 @@ namespace MASAN_SERIALIZATION.Views.SCADA
             };
 
 
-            string templatePath = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\TeraCharts\ChartCS\bar-label-rotation.html";
-            string templatePatho = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\TeraCharts\ChartCS\bar-label-rotation-out.html";
+            string templatePath = @"C:\test\bar-label-rotation.html";
+            string templatePatho = @"C:\test\bar-label-rotation-out.html";
             InjectOptionToHtml(templatePath, templatePatho, option);
 
 
@@ -229,7 +229,10 @@ namespace MASAN_SERIALIZATION.Views.SCADA
             
             
             webView21.Source = new Uri(templatePatho);
-            
+            webView22.Source =  new Uri(@"C:\test\b2.html");
+            webView23.Source = new Uri(@"C:\test\b3.html");
+            webView24.Source = new Uri(@"C:\test\b4.html");
+
 
         }
 

@@ -349,7 +349,8 @@ namespace MASAN_SERIALIZATION.Production
                     string czRunPath = $"{dataPath}/Record_{orderNO}.db";
                     if (!File.Exists(czRunPath))
                     {
-                        return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
+                        return new TResult(true, "Cơ sở dữ liệu ghi không tồn tại.");
+
                     }
                     
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
@@ -378,7 +379,7 @@ namespace MASAN_SERIALIZATION.Production
                     string czRunPath = $"{dataPath}/{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
-                        return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
+                        return new TResult(true, "Cơ sở dữ liệu ghi không tồn tại.");
                     }
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {

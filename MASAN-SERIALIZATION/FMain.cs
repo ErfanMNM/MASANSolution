@@ -33,7 +33,7 @@ namespace MASAN_SERIALIZATION
         private PPOInfo _pProduction = new PPOInfo();
         private PStatictis _pStatictis = new PStatictis();
         private PCartonDashboard _pCartonDashboard = new PCartonDashboard();
-        //private PAws _pAws = new PAws();
+        private PAws _pAws1 = new PAws();
         private PAwsIot _pAws = new PAwsIot();
         private PSettings _pSettings = new PSettings();
         private PLCSetting _pPLCSetting = new PLCSetting();
@@ -130,6 +130,7 @@ namespace MASAN_SERIALIZATION
                 NavMenu.CreateNode(AddPage(_pAws, 1005));
                 NavMenu.CreateNode(AddPage(_pPLCSetting, 1006));
                 NavMenu.CreateNode(AddPage(_pSettings, 1007));
+                NavMenu.CreateNode(AddPage(_pAws1, 1008));
                 NavMenu.CreateNode(AddPage(_pLogin, 2001));
 
                 NavMenu.SelectPage(2001);
