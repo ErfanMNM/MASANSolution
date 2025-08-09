@@ -108,11 +108,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="COMPortEmulator.cs" />
-    <Compile Include="CameraSimulatorForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="CameraSimulatorForm.cs" />
     <Compile Include="CameraSimulatorForm.Designer.cs">
       <DependentUpon>CameraSimulatorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataWizardForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DataWizardForm.Designer.cs">
+      <DependentUpon>DataWizardForm.cs</DependentUpon>
     </Compile>
     <Compile Include="COMV.cs">
       <SubType>Form</SubType>
@@ -148,6 +152,9 @@
     <Compile Include="VirtualSerialPort.cs" />
     <EmbeddedResource Include="CameraSimulatorForm.resx">
       <DependentUpon>CameraSimulatorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataWizardForm.resx">
+      <DependentUpon>DataWizardForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="COMV.resx">
       <DependentUpon>COMV.cs</DependentUpon>

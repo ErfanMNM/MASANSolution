@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SQLite;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -118,6 +119,9 @@ namespace MASAN_SERIALIZATION.Views.AWS
             };
             //thêm vào hàng chờ xử lý cập nhật trạng thái
             Globals_Database.aWS_Recive_Datas.Enqueue(aWS_R_Data);
+            
+            // Ghi Receive Record vào database
+            Insert_AWS_Receive_Record(messageId, status, errorMessage);
         }
 
         private void AWS_Status_Onchange(object sender, AWSStatusEventArgs e)
@@ -296,7 +300,11 @@ namespace MASAN_SERIALIZATION.Views.AWS
                         send_Status = e_AWS_Send_Status.Sent.ToString(),
                     };
                     Globals_Database.aWS_Send_Datas.Enqueue(aWS_Send_Data);
-                    //cập vào csdl
+                    
+                    // Ghi Send Record vào database
+                    Insert_AWS_Send_Record(payload.message_id, payload.orderNo, payload.uniqueCode, 
+                                         payload.status.ToString(), payload.activate_datetime, 
+                                         payload.production_date, payload.thing_name);
 
                     //cập nhật trạng thái đã gửi
                     this.InvokeIfRequired(() =>
@@ -405,20 +413,84 @@ namespace MASAN_SERIALIZATION.Views.AWS
             }
         }
 
-        //hàm thêm 1 record 
-        //        CREATE TABLE "Records" (
-        //	"ID"	INTEGER NOT NULL UNIQUE,
-        //	"message_id"	TEXT NOT NULL UNIQUE,
-        //	"orderNo"	TEXT NOT NULL DEFAULT 0,
-        //	"uniqueCode"	TEXT NOT NULL DEFAULT 'FAIL',
-        //	"status"	TEXT NOT NULL DEFAULT 0,
-        //	"activate_datetime"	TEXT NOT NULL DEFAULT 0,
-        //	"production_date"	TEXT NOT NULL DEFAULT 0,
-        //	"thing_name"	TEXT NOT NULL DEFAULT 0,
-        //	"send_datetime"	TEXT NOT NULL DEFAULT 0,
-        //    PRIMARY KEY("ID" AUTOINCREMENT)
-        //);
+        // Thêm Send Record vào database
+        public void Insert_AWS_Send_Record(string messageId, string orderNo, string uniqueCode, string status, 
+                                          string activateDatetime, string productionDate, string thingName)
+        {
+            try
+            {
+                string recordAWSPath = $@"C:/MasanSerialization/PODatabases/Send_AWS_Record_{orderNo}.db";
+                using (var conn = new SQLiteConnection($"Data Source={recordAWSPath};Version=3;"))
+                {
+                    conn.Open();
+                    string insertQuery = @"INSERT INTO Records (message_id, orderNo, uniqueCode, status, 
+                                         activate_datetime, production_date, thing_name, send_datetime) 
+                                         VALUES (@message_id, @orderNo, @uniqueCode, @status, 
+                                         @activate_datetime, @production_date, @thing_name, @send_datetime)";
+                    
+                    using (var command = new SQLiteCommand(insertQuery, conn))
+                    {
+                        command.Parameters.AddWithValue("@message_id", messageId);
+                        command.Parameters.AddWithValue("@orderNo", orderNo);
+                        command.Parameters.AddWithValue("@uniqueCode", uniqueCode);
+                        command.Parameters.AddWithValue("@status", status);
+                        command.Parameters.AddWithValue("@activate_datetime", activateDatetime);
+                        command.Parameters.AddWithValue("@production_date", productionDate);
+                        command.Parameters.AddWithValue("@thing_name", thingName);
+                        command.Parameters.AddWithValue("@send_datetime", DateTime.Now.ToString("o"));
+                        command.ExecuteNonQuery();
+                    }
+                }
+                
+                this.InvokeIfRequired(() =>
+                {
+                    opNotiboardAndSend.Items.Insert(0, $"📝 [{DateTime.Now}] Đã ghi Send Record: {messageId}");
+                });
+            }
+            catch (Exception ex)
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    opNotiboardAndSend.Items.Insert(0, $"❌ [{DateTime.Now}] Lỗi ghi Send Record: {ex.Message}");
+                });
+            }
+        }
 
-        //public void 
+        // Thêm Receive Record vào database
+        public void Insert_AWS_Receive_Record(string messageId, string status, string errorMessage)
+        {
+            try
+            {
+                string orderNo = Globals.ProductionData.orderNo;
+                string reciveAWSPath = $@"C:/MasanSerialization/PODatabases/Recive_AWS_Record_{orderNo}.db";
+                using (var conn = new SQLiteConnection($"Data Source={reciveAWSPath};Version=3;"))
+                {
+                    conn.Open();
+                    string insertQuery = @"INSERT INTO Records (message_id, status, error_message, recive_datetime) 
+                                         VALUES (@message_id, @status, @error_message, @recive_datetime)";
+                    
+                    using (var command = new SQLiteCommand(insertQuery, conn))
+                    {
+                        command.Parameters.AddWithValue("@message_id", messageId);
+                        command.Parameters.AddWithValue("@status", status);
+                        command.Parameters.AddWithValue("@error_message", errorMessage ?? "");
+                        command.Parameters.AddWithValue("@recive_datetime", DateTime.Now.ToString("o"));
+                        command.ExecuteNonQuery();
+                    }
+                }
+                
+                this.InvokeIfRequired(() =>
+                {
+                    opRecive.Items.Insert(0, $"📝 [{DateTime.Now}] Đã ghi Receive Record: {messageId} - Status: {status}");
+                });
+            }
+            catch (Exception ex)
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    opRecive.Items.Insert(0, $"❌ [{DateTime.Now}] Lỗi ghi Receive Record: {ex.Message}");
+                });
+            }
+        } 
     }
 }

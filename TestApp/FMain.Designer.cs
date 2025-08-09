@@ -47,7 +47,7 @@
             // 
             this.opClock.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opClock.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.opClock.Location = new System.Drawing.Point(858, 0);
+            this.opClock.Location = new System.Drawing.Point(995, 0);
             this.opClock.Margin = new System.Windows.Forms.Padding(0);
             this.opClock.MinimumSize = new System.Drawing.Size(1, 1);
             this.opClock.Name = "opClock";
@@ -73,7 +73,7 @@
             this.footer.Name = "footer";
             this.footer.RowCount = 1;
             this.footer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.footer.Size = new System.Drawing.Size(1024, 42);
+            this.footer.Size = new System.Drawing.Size(1161, 42);
             this.footer.TabIndex = 3;
             this.footer.TagString = null;
             // 
@@ -110,8 +110,8 @@
             // BodyPanel
             // 
             this.BodyPanel.ColumnCount = 2;
-            this.BodyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18F));
-            this.BodyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82F));
+            this.BodyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15.84841F));
+            this.BodyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 84.1516F));
             this.BodyPanel.Controls.Add(this.navPanel, 0, 0);
             this.BodyPanel.Controls.Add(this.TabBody, 1, 0);
             this.BodyPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -120,7 +120,7 @@
             this.BodyPanel.Name = "BodyPanel";
             this.BodyPanel.RowCount = 1;
             this.BodyPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.BodyPanel.Size = new System.Drawing.Size(1024, 726);
+            this.BodyPanel.Size = new System.Drawing.Size(1161, 726);
             this.BodyPanel.TabIndex = 2;
             this.BodyPanel.TagString = null;
             // 
@@ -194,7 +194,7 @@
             this.TabBody.MenuStyle = Sunny.UI.UIMenuStyle.Custom;
             this.TabBody.Name = "TabBody";
             this.TabBody.SelectedIndex = 0;
-            this.TabBody.Size = new System.Drawing.Size(840, 726);
+            this.TabBody.Size = new System.Drawing.Size(977, 726);
             this.TabBody.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.TabBody.TabBackColor = System.Drawing.Color.PaleTurquoise;
             this.TabBody.TabIndex = 1;
@@ -215,7 +215,7 @@
             this.mainPanelLayout.RowCount = 2;
             this.mainPanelLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 87.76041F));
             this.mainPanelLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5F));
-            this.mainPanelLayout.Size = new System.Drawing.Size(1024, 768);
+            this.mainPanelLayout.Size = new System.Drawing.Size(1161, 768);
             this.mainPanelLayout.TabIndex = 1;
             this.mainPanelLayout.TagString = null;
             // 
@@ -223,9 +223,9 @@
             // 
             this.AllowShowTitle = false;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(1024, 768);
+            this.ClientSize = new System.Drawing.Size(1161, 768);
             this.Controls.Add(this.mainPanelLayout);
-            this.MaximumSize = new System.Drawing.Size(1024, 768);
+            this.MaximumSize = new System.Drawing.Size(1902, 1080);
             this.MinimumSize = new System.Drawing.Size(1024, 768);
             this.Name = "FMain";
             this.Padding = new System.Windows.Forms.Padding(0);

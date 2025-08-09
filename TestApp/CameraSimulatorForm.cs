@@ -16,101 +16,217 @@ using Sunny.UI;
 
 namespace TestApp
 {
+    public class CameraInstance
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int Port { get; set; }
+        public TcpListener TcpListener { get; set; }
+        public List<TcpClient> ConnectedClients { get; set; }
+        public bool ServerRunning { get; set; }
+        public CancellationTokenSource CancellationTokenSource { get; set; }
+        public BackgroundWorker SendWorker { get; set; }
+        public string[] FileLines { get; set; }
+        public int CurrentLineIndex { get; set; }
+        public int SendCount { get; set; }
+        public int MaxCount { get; set; }
+        public int DelayMs { get; set; }
+        public bool IsSending { get; set; }
+        
+        public CameraInstance(int id, string name, int port)
+        {
+            Id = id;
+            Name = name;
+            Port = port;
+            ConnectedClients = new List<TcpClient>();
+            ServerRunning = false;
+            SendWorker = new BackgroundWorker();
+            SendWorker.WorkerReportsProgress = true;
+            SendWorker.WorkerSupportsCancellation = true;
+            CurrentLineIndex = 0;
+            SendCount = 0;
+            IsSending = false;
+        }
+    }
+
     public partial class CameraSimulatorForm : UIPage
     {
-        private TcpListener tcpListener;
-        private List<TcpClient> connectedClients;
-        private bool serverRunning;
-        private CancellationTokenSource cancellationTokenSource;
-        private System.Threading.Timer sendTimer;
-        private string[] fileLines;
-        private int currentLineIndex;
-        private string selectedColumn;
+        private Dictionary<int, CameraInstance> cameras;
+        private int selectedCameraId;
+        private const int MAX_CAMERAS = 3;
+        private string currentDatabasePath;
 
         public CameraSimulatorForm()
         {
             InitializeComponent();
-            connectedClients = new List<TcpClient>();
+
+            cameras = new Dictionary<int, CameraInstance>();
+            selectedCameraId = 1;
+            InitializeCameras();
             InitializeUI();
+        }
+        
+        private void InitializeCameras()
+        {
+            for (int i = 1; i <= MAX_CAMERAS; i++)
+            {
+                var camera = new CameraInstance(i, $"Camera {i}", 8080 + i - 1);
+                camera.SendWorker.DoWork += SendWorker_DoWork;
+                camera.SendWorker.ProgressChanged += SendWorker_ProgressChanged;
+                camera.SendWorker.RunWorkerCompleted += SendWorker_RunWorkerCompleted;
+                cameras[i] = camera;
+            }
         }
 
         private void InitializeUI()
         {
-            this.Text = "Camera TCP Server Simulator";
+            this.Text = "🖥️ Camera TCP Server Simulator Pro - Multi Instance Manager";
+            this.BackColor = System.Drawing.Color.FromArgb(245, 246, 247);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular);
             
             // Start server button
-            uiButton_StartServer.Text = "Khởi động Server";
+            uiButton_StartServer.Text = "▶️ Khởi động";
             uiButton_StartServer.Click += BtnStartServer_Click;
             
             // Stop server button
-            uiButton_StopServer.Text = "Dừng Server";
+            uiButton_StopServer.Text = "⏹️ Dừng";
             uiButton_StopServer.Click += BtnStopServer_Click;
             uiButton_StopServer.Enabled = false;
             
             // Send single code button
-            uiButton_SendSingle.Text = "Gửi mã đơn";
+            uiButton_SendSingle.Text = "📤 Gửi";
             uiButton_SendSingle.Click += BtnSendSingle_Click;
             uiButton_SendSingle.Enabled = false;
             
             // Load file button
-            uiButton_LoadFile.Text = "Chọn file";
+            uiButton_LoadFile.Text = "📄 TXT";
             uiButton_LoadFile.Click += BtnLoadFile_Click;
             
+            // Load CSV button
+            uiButton_LoadCSV.Text = "📈 CSV";
+            uiButton_LoadCSV.Click += BtnLoadCSV_Click;
+            
+            // Data Wizard button
+            uiButton_DataWizard.Text = "🧝‍♂️ Wizard";
+            uiButton_DataWizard.Click += BtnDataWizard_Click;
+            
+            // Send range button
+            uiButton_SendRange.Text = "📦 Dải mã";
+            uiButton_SendRange.Click += BtnSendRange_Click;
+            uiButton_SendRange.Enabled = false;
+            
             // Start continuous send button
-            uiButton_StartContinuous.Text = "Gửi liên tục";
+            uiButton_StartContinuous.Text = "▶️ Bắt đầu";
             uiButton_StartContinuous.Click += BtnStartContinuous_Click;
             uiButton_StartContinuous.Enabled = false;
             
             // Stop continuous send button
-            uiButton_StopContinuous.Text = "Dừng gửi";
+            uiButton_StopContinuous.Text = "⏹️ Dừng";
             uiButton_StopContinuous.Click += BtnStopContinuous_Click;
             uiButton_StopContinuous.Enabled = false;
             
             // Load SQLite button
-            uiButton_LoadSQLite.Text = "Chọn SQLite DB";
+            uiButton_LoadSQLite.Text = "🗄 Chọn DB";
             uiButton_LoadSQLite.Click += BtnLoadSQLite_Click;
             
+            // Load Column Data button
+            uiButton_LoadColumnData.Text = "⬇️ Tải";
+            uiButton_LoadColumnData.Click += BtnLoadColumnData_Click;
+            uiButton_LoadColumnData.Enabled = false;
+            
+            // Start/Stop all cameras buttons
+            uiButton_StartAllCameras.Text = "▶️ Tất cả";
+            uiButton_StartAllCameras.Click += BtnStartAllCameras_Click;
+            
+            uiButton_StopAllCameras.Text = "⏹️ Tất cả";
+            uiButton_StopAllCameras.Click += BtnStopAllCameras_Click;
+            
+            // Initialize camera selection dropdown
+            uiComboBox_CameraSelect.Items.Clear();
+            foreach (var camera in cameras.Values)
+            {
+                uiComboBox_CameraSelect.Items.Add($"Camera {camera.Id} (Port {camera.Port})");
+            }
+            uiComboBox_CameraSelect.SelectedIndex = 0;
+            
             // Default values
-            uiTextBox_Port.Text = "8080";
             uiIntegerUpDown_Count.Value = 10;
             uiIntegerUpDown_Delay.Value = 1000;
+            
+            // Update UI to show current camera
+            UpdateCameraSelection();
+        }
+        
+        private void UpdateCameraSelection()
+        {
+            var camera = cameras[selectedCameraId];
+            uiTextBox_Port.Text = camera.Port.ToString();
+            uiLabel_ClientCount.Text = $"Camera {camera.Id} - Clients: {camera.ConnectedClients.Count}";
+            
+            uiButton_StartServer.Enabled = !camera.ServerRunning;
+            uiButton_StopServer.Enabled = camera.ServerRunning;
+            uiButton_SendSingle.Enabled = camera.ServerRunning;
+            uiButton_StartContinuous.Enabled = camera.ServerRunning && camera.FileLines != null && camera.FileLines.Length > 0 && !camera.IsSending;
+            uiButton_StopContinuous.Enabled = camera.IsSending;
+            uiButton_SendRange.Enabled = camera.ServerRunning && !string.IsNullOrEmpty(uiTextBox_FromCode.Text) && !string.IsNullOrEmpty(uiTextBox_ToCode.Text);
+            
+            // Update file status label if camera has data
+            if (camera.FileLines != null && camera.FileLines.Length > 0)
+            {
+                if (string.IsNullOrEmpty(uiLabel_FileStatus.Text) || !uiLabel_FileStatus.Text.Contains($"Camera {camera.Id}"))
+                {
+                    uiLabel_FileStatus.Text = $"Camera {camera.Id}: {camera.FileLines.Length} dòng dữ liệu";
+                }
+            }
+            else
+            {
+                if (camera.Id == selectedCameraId)
+                {
+                    uiLabel_FileStatus.Text = $"Camera {camera.Id}: Chưa có dữ liệu";
+                }
+            }
         }
 
         private async void BtnStartServer_Click(object sender, EventArgs e)
         {
+            var camera = cameras[selectedCameraId];
             try
             {
                 int port = int.Parse(uiTextBox_Port.Text);
-                tcpListener = new TcpListener(IPAddress.Any, port);
-                tcpListener.Start();
-                serverRunning = true;
-                cancellationTokenSource = new CancellationTokenSource();
+                camera.Port = port;
+                camera.TcpListener = new TcpListener(IPAddress.Any, port);
+                camera.TcpListener.Start();
+                camera.ServerRunning = true;
+                camera.CancellationTokenSource = new CancellationTokenSource();
                 
-                uiButton_StartServer.Enabled = false;
-                uiButton_StopServer.Enabled = true;
-                uiButton_SendSingle.Enabled = true;
+                UpdateCameraSelection();
                 
-                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Server đã khởi động trên cổng {port}\n");
+                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Server đã khởi động trên cổng {port}\n");
                 
-                await AcceptClientsAsync(cancellationTokenSource.Token);
+                await AcceptClientsAsync(camera, camera.CancellationTokenSource.Token);
             }
             catch (Exception ex)
             {
-                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Lỗi khởi động server: {ex.Message}\n");
+                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Lỗi khởi động Camera {camera.Id} server: {ex.Message}\n");
             }
         }
 
-        private async Task AcceptClientsAsync(CancellationToken cancellationToken)
+        private async Task AcceptClientsAsync(CameraInstance camera, CancellationToken cancellationToken)
         {
-            while (!cancellationToken.IsCancellationRequested && serverRunning)
+            while (!cancellationToken.IsCancellationRequested && camera.ServerRunning)
             {
                 try
                 {
-                    var client = await AcceptTcpClientAsync(tcpListener, cancellationToken);
+                    var client = await AcceptTcpClientAsync(camera.TcpListener, cancellationToken);
                     if (client != null)
                     {
-                        connectedClients.Add(client);
-                        uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Client kết nối: {client.Client.RemoteEndPoint}\n");
+                        camera.ConnectedClients.Add(client);
+                        uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Client kết nối: {client.Client.RemoteEndPoint}\n");
+                        
+                        if (camera.Id == selectedCameraId)
+                        {
+                            UpdateCameraSelection();
+                        }
                     }
                 }
                 catch (ObjectDisposedException)
@@ -121,7 +237,7 @@ namespace TestApp
                 {
                     if (!cancellationToken.IsCancellationRequested)
                     {
-                        uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Lỗi chấp nhận client: {ex.Message}\n");
+                        uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Lỗi chấp nhận client: {ex.Message}\n");
                     }
                 }
             }
@@ -152,49 +268,53 @@ namespace TestApp
 
         private void BtnStopServer_Click(object sender, EventArgs e)
         {
-            StopServer();
+            var camera = cameras[selectedCameraId];
+            StopServer(camera);
         }
 
-        private void StopServer()
+        private void StopServer(CameraInstance camera)
         {
             try
             {
-                serverRunning = false;
-                cancellationTokenSource?.Cancel();
+                camera.ServerRunning = false;
+                camera.CancellationTokenSource?.Cancel();
                 
-                foreach (var client in connectedClients.ToList())
+                foreach (var client in camera.ConnectedClients.ToList())
                 {
                     client?.Close();
                 }
-                connectedClients.Clear();
+                camera.ConnectedClients.Clear();
                 
-                tcpListener?.Stop();
+                camera.TcpListener?.Stop();
                 
-                uiButton_StartServer.Enabled = true;
-                uiButton_StopServer.Enabled = false;
-                uiButton_SendSingle.Enabled = false;
+                StopContinuousSending(camera);
                 
-                StopContinuousSending();
+                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Server đã dừng\n");
                 
-                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Server đã dừng\n");
+                if (camera.Id == selectedCameraId)
+                {
+                    UpdateCameraSelection();
+                }
             }
             catch (Exception ex)
             {
-                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Lỗi dừng server: {ex.Message}\n");
+                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Lỗi dừng Camera {camera.Id} server: {ex.Message}\n");
             }
         }
 
         private void BtnSendSingle_Click(object sender, EventArgs e)
         {
+            var camera = cameras[selectedCameraId];
             string code = uiTextBox_SingleCode.Text.Trim();
             if (!string.IsNullOrEmpty(code))
             {
-                SendToAllClients(code);
+                SendToAllClients(camera, code);
             }
         }
 
         private void BtnLoadFile_Click(object sender, EventArgs e)
         {
+            var camera = cameras[selectedCameraId];
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
                 ofd.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
@@ -202,14 +322,14 @@ namespace TestApp
                 {
                     try
                     {
-                        fileLines = File.ReadAllLines(ofd.FileName);
-                        currentLineIndex = 0;
-                        uiLabel_FileStatus.Text = $"File đã tải: {fileLines.Length} dòng";
-                        uiButton_StartContinuous.Enabled = serverRunning && fileLines.Length > 0;
+                        camera.FileLines = File.ReadAllLines(ofd.FileName);
+                        camera.CurrentLineIndex = 0;
+                        uiLabel_FileStatus.Text = $"Camera {camera.Id} File đã tải: {camera.FileLines.Length} dòng";
+                        UpdateCameraSelection();
                     }
                     catch (Exception ex)
                     {
-                        uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Lỗi đọc file: {ex.Message}\n");
+                        uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Lỗi đọc file cho Camera {camera.Id}: {ex.Message}\n");
                     }
                 }
             }
@@ -217,60 +337,56 @@ namespace TestApp
 
         private void BtnStartContinuous_Click(object sender, EventArgs e)
         {
-            if (fileLines != null && fileLines.Length > 0)
+            var camera = cameras[selectedCameraId];
+            if (camera.FileLines != null && camera.FileLines.Length > 0)
             {
                 int count = (int)uiIntegerUpDown_Count.Value;
                 int delay = (int)uiIntegerUpDown_Delay.Value;
                 
-                StartContinuousSending(count, delay);
+                StartContinuousSending(camera, count, delay);
             }
         }
 
-        private void StartContinuousSending(int count, int delayMs)
+        private void StartContinuousSending(CameraInstance camera, int count, int delayMs)
         {
-            sendTimer = new System.Threading.Timer();
-            sendTimer.Interval = delayMs;
+            if (camera.SendWorker.IsBusy)
+                return;
+                
+            camera.MaxCount = count;
+            camera.DelayMs = delayMs;
+            camera.SendCount = 0;
+            camera.CurrentLineIndex = 0;
+            camera.IsSending = true;
             
-            int sentCount = 0;
-            int maxCount = count;
+            camera.SendWorker.RunWorkerAsync(camera);
             
-            sendTimer.Tick += (s, e) =>
+            if (camera.Id == selectedCameraId)
             {
-                if (sentCount >= maxCount || currentLineIndex >= fileLines.Length)
-                {
-                    StopContinuousSending();
-                    return;
-                }
-                
-                string line = fileLines[currentLineIndex];
-                SendToAllClients(line);
-                
-                currentLineIndex++;
-                sentCount++;
-                
-                uiLabel_SendStatus.Text = $"Đã gửi: {sentCount}/{maxCount}";
-            };
-            
-            sendTimer.Start();
-            uiButton_StartContinuous.Enabled = false;
-            uiButton_StopContinuous.Enabled = true;
-            uiLabel_SendStatus.Text = "Đang gửi...";
+                UpdateCameraSelection();
+                uiLabel_SendStatus.Text = $"Camera {camera.Id} Đang gửi...";
+            }
         }
 
         private void BtnStopContinuous_Click(object sender, EventArgs e)
         {
-            StopContinuousSending();
+            var camera = cameras[selectedCameraId];
+            StopContinuousSending(camera);
         }
 
-        private void StopContinuousSending()
+        private void StopContinuousSending(CameraInstance camera)
         {
-            sendTimer?.Stop();
-            sendTimer?.Dispose();
-            sendTimer = null;
+            if (camera.SendWorker.IsBusy)
+            {
+                camera.SendWorker.CancelAsync();
+            }
             
-            uiButton_StartContinuous.Enabled = serverRunning && fileLines != null && fileLines.Length > 0;
-            uiButton_StopContinuous.Enabled = false;
-            uiLabel_SendStatus.Text = "Đã dừng";
+            camera.IsSending = false;
+            
+            if (camera.Id == selectedCameraId)
+            {
+                UpdateCameraSelection();
+                uiLabel_SendStatus.Text = $"Camera {camera.Id} Đã dừng";
+            }
         }
 
         private void BtnLoadSQLite_Click(object sender, EventArgs e)
@@ -303,6 +419,8 @@ namespace TestApp
                         
                         LoadTableColumns(connection, tables[0]);
                         uiLabel_DBStatus.Text = $"DB đã tải: {tables.Count} bảng";
+                        currentDatabasePath = dbPath;
+                        uiButton_LoadColumnData.Enabled = uiComboBox_Columns.Items.Count > 0;
                     }
                 }
             }
@@ -343,6 +461,11 @@ namespace TestApp
                 if (uiComboBox_Columns.Items.Count > 0)
                 {
                     uiComboBox_Columns.SelectedIndex = 0;
+                    uiButton_LoadColumnData.Enabled = true;
+                }
+                else
+                {
+                    uiButton_LoadColumnData.Enabled = false;
                 }
             }
             catch (Exception ex)
@@ -353,28 +476,22 @@ namespace TestApp
 
         private void UiComboBox_Tables_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (uiComboBox_Tables.SelectedItem != null)
+            if (uiComboBox_Tables.SelectedItem != null && !string.IsNullOrEmpty(currentDatabasePath))
             {
-                string dbPath = uiLabel_DBStatus.Text.Contains("DB đã tải") ? 
-                    uiLabel_DBStatus.Tag?.ToString() : "";
-                
-                if (!string.IsNullOrEmpty(dbPath))
+                string connectionString = $"Data Source={currentDatabasePath};Version=3;";
+                using (var connection = new SQLiteConnection(connectionString))
                 {
-                    string connectionString = $"Data Source={dbPath};Version=3;";
-                    using (var connection = new SQLiteConnection(connectionString))
-                    {
-                        connection.Open();
-                        LoadTableColumns(connection, uiComboBox_Tables.SelectedItem.ToString());
-                    }
+                    connection.Open();
+                    LoadTableColumns(connection, uiComboBox_Tables.SelectedItem.ToString());
                 }
             }
         }
 
-        private void SendToAllClients(string message)
+        private void SendToAllClients(CameraInstance camera, string message)
         {
             var clientsToRemove = new List<TcpClient>();
             
-            foreach (var client in connectedClients.ToList())
+            foreach (var client in camera.ConnectedClients.ToList())
             {
                 try
                 {
@@ -396,17 +513,306 @@ namespace TestApp
             
             foreach (var client in clientsToRemove)
             {
-                connectedClients.Remove(client);
+                camera.ConnectedClients.Remove(client);
                 client?.Close();
             }
             
-            uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Gửi tới {connectedClients.Count} client: {message}\n");
-            uiLabel_ClientCount.Text = $"Clients kết nối: {connectedClients.Count}";
+            uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Gửi tới {camera.ConnectedClients.Count} client: {message}\n");
+            
+            if (camera.Id == selectedCameraId)
+            {
+                uiLabel_ClientCount.Text = $"Camera {camera.Id} - Clients: {camera.ConnectedClients.Count}";
+            }
         }
 
+        private void SendWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var camera = (CameraInstance)e.Argument;
+            var worker = sender as BackgroundWorker;
+            
+            while (camera.SendCount < camera.MaxCount && camera.CurrentLineIndex < camera.FileLines.Length)
+            {
+                if (worker.CancellationPending)
+                {
+                    e.Cancel = true;
+                    break;
+                }
+                
+                string line = camera.FileLines[camera.CurrentLineIndex];
+                
+                // Send message on UI thread
+                this.Invoke(new Action(() =>
+                {
+                    SendToAllClients(camera, line);
+                }));
+                
+                camera.CurrentLineIndex++;
+                camera.SendCount++;
+                
+                // Report progress
+                int progressPercentage = (int)((double)camera.SendCount / camera.MaxCount * 100);
+                worker.ReportProgress(progressPercentage, camera);
+                
+                // Wait for the specified delay
+                Thread.Sleep(camera.DelayMs);
+            }
+        }
+        
+        private void SendWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            var camera = (CameraInstance)e.UserState;
+            
+            if (camera.Id == selectedCameraId)
+            {
+                uiLabel_SendStatus.Text = $"Camera {camera.Id} Đã gửi: {camera.SendCount}/{camera.MaxCount}";
+            }
+        }
+        
+        private void SendWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            var worker = sender as BackgroundWorker;
+            var camera = cameras.Values.FirstOrDefault(c => c.SendWorker == worker);
+            
+            if (camera != null)
+            {
+                camera.IsSending = false;
+                
+                if (camera.Id == selectedCameraId)
+                {
+                    UpdateCameraSelection();
+                    if (e.Cancelled)
+                    {
+                        uiLabel_SendStatus.Text = $"Camera {camera.Id} Đã hủy";
+                    }
+                    else
+                    {
+                        uiLabel_SendStatus.Text = $"Camera {camera.Id} Hoàn thành: {camera.SendCount}/{camera.MaxCount}";
+                    }
+                }
+            }
+        }
+        
+        private void UiComboBox_CameraSelect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selectedCameraId = uiComboBox_CameraSelect.SelectedIndex + 1;
+            UpdateCameraSelection();
+        }
+        
+        private async void BtnStartAllCameras_Click(object sender, EventArgs e)
+        {
+            foreach (var camera in cameras.Values)
+            {
+                if (!camera.ServerRunning)
+                {
+                    try
+                    {
+                        camera.TcpListener = new TcpListener(IPAddress.Any, camera.Port);
+                        camera.TcpListener.Start();
+                        camera.ServerRunning = true;
+                        camera.CancellationTokenSource = new CancellationTokenSource();
+                        
+                        uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Server đã khởi động trên cổng {camera.Port}\n");
+                        
+                        // Start accepting clients in background
+                        _ = Task.Run(() => AcceptClientsAsync(camera, camera.CancellationTokenSource.Token));
+                    }
+                    catch (Exception ex)
+                    {
+                        uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Lỗi khởi động Camera {camera.Id} server: {ex.Message}\n");
+                    }
+                }
+            }
+            
+            UpdateCameraSelection();
+            uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Đã khởi động tất cả cameras\n");
+        }
+        
+        private void BtnStopAllCameras_Click(object sender, EventArgs e)
+        {
+            foreach (var camera in cameras.Values)
+            {
+                if (camera.ServerRunning)
+                {
+                    StopServer(camera);
+                }
+            }
+            
+            UpdateCameraSelection();
+            uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Đã dừng tất cả cameras\n");
+        }
+        
+        private void BtnLoadColumnData_Click(object sender, EventArgs e)
+        {
+            var camera = cameras[selectedCameraId];
+            
+            if (string.IsNullOrEmpty(currentDatabasePath) || 
+                uiComboBox_Tables.SelectedItem == null || 
+                uiComboBox_Columns.SelectedItem == null)
+            {
+                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Vui lòng chọn DB, bảng và cột\n");
+                return;
+            }
+            
+            try
+            {
+                string connectionString = $"Data Source={currentDatabasePath};Version=3;";
+                string tableName = uiComboBox_Tables.SelectedItem.ToString();
+                string columnName = uiComboBox_Columns.SelectedItem.ToString();
+                
+                using (var connection = new SQLiteConnection(connectionString))
+                {
+                    connection.Open();
+                    
+                    // Load data from selected column
+                    string query = $"SELECT [{columnName}] FROM [{tableName}] WHERE [{columnName}] IS NOT NULL AND [{columnName}] != ''";
+                    using (var command = new SQLiteCommand(query, connection))
+                    using (var reader = command.ExecuteReader())
+                    {
+                        var dataList = new List<string>();
+                        while (reader.Read())
+                        {
+                            string value = reader.GetValue(0)?.ToString();
+                            if (!string.IsNullOrWhiteSpace(value))
+                            {
+                                dataList.Add(value.Trim());
+                            }
+                        }
+                        
+                        if (dataList.Count > 0)
+                        {
+                            camera.FileLines = dataList.ToArray();
+                            camera.CurrentLineIndex = 0;
+                            uiLabel_FileStatus.Text = $"Camera {camera.Id} SQLite: {dataList.Count} bản ghi từ {columnName}";
+                            uiLabel_RecordCount.Text = $"Đã tải {dataList.Count} bản ghi";
+                            UpdateCameraSelection();
+                            
+                            uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Đã tải {dataList.Count} bản ghi từ cột {columnName}\n");
+                        }
+                        else
+                        {
+                            uiLabel_RecordCount.Text = "Không có dữ liệu";
+                            uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Không tìm thấy dữ liệu trong cột {columnName}\n");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Lỗi tải dữ liệu SQLite: {ex.Message}\n");
+                uiLabel_RecordCount.Text = $"Lỗi: {ex.Message}";
+            }
+        }
+        
+        private void BtnLoadCSV_Click(object sender, EventArgs e)
+        {
+            var camera = cameras[selectedCameraId];
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        var lines = File.ReadAllLines(ofd.FileName);
+                        var dataLines = new List<string>();
+                        
+                        // Skip header if exists and process CSV
+                        bool hasHeader = lines.Length > 0 && !lines[0].All(char.IsDigit);
+                        int startIndex = hasHeader ? 1 : 0;
+                        
+                        for (int i = startIndex; i < lines.Length; i++)
+                        {
+                            var columns = lines[i].Split(',');
+                            if (columns.Length > 0)
+                            {
+                                dataLines.Add(columns[0].Trim()); // Take first column by default
+                            }
+                        }
+                        
+                        camera.FileLines = dataLines.ToArray();
+                        camera.CurrentLineIndex = 0;
+                        uiLabel_FileStatus.Text = $"Camera {camera.Id} CSV đã tải: {camera.FileLines.Length} dòng";
+                        UpdateCameraSelection();
+                    }
+                    catch (Exception ex)
+                    {
+                        uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Lỗi đọc CSV cho Camera {camera.Id}: {ex.Message}\n");
+                    }
+                }
+            }
+        }
+        
+        private void BtnDataWizard_Click(object sender, EventArgs e)
+        {
+            var camera = cameras[selectedCameraId];
+            
+            // Simple data wizard dialog
+            using (var wizard = new DataWizardForm())
+            {
+                if (wizard.ShowDialog() == DialogResult.OK)
+                {
+                    camera.FileLines = wizard.GeneratedData;
+                    camera.CurrentLineIndex = 0;
+                    uiLabel_FileStatus.Text = $"Camera {camera.Id} Wizard: {camera.FileLines.Length} dòng";
+                    UpdateCameraSelection();
+                }
+            }
+        }
+        
+        private void BtnSendRange_Click(object sender, EventArgs e)
+        {
+            var camera = cameras[selectedCameraId];
+            string fromCode = uiTextBox_FromCode.Text.Trim();
+            string toCode = uiTextBox_ToCode.Text.Trim();
+            
+            if (string.IsNullOrEmpty(fromCode) || string.IsNullOrEmpty(toCode))
+            {
+                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Vui lòng nhập mã bắt đầu và kết thúc\n");
+                return;
+            }
+            
+            try
+            {
+                // Try to parse as numbers first
+                if (long.TryParse(fromCode, out long fromNum) && long.TryParse(toCode, out long toNum))
+                {
+                    if (fromNum > toNum)
+                    {
+                        uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Mã bắt đầu phải nhỏ hơn mã kết thúc\n");
+                        return;
+                    }
+                    
+                    var rangeData = new List<string>();
+                    for (long i = fromNum; i <= toNum; i++)
+                    {
+                        rangeData.Add(i.ToString().PadLeft(fromCode.Length, '0'));
+                    }
+                    
+                    camera.FileLines = rangeData.ToArray();
+                    camera.CurrentLineIndex = 0;
+                    uiLabel_FileStatus.Text = $"Camera {camera.Id} Dải số: {fromCode}-{toCode} ({camera.FileLines.Length} mã)";
+                    UpdateCameraSelection();
+                    
+                    uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Đã tạo dải mã từ {fromCode} đến {toCode}\n");
+                }
+                else
+                {
+                    // Handle as string range (alphabetical)
+                    uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Chưa hỗ trợ dải chuỗi, vui lòng sử dụng số\n");
+                }
+            }
+            catch (Exception ex)
+            {
+                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Lỗi tạo dải mã: {ex.Message}\n");
+            }
+        }
+        
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            StopServer();
+            foreach (var camera in cameras.Values)
+            {
+                StopServer(camera);
+            }
             base.OnFormClosing(e);
         }
     }
