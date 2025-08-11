@@ -20,6 +20,7 @@ namespace MASAN_SERIALIZATION.Configs
         public int Camera_Sub_Port { get; set; } // Cổng kết nối của camera phụ
         public string HandScanCOM01 { get; set; } // Tên đăng nhập của camera chính
         public string HandScanCOM02 { get; set; } // Tên đăng nhập của camera phụ
+        public string HandScanCOMMain { get; set; } // Tên đăng nhập của camera phụ thứ ba (nếu có, có thể để trống nếu không sử dụng)
         public bool AWS_ENA { get; set; } // Bật/Tắt tính năng AWS (Amazon Web Services)
         public string host { get; set; } // Địa chỉ máy chủ AWS
         public string rootCAPath { get; set; } // Khóa truy cập AWS
@@ -46,6 +47,7 @@ namespace MASAN_SERIALIZATION.Configs
             Camera_Sub_Port = 51237; // Cổng kết nối mặc định của camera phụ
             HandScanCOM01 = "COM2"; // Tên đăng nhập mặc định của camera chính
             HandScanCOM02 = "COM3"; // Tên đăng nhập mặc định của camera phụ
+            HandScanCOMMain = "COM4"; // Tên đăng nhập mặc định của camera phụ thứ ba (nếu có, có thể để trống nếu không sử dụng)
             AWS_ENA = true; // Mặc định tắt tính năng AWS
             rootCAPath = @"C:\MIPWP501\AmazonRootCA1.pem"; // Default path for root CA certificate
             pfxPath = @"C:\MIPWP501\client-certificate.pfx"; // Default path for client certificate

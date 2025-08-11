@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lưu đồ: Đăng nhập → Chọn PO → Quét thùng</title>
+  <style>
+    html, body { margin: 0; padding: 0; background: #f7f7f9; font-family: Segoe UI, Roboto, Arial, sans-serif; }
+    .wrap { padding: 12px; }
+    .legend { margin: 8px 0 12px; color: #333; font-size: 14px; }
+    svg { background: #fff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .box { fill: #dae8fc; stroke: #333; stroke-width: 1; rx: 10; ry: 10; }
+    .note { fill: #e1d5e7; stroke: #333; }
+    .ok { fill: #d5e8d4; stroke: #333; }
+    .warn { fill: #fff2cc; stroke: #333; }
+    .err { fill: #f8cecc; stroke: #333; }
+    .start { fill: #dae8fc; stroke: #333; }
+    .swim { fill: #fff2cc; stroke: #d6b656; }
+    .txt { font-size: 14px; fill: #111; }
+    .small { font-size: 12px; fill: #333; }
+    .arrow { stroke: #333; stroke-width: 1.4; fill: none; }
+    .label { font-size: 12px; fill: #333; }
+    .diamond { fill: #fff2cc; stroke: #333; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="legend">Lưu đồ tổng quan quá trình: Đăng nhập → nạp/chọn PO → kiểm tra/khởi tạo DB → tính counters/cartonID → Ready → RUN → Running → tiểu trình quét thùng (01/02, chẵn/lẻ, auto start, chống trùng).</div>
+    <svg width="1600" height="1400" viewBox="0 0 1600 1400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L10,4 L0,8 z" fill="#333" />
+        </marker>
+      </defs>
+
+      <!-- Start ellipse -->
+      <ellipse class="start" cx="160" cy="60" rx="60" ry="30" />
+      <text class="txt" x="160" y="65" text-anchor="middle">Start</text>
+
+      <!-- Login success? (diamond) -->
+      <polygon class="diamond" points="160,130 230,170 160,210 90,170" />
+      <text class="txt" x="160" y="168" text-anchor="middle">Login success?</text>
+
+      <!-- Stay in LOGIN -->
+      <rect class="err" x="10" y="240" width="220" height="80" rx="10" ry="10" />
+      <text class="small" x="120" y="268" text-anchor="middle">Stay in LOGIN</text>
+      <text class="small" x="120" y="288" text-anchor="middle">NavMenu disabled, show Login</text>
+
+      <!-- Set user / ACTIVE -->
+      <rect class="ok" x="280" y="240" width="260" height="80" rx="10" ry="10" />
+      <text class="small" x="410" y="268" text-anchor="middle">Set Globals.CurrentUser</text>
+      <text class="small" x="410" y="288" text-anchor="middle">AppState → ACTIVE</text>
+
+      <!-- Open ProductionInfo / Load PO -->
+      <rect class="note" x="280" y="350" width="260" height="80" rx="10" ry="10" />
+      <text class="small" x="410" y="378" text-anchor="middle">Open ProductionInfo</text>
+      <text class="small" x="410" y="398" text-anchor="middle">Load PO list from MES</text>
+
+      <!-- Has Last PO? (diamond) -->
+      <polygon class="diamond" points="410,470 510,515 410,560 310,515" />
+      <text class="txt" x="410" y="517" text-anchor="middle">Has Last PO?</text>
+
+      <!-- Set order from LastPO -->
+      <rect class="box" x="600" y="480" width="300" height="80" />
+      <text class="small" x="750" y="508" text-anchor="middle">Set orderNo from LastPO</text>
+      <text class="small" x="750" y="528" text-anchor="middle">Load detail + select in combo</text>
+
+      <!-- Enter Saving mode -->
+      <rect class="box" x="600" y="580" width="220" height="60" />
+      <text class="small" x="710" y="616" text-anchor="middle">Enter Saving mode</text>
+
+      <!-- PO valid? -->
+      <polygon class="diamond" points="710,670 830,725 710,780 590,725" />
+      <text class="small" x="710" y="712" text-anchor="middle">PO valid?</text>
+      <text class="small" x="710" y="730" text-anchor="middle">(not Deleted/Completed</text>
+      <text class="small" x="710" y="746" text-anchor="middle">AND CZ ≥ orderQty)</text>
+
+      <!-- Show error, back to Editing -->
+      <rect class="err" x="440" y="700" width="160" height="60" />
+      <text class="small" x="520" y="732" text-anchor="middle">Error → Editing</text>
+
+      <!-- Save + Init DB -->
+      <rect class="ok" x="880" y="680" width="320" height="80" />
+      <text class="small" x="1040" y="708" text-anchor="middle">Save_PO + Check_Database_File</text>
+      <text class="small" x="1040" y="728" text-anchor="middle">Create local DBs for PO</text>
+
+      <!-- Calculate counters + cartonID -->
+      <rect class="note" x="880" y="780" width="260" height="60" />
+      <text class="small" x="1010" y="812" text-anchor="middle">Calculate counters + cartonID</text>
+
+      <!-- Ready -->
+      <rect class="box" x="880" y="860" width="200" height="60" />
+      <text class="small" x="980" y="892" text-anchor="middle">State: Ready</text>
+
+      <!-- Pressed RUN? -->
+      <polygon class="diamond" points="980,940 1060,980 980,1020 900,980" />
+      <text class="small" x="980" y="986" text-anchor="middle">Pressed RUN?</text>
+
+      <!-- APP_Ready && Device_Ready? -->
+      <polygon class="diamond" points="980,1040 1100,1090 980,1140 860,1090" />
+      <text class="small" x="980" y="1084" text-anchor="middle">APP_Ready</text>
+      <text class="small" x="980" y="1102" text-anchor="middle">&&</text>
+      <text class="small" x="980" y="1120" text-anchor="middle">Device_Ready?</text>
+
+      <!-- Push to PLC -->
+      <rect class="ok" x="880" y="1150" width="260" height="60" />
+      <text class="small" x="1010" y="1182" text-anchor="middle">Push new/continue PO to PLC</text>
+
+      <!-- Running -->
+      <rect class="box" x="900" y="1225" width="200" height="60" />
+      <text class="small" x="1000" y="1258" text-anchor="middle">State: Running</text>
+
+      <!-- Subflow swimlane -->
+      <rect class="swim" x="1220" y="1040" width="340" height="240" rx="10" ry="10" />
+      <text class="txt" x="1390" y="1068" text-anchor="middle">Subflow: Carton Scan</text>
+      <text class="small" x="1240" y="1096">• Scanner 01 → lẻ; Scanner 02 → chẵn</text>
+      <text class="small" x="1240" y="1114">• Mỗi mã thùng duy nhất (no-duplicate)</text>
+      <text class="small" x="1240" y="1132">• Nếu parity ≠ hiện hành: chốt thùng trước</text>
+      <text class="small" x="1240" y="1150">  - AutoStart: Activate_Datetime = Now</text>
+      <text class="small" x="1240" y="1168">  - Manual: mã quét phải khớp cartonCode</text>
+      <text class="small" x="1240" y="1186">• Nếu thùng kế chưa Start: gán Start_Datetime = Now</text>
+      <text class="small" x="1240" y="1204">• Nếu parity = hiện hành: Start thùng nếu chưa Start;</text>
+      <text class="small" x="1240" y="1222">  nếu đang xếp thì chặn/kêu lỗi</text>
+
+      <!-- Arrows -->
+      <line class="arrow" x1="160" y1="90" x2="160" y2="130" marker-end="url(#arrow)" />
+      <path class="arrow" d="M 130 170 L 40 170 L 40 240" marker-end="url(#arrow)" />
+      <path class="arrow" d="M 190 170 L 410 170 L 410 240" marker-end="url(#arrow)" />
+      <line class="arrow" x1="410" y1="320" x2="410" y2="350" marker-end="url(#arrow)" />
+      <line class="arrow" x1="410" y1="430" x2="410" y2="470" marker-end="url(#arrow)" />
+      <path class="arrow" d="M 510 515 L 600 515" marker-end="url(#arrow)" />
+      <path class="arrow" d="M 410 560 L 410 610 L 600 610" marker-end="url(#arrow)" />
+      <line class="arrow" x1="710" y1="640" x2="710" y2="670" marker-end="url(#arrow)" />
+      <path class="arrow" d="M 590 725 L 520 725" marker-end="url(#arrow)" />
+      <text class="label" x="540" y="720">No</text>
+      <path class="arrow" d="M 830 725 L 880 720" marker-end="url(#arrow)" />
+      <text class="label" x="840" y="712">Yes</text>
+      <line class="arrow" x1="1010" y1="760" x2="1010" y2="780" marker-end="url(#arrow)" />
+      <line class="arrow" x1="1010" y1="840" x2="1010" y2="860" marker-end="url(#arrow)" />
+      <line class="arrow" x1="980" y1="920" x2="980" y2="940" marker-end="url(#arrow)" />
+      <line class="arrow" x1="980" y1="1020" x2="980" y2="1040" marker-end="url(#arrow)" />
+      <path class="arrow" d="M 900 980 L 880 980 L 880 890 L 880 890" marker-end="url(#arrow)" />
+      <text class="label" x="885" y="968">No</text>
+      <line class="arrow" x1="980" y1="1140" x2="980" y2="1150" marker-end="url(#arrow)" />
+      <path class="arrow" d="M 860 1090 L 840 1090 L 840 890" marker-end="url(#arrow)" />
+      <text class="label" x="845" y="1080">No</text>
+      <line class="arrow" x1="1010" y1="1210" x2="1000" y2="1225" marker-end="url(#arrow)" />
+      <path class="arrow" d="M 1100 1260 L 1220 1260" marker-end="url(#arrow)" />
+
+      <!-- Yes/No labels near top decisions -->
+      <text class="label" x="100" y="230">No</text>
+      <text class="label" x="280" y="230">Yes</text>
+    </svg>
+  </div>
+</body>
+</html>

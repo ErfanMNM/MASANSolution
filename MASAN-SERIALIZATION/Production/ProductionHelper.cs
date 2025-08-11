@@ -47,7 +47,6 @@ namespace MASAN_SERIALIZATION.Production
         public Product_Counter counter { get; set; } = new Product_Counter();
         public AWS_Send_Counter awsSendCounter { get; set; } = new AWS_Send_Counter();
         public AWS_Recived_Counter awsRecivedCounter { get; set; } = new AWS_Recived_Counter();
-
         public string dbPath
         {
             get

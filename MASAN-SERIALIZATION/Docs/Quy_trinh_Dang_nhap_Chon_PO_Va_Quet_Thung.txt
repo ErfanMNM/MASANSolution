@@ -1,0 +1,130 @@
+Tài liệu giải thuật cơ bản: Đăng nhập → Chọn PO → Quy chế quét mã thùng
+
+1) Phạm vi và thuật ngữ
+- Ứng dụng: WinForms MASAN-SERIALIZATION (Sunny.UI), điều phối theo trạng thái.
+- Trạng thái ứng dụng: LOGIN/ACTIVE/DEACTIVE (Globals.AppState, AppRenderState).
+- PO: Production Order lấy từ MES (SQLite C:\MasanSerialization\Server_Service\po.db).
+- Carton: thùng đóng gói; mỗi thùng có mã, thời điểm bắt đầu (Start_Datetime) và chốt (Activate_Datetime).
+- Scanner 01/02: hai tay quét cầm tay (COM) cho 2 làn; 01 phục vụ thùng lẻ, 02 phục vụ thùng chẵn.
+- Auto start carton: AppConfigs.Current.cartonAutoStart (true/false).
+
+2) Luồng đăng nhập (Login)
+- Màn hình khởi động: Program.cs tạo mutex 1 phiên, mở FMain.
+- FMain khởi tạo: UI, cấu hình (AppConfigs.Load; PLCAddress.Init), trang con, full screen, worker nền.
+- Page Login (PLogin): hiển thị UC đăng nhập; khi sự kiện OnLoginAction(Status=true):
+  - Lưu Globals.CurrentUser; FMain.Main_Process_Async phát hiện Globals.CurrentUser.Username != "" ⇒
+    - Cập nhật hiển thị người dùng (màu theo Role) và chuyển Globals.AppState sang ACTIVE/DEACTIVE tùy Globals.ACTIVE_State.
+    - NavMenu bật/hiện, chọn trang sản xuất (ProductionInfo) làm mặc định.
+- Nếu đăng xuất (Username rỗng) ⇒ quay về trạng thái LOGIN và ẩn menu.
+
+3) Điều kiện “Ready” hệ thống trước khi chạy PO
+- APP_Ready = true khi đăng nhập hợp lệ và giao diện sẵn sàng.
+- Device_Ready = true khi cả 3 điều kiện:
+  - CameraMain_State == CONNECTED
+  - CameraSub_State == CONNECTED
+  - PLC_Connected == true
+- Nếu chưa đạt điều kiện, FMain hiển thị trạng thái “Lỗi thiết bị/Chưa đăng nhập” và ngăn RUN.
+
+4) Luồng chọn PO (ProductionInfo/PPOInfo)
+4.1) Tải danh sách PO
+- Khi mở trang: gọi MES_Load_OrderNo_ToComboBox(ipOrderNO) để nạp danh sách orderNo từ SQLite MES.
+- Vòng lặp nền ProcessMainLoop điều phối theo Globals.Production_State.
+
+4.2) Tự chọn PO gần nhất (nếu có)
+- Ở trạng thái Start: lấy PO gần nhất (GetLastPO). Nếu có dữ liệu:
+  - Chuyển sang Checking_PO_Info, set Globals.ProductionData.orderNo = row["orderNo"].
+  - Kiểm tra chi tiết PO (ProductionOrder_Detail). Nếu OK và combobox đã có dữ liệu ⇒ chuyển Loading.
+  - Ở Loading: dò ipOrderNO để chọn đúng item, delay 2s ⇒ chuyển Saving.
+
+4.3) Người dùng bấm “Chọn PO”
+- Trạng thái NoSelectedPO hoặc Ready: vào chế độ Editing (cho phép chọn ipOrderNO, chỉnh ipProductionDate nếu được).
+- Khi đang Ready và đơn đã từng chạy (Get_Record_Count > 0 hoặc counter.totalCount > 0) ⇒ không cho đổi PO.
+- Khi ở Editing và người dùng xác nhận lưu ⇒ chuyển Saving với giao diện “Đang lưu…”.
+
+4.4) Ràng buộc/kiểm tra trước khi lưu
+- Từ ipOrderNO đã chọn:
+  - Nếu PO đã bị xóa (Is_PO_Deleted) ⇒ báo lỗi và về Editing.
+  - Nếu PO đã hoàn thành (Is_PO_Completed) ⇒ báo lỗi và về Editing.
+  - Nếu số mã CZ từ MES chưa đủ so với orderQty (opCZCodeCount < opOrderQty) ⇒ báo lỗi và về Editing.
+
+4.5) Lưu PO và chuẩn bị cơ sở dữ liệu
+- Save_PO(orderNo, productionDate, user):
+  - Ghi nhật ký PO vào C:\MasanSerialization\Databases\POLog.db (hành động Create/Update).
+  - Đồng bộ bảng mã UniqueCodes trong DB MES (nếu cần bổ sung mã còn thiếu).
+- Check_Database_File(orderNo, orderQty): tạo/cấu trúc các DB cục bộ nếu chưa có dưới C:/MasanSerialization/PODatabases:
+  - {orderNo}.db: bảng UniqueCodes (Code, Status, cartonCode, ActivateDate, ProductionDate, …, Send/Receive AWS trạng thái).
+  - Record_{orderNo}.db: bảng Records (ghi lịch sử Pass/Fail…).
+  - Record_CameraSub_{orderNo}.db: bảng Records_CameraSub (ghi lịch sử camera phụ).
+  - carton_{orderNo}.db: bảng Carton (ID, cartonCode, Start_Datetime, Activate_Datetime, …).
+  - Send_AWS_Record_{orderNo}.db, Recive_AWS_Record_{orderNo}.db: nhật ký gửi/nhận AWS.
+- Tải dữ liệu hiện có của PO (Get_Records) để tính bộ đếm.
+
+4.6) Tính toán bộ đếm và xác định CartonID hiện hành
+- Duyệt Records để tính: passCount, failCount, duplicateCount, readfailCount, notfoundCount, errorCount, totalCount.
+- carton_Packing_Count = passCount % cartonPack.
+- cartonID hiện hành:
+  - Nếu passCount == 0 ⇒ cartonID = 1.
+  - Ngược lại: cartonID = (passCount % cartonPack == 0) ? passCount / cartonPack : passCount / cartonPack + 1.
+- Sau khi lưu thành công: chuyển trạng thái Ready, bật nút RUN, PO được “chốt” để chạy.
+
+5) Quy chế quét mã thùng (PCartonDashboard)
+5.1) Ánh xạ tay quét và thùng chẵn/lẻ
+- Scanner 01 xử lý nhánh lẻ; Scanner 02 xử lý nhánh chẵn.
+- cartonID hiện hành (Globals.ProductionData.counter.cartonID) quyết định thùng đang xếp là chẵn hay lẻ.
+
+5.2) Trạng thái dữ liệu thùng
+- Start_Datetime == "0": thùng chưa được “kích hoạt bắt đầu”.
+- Activate_Datetime == "0": thùng chưa được “chốt/kết thúc”.
+- Mỗi mã thùng phải là duy nhất trong toàn bộ Dictionary_ProductionCarton_Data (không được trùng).
+
+5.3) Quy tắc chung khi quét
+- Không cho phép trùng mã: nếu mã quét đã tồn tại ở bất kỳ thùng nào ⇒ báo lỗi.
+- Nguyên tắc parity:
+  - Tay quét 01 chủ yếu thao tác với thùng lẻ; tay quét 02 với thùng chẵn.
+  - Khi thùng hiện hành trùng parity với tay quét: thao tác chủ yếu là “kích hoạt bắt đầu” (nếu chưa Start).
+  - Khi thùng hiện hành khác parity với tay quét: thao tác chủ yếu là “chốt” thùng trước đó (ID-1) hoặc “lót sẵn” thùng kế (ID+1) nếu phù hợp.
+- Chế độ Auto start (cartonAutoStart = true):
+  - Khi thùng trước chưa chốt, quét một mã sẽ gán luôn cartonCode và đặt Activate_Datetime = Now (chốt ngay) mà không yêu cầu mã khớp trước đó.
+  - Nếu thùng đang xếp (đã Start nhưng chưa chốt), quét kích hoạt ở tay quét sai thời điểm sẽ bị chặn (thông báo “Thùng đang xếp, không thể kích hoạt”).
+
+5.4) Luồng chi tiết – Scanner 02 (thùng chẵn)
+Giả sử nhận chuỗi s (đã Trim):
+- Nếu cartonID hiện hành là lẻ (ID % 2 != 0):
+  1) Kiểm tra thùng trước (ID-1 – là thùng chẵn cũ):
+     - Nếu thùng trước chưa chốt (Activate_Datetime == "0"):
+       • Auto start = true: kiểm tra trùng mã; nếu không trùng ⇒ gán cartonCode = s; đặt Activate_Datetime = Now; enqueue cập nhật; enqueue Activate_Carton; KẾT THÚC.
+       • Auto start = false: yêu cầu s == cartonCode đã có; nếu không khớp ⇒ báo lỗi; nếu khớp ⇒ đặt Activate_Datetime = Now; enqueue cập nhật; enqueue Activate_Carton; KẾT THÚC.
+     - Nếu thùng trước đã chốt: xét thùng kế (ID+1):
+       • Nếu thùng kế chưa Start (Start_Datetime == "0"): kiểm tra trùng; nếu không trùng ⇒ gán cartonCode = s; đặt Start_Datetime = Now; enqueue cập nhật.
+- Nếu cartonID hiện hành là chẵn (ID % 2 == 0):
+  - Đang xếp thùng chẵn, Scanner 02 không dùng để “kích hoạt bắt đầu” thùng chẵn hiện hành; nếu auto start đang bật ⇒ báo “02 Thùng đang xếp, không thể kích hoạt”.
+  - Với thùng hiện hành, nếu chưa Start (ít gặp ở nhánh này), cho phép gán Start tương tự logic thùng kế ở trên (code hiện hành kiểm tra chủ yếu ở Scanner 01 cho trường hợp này).
+
+5.5) Luồng chi tiết – Scanner 01 (thùng lẻ)
+Tương tự Scanner 02 nhưng hoán đổi parity:
+- Nếu cartonID hiện hành là chẵn (ID % 2 == 0):
+  1) Kiểm tra thùng trước (ID-1 – là thùng lẻ cũ):
+     - Nếu chưa chốt:
+       • Auto start = true: kiểm tra trùng; nếu OK ⇒ gán cartonCode = s; đặt Activate_Datetime = Now; enqueue cập nhật; enqueue Activate_Carton.
+       • Auto start = false: bắt buộc s == cartonCode đã có; nếu không ⇒ lỗi; nếu khớp ⇒ chốt như trên.
+     - Nếu đã chốt: xét thùng kế (ID+1) và nếu chưa Start ⇒ kiểm tra trùng ⇒ gán cartonCode = s; Start_Datetime = Now; enqueue cập nhật.
+- Nếu cartonID hiện hành là lẻ (ID % 2 != 0):
+  - Khi thùng lẻ hiện hành đã Start ⇒ không cho kích hoạt lại; báo “Thùng đã kích hoạt và đang trong thời gian xếp”.
+  - Nếu chưa Start ⇒ kiểm tra trùng ⇒ gán cartonCode = s; Start_Datetime = Now; enqueue cập nhật.
+
+5.6) Hàng đợi và cập nhật DB
+- Mọi cập nhật Carton đều được đưa vào:
+  - Globals_Database.Update_Product_To_Record_Carton_Queue (ghi xuống SQLite carton_{orderNo}.db).
+  - Globals_Database.Activate_Carton (đánh dấu sự kiện kích hoạt/chốt để các tiến trình khác xử lý tiếp).
+- UI cập nhật liên tục: hiển thị mã thùng hiện tại, trước và kế tiếp; cảnh báo trùng; trạng thái kết nối tay quét.
+
+6) Điều kiện chạy sản xuất (RUN)
+- Từ trạng thái Ready, người dùng nhấn RUN:
+  - Kiểm tra APP_Ready và Device_Ready; nếu fail ⇒ báo lỗi và không chạy.
+  - Tải Records hiện có để tính counters; nếu totalCount == 0 ⇒ state = Pushing_new_PO_to_PLC, ngược lại ⇒ Pushing_continue_PO_to_PLC.
+- Khi đang Running, nhấn RUN lần nữa ⇒ dừng, chuyển Checking_Queue, chờ hàng đợi DB/AWS trống rồi quay Ready.
+
+Ghi chú triển khai
+- Chống trùng mã thùng: dò bằng Dictionary_ProductionCarton_Data.Values.Any(x => x.cartonCode == s).
+- Dấu thời gian lưu theo ISO 8601 (DateTime.Now.ToString("o")).
+- Các hằng số và mã lỗi: xem Utils/ErrorCodes.cs để hiển thị thông báo nhất quán.
