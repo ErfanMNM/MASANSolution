@@ -221,7 +221,7 @@ namespace TestApp
                     if (client != null)
                     {
                         camera.ConnectedClients.Add(client);
-                        uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Client kết nối: {client.Client.RemoteEndPoint}\n");
+                        uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Client kết nối: {client.Client.RemoteEndPoint}");
                         
                         if (camera.Id == selectedCameraId)
                         {
@@ -497,7 +497,7 @@ namespace TestApp
                 {
                     if (client.Connected)
                     {
-                        byte[] data = Encoding.UTF8.GetBytes(message + "\n");
+                        byte[] data = Encoding.UTF8.GetBytes(message);
                         client.GetStream().Write(data, 0, data.Length);
                     }
                     else
