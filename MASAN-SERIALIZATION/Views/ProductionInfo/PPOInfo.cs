@@ -732,16 +732,17 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void LoadCountersAsync()
         {
-            this.InvokeIfRequired(() =>
-            {
-                SetCountersToLoading();
-            });
+            
 
             Task.Run(() =>
             {
+                this.InvokeIfRequired(() =>
+                {
+                    SetCountersToLoading();
+                });
                 //try
                 //{
-                    Task.Delay(1000).Wait();
+                Task.Delay(1000).Wait();
                     LoadAndDisplayCounters();
                 //}
                 //catch (Exception ex)

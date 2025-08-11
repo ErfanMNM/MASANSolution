@@ -73,13 +73,20 @@
             this.opnextStart = new Sunny.UI.UIPanel();
             this.warningGroup = new Sunny.UI.UIGroupBox();
             this.opWarning = new Sunny.UI.UIListBox();
+            this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
+            this.serialPort2 = new System.IO.Ports.SerialPort(this.components);
+            this.uiTabControl1 = new Sunny.UI.UITabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.debugGroup = new Sunny.UI.UIGroupBox();
             this.debugContainer = new Sunny.UI.UITableLayoutPanel();
             this.uiLabel1 = new Sunny.UI.UILabel();
             this.uiLabel2 = new Sunny.UI.UILabel();
             this.uiLabel3 = new Sunny.UI.UILabel();
-            this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
-            this.serialPort2 = new System.IO.Ports.SerialPort(this.components);
+            this.btnSend1 = new Sunny.UI.UISymbolButton();
+            this.btnSend2 = new Sunny.UI.UISymbolButton();
+            this.ipTest1 = new Sunny.UI.UITextBox();
+            this.ipTest2 = new Sunny.UI.UITextBox();
             this.mainContainer.SuspendLayout();
             this.scannerGroup.SuspendLayout();
             this.scannerContainer.SuspendLayout();
@@ -103,6 +110,9 @@
             this.uiTableLayoutPanel5.SuspendLayout();
             this.uiTableLayoutPanel4.SuspendLayout();
             this.warningGroup.SuspendLayout();
+            this.uiTabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.debugGroup.SuspendLayout();
             this.debugContainer.SuspendLayout();
             this.SuspendLayout();
@@ -115,7 +125,7 @@
             this.mainContainer.Controls.Add(this.scannerGroup, 0, 0);
             this.mainContainer.Controls.Add(this.statusGroup, 1, 0);
             this.mainContainer.Controls.Add(this.warningGroup, 0, 1);
-            this.mainContainer.Controls.Add(this.debugGroup, 1, 1);
+            this.mainContainer.Controls.Add(this.uiTabControl1, 1, 1);
             this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainContainer.Location = new System.Drawing.Point(0, 0);
             this.mainContainer.Name = "mainContainer";
@@ -797,19 +807,59 @@
             this.opWarning.TabIndex = 0;
             this.opWarning.Text = "uiListBox2";
             // 
+            // uiTabControl1
+            // 
+            this.uiTabControl1.Controls.Add(this.tabPage1);
+            this.uiTabControl1.Controls.Add(this.tabPage2);
+            this.uiTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
+            this.uiTabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTabControl1.ItemSize = new System.Drawing.Size(150, 40);
+            this.uiTabControl1.Location = new System.Drawing.Point(428, 474);
+            this.uiTabControl1.MainPage = "";
+            this.uiTabControl1.Name = "uiTabControl1";
+            this.uiTabControl1.SelectedIndex = 0;
+            this.uiTabControl1.Size = new System.Drawing.Size(375, 151);
+            this.uiTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
+            this.uiTabControl1.TabIndex = 3;
+            this.uiTabControl1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.debugGroup);
+            this.tabPage1.Location = new System.Drawing.Point(0, 40);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Size = new System.Drawing.Size(375, 111);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Debug";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.ipTest2);
+            this.tabPage2.Controls.Add(this.ipTest1);
+            this.tabPage2.Controls.Add(this.btnSend2);
+            this.tabPage2.Controls.Add(this.btnSend1);
+            this.tabPage2.Location = new System.Drawing.Point(0, 40);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Size = new System.Drawing.Size(375, 111);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Test";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
             // debugGroup
             // 
             this.debugGroup.Controls.Add(this.debugContainer);
             this.debugGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.debugGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.debugGroup.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.debugGroup.Location = new System.Drawing.Point(429, 476);
+            this.debugGroup.Location = new System.Drawing.Point(0, 0);
             this.debugGroup.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.debugGroup.MinimumSize = new System.Drawing.Size(1, 1);
             this.debugGroup.Name = "debugGroup";
             this.debugGroup.Padding = new System.Windows.Forms.Padding(3, 32, 3, 3);
-            this.debugGroup.Size = new System.Drawing.Size(373, 147);
-            this.debugGroup.TabIndex = 3;
+            this.debugGroup.Size = new System.Drawing.Size(375, 111);
+            this.debugGroup.TabIndex = 4;
             this.debugGroup.Text = "🔧 Thông tin debug";
             this.debugGroup.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -827,7 +877,7 @@
             this.debugContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
             this.debugContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
             this.debugContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.34F));
-            this.debugContainer.Size = new System.Drawing.Size(367, 112);
+            this.debugContainer.Size = new System.Drawing.Size(369, 76);
             this.debugContainer.TabIndex = 0;
             this.debugContainer.TagString = null;
             // 
@@ -838,7 +888,7 @@
             this.uiLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.uiLabel1.Location = new System.Drawing.Point(3, 0);
             this.uiLabel1.Name = "uiLabel1";
-            this.uiLabel1.Size = new System.Drawing.Size(361, 37);
+            this.uiLabel1.Size = new System.Drawing.Size(363, 25);
             this.uiLabel1.TabIndex = 0;
             this.uiLabel1.Text = "Debug 1: -";
             this.uiLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -848,9 +898,9 @@
             this.uiLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.uiLabel2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.uiLabel2.Location = new System.Drawing.Point(3, 37);
+            this.uiLabel2.Location = new System.Drawing.Point(3, 25);
             this.uiLabel2.Name = "uiLabel2";
-            this.uiLabel2.Size = new System.Drawing.Size(361, 37);
+            this.uiLabel2.Size = new System.Drawing.Size(363, 25);
             this.uiLabel2.TabIndex = 1;
             this.uiLabel2.Text = "Debug 2: -";
             this.uiLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -860,12 +910,74 @@
             this.uiLabel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.uiLabel3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.uiLabel3.Location = new System.Drawing.Point(3, 74);
+            this.uiLabel3.Location = new System.Drawing.Point(3, 50);
             this.uiLabel3.Name = "uiLabel3";
-            this.uiLabel3.Size = new System.Drawing.Size(361, 38);
+            this.uiLabel3.Size = new System.Drawing.Size(363, 26);
             this.uiLabel3.TabIndex = 2;
             this.uiLabel3.Text = "Debug 3: -";
             this.uiLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // btnSend1
+            // 
+            this.btnSend1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSend1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnSend1.Location = new System.Drawing.Point(271, 3);
+            this.btnSend1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnSend1.Name = "btnSend1";
+            this.btnSend1.Size = new System.Drawing.Size(100, 51);
+            this.btnSend1.TabIndex = 0;
+            this.btnSend1.Text = "Gửi 1";
+            this.btnSend1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnSend1.Click += new System.EventHandler(this.btnSend1_Click);
+            // 
+            // btnSend2
+            // 
+            this.btnSend2.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSend2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnSend2.Location = new System.Drawing.Point(271, 57);
+            this.btnSend2.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnSend2.Name = "btnSend2";
+            this.btnSend2.Size = new System.Drawing.Size(100, 51);
+            this.btnSend2.TabIndex = 1;
+            this.btnSend2.Text = "Gửi 2";
+            this.btnSend2.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnSend2.Click += new System.EventHandler(this.btnSend2_Click);
+            // 
+            // ipTest1
+            // 
+            this.ipTest1.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.ipTest1.DoubleValue = 12345D;
+            this.ipTest1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ipTest1.IntValue = 12345;
+            this.ipTest1.Location = new System.Drawing.Point(4, 5);
+            this.ipTest1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ipTest1.MinimumSize = new System.Drawing.Size(1, 16);
+            this.ipTest1.Name = "ipTest1";
+            this.ipTest1.Padding = new System.Windows.Forms.Padding(5);
+            this.ipTest1.ShowText = false;
+            this.ipTest1.Size = new System.Drawing.Size(260, 49);
+            this.ipTest1.TabIndex = 2;
+            this.ipTest1.Text = "12345";
+            this.ipTest1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ipTest1.Watermark = "";
+            // 
+            // ipTest2
+            // 
+            this.ipTest2.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.ipTest2.DoubleValue = 12345D;
+            this.ipTest2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ipTest2.IntValue = 12345;
+            this.ipTest2.Location = new System.Drawing.Point(4, 57);
+            this.ipTest2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ipTest2.MinimumSize = new System.Drawing.Size(1, 16);
+            this.ipTest2.Name = "ipTest2";
+            this.ipTest2.Padding = new System.Windows.Forms.Padding(5);
+            this.ipTest2.ShowText = false;
+            this.ipTest2.Size = new System.Drawing.Size(260, 51);
+            this.ipTest2.TabIndex = 3;
+            this.ipTest2.Text = "12345";
+            this.ipTest2.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ipTest2.Watermark = "";
             // 
             // PCartonDashboard
             // 
@@ -898,6 +1010,9 @@
             this.uiTableLayoutPanel5.ResumeLayout(false);
             this.uiTableLayoutPanel4.ResumeLayout(false);
             this.warningGroup.ResumeLayout(false);
+            this.uiTabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.debugGroup.ResumeLayout(false);
             this.debugContainer.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -952,10 +1067,17 @@
         private Sunny.UI.UIPanel opnextStart;
         private Sunny.UI.UIGroupBox warningGroup;
         private Sunny.UI.UIListBox opWarning;
+        private Sunny.UI.UITabControl uiTabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
         private Sunny.UI.UIGroupBox debugGroup;
         private Sunny.UI.UITableLayoutPanel debugContainer;
         private Sunny.UI.UILabel uiLabel1;
         private Sunny.UI.UILabel uiLabel2;
         private Sunny.UI.UILabel uiLabel3;
+        private System.Windows.Forms.TabPage tabPage2;
+        private Sunny.UI.UITextBox ipTest2;
+        private Sunny.UI.UITextBox ipTest1;
+        private Sunny.UI.UISymbolButton btnSend2;
+        private Sunny.UI.UISymbolButton btnSend1;
     }
 }

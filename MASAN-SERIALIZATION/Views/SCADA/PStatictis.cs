@@ -145,6 +145,9 @@ namespace MASAN_SERIALIZATION.Views.SCADA
         {
             try
             {
+                Render_MEM();
+                WK_Update.DoWork += WK_Update_DoWork;
+
                 var labelOption = new
                 {
                     show = true,
@@ -223,9 +226,7 @@ namespace MASAN_SERIALIZATION.Views.SCADA
                 string templatePatho = @"C:\test\bar-label-rotation-out.html";
                 InjectOptionToHtml(templatePath, templatePatho, option);
 
-
-                Render_MEM();
-                WK_Update.DoWork += WK_Update_DoWork;
+                
                 // Lưu file HTML tạm
                 //string folderPath = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\TeraCharts\ChartCS";
 
