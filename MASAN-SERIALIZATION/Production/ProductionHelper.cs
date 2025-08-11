@@ -15,7 +15,7 @@ namespace MASAN_SERIALIZATION.Production
         private static string poAPIServerPath;
         private static string poAPIServerFileName;
         private static string POLog_dbPath = @"C:\MasanSerialization\Databases\POLog.db";
-        private static string dataPath = $"C:/MasanSerialization/PODatabases";
+        public static string dataPath = $"C:/MasanSerialization/PODatabases";
         public static string orderNO { get; set; } = string.Empty;
         #endregion
 
@@ -47,6 +47,14 @@ namespace MASAN_SERIALIZATION.Production
         public Product_Counter counter { get; set; } = new Product_Counter();
         public AWS_Send_Counter awsSendCounter { get; set; } = new AWS_Send_Counter();
         public AWS_Recived_Counter awsRecivedCounter { get; set; } = new AWS_Recived_Counter();
+
+        public string dbPath
+        {
+            get
+            {
+                return $"{dataPath}";
+            }
+        }
         #endregion
 
         #region Data Access Objects

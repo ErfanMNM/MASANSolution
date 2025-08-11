@@ -27,6 +27,11 @@ namespace MASAN_SERIALIZATION.Views.Settings
             {
                 GenerateConfigControls();
                 LoadCurrentConfig();
+                if(Globals.CurrentUser.Username == "sa")
+                {
+                    btnReset.Enabled = true;
+                    btnSave.Enabled = true;
+                }
             }
             catch (Exception ex)
             {

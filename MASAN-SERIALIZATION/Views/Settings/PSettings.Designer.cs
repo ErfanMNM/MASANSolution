@@ -28,7 +28,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
         /// </summary>
         private void InitializeComponent()
         {
-            SpT.Auth.UserData userData2 = new SpT.Auth.UserData();
+            SpT.Auth.UserData userData1 = new SpT.Auth.UserData();
             this.btnSave = new Sunny.UI.UIButton();
             this.btnReset = new Sunny.UI.UIButton();
             this.uiPanel1 = new Sunny.UI.UIPanel();
@@ -46,6 +46,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSave.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSave.Enabled = false;
             this.btnSave.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(125)))), ((int)(((byte)(50)))));
             this.btnSave.FillHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(67)))), ((int)(((byte)(160)))), ((int)(((byte)(71)))));
             this.btnSave.FillPressColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(94)))), ((int)(((byte)(32)))));
@@ -65,6 +66,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
             // 
             this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnReset.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnReset.Enabled = false;
             this.btnReset.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(124)))), ((int)(((byte)(0)))));
             this.btnReset.FillHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(149)))), ((int)(((byte)(0)))));
             this.btnReset.FillPressColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(116)))), ((int)(((byte)(0)))));
@@ -105,7 +107,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
             this.tabPage1.Controls.Add(this.uc_UserManager1);
             this.tabPage1.Location = new System.Drawing.Point(0, 40);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(840, 552);
+            this.tabPage1.Size = new System.Drawing.Size(200, 60);
             this.tabPage1.TabIndex = 1;
             this.tabPage1.Text = "👤 Người dùng";
             // 
@@ -121,12 +123,12 @@ namespace MASAN_SERIALIZATION.Views.Settings
             this.uc_UserSetting1.TabIndex = 1;
             this.uc_UserSetting1.Text = "uc_UserSetting1";
             this.uc_UserSetting1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            userData2.Key2FA = null;
-            userData2.Password = null;
-            userData2.Role = null;
-            userData2.Salt = null;
-            userData2.Username = "";
-            this.uc_UserSetting1.userData = userData2;
+            userData1.Key2FA = null;
+            userData1.Password = null;
+            userData1.Role = null;
+            userData1.Salt = null;
+            userData1.Username = "";
+            this.uc_UserSetting1.userData = userData1;
             this.uc_UserSetting1.OnUserAction += new System.EventHandler<SpT.Auth.LoginActionEventArgs>(this.uc_UserSetting1_OnUserAction);
             // 
             // uc_UserManager1

@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SQLite;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -122,6 +123,8 @@ namespace MASAN_SERIALIZATION.Views.SCADA
             {"Globals.AWS_IoT_Status", "☁️ Trạng thái AWS IoT"}
         };
 
+        private string orderNo { get; set; } = string.Empty; // Biến để lưu số đơn hàng hiện tại
+
 
         private BackgroundWorker WK_Update = new BackgroundWorker()
         {
@@ -147,93 +150,7 @@ namespace MASAN_SERIALIZATION.Views.SCADA
             {
                 Render_MEM();
                 WK_Update.DoWork += WK_Update_DoWork;
-
-                var labelOption = new
-                {
-                    show = true,
-                    position = "inside",
-                    fontSize = 12
-                };
-
-                var option = new
-                {
-                    tooltip = new
-                    {
-                        trigger = "axis",
-                        axisPointer = new { type = "shadow" }
-                    },
-                    legend = new { data = new[] { "Tổng", "Tốt", "Loại" } },
-                    toolbox = new
-                    {
-                        show = true,
-                        orient = "vertical",
-                        left = "right",
-                        top = "center",
-                        feature = new
-                        {
-                            mark = new { show = true },
-                            dataView = new { show = true, readOnly = false },
-                            magicType = new { show = true, type = new[] { "line", "bar", "stack" } },
-                            restore = new { show = true },
-                            saveAsImage = new { show = true }
-                        }
-                    },
-                    xAxis = new object[]
-                    {
-        new
-        {
-            type = "category",
-            axisTick = new { show = false },
-            data = new[] { "1:00", "2:00", "3:00", "4:00", "5:00" }
-        }
-                    },
-                    yAxis = new object[]
-                    {
-        new { type = "value" }
-                    },
-                    series = new object[]
-                    {
-        new
-        {
-            name = "Tổng",
-            type = "bar",
-            barGap = 0,
-            label = labelOption,
-            emphasis = new { focus = "series" },
-            data = new[] { 320, 332, 301, 334, 390 }
-        },
-        new
-        {
-            name = "Tốt",
-            type = "bar",
-            label = labelOption,
-            emphasis = new { focus = "series" },
-            data = new[] { 220, 182, 191, 234, 290 }
-        },
-        new
-        {
-            name = "Loại",
-            type = "bar",
-            label = labelOption,
-            emphasis = new { focus = "series" },
-            data = new[] { 150, 232, 201, 154, 190 }
-        }
-                    }
-                };
-
-                string templatePath = @"C:\Charts\bar-label-rotation.html";
-                string templatePatho = @"C:\test\bar-label-rotation-out.html";
-                InjectOptionToHtml(templatePath, templatePatho, option);
-
-                
-                // Lưu file HTML tạm
-                //string folderPath = @"C:\Users\THUC\source\repos\ErfanMNM\MASANSolution\TeraCharts\ChartCS";
-
-
-                webView21.Source = new Uri(templatePatho);
-                webView22.Source = new Uri(@"C:\test\b2.html");
                 webView23.Source = new Uri(@"C:\test\b3.html");
-                webView24.Source = new Uri(@"C:\test\b4.html");
             }
             catch (Exception ex)
             {
@@ -445,6 +362,121 @@ namespace MASAN_SERIALIZATION.Views.SCADA
             {
                 try
                 {
+                    try
+                    {
+                        if (Globals.ProductionData.orderNo != orderNo)
+                        {
+                            orderNo = Globals.ProductionData.orderNo;
+                            HourlyChartData hourlyChartData = GetLast6Hours($@"{Globals.ProductionData.dbPath}/Record_{Globals.ProductionData.orderNo}.db");
+
+                            var labels = hourlyChartData.Labels;
+                            var labelOption = new
+                            {
+                                show = true,
+                                position = "inside",
+                                fontSize = 12
+                            };
+
+                            var option = new
+                            {
+                                tooltip = new
+                                {
+                                    trigger = "axis",
+                                    axisPointer = new { type = "shadow" }
+                                },
+                                legend = new { data = new[] { "Tổng", "Tốt", "Loại", "Không Kiểm" } },
+                                toolbox = new
+                                {
+                                    show = true,
+                                    orient = "vertical",
+                                    left = "right",
+                                    top = "center",
+                                    feature = new
+                                    {
+                                        mark = new { show = true },
+                                        dataView = new { show = true, readOnly = false },
+                                        magicType = new { show = true, type = new[] { "line", "bar", "stack", "pie" } },
+                                        restore = new { show = true },
+                                        saveAsImage = new { show = true }
+                                    }
+                                },
+                                xAxis = new object[]
+                                {
+                                    new
+                                    {
+                                        type = "category",
+                                        axisTick = new { show = false },
+                                        data = labels
+                                    }
+                                                                    },
+                                                                    yAxis = new object[]
+                                                                    {
+                                    new { type = "value" }
+                                                                    },
+                                                                    series = new object[]
+                                                                    {
+                                    new
+                                    {
+                                        name = "Tổng",
+                                        type = "bar",
+                                        barGap = 0,
+                                        label = labelOption,
+                                        emphasis = new { focus = "series" },
+                                        data = hourlyChartData.Tong
+                                    },
+                                    new
+                                    {
+                                        name = "Tốt",
+                                        type = "bar",
+                                        label = labelOption,
+                                        emphasis = new { focus = "series" },
+                                        data = hourlyChartData.Tot
+                                    },
+                                    new
+                                    {
+                                        name = "Loại",
+                                        type = "bar",
+                                        label = labelOption,
+                                        emphasis = new { focus = "series" },
+                                        data = hourlyChartData.Loi
+                                    },new
+                                    {
+                                        name = "Không kiểm",
+                                        type = "bar",
+                                        label = labelOption,
+                                        emphasis = new { focus = "series" },
+                                        data = hourlyChartData.Khac
+                                    }
+                                }
+                            };
+
+                            string templatePath = @"C:\MasanSerialization\Chart_Database\bar-label-rotation.html";
+
+                            
+                            string templatePatho = @"C:\MasanSerialization\Chart_Database\bar-label-rotation-out.html";
+                            // Xóa file HTML cũ nếu có
+                            if (File.Exists(templatePatho))
+                            {
+                                File.Delete(templatePatho);
+                                Console.WriteLine("Đã xóa file HTML cũ.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Không tìm thấy file cũ, bỏ qua bước xóa.");
+                            }
+
+                            InjectOptionToHtml(templatePath, templatePatho, option);
+
+                            this.InvokeIfRequired(() =>
+                            {
+                                webView21.Source = new Uri(templatePatho);
+                            });
+                        }
+                    }
+                    catch
+                    {
+                        //không làm gì cả
+                    }
                     this.InvokeIfRequired(() =>
                     {
                         Update_BindingProps();
@@ -742,5 +774,96 @@ namespace MASAN_SERIALIZATION.Views.SCADA
         }
 
         #endregion
+
+        public class HourlyChartData
+        {
+            public string[] Labels { get; set; }
+            public int[] Tong { get; set; }   // Tổng = Pass + Failed + Khác
+            public int[] Tot { get; set; }    // Pass
+            public int[] Loi { get; set; }    // Failed
+            public int[] Khac { get; set; }   // còn lại
+        }
+        public static HourlyChartData GetLast6Hours(string dbPath)
+            {
+                // Chốt mốc giờ: tròn giờ hiện tại và lùi 5 giờ
+                var now = DateTime.UtcNow;
+                var endHour = new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0);
+                var startHour = endHour.AddHours(-3);
+
+            var labels = Enumerable.Range(0, 6)
+.Select(i => startHour.AddHours(i + 7).ToString("H:00")) // cộng 7 giờ khi hiển thị
+.ToArray();
+
+            int[] tong = new int[4];
+                int[] tot = new int[4];
+                int[] loi = new int[4];
+                int[] khac = new int[4];
+
+                using (var conn = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
+                {
+                    conn.Open();
+
+                    // Gộp theo từng block giờ. Dùng replace(ActivateDate,'T',' ') để chắc kèo ISO8601.
+                    string sql = @"
+                                    WITH src AS (
+                                      SELECT 
+                                        strftime('%Y-%m-%d %H:00:00', replace(ActivateDate,'T',' ')) AS HourBlock,
+                                        lower(coalesce(trim(Status), '')) AS st
+                                      FROM Records
+                                      WHERE datetime(replace(ActivateDate,'T',' ')) >= datetime(@start)
+                                        AND datetime(replace(ActivateDate,'T',' ')) <= datetime(@end, '+59 minutes', '+59 seconds')
+                                    ),
+                                    agg AS (
+                                      SELECT 
+                                        HourBlock,
+                                        COUNT(*)                                                  AS Total,
+                                        SUM(CASE WHEN st='pass'   THEN 1 ELSE 0 END)             AS Good,
+                                        SUM(CASE WHEN st='failed' THEN 1 ELSE 0 END)             AS Bad,
+                                        SUM(CASE WHEN st NOT IN ('pass','failed') THEN 1 ELSE 0 END) AS Other
+                                      FROM src
+                                      GROUP BY HourBlock
+                                    )
+                                    SELECT HourBlock, Total, Good, Bad, Other
+                                    FROM agg
+                                    ORDER BY HourBlock;
+                                    ";
+
+                    using (var cmd = new SQLiteCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@start", startHour.ToString("yyyy-MM-dd HH:mm:ss"));
+                        cmd.Parameters.AddWithValue("@end", endHour.ToString("yyyy-MM-dd HH:mm:ss"));
+
+                        using (var rd = cmd.ExecuteReader())
+                        {
+                            while (rd.Read())
+                            {
+                                var hourBlock = DateTime.Parse(rd["HourBlock"].ToString());
+                                int idx = (int)(hourBlock - startHour).TotalHours;
+                                if (idx < 0 || idx >= 6) continue;
+
+                                int total = Convert.ToInt32(rd["Total"]);
+                                int good = Convert.ToInt32(rd["Good"]);
+                                int bad = Convert.ToInt32(rd["Bad"]);
+                                int other = Convert.ToInt32(rd["Other"]);
+
+                                tong[idx] = total;
+                                tot[idx] = good;
+                                loi[idx] = bad;
+                                khac[idx] = other;
+                            }
+                        }
+                    }
+                }
+
+                return new HourlyChartData
+                {
+                    Labels = labels, // ví dụ: ["11:00","12:00",...]
+                    Tong = tong,
+                    Tot = tot,
+                    Loi = loi,
+                    Khac = khac
+                };
+            }
+
     }
 }
