@@ -237,6 +237,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             return;
                         }
 
+                        //nếu là thùng 24 thì kích hoạt
+
+
                         //nếu thùng đã kết thúc thì kiểm tra thùng tiếp theo có mã chưa
                         if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out ProductionCartonData nextCartonData))
                         {

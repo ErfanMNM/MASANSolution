@@ -221,8 +221,7 @@ namespace MASAN_SERIALIZATION.Views.SCADA
                     }
                 };
 
-
-                string templatePath = @"C:\test\bar-label-rotation.html";
+                string templatePath = @"C:\Charts\bar-label-rotation.html";
                 string templatePatho = @"C:\test\bar-label-rotation-out.html";
                 InjectOptionToHtml(templatePath, templatePatho, option);
 

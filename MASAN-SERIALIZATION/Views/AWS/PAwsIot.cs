@@ -332,7 +332,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
         private void opNotiboardAndSend_DoubleClick(object sender, EventArgs e)
         {
-            this.ShowInfoDialog("Thông báo", opNotiboardAndSend.SelectedValue.ToString());
+            this.ShowInfoDialog("Thông báo", opNotiboardAndSend.SelectedItem.ToString());
         }
 
         private void PAwsIot_Initialize(object sender, EventArgs e)
@@ -349,15 +349,21 @@ namespace MASAN_SERIALIZATION.Views.AWS
             {
                 //nếu bật AWS thì kết nối
                 Connect_AWS();
-                //khởi tạo background worker để gửi dữ liệu
+                
+                if(Globals.AWS_IoT_Status == e_awsIot_status.Connected)
+                {
+                    //khởi tạo background worker để gửi dữ liệu
+                    bgw_process = new BackgroundWorker();
+                    bgw_send = new BackgroundWorker();
 
-                bgw_process.RunWorkerAsync();
-                bgw_process.WorkerSupportsCancellation = true;
-                bgw_process.DoWork += Bgw_process_DoWork;
+                    bgw_process.WorkerSupportsCancellation = true;
+                    bgw_process.DoWork += Bgw_process_DoWork;
+                    bgw_process.RunWorkerAsync();
 
-                bgw_send = new BackgroundWorker();
-                bgw_send.WorkerSupportsCancellation = true;
-                bgw_send.DoWork += Bgw_send_DoWork;
+                    bgw_send = new BackgroundWorker();
+                    bgw_send.WorkerSupportsCancellation = true;
+                    bgw_send.DoWork += Bgw_send_DoWork;
+                }
             }
         }
 
