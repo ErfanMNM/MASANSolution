@@ -15,6 +15,7 @@ using MASAN_SERIALIZATION.Enums;
 using MASAN_SERIALIZATION.Utils;
 using MASAN_SERIALIZATION.Views.AWS;
 using MASAN_SERIALIZATION.Views.Dashboards;
+using MASAN_SERIALIZATION.Views.Database;
 using MASAN_SERIALIZATION.Views.Login;
 using MASAN_SERIALIZATION.Views.ProductionInfo;
 using MASAN_SERIALIZATION.Views.SCADA;
@@ -37,6 +38,7 @@ namespace MASAN_SERIALIZATION
         private PAwsIot _pAws = new PAwsIot();
         private PSettings _pSettings = new PSettings();
         private PLCSetting _pPLCSetting = new PLCSetting();
+        private PScaner _pScaner = new PScaner();
         #endregion
 
         #region Private Fields - Background Workers
@@ -127,10 +129,11 @@ namespace MASAN_SERIALIZATION
                 NavMenu.CreateNode(AddPage(_pProduction, 1002));
                 NavMenu.CreateNode(AddPage(_pStatictis, 1003));
                 NavMenu.CreateNode(AddPage(_pCartonDashboard, 1004));
-                NavMenu.CreateNode(AddPage(_pAws, 1005));
-                NavMenu.CreateNode(AddPage(_pPLCSetting, 1006));
-                NavMenu.CreateNode(AddPage(_pSettings, 1007));
-                NavMenu.CreateNode(AddPage(_pAws1, 1008));
+                NavMenu.CreateNode(AddPage(_pScaner, 1005));
+                NavMenu.CreateNode(AddPage(_pAws, 1006));
+                NavMenu.CreateNode(AddPage(_pPLCSetting, 1007));
+                NavMenu.CreateNode(AddPage(_pSettings, 1008));
+                NavMenu.CreateNode(AddPage(_pAws1, 1009));
                 NavMenu.CreateNode(AddPage(_pLogin, 2001));
 
                 NavMenu.SelectPage(2001);
@@ -156,6 +159,7 @@ namespace MASAN_SERIALIZATION
                 _pDashboard.STARTUP();
                 _pStatictis.INIT();
                 _pCartonDashboard.INIT();
+                _pScaner.INIT();
                 _pSettings.INIT();
                 _pPLCSetting.INIT();
                 _pProduction.START();

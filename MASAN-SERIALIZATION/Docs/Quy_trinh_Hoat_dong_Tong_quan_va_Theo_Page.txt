@@ -1,0 +1,95 @@
+Quy trình hoạt động dự án MASAN-SERIALIZATION (Tổng quan → Theo Page)
+
+Phần A. Tổng quan hệ thống
+- Kiến trúc: Ứng dụng WinForms C# dùng Sunny.UI. Dự án chính: MASAN-SERIALIZATION; thư viện nội bộ: SpT, SPMS1 (Auth, Logs, PLC, Communications, SQLite...).
+- Thư mục chính: Configs (AppConfigs, PLCAddress), Infrastructure (Globals), Enums, Utils (ErrorCodes), Production (ProductionHelper), Views (AWS, Dashboards, Database, Login, ProductionInfo, SCADA, Settings, Test).
+- Lưu trữ/CSLD: SQLite cục bộ dưới C:/MasanSerialization/PODatabases (UniqueCodes, Records, Carton, Send_AWS_Record_{PO}, Recive_AWS_Record_{PO}); PO MES tại C:\MasanSerialization\Server_Service\po.db và /codes/{orderNo}.db.
+- Tích hợp thiết bị: PLC (qua HslCommunication – trong SPMS1), camera chính/phụ, 2 tay quét COM (01/02). Trạng thái thiết bị quyết định Device_Ready.
+- Cloud: AWS IoT Core qua Mqtt TLS (client .pfx). Gửi payload “CZ/data”, nhận phản hồi tại topic response. Nhật ký gửi/nhận vào DB cục bộ.
+- Trạng thái & nhật ký: Globals.AppState (LOGIN/ACTIVE/DEACTIVE), Globals.AppRenderState, Globals.Production_State; log vào %LocalAppData%/MASAN-SERIALIZATION/Logs.
+
+Phần B. Luồng khởi động/đăng nhập
+1) Program.cs: tạo mutex “MASAN-SERIALIZATION” (ngăn mở 2 phiên), khởi chạy FMain.
+2) FMain khởi tạo:
+   - InitializeUI (Sunny.UI styles, gắn Tab/TreeNav)
+   - InitializeConfigs (AppConfigs.Load, PLCAddress.Init từ Google Sheet → fallback json)
+   - RenderControlForm (nạp các Page, chọn Login, ẩn NavMenu)
+   - ToggleFullScreen, khởi chạy BackgroundWorker Main_Process_Async
+3) Vòng lặp Main_Process_Async (100 ms):
+   - Cập nhật đồng hồ, hiển thị trạng thái sản xuất.
+   - Login_Process: chuyển giữa LOGIN/ACTIVE/DEACTIVE, vẽ lại menu theo Role/User.
+   - App_State_Process: kết hợp APP_Ready/Device_Ready để đổi màu/trạng thái tổng.
+4) Page Login (PLogin): người dùng đăng nhập; nếu thành công ⇒ Globals.CurrentUser set ⇒ AppState → ACTIVE, NavMenu hiện, chuyển sang ProductionInfo.
+
+Phần C. Chuẩn bị & chọn PO (ProductionInfo/PPOInfo)
+1) Nạp danh sách PO từ MES (MES_Load_OrderNo_ToComboBox).
+2) Tự động lấy PO gần nhất (GetLastPO) nếu có; nếu không, người dùng bấm “Chọn PO”.
+3) Khi vào Saving:
+   - Kiểm tra ràng buộc: không Deleted/Completed; số mã CZ đủ so với OrderQty.
+   - Save_PO (ghi PO vào C:\MasanSerialization\Databases\POLog.db; đồng bộ UniqueCodes với MES nếu thiếu).
+   - Check_Database_File tạo các DB cục bộ theo PO nếu chưa có: {PO}.db (UniqueCodes), Record_{PO}.db, Record_CameraSub_{PO}.db, carton_{PO}.db, Send_AWS_Record_{PO}.db, Recive_AWS_Record_{PO}.db.
+   - Tải Records hiện có để tính counters: pass/fail/duplicate/readfail/notfound/error/total, và xác định cartonID hiện hành theo cartonPack.
+4) Chuyển trạng thái Ready: hiển thị thông tin PO, bật RUN.
+
+Phần D. Điều kiện RUN & trạng thái Running
+1) Người dùng bấm RUN tại Ready:
+   - Yêu cầu APP_Ready = true (đã đăng nhập, UI ổn) và Device_Ready = true (cả 3: CameraMain/CameraSub CONNECTED, PLC_Connected=true).
+   - Tính counters từ Records để xác định đẩy mới/tiếp tục PO xuống PLC: Pushing_new_PO_to_PLC hoặc Pushing_continue_PO_to_PLC.
+   - Chuyển Running.
+2) Khi Running: bấm RUN lần nữa ⇒ dừng, sang Checking_Queue, đợi hàng đợi DB/AWS trống ⇒ về Ready.
+
+Phần E. Quy chế quét mã thùng (PCartonDashboard)
+1) Kết nối tay quét:
+   - Connection cho COM của HandScan01/02 (từ AppConfigs.HandScanCOM01/02). Có vòng lặp nền cập nhật UI trạng thái tay quét, carton hiện hành.
+2) Parity & vai trò tay quét:
+   - Scanner 01 xử lý nhánh lẻ; Scanner 02 xử lý nhánh chẵn. cartonID hiện hành quyết định thùng đang xếp là chẵn/lẻ.
+3) Trạng thái thùng trong DB/carton dict:
+   - Start_Datetime == "0": thùng chưa “bắt đầu”; Activate_Datetime == "0": thùng chưa “chốt/kết thúc”.
+4) Quy tắc chung:
+   - Không trùng mã (so toàn bộ Dictionary_ProductionCarton_Data). Nếu trùng ⇒ báo lỗi UI.
+   - If scanner parity ≠ carton hiện hành: ưu tiên “chốt” thùng trước (ID-1) nếu chưa Activate.
+     • Auto start = true: gán cartonCode=scan; Activate_Datetime=Now (không cần khớp code cũ).
+     • Manual = false: yêu cầu mã quét khớp cartonCode đã có.
+     - Nếu thùng trước đã chốt: có thể “lót” thùng kế (ID+1) nếu chưa Start ⇒ set Start_Datetime=Now với mã vừa quét.
+   - If scanner parity = carton hiện hành: nếu chưa Start ⇒ set Start với mã quét; nếu đã Start ⇒ chặn (đang xếp, không kích hoạt).
+5) Hàng đợi cập nhật:
+   - Mọi thay đổi đẩy vào Queue: Update_Product_To_Record_Carton_Queue và Activate_Carton; tiến trình khác sẽ flush xuống SQLite carton_{PO}.db.
+
+Phần F. Gửi/nhận AWS IoT (PAwsIot)
+1) Kết nối: đọc host, clientId, rootCA/pfx/pwd từ AppConfigs; ConnectAsync; subscribe topic response. Cập nhật Globals.AWS_IoT_Status và UI.
+2) Lấy danh sách gửi:
+   - Pending: UniqueCodes WHERE Status != 0 AND Send_Status != 'Sent' AND cartonCode != 'pending' AND cartonCode != '0'.
+   - Resend: UniqueCodes WHERE Status != 0 AND Send_Status == 'Failed'.
+3) Gửi payload CZ/data: AWSSendPayload { message_id = ID-orderNo, orderNo, uniqueCode, cartonCode, status, activate_datetime, production_date, thing_name }.
+   - Thành công: enqueue aWS_Send_Datas (Sent) + ghi Send_AWS_Record_{PO}.db.
+   - Thất bại: enqueue aWS_Send_Datas (Failed) + log UI.
+4) Nhận response: parse status, message_id, error_message ⇒ enqueue aWS_Recive_Datas; ghi Recive_AWS_Record_{PO}.db; cập nhật UI.
+5) Có chế độ tự động (Auto_Send_AWS): background worker định kỳ fetch & gửi.
+
+Phần G. Trang khác và vai trò
+- FDashboard (Dashboards/FDashboard): Trang tổng hợp sản xuất/thống kê nhanh (khởi tạo bằng STARTUP). Hiển thị counters, trạng thái thiết bị; thao tác điều hành nhanh (theo thiết kế UI).
+- Database/PScaner: Giao diện quan sát/tra cứu dữ liệu quét (UniqueCodes/Records) theo PO; hỗ trợ test scan nội bộ (theo tên).
+- SCADA/PStatictis: Thống kê – biểu đồ trạng thái/hiệu suất theo thời gian; đọc counters từ DB; hiển thị màu/trạng thái (theo mã nguồn trang).
+- Settings/PSettings: Cấu hình tổng quan ứng dụng (TwoFA, Camera IP/Port, COM, AWS_ENA, host, pfx, cartonPack, cartonAutoStart, APP_Mode, PLC_Test_Mode…).
+- Settings/PLCSetting: Thiết lập PLC – ánh xạ địa chỉ DM đọc từ Google Sheet (PLCAddress) và/hoặc cache json; chế độ test PLC.
+- AWS/PAws: Trang AWS IoT phụ (giao diện thao tác/quan sát đơn giản hơn so với PAwsIot).
+- Test (DemoPage, FormTest): Trang thử nghiệm/tạm thời phục vụ phát triển.
+
+Phần H. Trạng thái & mã lỗi
+- Production_State: NoSelectedPO → Start → Checking_PO_Info → Loading → Ready → Running → Completed / Editing / Editting_ProductionDate → Saving → Error → Pushing_new/continue → Checking_Queue → Pause.
+- Mã lỗi chuẩn hoá tại Utils/ErrorCodes.cs; sử dụng để hiện UI nhất quán và phân loại theo module.
+
+Phần I. Quy trình điển hình ca làm việc
+1) Đăng nhập thành công (PLogin) ⇒ ACTIVE, NavMenu hiển thị.
+2) Vào ProductionInfo, chọn hoặc tự động nạp PO gần nhất.
+3) Lưu PO (Saving): kiểm tra ràng buộc, tạo DB, tính counters & cartonID ⇒ Ready.
+4) Kiểm tra thiết bị (Camera/PLC) đạt Device_Ready; nhấn RUN ⇒ Running.
+5) Quét mã thùng tại PCartonDashboard theo quy tắc chẵn/lẻ, auto/manual; DB queue ghi nhận Start/Activate.
+6) Gửi dữ liệu AWS (PAwsIot) tự động hoặc thủ công; ghi nhận phản hồi.
+7) Khi đủ số lượng hoặc cần đổi đơn: dừng, kiểm tra hàng đợi rỗng, về Ready/Completed, chọn PO mới.
+
+Phần J. Ghi chú triển khai & bảo trì
+- Đường dẫn tuyệt đối C:\MasanSerialization\... cần đảm bảo quyền ghi; có thể cấu hình hoá nếu cần triển khai đa máy.
+- File ‘credentials.json’ dùng cho Google Sheets (PLCAddress) cần đặt đúng thư mục chạy.
+- Nhật ký đặt tại %LocalAppData%/MASAN-SERIALIZATION/Logs – hữu ích cho truy vết sự cố.
+- Các BackgroundWorker cần kết thúc an toàn khi đóng ứng dụng (WK_Main_Proccess.CancelAsync,...).

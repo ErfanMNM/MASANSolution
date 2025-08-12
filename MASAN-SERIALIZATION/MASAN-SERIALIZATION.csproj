@@ -164,6 +164,7 @@
     <Compile Include="FMain.Designer.cs">
       <DependentUpon>FMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\DatabaseHelper.cs" />
     <Compile Include="Infrastructure\Globals.cs" />
     <Compile Include="Production\ProductionHelper.cs" />
     <Compile Include="Program.cs" />
@@ -195,6 +196,12 @@
     </Compile>
     <Compile Include="Views\Dashboards\PCartonDashboard.Designer.cs">
       <DependentUpon>PCartonDashboard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Database\PScaner.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Database\PScaner.Designer.cs">
+      <DependentUpon>PScaner.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\Login\PLogin.cs">
       <SubType>Form</SubType>
@@ -265,6 +272,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Dashboards\PCartonDashboard.resx">
       <DependentUpon>PCartonDashboard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Database\PScaner.resx">
+      <DependentUpon>PScaner.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Login\PLogin.resx">
       <DependentUpon>PLogin.cs</DependentUpon>
