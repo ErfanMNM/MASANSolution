@@ -347,8 +347,8 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
             if (IsOrderCompleted())
             {
-                Globals.Production_State = e_Production_State.Waiting_Stop;
-                //Globals.Production_State = e_Production_State.Checking_Queue;
+                //Globals.Production_State = e_Production_State.Waiting_Stop;
+                Globals.Production_State = e_Production_State.Checking_Queue;
             }
         }
 

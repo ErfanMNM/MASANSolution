@@ -1,6 +1,7 @@
 ﻿using DATALOGIC_SCAN;
 using MASAN_SERIALIZATION.Configs;
 using MASAN_SERIALIZATION.Enums;
+using MASAN_SERIALIZATION.Production;
 using MASAN_SERIALIZATION.Utils;
 using SpT.Logs;
 using Sunny.UI;
@@ -323,6 +324,24 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     if (cartonDataL.Start_Datetime != "0")
                     {
 
+                        if (Globals.Production_State == e_Production_State.Waiting_Stop)
+                        {
+                            //kiểm tra mã có trùng không
+                            if (s.Trim() != cartonDataL.cartonCode)
+                            {
+                                this.InvokeIfRequired(() =>
+                                {
+                                    this.ShowErrorNotifier("Mã thùng không trùng với mã thùng đang xếp. Vui lòng kiểm tra lại!", false, 5000);
+                                });
+                                return;
+                            }
+
+                            cartonDataL.cartonCode = s.Trim();
+                            cartonDataL.Activate_Datetime = DateTime.Now.ToString("o");
+                            Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonDataL);
+                            Globals_Database.Activate_Carton.Enqueue(s.Trim());
+                        }
+
                         this.InvokeIfRequired(() =>
                         {
                             this.ShowErrorNotifier("02 Thùng đã kích hoạt và đang trong thời gian xếp, vui lòng thử lại", false, 5000);
@@ -503,12 +522,33 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     });
                     return;
                 }
+
                 //nếu thùng lẻ thì có nghĩa là đang chạy, chỉ kiểm tra có mã start chưa
+
                 if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonDataL))
                 {
                     //nếu thùng đã có mã start thì không làm gì cả, gửi thông báo chửi vì thùng phải kết thúc mới được quét mã
                     if (cartonDataL.Start_Datetime != "0")
                     {
+                        //nếu là thùng cuối thì kích hoạt mã
+
+                        if (Globals.Production_State == e_Production_State.Waiting_Stop)
+                        {
+                            //kiểm tra mã có trùng không
+                            if (s.Trim() != cartonDataL.cartonCode)
+                            {
+                                this.InvokeIfRequired(() =>
+                                {
+                                    this.ShowErrorNotifier("Mã thùng không trùng với mã thùng đang xếp. Vui lòng kiểm tra lại!", false, 5000);
+                                });
+                                return;
+                            }
+
+                            cartonDataL.cartonCode = s.Trim();
+                            cartonDataL.Activate_Datetime = DateTime.Now.ToString("o");
+                            Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonDataL);
+                            Globals_Database.Activate_Carton.Enqueue(s.Trim());
+                        }
 
                         this.InvokeIfRequired(() =>
                         {

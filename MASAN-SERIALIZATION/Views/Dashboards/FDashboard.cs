@@ -1222,11 +1222,25 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     {
                        if(cartonData5.Activate_Datetime != "0")
                         {
-                            Globals.Production_State = e_Production_State.Checking_Queue;
+                            Globals.Production_State = e_Production_State.Check_After_Completed;
                         }
                     }
                         break;
                 case e_Production_State.Check_After_Completed:
+
+                    if (Globals_Database.Insert_Product_To_Record_Queue.Count > 0 || Globals_Database.Update_Product_To_SQLite_Queue.Count > 0 || Globals_Database.Insert_Product_To_Record_CS_Queue.Count > 0 || Globals_Database.Update_Product_To_Record_Carton_Queue.Count > 0 || Globals_Database.aWS_Recive_Datas.Count > 0 || Globals_Database.Activate_Carton.Count > 0 || Globals_Database.aWS_Send_Datas.Count > 0)
+                    {
+                        this.InvokeIfRequired(() =>
+                        {
+                            //UpdateStatusMessage("Đang ghi dữ liệu vào cơ sở dữ liệu, Vui lòng đợi trong giây lát...", Color.Teal);
+                            this.ShowErrorDialog("Lỗi PP231: Đang có dữ liệu đang được ghi vào cơ sở dữ liệu, Vui lòng đợi trong giây lát.");
+                        });
+                    }
+                    else
+                    {
+                        Globals.Production_State = e_Production_State.Completed;
+                    }
+
                     break;
             }
         }
