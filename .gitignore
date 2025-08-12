@@ -384,3 +384,11 @@ FodyWeavers.xsd
 /Server_Service/codes/TO-123-123.db
 /sqlite-explorer/temp
 /TimeService/dist
+/Server_Service/requests
+/Server_Service/data
+/Server_Service/codes_json
+/Server_Service/po.db-wal
+/Server_Service/po.db-shm
+/MASAN-SERIALIZATION/ATE
+/MASAN-SERIALIZATION/Docs/FDashboard_Camera_PLC_Pipeline.txt
+/Server_Service/codes/System.Data.DataRowView.db
