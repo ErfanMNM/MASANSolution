@@ -64,6 +64,7 @@
             this.btnSendTest = new Sunny.UI.UISymbolButton();
             this.btnSendOne = new Sunny.UI.UISymbolButton();
             this.btnSendAll = new Sunny.UI.UISymbolButton();
+            this.uiTextBox1 = new Sunny.UI.UITextBox();
             this.mainContainer.SuspendLayout();
             this.consoleGroup.SuspendLayout();
             this.consoleContainer.SuspendLayout();
@@ -190,6 +191,7 @@
             // 
             // controlGroup
             // 
+            this.controlGroup.Controls.Add(this.uiTextBox1);
             this.controlGroup.Controls.Add(this.controlContainer);
             this.controlGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.controlGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
@@ -660,6 +662,22 @@
             this.btnSendAll.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnSendAll.Click += new System.EventHandler(this.btnSendAll_Click);
             // 
+            // uiTextBox1
+            // 
+            this.uiTextBox1.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.uiTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTextBox1.Location = new System.Drawing.Point(326, 0);
+            this.uiTextBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiTextBox1.MinimumSize = new System.Drawing.Size(1, 16);
+            this.uiTextBox1.Name = "uiTextBox1";
+            this.uiTextBox1.Padding = new System.Windows.Forms.Padding(5);
+            this.uiTextBox1.ShowText = false;
+            this.uiTextBox1.Size = new System.Drawing.Size(389, 29);
+            this.uiTextBox1.TabIndex = 1;
+            this.uiTextBox1.Text = "uiTextBox1";
+            this.uiTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiTextBox1.Watermark = "";
+            // 
             // PAws
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -724,5 +742,6 @@
         private Sunny.UI.UISymbolButton btnSendTest;
         private Sunny.UI.UISymbolButton btnSendOne;
         private Sunny.UI.UISymbolButton btnSendAll;
+        private Sunny.UI.UITextBox uiTextBox1;
     }
 }

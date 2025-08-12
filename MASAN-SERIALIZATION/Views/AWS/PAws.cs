@@ -310,7 +310,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
                         if (string.IsNullOrWhiteSpace(line)) continue;
 
                         // Tách bằng dấu phẩy, lấy cột đầu tiên
-                        string[] parts = line.Split(',');
+                        string[] parts = line.Split('\n');
                         if (parts.Length > 0)
                         {
                             values.Add(parts[0].Trim());
@@ -345,8 +345,8 @@ namespace MASAN_SERIALIZATION.Views.AWS
                             uniqueCode = val,
                             cartonCode = ipcartonCode.Text,
                             status = 1,
-                            activate_datetime = DateTime.UtcNow.ToString("o"),
-                            production_date = ipProductionDate.Value.ToString("o"),
+                            activate_datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"),
+                            production_date = ipProductionDate.Value.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"),
                             thing_name = "MIPWP501"
                         };
 
@@ -354,12 +354,17 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
                         //gưi dữ liệu
                         var rs = awsClient.Publish_V2("CZ/data", json);
+
+                        //lưu pay load vô csv
+
+                        this.InvokeIfRequired(() =>
+                        {
+                            uiTextBox1.Text = json;
+                            opConsole.Items.Insert(0, $"{json}");
+                        });
                     }
                     Task.Delay(100).Wait(); // Giả lập thời gian gửi dữ liệu
-                    this.InvokeIfRequired(() =>
-                    {
-                        opConsole.Items.Insert(0, $"✅ [{DateTime.Now}] Đã gửi {values.Count} mã thành công từ file CSV: {filePath}");
-                    });
+                    
                 }
                 catch (Exception ex)
                 {

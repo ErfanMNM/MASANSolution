@@ -467,14 +467,14 @@ namespace MASAN_SERIALIZATION.Production
             }
 
             //lấy danh sách thùng 
-            public (bool issucess, DataTable Cartons, string message) Get_Cartons(string orderNo)
+            public TResult Get_Cartons(string orderNo)
             {
                 try
                 {
                     string czRunPath = $"{dataPath}/carton_{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
-                        return (false, null, "Cơ sở dữ liệu ghi không tồn tại.");
+                        return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
                     }
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
@@ -483,12 +483,12 @@ namespace MASAN_SERIALIZATION.Production
                         var adapter = new SQLiteDataAdapter(query, conn);
                         var table = new DataTable();
                         adapter.Fill(table);
-                        return (table.Rows.Count > 0) ? (true, table, "Lấy danh sách bản ghi thành công.") : (true, null, "Không có bản ghi nào trong cơ sở dữ liệu.");
+                        return (table.Rows.Count > 0) ? new TResult (true, "Lấy danh sách bản ghi thành công.", table.Rows.Count, table) : new TResult (true, "Không có bản ghi nào trong cơ sở dữ liệu.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    return (false, null, $"Lỗi PH10 khi lấy danh sách bản ghi: {ex.Message}");
+                    return new TResult (false, $"Lỗi PH10 khi lấy danh sách bản ghi: {ex.Message}");
                 }
             }
 
@@ -1276,6 +1276,8 @@ namespace MASAN_SERIALIZATION.Production
         Pushing_to_Dic,
         Checking_Queue,
         Pause,
+        Waiting_Stop,
+        Check_After_Completed,
     }
 
     public enum e_Production_Status
