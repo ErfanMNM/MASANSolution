@@ -86,7 +86,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
         }
 
-        private void AWS_Status_OnReceive(object sender, AwsIotClientHelper.AWSStatusReceiveEventArgs e)
+        private void AWS_Status_OnReceive(object sender, AWSStatusReceiveEventArgs e)
         {
             JObject jsonObject = JObject.Parse(e.Payload);
             // Lấy giá trị của trường "status" từ JSON
@@ -98,8 +98,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
             this.InvokeIfRequired(() =>
             {
-                //cập nhật giao diện
-                opReciveConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: Nhận dữ liệu từ AWS IoT Core: {e.Topic} - {e.Payload}");
+                opReciveConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: {status}: {e.Topic} - {e.Payload}");
             });
 
 
@@ -284,8 +283,6 @@ namespace MASAN_SERIALIZATION.Views.AWS
         int lastLine = 0; // Biến để theo dõi dòng cuối cùng đã đọc
         private void btnSendTest_Click(object sender, EventArgs e)
         {
-            
-
             string filePath = ipfilePath.Text;
             List<string> values = new List<string>();
 
@@ -293,36 +290,22 @@ namespace MASAN_SERIALIZATION.Views.AWS
             {
                 while (!reader.EndOfStream)
                 {
-                    lines++;
-                    if (lines > lastLine)
+
+                    string line = reader.ReadLine();
+                    if (string.IsNullOrWhiteSpace(line)) continue;
+
+                    // Tách bằng dấu phẩy, lấy cột đầu tiên
+                    string[] parts = line.Split('\n');
+                    if (parts.Length > 0)
                     {
-                        if (lines >= ipSendCount.Text.ToInt32())
+                        values.Add(parts[0].Trim());
+                        this.InvokeIfRequired(() =>
                         {
-                            this.InvokeIfRequired(() =>
-                            {
-                                opConsole.Items.Insert(0, $"✅ [{DateTime.Now}] Đã đạt đến số lượng gửi: {ipSendCount.Text}");
-                            });
-                            lastLine = lines-1; // Cập nhật dòng cuối cùng đã đọc
-                            break; // Dừng đọc nếu đã đạt đến số lượng gửi
-                        }
-
-                        string line = reader.ReadLine();
-                        if (string.IsNullOrWhiteSpace(line)) continue;
-
-                        // Tách bằng dấu phẩy, lấy cột đầu tiên
-                        string[] parts = line.Split('\n');
-                        if (parts.Length > 0)
-                        {
-                            values.Add(parts[0].Trim());
-                            this.InvokeIfRequired(() =>
-                            {
-                                opConsole.Items.Insert(0, $"✅ [{DateTime.Now}] Đang đọc xx dòng {parts[0].Trim()} từ file CSV: {filePath}");
-                            });
-                        }
+                            opConsole.Items.Insert(0, $"✅ [{DateTime.Now}] Đang đọc xx dòng {parts[0].Trim()} từ file CSV: {filePath}");
+                        });
                     }
-
-                    
                 }
+
             }
 
             // Sử dụng trong vòng lặp

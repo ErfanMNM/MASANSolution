@@ -126,7 +126,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                         });
                         HandleProcessError(ex);
                     }
-                    Thread.Sleep(500);
+                    Thread.Sleep(100);
                 }
             }
             catch (TaskCanceledException) { }
@@ -142,7 +142,8 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     HandleNoSelectedPOState();
                     break;
                 case e_Production_State.Start:
-                    if(Globals.CurrentUser.Username.Length > 1)
+
+                    if (Globals.CurrentUser.Username.Length > 1)
                     {
                         HandleStartState();
                     }
@@ -161,6 +162,54 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     break;
                 case e_Production_State.Checking_Queue:
                     HandleCheckingQueueState();
+                    break;
+                case e_Production_State.Checking_PO_Info:
+                    break;
+                case e_Production_State.Camera_Processing:
+                    break;
+                case e_Production_State.Pushing_new_PO_to_PLC:
+                    break;
+                case e_Production_State.Pushing_continue_PO_to_PLC:
+                    break;
+                case e_Production_State.Completed:
+
+                    if (_processCounter > 50)
+                    {
+                        Task.Run(() => RenderOrderInfo());
+                        _processCounter = 0;
+                    }
+
+                    this.InvokeIfRequired(() =>
+                    {
+                        if(btnRUN.Enabled)
+                        {
+                            UpdateStatusMessage("Đơn hàng đã hoàn thành, Vui lòng chọn đơn hàng khác.", Color.Red);
+                            btnPO.Enabled = true;
+                            btnTestMode.Enabled = false;
+                            btnRUN.Enabled = false;
+                            btnProductionDate.Enabled = false;
+                        }
+                        
+                    });
+                    break;
+                case e_Production_State.Editing:
+                    break;
+                case e_Production_State.Editting_ProductionDate:
+                    break;
+                case e_Production_State.Error:
+                    break;
+                case e_Production_State.Pushing_to_Dic:
+                    break;
+                case e_Production_State.Pause:
+                    break;
+                case e_Production_State.Waiting_Stop:
+                    if (_processCounter > 50)
+                    {
+                        Task.Run(() => RenderOrderInfo());
+                        _processCounter = 0;
+                    }
+                    break;
+                case e_Production_State.Check_After_Completed:
                     break;
                 // Other states can be handled as needed
                 default:
@@ -209,7 +258,10 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         private void ProcessLastPOSuccess(TResult lastPO)
         {
             Globals.Production_State = e_Production_State.Checking_PO_Info;
-            Globals.ProductionData.orderNo = lastPO.data.Rows[0]["orderNo"].ToString();
+            if(lastPO.data != null)
+            {
+                Globals.ProductionData.orderNo = lastPO.data.Rows[0]["orderNo"].ToString();
+            }
 
             TResult orderDetailResult = Globals.ProductionData.getfromMES.ProductionOrder_Detail(Globals.ProductionData.orderNo);
             if (orderDetailResult.issuccess && ipOrderNO.Items.Count > 0)
@@ -277,7 +329,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void HandleReadyState()
         {
-            if (_processCounter > 10)
+            if (_processCounter > 50)
             {
                 Task.Run(() => RenderOrderInfo());
                 _processCounter = 0;
@@ -336,6 +388,12 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void HandleRunningState()
         {
+            if (_processCounter > 50)
+            {
+                Task.Run(() => RenderOrderInfo());
+                _processCounter = 0;
+            }
+
             if (!btnRUN.Enabled)
             {
                 this.InvokeIfRequired(() =>
@@ -347,8 +405,8 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
             if (IsOrderCompleted())
             {
-                //Globals.Production_State = e_Production_State.Waiting_Stop;
-                Globals.Production_State = e_Production_State.Checking_Queue;
+                Globals.Production_State = e_Production_State.Waiting_Stop;
+                //Globals.Production_State = e_Production_State.Checking_Queue;
             }
         }
 
@@ -447,6 +505,10 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
                 case e_Production_State.Editing:
                     HandlePOClickInEditingState();
+                    break;
+                case e_Production_State.Completed:
+                    SetEditMode();
+                    Globals.Production_State = e_Production_State.Editing;
                     break;
             }
         }
@@ -686,10 +748,10 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void ValidateDatabaseFile(DataTable PO)
         {
+            string orderQty = PO.Rows[0]["orderQty"].ToString();
+
             var checkResult = Globals.ProductionData.Check_Database_File(ipOrderNO.SelectedText, 
-                PO.Rows[0]["orderQty"].ToString());
-            
-            
+                orderQty);
             if (!checkResult.issucess)
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
@@ -733,25 +795,15 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void LoadCountersAsync()
         {
-            
-
             Task.Run(() =>
             {
                 this.InvokeIfRequired(() =>
                 {
                     SetCountersToLoading();
                 });
-                //try
-                //{
+
                 Task.Delay(1000).Wait();
                     LoadAndDisplayCounters();
-                //}
-                //catch (Exception ex)
-                //{
-                //    _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
-                //        $"Lỗi trong GetCounter_1: {ex.Message}");
-                //    this.ShowErrorDialog($"Lỗi PP15: {ex.Message}");
-                //}
             });
         }
 
@@ -784,12 +836,20 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             TResult runCountResult = GetRecordCount();
             TResult passCountResult = GetRecordCountByStatus(e_Production_Status.Pass);
             TResult failCountResult = GetRecordCountByStatus(e_Production_Status.Fail);
+
+            TResult notfountCount = GetRecordCountByStatus(e_Production_Status.NotFound);
+            TResult readfailCount = GetRecordCountByStatus(e_Production_Status.ReadFail);
+            TResult duplicateCount = GetRecordCountByStatus(e_Production_Status.Duplicate);
+
+            int totalCount = runCountResult.count + passCountResult.count + failCountResult.count +
+                notfountCount.count + readfailCount.count + duplicateCount.count;
+
             TResult awsFullOKResult = GetAWSRecordCount(e_AWS_Send_Status.Sent, e_AWS_Recive_Status.Waiting, "!=");
             TResult awsNotSentResult = GetAWSRecordCount(e_AWS_Send_Status.Pending, e_AWS_Recive_Status.Pending, "=", "AND Status != 0 AND cartonCode != 'pending' AND cartonCode != '0' ");
             TResult awsSentFailedResult = GetAWSRecordCount(e_AWS_Send_Status.Failed, e_AWS_Recive_Status.Waiting, "=", "AND Status != 0");
             TResult awsSentWaitingResult = GetAWSRecordCount(e_AWS_Send_Status.Sent, e_AWS_Recive_Status.Waiting, "=");
 
-            return (runCountResult.count, passCountResult.count, failCountResult.count,
+            return (runCountResult.count, passCountResult.count, totalCount,
                     awsFullOKResult.count, awsNotSentResult.count, awsSentFailedResult.count, awsSentWaitingResult.count);
         }
 

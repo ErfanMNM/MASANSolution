@@ -1,7 +1,7 @@
 const { app, BrowserWindow, Tray, Menu } = require('electron');
 const path = require('path');
 require('./server'); // Khởi động server Express
-require('./PO_Service') //khởi động máy chủ PO
+require('./PO_Service_JSON') //khởi động máy chủ PO
 
 let mainWindow;
 let tray;

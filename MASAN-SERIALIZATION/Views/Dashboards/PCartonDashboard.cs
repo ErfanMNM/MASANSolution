@@ -160,8 +160,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 case e_Serial.Recive:
 
                     HandScan01_Process(s);
-
-
                     break;
 
             }
@@ -202,9 +200,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             }
 
                             cartonData.cartonCode = s.Trim();
-                            cartonData.Activate_Datetime = DateTime.Now.ToString("o");
+                            cartonData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                             Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData);
                             Globals_Database.Activate_Carton.Enqueue(s.Trim());
+
                             return;
                         }
 
@@ -220,7 +219,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                         //kết thúc thùng chẵn cũ
                         cartonData.cartonCode = s.Trim();
-                        cartonData.Activate_Datetime = DateTime.Now.ToString("o");
+                        cartonData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                         Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData);
                         Globals_Database.Activate_Carton.Enqueue(s.Trim());
                         return;
@@ -264,7 +263,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                 {
                                     //nếu chưa tồn tại thì cập nhật mã thùng mới
                                     nextCartonData.cartonCode = s.Trim();
-                                    nextCartonData.Start_Datetime = DateTime.Now.ToString("o");
+                                    nextCartonData.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                                     //thêm vào hàng chờ cập nhật
                                     Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(nextCartonData);
                                 }
@@ -298,7 +297,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             {
                                 //nếu chưa tồn tại thì cập nhật mã thùng mới
                                 nextCartonData.cartonCode = s.Trim();
-                                nextCartonData.Start_Datetime = DateTime.Now.ToString("o");
+                                nextCartonData.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                                 //thêm vào hàng chờ cập nhật
                                 Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(nextCartonData);
                             }
@@ -336,15 +335,24 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                 return;
                             }
 
+                            if(Globals.ProductionData.counter.carton_Packing_Count != AppConfigs.Current.cartonPack)
+                            {
+                                this.InvokeIfRequired(() =>
+                                {
+                                    this.ShowErrorNotifier("Chưa đóng xong thùng", false, 5000);
+                                });
+                                return;
+                            }
+
                             cartonDataL.cartonCode = s.Trim();
-                            cartonDataL.Activate_Datetime = DateTime.Now.ToString("o");
+                            cartonDataL.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                             Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonDataL);
                             Globals_Database.Activate_Carton.Enqueue(s.Trim());
                         }
 
                         this.InvokeIfRequired(() =>
                         {
-                            this.ShowErrorNotifier("02 Thùng đã kích hoạt và đang trong thời gian xếp, vui lòng thử lại", false, 5000);
+                            this.ShowSuccessNotifier("Đã đóng thùng", false, 5000);
                         });
                         return;
 
@@ -363,7 +371,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         else
                         {
                             cartonDataL.cartonCode = s.Trim();
-                            cartonDataL.Start_Datetime = DateTime.Now.ToString("o");
+                            cartonDataL.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                             //thêm vào hàng chờ cập nhật
                             Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonDataL);
                         }
@@ -405,7 +413,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             }
 
                             cartonData.cartonCode = s.Trim();
-                            cartonData.Activate_Datetime = DateTime.Now.ToString("o");
+                            cartonData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                             Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData);
                             Globals_Database.Activate_Carton.Enqueue(s.Trim());
                             return;
@@ -422,7 +430,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         }
 
                         cartonData.cartonCode = s.Trim();
-                        cartonData.Activate_Datetime = DateTime.Now.ToString("o");
+                        cartonData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                         Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData);
                         Globals_Database.Activate_Carton.Enqueue(s.Trim());
                     }
@@ -460,7 +468,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                 {
                                     //nếu chưa tồn tại thì cập nhật mã thùng mới
                                     nextCartonData.cartonCode = s.Trim();
-                                    nextCartonData.Start_Datetime = DateTime.Now.ToString("o");
+                                    nextCartonData.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                                     //thêm vào hàng chờ cập nhật
                                     Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(nextCartonData);
                                 }
@@ -503,7 +511,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             {
                                 //nếu chưa tồn tại thì cập nhật mã thùng mới
                                 nextCartonData.cartonCode = s.Trim();
-                                nextCartonData.Start_Datetime = DateTime.Now.ToString("o");
+                                nextCartonData.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                                 //thêm vào hàng chờ cập nhật
                                 Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(nextCartonData);
                             }
@@ -544,15 +552,24 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                 return;
                             }
 
+                            if (Globals.ProductionData.counter.carton_Packing_Count != AppConfigs.Current.cartonPack)
+                            {
+                                this.InvokeIfRequired(() =>
+                                {
+                                    this.ShowErrorNotifier("Chưa đóng xong thùng", false, 5000);
+                                });
+                                return;
+                            }
+
                             cartonDataL.cartonCode = s.Trim();
-                            cartonDataL.Activate_Datetime = DateTime.Now.ToString("o");
+                            cartonDataL.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                             Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonDataL);
                             Globals_Database.Activate_Carton.Enqueue(s.Trim());
                         }
 
                         this.InvokeIfRequired(() =>
                         {
-                            this.ShowErrorNotifier("Thùng đã kích hoạt và đang trong thời gian xếp, vui lòng thử lại", false, 5000);
+                            this.ShowSuccessNotifier("Đóng thùng thành công", false, 5000);
                         });
                         return;
 
@@ -571,7 +588,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         else
                         {
                             cartonDataL.cartonCode = s.Trim();
-                            cartonDataL.Start_Datetime = DateTime.Now.ToString("o");
+                            cartonDataL.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                             //thêm vào hàng chờ cập nhật
                             Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonDataL);
                         }

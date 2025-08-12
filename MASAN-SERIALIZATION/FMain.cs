@@ -72,7 +72,8 @@ namespace MASAN_SERIALIZATION
         {
             WK_Main_Proccess.CancelAsync();
             Globals.Log.WriteLogAsync("System", e_LogType.Info, "Ứng dụng MASAN-SERIALIZATION đã được đóng");
-            Application.Exit();
+            //Application.Exit();
+            Environment.Exit(0);
         }
 
         private void btnMini_Click(object sender, EventArgs e)

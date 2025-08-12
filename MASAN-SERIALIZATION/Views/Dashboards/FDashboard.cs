@@ -171,7 +171,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
                 Send_Result_Content_CMain(e_Production_Status.Error, _data);
-                Enqueue_Product_To_Record(_data, e_Production_Status.Error, stp, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate);
+                Enqueue_Product_To_Record(_data, e_Production_Status.Error, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
                 return;
             }
 
@@ -179,7 +179,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
                 Send_Result_Content_CMain(e_Production_Status.ReadFail, _data);
-                Enqueue_Product_To_Record(_data, e_Production_Status.ReadFail, stp, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate);
+                Enqueue_Product_To_Record(_data, e_Production_Status.ReadFail, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
                 return;
             }
 
@@ -192,7 +192,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     if (Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "1"))
                     {
                         _produtionCodeData.Main_Camera_Status = "1";
-                        _produtionCodeData.Activate_Datetime = DateTime.UtcNow.ToString("o");
+                        _produtionCodeData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                         _produtionCodeData.Production_Datetime = Globals.ProductionData.productionDate;
                         _produtionCodeData.cartonCode = "pending";
                         _produtionCodeData.Activate_User = Globals.CurrentUser.Username;
@@ -204,7 +204,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     else
                     {
                         _produtionCodeData.Main_Camera_Status = "-1";
-                        _produtionCodeData.Activate_Datetime = DateTime.UtcNow.ToString("o");
+                        _produtionCodeData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                         _produtionCodeData.Production_Datetime = Globals.ProductionData.productionDate;
                         _produtionCodeData.cartonCode = "pending";
                         _produtionCodeData.Activate_User = Globals.CurrentUser.Username;
@@ -228,7 +228,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
                 Send_Result_Content_CMain(e_Production_Status.NotFound, _data);
-                Enqueue_Product_To_Record(_data, e_Production_Status.NotFound, true, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate);
+                Enqueue_Product_To_Record(_data, e_Production_Status.NotFound, true, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
                 return;
             }
         }
@@ -246,7 +246,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
                 Send_Result_Content_CSub(e_Production_Status.Error, _data);
-                Enqueue_Product_To_Record(_data, e_Production_Status.Error, stp, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
+                Enqueue_Product_To_Record(_data, e_Production_Status.Error, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                 return;
             }
 
@@ -254,7 +254,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
                 Send_Result_Content_CSub(e_Production_Status.ReadFail, _data);
-                Enqueue_Product_To_Record(_data, e_Production_Status.ReadFail, stp, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
+                Enqueue_Product_To_Record(_data, e_Production_Status.ReadFail, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                 return;
             }
 
@@ -271,7 +271,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 {
                     bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
                                                                          //gửi vào hàng chờ thêm record
-                    Enqueue_Product_To_Record(_data, e_Production_Status.ReadFail, stp, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
+                    Enqueue_Product_To_Record(_data, e_Production_Status.ReadFail, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                     return;
                 }
                 else
@@ -284,7 +284,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             if (_produtionCartonData.Activate_Datetime == "0")
                             {
                                 Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
-                                Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
+                                Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                                 Send_Result_Content_CSub(e_Production_Status.Error, _data);
 
                                 //bao lỗi không có mã thùng trước đó, không xử lý tiếp
@@ -312,7 +312,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         {
                             //nếu thùng hiện tại đã có mã thì không cần xử lý tiếp
                             Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
-                            Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
+                            Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                             Send_Result_Content_CSub(e_Production_Status.Error, _data);
 
                             this.InvokeIfRequired(() =>
@@ -356,7 +356,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             //chưa được quét mã bắt đầu => dừng line, sút chai này ra
                             sendCode = "0"; // Gửi dữ liệu loại sản phẩm đến PLC
                             Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), sendCode);
-                            Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
+                            Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                             Send_Result_Content_CSub(e_Production_Status.Error, _data);
                             //Quăng về pause
                             Globals.Production_State = e_Production_State.Pause;
@@ -399,18 +399,18 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         }
                         
 
-                        _produtionCodeData.Sub_Camera_Activate_Datetime = DateTime.UtcNow.ToString("o"); // Cập nhật thời gian kích hoạt từ camera phụ
+                        _produtionCodeData.Sub_Camera_Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"); // Cập nhật thời gian kích hoạt từ camera phụ
                         
 
                         Enqueue_Product_To_SQLite(_data, _produtionCodeData); //thêm vào hàng chờ lưu sqlite
-                        Enqueue_Product_To_Record(_data, e_Production_Status.Pass, true, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false, Globals.ProductionData.counter.cartonID);
+                        Enqueue_Product_To_Record(_data, e_Production_Status.Pass, true, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false, Globals.ProductionData.counter.cartonID);
                         Send_Result_Content_CSub(e_Production_Status.Pass, _data);
                     }
                     else
                     {
                         //nếu gửi PLC thất bại
                         //lưu record C phụ
-                        Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
+                        Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                         Send_Result_Content_CSub(e_Production_Status.Error, _data);
                         return;
                     }
@@ -425,7 +425,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
                 Send_Result_Content_CSub(e_Production_Status.NotFound, _data);
                 //gửi vào hàng chờ thêm record
-                Enqueue_Product_To_Record(_data, e_Production_Status.NotFound, true, DateTime.UtcNow.ToString("o"), Globals.ProductionData.productionDate, false);
+                Enqueue_Product_To_Record(_data, e_Production_Status.NotFound, true, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                 return;
             }
         }
@@ -444,9 +444,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 case e_Production_Status.Pass:
                     Globals.ProductionData.counter.passCount++;
+
                     if (Globals.ProductionData.counter.passCount == Globals.ProductionData.orderQty.ToInt32())
                     {
-                        Globals.Production_State = e_Production_State.Checking_Queue;
+                        Globals.Production_State = e_Production_State.Waiting_Stop;
                     }
                     break;
                 case e_Production_Status.Duplicate:
@@ -761,7 +762,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 if (AppConfigs.Current.cartonAutoStart)
                 {
                     cartonData.cartonCode = "Demo";
-                    cartonData.Start_Datetime = DateTime.Now.ToString("o");
+                    cartonData.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                     Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData);
                     return;
                 }
@@ -809,7 +810,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     if (AppConfigs.Current.cartonAutoStart)
                     {
                         cartonData2.cartonCode = "Demo";
-                        cartonData2.Start_Datetime = DateTime.Now.ToString("o");
+                        cartonData2.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                         Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData2);
                         return;
                     }
@@ -855,7 +856,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 if (AppConfigs.Current.cartonAutoStart)
                 {
                     cartonData4.cartonCode = "Demo";
-                    cartonData4.Start_Datetime = DateTime.Now.ToString("o");
+                    cartonData4.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                     Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData4);
                     return;
                 }
@@ -866,11 +867,18 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 }
             }
 
-            if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID - 1, out ProductionCartonData cartonData3))
+            try
             {
-                if (Globals.ProductionData.counter.carton_Packing_Count >= AppConfigs.Current.cartonPack - AppConfigs.Current.cartonOfset)
+                if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID - 1, out ProductionCartonData cartonData3))
                 {
-                    if (cartonData3.Activate_Datetime != "0")
+                    if (Globals.ProductionData.counter.carton_Packing_Count >= AppConfigs.Current.cartonPack - AppConfigs.Current.cartonOfset)
+                    {
+                        if (cartonData3.Activate_Datetime != "0")
+                        {
+                            isCartonReady2 = true;
+                        }
+                    }
+                    else
                     {
                         isCartonReady2 = true;
                     }
@@ -879,18 +887,19 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 {
                     isCartonReady2 = true;
                 }
-            }
-            else
+            }catch (Exception ex)
             {
-                isCartonReady2 = true;
+                DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error, "Lỗi DA01070 khi kiểm tra thùng trước đó", ExceptionToJson(ex));
+                this.ShowErrorNotifier($"Lỗi DA01070 khi kiểm tra thùng trước đó: {ex.Message}");
             }
+
 
             if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out ProductionCartonData cartonData5))
             {
                 if (AppConfigs.Current.cartonAutoStart)
                 {
                     cartonData5.cartonCode = "Demo";
-                    cartonData5.Start_Datetime = DateTime.Now.ToString("o");
+                    cartonData5.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                     Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData5);
                     return;
                 }
@@ -1212,20 +1221,38 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 case e_Production_State.Error:
                     break;
                 case e_Production_State.Pushing_to_Dic:
-
                     break;
                 case e_Production_State.Checking_Queue:
                     break;
                 case e_Production_State.Waiting_Stop:
+
+                    bool isCartonReady4 = false;
+                    bool isCartonReady5 = false;
                     //kiểm tra thùng đang xếp chốt mã chưa
                     if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonData5))
                     {
                        if(cartonData5.Activate_Datetime != "0")
                         {
-                            Globals.Production_State = e_Production_State.Check_After_Completed;
+                            isCartonReady4 = true;
                         }
                     }
-                        break;
+
+                    //KIỂM TRA  thùng cũ chốt mã chưa
+                    if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID-1, out ProductionCartonData cartonDatat))
+                    {
+                        if (cartonDatat.Activate_Datetime != "0")
+                        {
+                            isCartonReady5 = true;
+                        }
+                    }
+
+                    if (isCartonReady4 && isCartonReady5)
+                    {
+                        //nếu thùng đang xếp đã chốt mã và thùng cũ đã chốt mã thì chuyển sang Completed
+                        Globals.Production_State = e_Production_State.Check_After_Completed;
+                    }
+
+                    break;
                 case e_Production_State.Check_After_Completed:
 
                     if (Globals_Database.Insert_Product_To_Record_Queue.Count > 0 || Globals_Database.Update_Product_To_SQLite_Queue.Count > 0 || Globals_Database.Insert_Product_To_Record_CS_Queue.Count > 0 || Globals_Database.Update_Product_To_Record_Carton_Queue.Count > 0 || Globals_Database.aWS_Recive_Datas.Count > 0 || Globals_Database.Activate_Carton.Count > 0 || Globals_Database.aWS_Send_Datas.Count > 0)
@@ -1246,6 +1273,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         }
 
         int lastvisibleCount1 = 0; // Biến để lưu số lượng sản phẩm đã hiển thị
+        int lastvisibleCount2 = 0; // Biến để lưu số lượng sản phẩm đã hiển thị cho camera phụ
         public void Update_Result_UI()
         {
             this.InvokeIfRequired(() =>
@@ -1261,14 +1289,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         // Xóa các mục cũ nếu số lượng mục lớn hơn 20
                         opHis2.Items.Remove(opHis2.Items.Count -1);
                     }
-
-
-                    opHisCS.Items.Insert(0, $"#{CameraSub_HMI.ID} : {CameraSub_HMI.Camera_Status} - {CameraSub_HMI.Camera_Content}"); // Thêm mục mới vào danh sách lịch sử camera phụ
-                    if (opHisCS.Items.Count > 20)
-                    {
-                        // Xóa các mục cũ nếu số lượng mục lớn hơn 20
-                        opHisCS.Items.Remove(opHisCS.Items.Count - 1);
-                    }
+                    
                     switch (CameraMain_HMI.Camera_Status)
                     {
                         case e_Production_Status.Pass:
@@ -1298,7 +1319,18 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             break;
                     }
                 }
+
+                if(lastvisibleCount2 != CameraSub_HMI.ID)
+                {
+                    opHisCS.Items.Insert(0, $"#{CameraSub_HMI.ID} : {CameraSub_HMI.Camera_Status} - {CameraSub_HMI.Camera_Content}"); // Thêm mục mới vào danh sách lịch sử camera phụ
+                    if (opHisCS.Items.Count > 20)
+                    {
+                        // Xóa các mục cũ nếu số lượng mục lớn hơn 20
+                        opHisCS.Items.Remove(opHisCS.Items.Count - 1);
+                    }
+                }
             });
+
         }
 
         #endregion

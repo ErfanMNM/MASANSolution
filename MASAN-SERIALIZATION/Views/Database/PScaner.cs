@@ -27,8 +27,6 @@ namespace MASAN_SERIALIZATION.Views.Database
             InitializeComponent();
             InitializeDataGridView();
             InitializeBackgroundWorker();
-            
-            this.Text = "🔍 Tìm kiếm mã sản phẩm";
             this.Symbol = 61442; // Search icon
         }
 

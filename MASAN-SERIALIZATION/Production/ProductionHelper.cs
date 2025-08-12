@@ -1,4 +1,6 @@
 using MASAN_SERIALIZATION.Configs;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Sunny.UI;
 using System;
 using System.Collections.Generic;
@@ -16,6 +18,9 @@ namespace MASAN_SERIALIZATION.Production
         private static string poAPIServerFileName;
         private static string POLog_dbPath = @"C:\MasanSerialization\Databases\POLog.db";
         public static string dataPath = $"C:/MasanSerialization/PODatabases";
+
+        private static string poMesJsonCodesPath = @"C:\MasanSerialization\Server_Service\codes_json";
+        private static string poMesJsonPODataPath = @"C:/MasanSerialization/Server_Service/data";
         public static string orderNO { get; set; } = string.Empty;
         #endregion
 
@@ -156,7 +161,35 @@ namespace MASAN_SERIALIZATION.Production
                     return (false, $"Lỗi P01 khi kiểm tra cơ sở dữ liệu PO: {ex.Message}", null);
                 }
             }
-            public TResult ProductionOrder_Detail(string orderNo)
+            public (bool issucess, string message) MES_Load_OrderNo_ToComboBox_V1(UIComboBox comboBox)
+            {
+                try
+                {
+                    string connectionString = $@"Data Source={poAPIServerPath}{poAPIServerFileName};Version=3;";
+                    using (var conn = new SQLiteConnection(connectionString))
+                    {
+                        string query = "SELECT DISTINCT orderNo FROM POInfo ORDER BY orderNo";
+                        var adapter = new SQLiteDataAdapter(query, conn);
+                        var table = new DataTable();
+                        adapter.Fill(table);
+
+                        DataRow emptyRow = table.NewRow();
+                        emptyRow["orderNo"] = "Chọn orderNO";
+                        table.Rows.InsertAt(emptyRow, 0);
+
+                        comboBox.DataSource = table;
+                        comboBox.DisplayMember = "orderNo";
+                        comboBox.ValueMember = "orderNo";
+                    }
+
+                    return (true, "Tải danh sách orderNo thành công.");
+                }
+                catch (Exception ex)
+                {
+                    return (false, $"Lỗi GC01 khi tải danh sách orderNo: {ex.Message}");
+                }
+            }
+            public TResult ProductionOrder_Detail_V1(string orderNo)
             {
                 string dbPath = $@"{poAPIServerPath}{poAPIServerFileName}";
                 try
@@ -186,7 +219,7 @@ namespace MASAN_SERIALIZATION.Production
                     return new TResult(false, $"Lỗi P02 khi lấy thông tin chi tiết PO: {ex.Message}");
                 }
             }
-            public TResult Get_Unique_Code_MES_Count(string orderNo)
+            public TResult Get_Unique_Code_MES_Count_V1(string orderNo)
             {
                 try
                 {
@@ -208,60 +241,228 @@ namespace MASAN_SERIALIZATION.Production
                     return new TResult(false, $"Lỗi P03 khi lấy số lượng mã CZ: {ex.Message}");
                 }
             }
-
-            public (bool issucess, string message, DataTable Data) Get_Unique_Codes_MES(string orderNo)
+            public TResult Get_Unique_Codes_MES_V1(string orderNo)
             {
                 try
                 {
                     string czpath = $@"{poAPIServerPath}/codes/{orderNo}.db";
                     if (!File.Exists(czpath))
                     {
-                        return (false, "Cơ sở dữ liệu mã CZ không tồn tại.", null);
+                        return new TResult(false, "Cơ sở dữ liệu mã CZ không tồn tại.");
                     }
-                    
+
                     using (var conn = new SQLiteConnection($"Data Source={czpath};Version=3;"))
                     {
                         string query = "SELECT * FROM UniqueCodes";
                         var adapter = new SQLiteDataAdapter(query, conn);
                         var table = new DataTable();
                         adapter.Fill(table);
-                        return (table.Rows.Count > 0) ? 
-                            (true, "Lấy danh sách mã CZ thành công.", table) : 
-                            (false, "Không có mã CZ nào trong cơ sở dữ liệu.", null);
+                        return (table.Rows.Count > 0) ?
+                           new TResult(true, "Lấy danh sách mã CZ thành công.", table.Rows.Count, table) :
+                           new TResult(false, "Không có mã CZ nào trong cơ sở dữ liệu.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    return (false, $"Lỗi P04 khi lấy danh sách mã CZ: {ex.Message}", null);
+                    return new TResult(false, $"Lỗi P04 khi lấy danh sách mã CZ: {ex.Message}");
                 }
             }
 
+            public TResult ProductionOrder_Detail(string orderNo)
+            {
+                string filePath = Path.Combine(poMesJsonPODataPath, orderNo + ".json");
+
+                try
+                {
+                    if (!File.Exists(filePath))
+                    {
+                        return new TResult(false, $"PH019 Không tìm thấy file dữ liệu PO: {orderNo}.json");
+                    }
+
+                    // Đọc nội dung file
+                    string fileContent = File.ReadAllText(filePath).Trim();
+
+                    // Parse JSON
+                    var jsonObj = JsonConvert.DeserializeObject<Dictionary<string, object>>(fileContent);
+
+                    if (jsonObj == null || jsonObj.Count == 0)
+                    {
+                        return new TResult(false, $"File dữ liệu PO rỗng hoặc không hợp lệ: {orderNo}.json");
+                    }
+
+                    // Tạo DataTable ngang: mỗi key là một cột
+                    var table = new DataTable();
+
+                    // Tạo các cột
+                    foreach (var kv in jsonObj)
+                    {
+                        table.Columns.Add(kv.Key);
+                    }
+
+                    // Tạo một dòng dữ liệu
+                    var row = table.NewRow();
+                    foreach (var kv in jsonObj)
+                    {
+                        row[kv.Key] = kv.Value ?? DBNull.Value;
+                    }
+                    table.Rows.Add(row);
+
+                    return new TResult(true, "Lấy thông tin chi tiết PO thành công.", 0, table);
+                }
+                catch (Exception ex)
+                {
+                    return new TResult(false, $"Lỗi P02 khi lấy thông tin chi tiết PO: {ex.Message}");
+                }
+            }
+
+            public TResult Get_Unique_Code_MES_Count(string orderNo)
+            {
+                try
+                {
+                    string jsonPath = poMesJsonCodesPath + "/" + orderNo + ".json";
+
+                    if (!File.Exists(jsonPath))
+                    {
+                        return new TResult(false, $"Không tìm thấy file codes: {orderNo}.json", 0);
+                    }
+
+                    string jsonText = File.ReadAllText(jsonPath);
+                    var root = JObject.Parse(jsonText);
+
+                    // (Tuỳ chọn) kiểm tra orderNo trong file có khớp tham số
+                    var jsonOrderNo = (string)root["orderNo"];
+                    if (!string.Equals(jsonOrderNo, orderNo, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Nếu muốn nghiêm ngặt thì return false ở đây
+                    }
+
+                    var blocks = root["blocks"] as JObject;
+                    if (blocks == null || !blocks.HasValues)
+                    {
+                        return new TResult(false, "Không có khối (blocks) nào trong file.", 0);
+                    }
+
+                    // Đếm tổng số codes trong tất cả các block
+                    int count = blocks
+                        .Properties()
+                        .Select(p => p.Value["codes"] as JArray)
+                        .Where(arr => arr != null)
+                        .Sum(arr => arr.Count);
+
+                    return (count > 0)
+                        ? new TResult(true, "Lấy số lượng mã CZ thành công.", count)
+                        : new TResult(false, "Không có mã CZ nào trong file codes.", 0);
+                }
+                catch (Exception ex)
+                {
+                    return new TResult(false, $"Lỗi P03 khi lấy số lượng mã CZ: {ex.Message}");
+                }
+            }
+            public TResult Get_Unique_Codes_MES(string orderNo)
+            {
+                try
+                {
+                    string jsonPath = Path.Combine(poMesJsonCodesPath, orderNo + ".json");
+                    if (!File.Exists(jsonPath))
+                    {
+                        return new TResult(false, "File mã CZ không tồn tại.");
+                    }
+
+                    string jsonText = File.ReadAllText(jsonPath);
+                    var root = JObject.Parse(jsonText);
+
+                    var blocks = root["blocks"] as JObject;
+                    if (blocks == null || !blocks.HasValues)
+                    {
+                        return new TResult(false, "Không có mã CZ nào trong file codes.");
+                    }
+
+                    // Tạo DataTable kết quả (tên cột theo dữ liệu JSON)
+                    var table = new DataTable();
+                    table.Columns.Add("code", typeof(string));
+                    table.Columns.Add("createdAt", typeof(string)); // để nguyên dạng ISO string cho an toàn
+                    table.Columns.Add("blockNo", typeof(int));
+                    table.Columns.Add("blockKey", typeof(string));  // key của block trong JSON, ví dụ "0","1",...
+
+                    int total = 0;
+
+                    foreach (var prop in blocks.Properties())
+                    {
+                        string blockKey = prop.Name; // "0","1",...
+                        var codesArr = prop.Value["codes"] as JArray;
+                        if (codesArr == null) continue;
+
+                        foreach (var item in codesArr)
+                        {
+                            string code = (string)(item["code"] ?? string.Empty);
+                            string createdAt = (string)(item["createdAt"] ?? string.Empty);
+
+                            int blockNo = 0;
+                            // ưu tiên lấy blockNo trong từng item; nếu thiếu thì thử parse từ blockKey
+                            JToken bnToken = item["blockNo"];
+                            if (bnToken != null && bnToken.Type != JTokenType.Null)
+                            {
+                                int.TryParse(bnToken.ToString(), out blockNo);
+                            }
+                            else
+                            {
+                                int.TryParse(blockKey, out blockNo);
+                            }
+
+                            table.Rows.Add(code, createdAt, blockNo, blockKey);
+                            total++;
+                        }
+                    }
+
+                    return (total > 0)
+                        ? new TResult(true, "Lấy danh sách mã CZ thành công.", total, table)
+                        : new TResult(false, "Không có mã CZ nào trong file codes.");
+                }
+                catch (Exception ex)
+                {
+                    return new TResult(false, $"Lỗi P04 khi lấy danh sách mã CZ: {ex.Message}");
+                }
+            }
             public (bool issucess, string message) MES_Load_OrderNo_ToComboBox(UIComboBox comboBox)
             {
                 try
                 {
-                    string connectionString = $@"Data Source={poAPIServerPath}{poAPIServerFileName};Version=3;";
-                    using (var conn = new SQLiteConnection(connectionString))
+                    //lấy danh sách file trong thư mục poMesJsonPOPath
+                    if (!Directory.Exists(poMesJsonPODataPath))
                     {
-                        string query = "SELECT DISTINCT orderNo FROM POInfo ORDER BY orderNo";
-                        var adapter = new SQLiteDataAdapter(query, conn);
-                        var table = new DataTable();
-                        adapter.Fill(table);
-                        
-                        DataRow emptyRow = table.NewRow();
-                        emptyRow["orderNo"] = "Chọn orderNO";
-                        table.Rows.InsertAt(emptyRow, 0);
-                        
-                        comboBox.DataSource = table;
-                        comboBox.DisplayMember = "orderNo";
-                        comboBox.ValueMember = "orderNo";
+                        return (false, "Thư mục chứa file JSON không tồn tại.");
                     }
+                    var files = Directory.GetFiles(poMesJsonPODataPath, "*.json");
+                    if (files.Length == 0)
+                    {
+                        return (false, "Không có file JSON nào trong thư mục.");
+                    }
+                    DataTable table = new DataTable();
+                    table.Columns.Add("orderNo", typeof(string));
+                    foreach (var file in files)
+                    {
+                        string orderNo = Path.GetFileNameWithoutExtension(file);
+                        //kiểm tra có chứa chữ PO ở đầu khônh
+                        
+
+                            DataRow row = table.NewRow();
+                            row["orderNo"] = orderNo;
+                            table.Rows.Add(row);
+                        //}
+                        
+                    }
+                    DataRow emptyRow = table.NewRow();
+                    emptyRow["orderNo"] = "Chọn orderNO";
+                    table.Rows.InsertAt(emptyRow, 0);
+                    comboBox.DataSource = table;
+                    comboBox.DisplayMember = "orderNo";
+                    comboBox.ValueMember = "orderNo";
 
                     return (true, "Tải danh sách orderNo thành công.");
                 }
                 catch (Exception ex)
                 {
-                    return (false, $"Lỗi GC01 khi tải danh sách orderNo: {ex.Message}");
+                    return (false, $"Lỗi GCJ001 khi tải danh sách orderNo: {ex.Message}");
                 }
             }
         }
@@ -786,12 +987,12 @@ namespace MASAN_SERIALIZATION.Production
                 }
 
                 //cập nhật lại mã CZ cho chắc
-                var getUniqueCodesMes = getfromMES.Get_Unique_Codes_MES(orderNo);
-                if (!getUniqueCodesMes.issucess)
+                TResult getUniqueCodesMes = getfromMES.Get_Unique_Codes_MES(orderNo);
+                if (!getUniqueCodesMes.issuccess)
                 {
                     return (false, getUniqueCodesMes.message);
                 }
-                DataTable poUniqueCodes = getUniqueCodesMes.Data;
+                DataTable poUniqueCodes = getUniqueCodesMes.data;
 
                 var getUniqueCodesRun = getDataPO.Get_Codes(orderNo);
                 if (!getUniqueCodesRun.issucess)
@@ -1061,11 +1262,11 @@ namespace MASAN_SERIALIZATION.Production
 
 
                     var getczCodes = getfromMES.Get_Unique_Codes_MES(orderNo);
-                    if (!getczCodes.issucess)
+                    if (!getczCodes.issuccess)
                     {
                         return (false, getczCodes.message);
                     }
-                    DataTable czCodes = getczCodes.Data;
+                    DataTable czCodes = getczCodes.data;
 
                     if (czCodes.Rows.Count > 0)
                     {

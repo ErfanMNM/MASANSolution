@@ -280,7 +280,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 //tạo dữ liệu gửi
                 AWSSendPayload payload = new AWSSendPayload
                 {
-                    message_id = $"{ID}-{orderNO}",
+                    message_id = $"{ID}-{orderNO}-{DateTime.Now.ToString("o")}",
                     orderNo = orderNO,
                     uniqueCode = code,
                     cartonCode = cartonCode,
@@ -349,21 +349,20 @@ namespace MASAN_SERIALIZATION.Views.AWS
             {
                 //nếu bật AWS thì kết nối
                 Connect_AWS();
+
+                //khởi tạo background worker để gửi dữ liệu
+                bgw_process = new BackgroundWorker();
+                bgw_send = new BackgroundWorker();
+
+                bgw_process.WorkerSupportsCancellation = true;
+                bgw_process.DoWork += Bgw_process_DoWork;
+
+                bgw_process.RunWorkerAsync();
+
+                bgw_send = new BackgroundWorker();
+                bgw_send.WorkerSupportsCancellation = true;
+                bgw_send.DoWork += Bgw_send_DoWork;
                 
-                if(Globals.AWS_IoT_Status == e_awsIot_status.Connected)
-                {
-                    //khởi tạo background worker để gửi dữ liệu
-                    bgw_process = new BackgroundWorker();
-                    bgw_send = new BackgroundWorker();
-
-                    bgw_process.WorkerSupportsCancellation = true;
-                    bgw_process.DoWork += Bgw_process_DoWork;
-                    bgw_process.RunWorkerAsync();
-
-                    bgw_send = new BackgroundWorker();
-                    bgw_send.WorkerSupportsCancellation = true;
-                    bgw_send.DoWork += Bgw_send_DoWork;
-                }
             }
         }
 
@@ -384,23 +383,10 @@ namespace MASAN_SERIALIZATION.Views.AWS
                     dtResend = getCodeResend.data;
                 }
 
-                //nếu có dữ liệu gửi thì gửi
-                if (dtSends.Rows.Count > 0)
-                {
-                    AWS_Send_Datatable(dtSends);
-                }
-
-                if (dtResend.Rows.Count > 0)
-                {
-                    AWS_Send_Datatable(dtResend);
-                }
-
                 this.InvokeIfRequired(() =>
                 {
                     //cập nhật giao diện
                     opNotiboardAndSend.Items.Insert(0, $"🔄 [{DateTime.Now}] Đã kiểm tra dữ liệu gửi AWS.");
-                    opAWSMode.Text = AppConfigs.Current.Auto_Send_AWS.ToString();
-
                     if (opNotiboardAndSend.Items.Count > 50)
                     {
                         // Giới hạn số lượng mục hiển thị trong opNotiboardAndSend
@@ -414,6 +400,22 @@ namespace MASAN_SERIALIZATION.Views.AWS
                     }
 
                 });
+
+                if (Globals.AWS_IoT_Status != e_awsIot_status.Disconnected && Globals.AWS_IoT_Status != e_awsIot_status.Connecting )
+                {
+                    //nếu có dữ liệu gửi thì gửi
+                    if (dtSends != null)
+                    {
+                        AWS_Send_Datatable(dtSends);
+                        dtSends = null; // Xóa dữ liệu resend sau khi gửi thành công
+                    }
+
+                    if (dtResend != null)
+                    {
+                        AWS_Send_Datatable(dtResend);
+                        dtResend = null; // Xóa dữ liệu resend sau khi gửi thành công
+                    }
+                }
 
                 Thread.Sleep(10000); // Giữ cho vòng lặp chạy liên tục
             }
@@ -497,6 +499,11 @@ namespace MASAN_SERIALIZATION.Views.AWS
                     opRecive.Items.Insert(0, $"❌ [{DateTime.Now}] Lỗi ghi Receive Record: {ex.Message}");
                 });
             }
-        } 
+        }
+
+        private void opRecive_DoubleClick(object sender, EventArgs e)
+        {
+            this.ShowInfoDialog("Thông báo", opRecive.SelectedItem.ToString());
+        }
     }
 }

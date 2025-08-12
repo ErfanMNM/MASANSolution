@@ -150,7 +150,7 @@ namespace MASAN_SERIALIZATION.Views.SCADA
             {
                 Render_MEM();
                 WK_Update.DoWork += WK_Update_DoWork;
-                webView23.Source = new Uri(@"C:\test\b3.html");
+                //webView23.Source = new Uri(@"C:\test\b3.html");
             }
             catch (Exception ex)
             {
@@ -355,17 +355,29 @@ namespace MASAN_SERIALIZATION.Views.SCADA
         #endregion
 
         #region Các luồng và hàm của nó
-
+        int refreshCount = 10; // Biến đếm số lần cập nhật
         private void WK_Update_DoWork(object sender, DoWorkEventArgs e)
         {
             while(!WK_Update.CancellationPending)
             {
+                refreshCount++;
                 try
                 {
+                    
+
+                    this.InvokeIfRequired(() =>
+                    {
+                        Update_BindingProps();
+                        Update_ExtraProp();
+                        Update_GlobalsProps();
+                        Update_GlobalsDatabaseProps();
+                    });
+
                     try
                     {
-                        if (Globals.ProductionData.orderNo != orderNo)
+                        if (refreshCount > 10)
                         {
+                            refreshCount = 0; // Reset đếm sau mỗi 10 lần cập nhật
                             orderNo = Globals.ProductionData.orderNo;
                             HourlyChartData hourlyChartData = GetLast6Hours($@"{Globals.ProductionData.dbPath}/Record_{Globals.ProductionData.orderNo}.db");
 
@@ -409,11 +421,11 @@ namespace MASAN_SERIALIZATION.Views.SCADA
                                         data = labels
                                     }
                                                                     },
-                                                                    yAxis = new object[]
+                                yAxis = new object[]
                                                                     {
                                     new { type = "value" }
                                                                     },
-                                                                    series = new object[]
+                                series = new object[]
                                                                     {
                                     new
                                     {
@@ -434,25 +446,24 @@ namespace MASAN_SERIALIZATION.Views.SCADA
                                     },
                                     new
                                     {
-                                        name = "Loại",
-                                        type = "bar",
-                                        label = labelOption,
-                                        emphasis = new { focus = "series" },
-                                        data = hourlyChartData.Loi
-                                    },new
-                                    {
                                         name = "Không kiểm",
                                         type = "bar",
                                         label = labelOption,
                                         emphasis = new { focus = "series" },
                                         data = hourlyChartData.Khac
-                                    }
+                                    },
+                                    new
+                                    {
+                                        name = "Loại",
+                                        type = "bar",
+                                        label = labelOption,
+                                        emphasis = new { focus = "series" },
+                                        data = hourlyChartData.Loi
+                                    },
                                 }
                             };
 
                             string templatePath = @"C:\MasanSerialization\Chart_Database\bar-label-rotation.html";
-
-                            
                             string templatePatho = @"C:\MasanSerialization\Chart_Database\bar-label-rotation-out.html";
                             // Xóa file HTML cũ nếu có
                             if (File.Exists(templatePatho))
@@ -470,6 +481,173 @@ namespace MASAN_SERIALIZATION.Views.SCADA
                             this.InvokeIfRequired(() =>
                             {
                                 webView21.Source = new Uri(templatePatho);
+                                webView21.Refresh();
+                            });
+
+
+                            //biểu đồ 02
+
+                            var option02 = new
+                            {
+                                tooltip = new
+                                {
+                                    trigger = "item"
+                                },
+                                legend = new
+                                {
+                                    orient = "vertical",
+                                    left = "left"
+                                },
+                                series = new[]
+                                {
+                                    new
+                                    {
+                                        name = "Sản lượng",
+                                        type = "pie",
+                                        radius = "50%",
+                                        data = new object[]
+                                        {
+                                            new { value = Globals.ProductionData.counter.passCount, name = "Tốt", itemStyle = new { color = "#4CAF50" } },
+                                            new { value = Globals.ProductionData.counter.failCount,  name = "Lỗi", itemStyle = new { color = "#FF5722" } },
+                                            new { value = 0,  name = "Không kiểm", itemStyle = new { color = "#9E9E9E" } }
+                                        },
+                                        emphasis = new
+                                        {
+                                            itemStyle = new
+                                            {
+                                                shadowBlur = 10,
+                                                shadowOffsetX = 0,
+                                                shadowColor = "rgba(0, 0, 0, 0.5)"
+                                            }
+                                        }
+                                    }
+                                }
+                            };
+                            string templatePath2 = @"C:\MasanSerialization\Chart_Database\pie.html";
+                            string templatePatho2 = @"C:\MasanSerialization\Chart_Database\pie-out.html";
+                            // Xóa file HTML cũ nếu có
+                            if (File.Exists(templatePatho2))
+                            {
+                                File.Delete(templatePatho2);
+                                Console.WriteLine("Đã xóa file HTML cũ.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Không tìm thấy file cũ, bỏ qua bước xóa.");
+                            }
+
+                            InjectOptionToHtml(templatePath2, templatePatho2, option02);
+
+                            this.InvokeIfRequired(() =>
+                            {
+                                webView22.Source = new Uri(templatePatho2);
+                                webView22.Refresh();
+                            });
+
+
+                            //biểu đồ 03
+                            var labelOption3 = new
+                            {
+                                show = true,
+                                position = "insideBottom",
+                                distance = 15,
+                                align = "left",
+                                verticalAlign = "middle",
+                                rotate = 90,
+                                fontSize = 16,
+                                rich = new
+                                {
+                                    name = new { }
+                                }
+                            };
+
+                            var option3 = new
+                            {
+                                tooltip = new
+                                {
+                                    trigger = "axis",
+                                    axisPointer = new
+                                    {
+                                        type = "shadow"
+                                    }
+                                },
+                                legend = new
+                                {
+                                    data = new[] { "Đã hoàn tất", "Đang gửi", "Đang chờ", "Gửi lại" }
+                                },
+                                xAxis = new object[]
+                                {
+                                new
+                                {
+                                    type = "category",
+                                    axisTick = new { show = false },
+                                    data = new[] { "Thống kê" }
+                                }
+                                                        },
+                                yAxis = new object[]
+                                                        {
+                                new
+                                {
+                                    type = "value"
+                                }
+                                                        },
+                                series = new object[]
+                                                        {
+                                new
+                                {
+                                    name = "Đã hoàn tất",
+                                    type = "bar",
+                                    barGap = 0,
+                                    label = labelOption3,
+                                    emphasis = new { focus = "series" },
+                                    data = new object[] { Globals.ProductionData.awsRecivedCounter.recivedCount }
+                                },
+                                new
+                                {
+                                    name = "Đang gửi",
+                                    type = "bar",
+                                    label = labelOption3,
+                                    emphasis = new { focus = "series" },
+                                    data = new object[] { Globals.ProductionData.awsSendCounter.sentCount }
+                                },
+                                new
+                                {
+                                    name = "Đang chờ",
+                                    type = "bar",
+                                    label = labelOption3,
+                                    emphasis = new { focus = "series" },
+                                    data = new object[] { Globals.ProductionData.awsSendCounter.pendingCount }
+                                },
+                                new
+                                {
+                                    name = "Gửi lại",
+                                    type = "bar",
+                                    label = labelOption3,
+                                    emphasis = new { focus = "series" },
+                                    data = new object[] { Globals.ProductionData.awsSendCounter.failedCount }
+                                }
+                                                        }
+                            };
+
+                            string templatePath3 = @"C:\MasanSerialization\Chart_Database\bar-label-rotation.html";
+                            string templatePatho3 = @"C:\MasanSerialization\Chart_Database\bar-label-rotation-out2.html";
+                            // Xóa file HTML cũ nếu có
+                            if (File.Exists(templatePatho3))
+                            {
+                                File.Delete(templatePatho3);
+                                Console.WriteLine("Đã xóa file HTML cũ.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Không tìm thấy file cũ, bỏ qua bước xóa.");
+                            }
+
+                            InjectOptionToHtml(templatePath3, templatePatho3, option3);
+
+                            this.InvokeIfRequired(() =>
+                            {
+                                webView23.Source = new Uri(templatePatho3);
+                                webView23.Refresh();
                             });
                         }
                     }
@@ -477,14 +655,7 @@ namespace MASAN_SERIALIZATION.Views.SCADA
                     {
                         //không làm gì cả
                     }
-                    this.InvokeIfRequired(() =>
-                    {
-                        Update_BindingProps();
-                        Update_ExtraProp();
-                        Update_GlobalsProps();
-                        Update_GlobalsDatabaseProps();
-                    });
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -786,15 +957,15 @@ namespace MASAN_SERIALIZATION.Views.SCADA
         public static HourlyChartData GetLast6Hours(string dbPath)
             {
                 // Chốt mốc giờ: tròn giờ hiện tại và lùi 5 giờ
-                var now = DateTime.UtcNow;
+                var now = DateTime.Now;
                 var endHour = new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0);
                 var startHour = endHour.AddHours(-3);
 
             var labels = Enumerable.Range(0, 6)
-.Select(i => startHour.AddHours(i + 7).ToString("H:00")) // cộng 7 giờ khi hiển thị
+.Select(i => startHour.AddHours(i).ToString("H:00")) // cộng 7 giờ khi hiển thị
 .ToArray();
 
-            int[] tong = new int[4];
+                int[] tong = new int[4];
                 int[] tot = new int[4];
                 int[] loi = new int[4];
                 int[] khac = new int[4];
@@ -803,32 +974,34 @@ namespace MASAN_SERIALIZATION.Views.SCADA
                 {
                     conn.Open();
 
-                    // Gộp theo từng block giờ. Dùng replace(ActivateDate,'T',' ') để chắc kèo ISO8601.
-                    string sql = @"
-                                    WITH src AS (
-                                      SELECT 
-                                        strftime('%Y-%m-%d %H:00:00', replace(ActivateDate,'T',' ')) AS HourBlock,
-                                        lower(coalesce(trim(Status), '')) AS st
-                                      FROM Records
-                                      WHERE datetime(replace(ActivateDate,'T',' ')) >= datetime(@start)
-                                        AND datetime(replace(ActivateDate,'T',' ')) <= datetime(@end, '+59 minutes', '+59 seconds')
-                                    ),
-                                    agg AS (
-                                      SELECT 
-                                        HourBlock,
-                                        COUNT(*)                                                  AS Total,
-                                        SUM(CASE WHEN st='pass'   THEN 1 ELSE 0 END)             AS Good,
-                                        SUM(CASE WHEN st='failed' THEN 1 ELSE 0 END)             AS Bad,
-                                        SUM(CASE WHEN st NOT IN ('pass','failed') THEN 1 ELSE 0 END) AS Other
-                                      FROM src
-                                      GROUP BY HourBlock
-                                    )
-                                    SELECT HourBlock, Total, Good, Bad, Other
-                                    FROM agg
-                                    ORDER BY HourBlock;
-                                    ";
+                // Gộp theo từng block giờ. Dùng replace(ActivateDate,'T',' ') để chắc kèo ISO8601.
+                string sql = @"
+                WITH src AS (
+                    SELECT 
+                        -- Cắt mili-giây và offset
+                        strftime('%Y-%m-%d %H:00:00', substr(ActivateDate, 1, 19)) AS HourBlock,
+                        lower(coalesce(trim(Status), '')) AS st
+                    FROM Records
+                    WHERE datetime(substr(ActivateDate, 1, 19)) >= datetime(@start)
+                        AND datetime(substr(ActivateDate, 1, 19)) <= datetime(@end, '+59 minutes', '+59 seconds')
+                ),
+                agg AS (
+                    SELECT 
+                        HourBlock,
+                        COUNT(*)                                                  AS Total,
+                        SUM(CASE WHEN st='pass'   THEN 1 ELSE 0 END)              AS Good,
+                        SUM(CASE WHEN st='error' THEN 1 ELSE 0 END)              AS Other,
+                        SUM(CASE WHEN st NOT IN ('pass','error') THEN 1 ELSE 0 END) AS Bad
+                    FROM src
+                    GROUP BY HourBlock
+                )
+                SELECT HourBlock, Total, Good, Bad, Other
+                FROM agg
+                ORDER BY HourBlock;
+                ";
 
-                    using (var cmd = new SQLiteCommand(sql, conn))
+
+                using (var cmd = new SQLiteCommand(sql, conn))
                     {
                         cmd.Parameters.AddWithValue("@start", startHour.ToString("yyyy-MM-dd HH:mm:ss"));
                         cmd.Parameters.AddWithValue("@end", endHour.ToString("yyyy-MM-dd HH:mm:ss"));
