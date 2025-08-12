@@ -130,11 +130,11 @@ namespace MASAN_SERIALIZATION
                 NavMenu.CreateNode(AddPage(_pProduction, 1002));
                 NavMenu.CreateNode(AddPage(_pStatictis, 1003));
                 NavMenu.CreateNode(AddPage(_pCartonDashboard, 1004));
-                NavMenu.CreateNode(AddPage(_pScaner, 1005));
+                //NavMenu.CreateNode(AddPage(_pScaner, 1005));
                 NavMenu.CreateNode(AddPage(_pAws, 1006));
                 NavMenu.CreateNode(AddPage(_pPLCSetting, 1007));
                 NavMenu.CreateNode(AddPage(_pSettings, 1008));
-                NavMenu.CreateNode(AddPage(_pAws1, 1009));
+                //NavMenu.CreateNode(AddPage(_pAws1, 1009));
                 NavMenu.CreateNode(AddPage(_pLogin, 2001));
 
                 NavMenu.SelectPage(2001);
