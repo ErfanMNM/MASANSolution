@@ -73,20 +73,20 @@
             this.opnextStart = new Sunny.UI.UIPanel();
             this.warningGroup = new Sunny.UI.UIGroupBox();
             this.opWarning = new Sunny.UI.UIListBox();
-            this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
-            this.serialPort2 = new System.IO.Ports.SerialPort(this.components);
             this.uiTabControl1 = new Sunny.UI.UITabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.debugGroup = new Sunny.UI.UIGroupBox();
             this.debugContainer = new Sunny.UI.UITableLayoutPanel();
             this.uiLabel1 = new Sunny.UI.UILabel();
             this.uiLabel2 = new Sunny.UI.UILabel();
             this.uiLabel3 = new Sunny.UI.UILabel();
-            this.btnSend1 = new Sunny.UI.UISymbolButton();
-            this.btnSend2 = new Sunny.UI.UISymbolButton();
-            this.ipTest1 = new Sunny.UI.UITextBox();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.ipTest2 = new Sunny.UI.UITextBox();
+            this.ipTest1 = new Sunny.UI.UITextBox();
+            this.btnSend2 = new Sunny.UI.UISymbolButton();
+            this.btnSend1 = new Sunny.UI.UISymbolButton();
+            this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
+            this.serialPort2 = new System.IO.Ports.SerialPort(this.components);
             this.mainContainer.SuspendLayout();
             this.scannerGroup.SuspendLayout();
             this.scannerContainer.SuspendLayout();
@@ -112,9 +112,9 @@
             this.warningGroup.SuspendLayout();
             this.uiTabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
             this.debugGroup.SuspendLayout();
             this.debugContainer.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainContainer
@@ -583,7 +583,7 @@
             this.uiPanel2.Name = "uiPanel2";
             this.uiPanel2.Size = new System.Drawing.Size(134, 24);
             this.uiPanel2.TabIndex = 5;
-            this.uiPanel2.Text = "⏰ Kết thúc";
+            this.uiPanel2.Text = "⏰ Bắt đầu";
             this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opLastActive
@@ -834,19 +834,6 @@
             this.tabPage1.Text = "Debug";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.ipTest2);
-            this.tabPage2.Controls.Add(this.ipTest1);
-            this.tabPage2.Controls.Add(this.btnSend2);
-            this.tabPage2.Controls.Add(this.btnSend1);
-            this.tabPage2.Location = new System.Drawing.Point(0, 40);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(375, 111);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Test";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
             // debugGroup
             // 
             this.debugGroup.Controls.Add(this.debugContainer);
@@ -917,31 +904,36 @@
             this.uiLabel3.Text = "Debug 3: -";
             this.uiLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // btnSend1
+            // tabPage2
             // 
-            this.btnSend1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSend1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnSend1.Location = new System.Drawing.Point(271, 3);
-            this.btnSend1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btnSend1.Name = "btnSend1";
-            this.btnSend1.Size = new System.Drawing.Size(100, 51);
-            this.btnSend1.TabIndex = 0;
-            this.btnSend1.Text = "Gửi 1";
-            this.btnSend1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnSend1.Click += new System.EventHandler(this.btnSend1_Click);
+            this.tabPage2.Controls.Add(this.ipTest2);
+            this.tabPage2.Controls.Add(this.ipTest1);
+            this.tabPage2.Controls.Add(this.btnSend2);
+            this.tabPage2.Controls.Add(this.btnSend1);
+            this.tabPage2.Location = new System.Drawing.Point(0, 40);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Size = new System.Drawing.Size(200, 60);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Test";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // btnSend2
+            // ipTest2
             // 
-            this.btnSend2.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSend2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnSend2.Location = new System.Drawing.Point(271, 57);
-            this.btnSend2.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btnSend2.Name = "btnSend2";
-            this.btnSend2.Size = new System.Drawing.Size(100, 51);
-            this.btnSend2.TabIndex = 1;
-            this.btnSend2.Text = "Gửi 2";
-            this.btnSend2.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnSend2.Click += new System.EventHandler(this.btnSend2_Click);
+            this.ipTest2.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.ipTest2.DoubleValue = 12345D;
+            this.ipTest2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ipTest2.IntValue = 12345;
+            this.ipTest2.Location = new System.Drawing.Point(4, 57);
+            this.ipTest2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ipTest2.MinimumSize = new System.Drawing.Size(1, 16);
+            this.ipTest2.Name = "ipTest2";
+            this.ipTest2.Padding = new System.Windows.Forms.Padding(5);
+            this.ipTest2.ShowText = false;
+            this.ipTest2.Size = new System.Drawing.Size(260, 51);
+            this.ipTest2.TabIndex = 3;
+            this.ipTest2.Text = "12345";
+            this.ipTest2.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ipTest2.Watermark = "";
             // 
             // ipTest1
             // 
@@ -961,23 +953,31 @@
             this.ipTest1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipTest1.Watermark = "";
             // 
-            // ipTest2
+            // btnSend2
             // 
-            this.ipTest2.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.ipTest2.DoubleValue = 12345D;
-            this.ipTest2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.ipTest2.IntValue = 12345;
-            this.ipTest2.Location = new System.Drawing.Point(4, 57);
-            this.ipTest2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.ipTest2.MinimumSize = new System.Drawing.Size(1, 16);
-            this.ipTest2.Name = "ipTest2";
-            this.ipTest2.Padding = new System.Windows.Forms.Padding(5);
-            this.ipTest2.ShowText = false;
-            this.ipTest2.Size = new System.Drawing.Size(260, 51);
-            this.ipTest2.TabIndex = 3;
-            this.ipTest2.Text = "12345";
-            this.ipTest2.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ipTest2.Watermark = "";
+            this.btnSend2.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSend2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnSend2.Location = new System.Drawing.Point(271, 57);
+            this.btnSend2.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnSend2.Name = "btnSend2";
+            this.btnSend2.Size = new System.Drawing.Size(100, 51);
+            this.btnSend2.TabIndex = 1;
+            this.btnSend2.Text = "Gửi 2";
+            this.btnSend2.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnSend2.Click += new System.EventHandler(this.btnSend2_Click);
+            // 
+            // btnSend1
+            // 
+            this.btnSend1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSend1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnSend1.Location = new System.Drawing.Point(271, 3);
+            this.btnSend1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnSend1.Name = "btnSend1";
+            this.btnSend1.Size = new System.Drawing.Size(100, 51);
+            this.btnSend1.TabIndex = 0;
+            this.btnSend1.Text = "Gửi 1";
+            this.btnSend1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnSend1.Click += new System.EventHandler(this.btnSend1_Click);
             // 
             // PCartonDashboard
             // 
@@ -1012,9 +1012,9 @@
             this.warningGroup.ResumeLayout(false);
             this.uiTabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
             this.debugGroup.ResumeLayout(false);
             this.debugContainer.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

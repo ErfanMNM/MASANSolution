@@ -85,7 +85,7 @@ class FileManager {
 
     // PO Info Operations
     async savePOInfo(poData) {
-        const filePath = path.join(this.dataDir, `PO_${this.sanitizeFileName(poData.orderNo)}.json`);
+        const filePath = path.join(this.dataDir, `${this.sanitizeFileName(poData.orderNo)}.json`);
         const timestamp = new Date().toISOString();
         
         const data = {
