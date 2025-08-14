@@ -841,7 +841,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             TResult readfailCount = GetRecordCountByStatus(e_Production_Status.ReadFail);
             TResult duplicateCount = GetRecordCountByStatus(e_Production_Status.Duplicate);
 
-            int totalCount = runCountResult.count + passCountResult.count + failCountResult.count +
+            int totalfailCount = failCountResult.count +
                 notfountCount.count + readfailCount.count + duplicateCount.count;
 
             TResult awsFullOKResult = GetAWSRecordCount(e_AWS_Send_Status.Sent, e_AWS_Recive_Status.Waiting, "!=");
@@ -849,7 +849,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             TResult awsSentFailedResult = GetAWSRecordCount(e_AWS_Send_Status.Failed, e_AWS_Recive_Status.Waiting, "=", "AND Status != 0");
             TResult awsSentWaitingResult = GetAWSRecordCount(e_AWS_Send_Status.Sent, e_AWS_Recive_Status.Waiting, "=");
 
-            return (runCountResult.count, passCountResult.count, totalCount,
+            return (runCountResult.count, passCountResult.count, totalfailCount,
                     awsFullOKResult.count, awsNotSentResult.count, awsSentFailedResult.count, awsSentWaitingResult.count);
         }
 

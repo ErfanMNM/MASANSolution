@@ -32,10 +32,9 @@
             this.consoleGroup = new Sunny.UI.UIGroupBox();
             this.consoleContainer = new Sunny.UI.UITableLayoutPanel();
             this.lblSendConsole = new Sunny.UI.UILabel();
-            this.lblReceiveConsole = new Sunny.UI.UILabel();
             this.opConsole = new Sunny.UI.UIListBox();
-            this.opReciveConsole = new Sunny.UI.UIListBox();
             this.controlGroup = new Sunny.UI.UIGroupBox();
+            this.uiTextBox1 = new Sunny.UI.UITextBox();
             this.controlContainer = new Sunny.UI.UITableLayoutPanel();
             this.dataInputGroup = new Sunny.UI.UIGroupBox();
             this.dataInputContainer = new Sunny.UI.UITableLayoutPanel();
@@ -64,7 +63,12 @@
             this.btnSendTest = new Sunny.UI.UISymbolButton();
             this.btnSendOne = new Sunny.UI.UISymbolButton();
             this.btnSendAll = new Sunny.UI.UISymbolButton();
-            this.uiTextBox1 = new Sunny.UI.UITextBox();
+            this.lblReceiveConsole = new Sunny.UI.UILabel();
+            this.uiTabControl1 = new Sunny.UI.UITabControl();
+            this.RS = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.opReciveConsole = new Sunny.UI.UIListBox();
+            this.uiListBox1 = new Sunny.UI.UIListBox();
             this.mainContainer.SuspendLayout();
             this.consoleGroup.SuspendLayout();
             this.consoleContainer.SuspendLayout();
@@ -79,6 +83,9 @@
             this.uiTableLayoutPanel5.SuspendLayout();
             this.uiTableLayoutPanel6.SuspendLayout();
             this.buttonContainer.SuspendLayout();
+            this.uiTabControl1.SuspendLayout();
+            this.RS.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainContainer
@@ -120,7 +127,7 @@
             this.consoleContainer.Controls.Add(this.lblSendConsole, 0, 0);
             this.consoleContainer.Controls.Add(this.lblReceiveConsole, 1, 0);
             this.consoleContainer.Controls.Add(this.opConsole, 0, 1);
-            this.consoleContainer.Controls.Add(this.opReciveConsole, 1, 1);
+            this.consoleContainer.Controls.Add(this.uiTabControl1, 1, 1);
             this.consoleContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.consoleContainer.Location = new System.Drawing.Point(3, 32);
             this.consoleContainer.Name = "consoleContainer";
@@ -143,18 +150,6 @@
             this.lblSendConsole.Text = "📤 Send Console";
             this.lblSendConsole.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // lblReceiveConsole
-            // 
-            this.lblReceiveConsole.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblReceiveConsole.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.lblReceiveConsole.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
-            this.lblReceiveConsole.Location = new System.Drawing.Point(408, 0);
-            this.lblReceiveConsole.Name = "lblReceiveConsole";
-            this.lblReceiveConsole.Size = new System.Drawing.Size(399, 30);
-            this.lblReceiveConsole.TabIndex = 1;
-            this.lblReceiveConsole.Text = "📥 Receive Console";
-            this.lblReceiveConsole.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // opConsole
             // 
             this.opConsole.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -172,23 +167,6 @@
             this.opConsole.Text = "uiListBox1";
             this.opConsole.DoubleClick += new System.EventHandler(this.opConsole_DoubleClick);
             // 
-            // opReciveConsole
-            // 
-            this.opReciveConsole.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opReciveConsole.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.opReciveConsole.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
-            this.opReciveConsole.ItemSelectForeColor = System.Drawing.Color.White;
-            this.opReciveConsole.Location = new System.Drawing.Point(409, 35);
-            this.opReciveConsole.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.opReciveConsole.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opReciveConsole.Name = "opReciveConsole";
-            this.opReciveConsole.Padding = new System.Windows.Forms.Padding(2);
-            this.opReciveConsole.ShowText = false;
-            this.opReciveConsole.Size = new System.Drawing.Size(397, 327);
-            this.opReciveConsole.TabIndex = 3;
-            this.opReciveConsole.Text = "uiListBox1";
-            this.opReciveConsole.DoubleClick += new System.EventHandler(this.opReciveConsole_DoubleClick);
-            // 
             // controlGroup
             // 
             this.controlGroup.Controls.Add(this.uiTextBox1);
@@ -204,6 +182,22 @@
             this.controlGroup.TabIndex = 1;
             this.controlGroup.Text = "⚙️ Controls";
             this.controlGroup.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // uiTextBox1
+            // 
+            this.uiTextBox1.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.uiTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTextBox1.Location = new System.Drawing.Point(326, 0);
+            this.uiTextBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiTextBox1.MinimumSize = new System.Drawing.Size(1, 16);
+            this.uiTextBox1.Name = "uiTextBox1";
+            this.uiTextBox1.Padding = new System.Windows.Forms.Padding(5);
+            this.uiTextBox1.ShowText = false;
+            this.uiTextBox1.Size = new System.Drawing.Size(389, 29);
+            this.uiTextBox1.TabIndex = 1;
+            this.uiTextBox1.Text = "uiTextBox1";
+            this.uiTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiTextBox1.Watermark = "";
             // 
             // controlContainer
             // 
@@ -662,21 +656,87 @@
             this.btnSendAll.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnSendAll.Click += new System.EventHandler(this.btnSendAll_Click);
             // 
-            // uiTextBox1
+            // lblReceiveConsole
             // 
-            this.uiTextBox1.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.uiTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiTextBox1.Location = new System.Drawing.Point(326, 0);
-            this.uiTextBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.uiTextBox1.MinimumSize = new System.Drawing.Size(1, 16);
-            this.uiTextBox1.Name = "uiTextBox1";
-            this.uiTextBox1.Padding = new System.Windows.Forms.Padding(5);
-            this.uiTextBox1.ShowText = false;
-            this.uiTextBox1.Size = new System.Drawing.Size(389, 29);
-            this.uiTextBox1.TabIndex = 1;
-            this.uiTextBox1.Text = "uiTextBox1";
-            this.uiTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.uiTextBox1.Watermark = "";
+            this.lblReceiveConsole.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblReceiveConsole.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.lblReceiveConsole.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            this.lblReceiveConsole.Location = new System.Drawing.Point(408, 0);
+            this.lblReceiveConsole.Name = "lblReceiveConsole";
+            this.lblReceiveConsole.Size = new System.Drawing.Size(399, 30);
+            this.lblReceiveConsole.TabIndex = 1;
+            this.lblReceiveConsole.Text = "📥 Receive Console";
+            this.lblReceiveConsole.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // uiTabControl1
+            // 
+            this.uiTabControl1.Controls.Add(this.RS);
+            this.uiTabControl1.Controls.Add(this.tabPage2);
+            this.uiTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
+            this.uiTabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTabControl1.ItemSize = new System.Drawing.Size(150, 40);
+            this.uiTabControl1.Location = new System.Drawing.Point(408, 33);
+            this.uiTabControl1.MainPage = "";
+            this.uiTabControl1.Name = "uiTabControl1";
+            this.uiTabControl1.SelectedIndex = 0;
+            this.uiTabControl1.Size = new System.Drawing.Size(399, 331);
+            this.uiTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
+            this.uiTabControl1.TabIndex = 3;
+            this.uiTabControl1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            // 
+            // RS
+            // 
+            this.RS.Controls.Add(this.opReciveConsole);
+            this.RS.Location = new System.Drawing.Point(0, 40);
+            this.RS.Name = "RS";
+            this.RS.Size = new System.Drawing.Size(399, 291);
+            this.RS.TabIndex = 0;
+            this.RS.Text = "tabPage1";
+            this.RS.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.uiListBox1);
+            this.tabPage2.Location = new System.Drawing.Point(0, 40);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Size = new System.Drawing.Size(399, 291);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "tabPage2";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // opReciveConsole
+            // 
+            this.opReciveConsole.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opReciveConsole.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.opReciveConsole.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
+            this.opReciveConsole.ItemSelectForeColor = System.Drawing.Color.White;
+            this.opReciveConsole.Location = new System.Drawing.Point(0, 0);
+            this.opReciveConsole.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.opReciveConsole.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opReciveConsole.Name = "opReciveConsole";
+            this.opReciveConsole.Padding = new System.Windows.Forms.Padding(2);
+            this.opReciveConsole.ShowText = false;
+            this.opReciveConsole.Size = new System.Drawing.Size(399, 291);
+            this.opReciveConsole.TabIndex = 4;
+            this.opReciveConsole.Text = "uiListBox1";
+            this.opReciveConsole.DoubleClick += new System.EventHandler(this.opReciveConsole_DoubleClick);
+            // 
+            // uiListBox1
+            // 
+            this.uiListBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiListBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiListBox1.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
+            this.uiListBox1.ItemSelectForeColor = System.Drawing.Color.White;
+            this.uiListBox1.Location = new System.Drawing.Point(0, 0);
+            this.uiListBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiListBox1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiListBox1.Name = "uiListBox1";
+            this.uiListBox1.Padding = new System.Windows.Forms.Padding(2);
+            this.uiListBox1.ShowText = false;
+            this.uiListBox1.Size = new System.Drawing.Size(399, 291);
+            this.uiListBox1.TabIndex = 0;
+            this.uiListBox1.Text = "uiListBox1";
             // 
             // PAws
             // 
@@ -700,6 +760,9 @@
             this.uiTableLayoutPanel5.ResumeLayout(false);
             this.uiTableLayoutPanel6.ResumeLayout(false);
             this.buttonContainer.ResumeLayout(false);
+            this.uiTabControl1.ResumeLayout(false);
+            this.RS.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -710,9 +773,7 @@
         private Sunny.UI.UIGroupBox consoleGroup;
         private Sunny.UI.UITableLayoutPanel consoleContainer;
         private Sunny.UI.UILabel lblSendConsole;
-        private Sunny.UI.UILabel lblReceiveConsole;
         private Sunny.UI.UIListBox opConsole;
-        private Sunny.UI.UIListBox opReciveConsole;
         private Sunny.UI.UIGroupBox controlGroup;
         private Sunny.UI.UITableLayoutPanel controlContainer;
         private Sunny.UI.UIGroupBox dataInputGroup;
@@ -743,5 +804,11 @@
         private Sunny.UI.UISymbolButton btnSendOne;
         private Sunny.UI.UISymbolButton btnSendAll;
         private Sunny.UI.UITextBox uiTextBox1;
+        private Sunny.UI.UILabel lblReceiveConsole;
+        private Sunny.UI.UITabControl uiTabControl1;
+        private System.Windows.Forms.TabPage RS;
+        private Sunny.UI.UIListBox opReciveConsole;
+        private System.Windows.Forms.TabPage tabPage2;
+        private Sunny.UI.UIListBox uiListBox1;
     }
 }
