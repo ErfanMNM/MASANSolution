@@ -344,16 +344,16 @@ namespace MASAN_SERIALIZATION.Views.Settings
             isOpen = true;
             Uri uri = new Uri($"http://{AppConfigs.Current.Camera_Main_IP}/monitor");
             Uri uri1 = new Uri($"https://google.com");
-            // webView21.Source = uri;
+            webView21.Source = uri;
             Uri uri2 = new Uri($"http://{AppConfigs.Current.Camera_Sub_IP}/monitor");
             Uri uri21 = new Uri($"https://google.com");
-            // webView22.Source = uri2;
+            webView22.Source = uri2;
         }
         private void PLCSetting_Finalize(object sender, EventArgs e)
         {
             isOpen = false;
-            //  webView21.Source = new Uri("https://google.com");
-            // webView22.Source = new Uri("https://google.com");
+            webView21.Source = new Uri("https://google.com");
+            webView22.Source = new Uri("https://google.com");
         }
 
         private void ipRecipe_SelectedIndexChanged(object sender, EventArgs e)

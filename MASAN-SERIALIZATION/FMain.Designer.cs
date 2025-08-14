@@ -84,7 +84,7 @@
             this.uiPanel1.RectColor = System.Drawing.Color.DodgerBlue;
             this.uiPanel1.Size = new System.Drawing.Size(183, 39);
             this.uiPanel1.TabIndex = 7;
-            this.uiPanel1.Text = "t177119";
+            this.uiPanel1.Text = "MASAN";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opClock
@@ -120,7 +120,7 @@
             // 
             // footer
             // 
-            this.footer.BackColor = System.Drawing.Color.Green;
+            this.footer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.footer.ColumnCount = 5;
             this.footer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 183F));
             this.footer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));

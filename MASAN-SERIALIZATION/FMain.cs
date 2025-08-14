@@ -134,7 +134,7 @@ namespace MASAN_SERIALIZATION
                 NavMenu.CreateNode(AddPage(_pAws, 1006));
                 NavMenu.CreateNode(AddPage(_pPLCSetting, 1007));
                 NavMenu.CreateNode(AddPage(_pSettings, 1008));
-                //NavMenu.CreateNode(AddPage(_pAws1, 1009));
+                NavMenu.CreateNode(AddPage(_pAws1, 1009));
                 NavMenu.CreateNode(AddPage(_pLogin, 2001));
 
                 NavMenu.SelectPage(2001);

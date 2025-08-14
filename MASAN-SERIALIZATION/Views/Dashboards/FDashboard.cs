@@ -732,7 +732,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 opFail.Value = Globals.CameraMain_PLC_Counter.total_failed; // Số sản phẩm đã loại bỏ
                 opReadFail.Value = Globals.CameraMain_PLC_Counter.camera_read_fail; // Số sản phẩm đã loại bỏ do không đọc được từ camera
 
-                opCaseCount.Text = Globals.ProductionData.counter.totalCartonCount.ToString(); // Số lượng thùng đã đóng gói
+                //opCaseCount.Text = Globals.ProductionData.counter.totalCartonCount.ToString(); // Số lượng thùng đã đóng gói
+                opCaseCount.Text = Globals.ProductionData.counter.cartonID.ToString();
+                opTotalCase.Value = Globals.ProductionData.counter.cartonID;
             });
         }
 
@@ -752,6 +754,16 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 //ghi log lỗi
                 DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.PlcError, "Lỗi DA01068 khi đọc dữ liệu đếm từ PLC", readCount.Message);
                 this.ShowErrorNotifier($"Lỗi DA01068 khi đọc dữ liệu đếm từ PLC: {readCount.Message}");
+            }
+
+            OperateResult<int[]> readf = OMRON_PLC.plc.ReadInt32(PLCAddress.Get("PLC_Total_Count_DM_C1"), 5);
+            if (readf.IsSuccess)
+            {
+                //Globals.cam
+                this.InvokeIfRequired( () =>
+                {
+                    opFailC2.Value = readCount.Content[4] + readCount.Content[1];
+                } );
             }
         }
         
@@ -949,6 +961,15 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             else
             {
                 OperateResult writeStart = OMRON_PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 1);//gửi lệnh bắt đầu = 1
+            }
+
+            if (Globals.Production_State == e_Production_State.Running || Globals.Production_State == e_Production_State.Waiting_Stop)
+            {
+                OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Conveyor_ENA_DM"), 1);
+            }
+            else
+            {
+                OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Conveyor_ENA_DM"), 0);
             }
 
             //Đẩy dữ liệu vào dictionary
@@ -1322,6 +1343,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 if(lastvisibleCount2 != CameraSub_HMI.ID)
                 {
+                    lastvisibleCount2 = CameraSub_HMI.ID;
                     opHisCS.Items.Insert(0, $"#{CameraSub_HMI.ID} : {CameraSub_HMI.Camera_Status} - {CameraSub_HMI.Camera_Content}"); // Thêm mục mới vào danh sách lịch sử camera phụ
                     if (opHisCS.Items.Count > 20)
                     {

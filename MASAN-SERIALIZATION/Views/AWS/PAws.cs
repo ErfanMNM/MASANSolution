@@ -88,18 +88,29 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
         private void AWS_Status_OnReceive(object sender, AWSStatusReceiveEventArgs e)
         {
-            JObject jsonObject = JObject.Parse(e.Payload);
-            // Lấy giá trị của trường "status" từ JSON
-            string status = jsonObject["status"]?.ToString();
-            //lấy giá trị của trường "message_id" từ JSON
-            string messageId = jsonObject["message_id"]?.ToString();
-            // Lấy giá trị của trường "error_message" từ JSON
-            string errorMessage = jsonObject["error_message"]?.ToString();
-
-            this.InvokeIfRequired(() =>
+            if (e.Topic == "CZ/MIPWP501/response")
             {
-                opReciveConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: {status}: {e.Topic} - {e.Payload}");
-            });
+                JObject jsonObject = JObject.Parse(e.Payload);
+                // Lấy giá trị của trường "status" từ JSON
+                string status = jsonObject["status"]?.ToString();
+                //lấy giá trị của trường "message_id" từ JSON
+                string messageId = jsonObject["message_id"]?.ToString();
+                // Lấy giá trị của trường "error_message" từ JSON
+                string errorMessage = jsonObject["error_message"]?.ToString();
+
+                this.InvokeIfRequired(() =>
+                {
+                    opReciveConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: {status}: {e.Topic} - {e.Payload}");
+                });
+            }
+            else
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    uiListBox1.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}:{e.Topic} - {e.Payload}");
+                });
+            }
+            
 
 
         }
@@ -120,7 +131,8 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
                     string[] topicsToSub = new[]
                                       {
-                                            "CZ/MIPWP501/response"
+                                            "CZ/MIPWP501/response",
+                                            "CZ/data"
                                         };
 
                     awsClient.SubscribeMultiple(topicsToSub);
@@ -421,6 +433,11 @@ namespace MASAN_SERIALIZATION.Views.AWS
         private void btnSendAll_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void opReciveConsole_DoubleClick_1(object sender, EventArgs e)
+        {
+            this.ShowInfoDialog(opReciveConsole.SelectedItem.ToString());
         }
     }
 }

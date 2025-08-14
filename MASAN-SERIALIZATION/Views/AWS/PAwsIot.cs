@@ -39,6 +39,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
         private DataTable dtSends;
         private DataTable dtResend;
+        private DataTable dtTimeout;
 
         private void Connect_AWS()
         {
@@ -226,6 +227,11 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 AWS_Send_Datatable(dtResend);
             }
 
+            if(dtTimeout.Rows.Count > 0)
+            {
+                AWS_Send_Datatable(dtTimeout);
+            }
+
         }
 
         private void btnSendFailed_Click(object sender, EventArgs e)
@@ -270,6 +276,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
         {
             for(int i = 0; i < SendCodes.Rows.Count; i++)
             {
+                Thread.Sleep(300);
                 string orderNO = Globals.ProductionData.orderNo;
                 string ID = SendCodes.Rows[i]["ID"].ToString();
                 string code = SendCodes.Rows[i]["Code"].ToString();
@@ -305,6 +312,9 @@ namespace MASAN_SERIALIZATION.Views.AWS
                     Insert_AWS_Send_Record(payload.message_id, payload.orderNo, payload.uniqueCode, 
                                          payload.status.ToString(), payload.activate_datetime, 
                                          payload.production_date, payload.thing_name);
+
+                    //ghi dữ liệu đã gửi vào file txt
+                    
 
                     //cập nhật trạng thái đã gửi
                     this.InvokeIfRequired(() =>
@@ -381,6 +391,13 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 if (getCodeResend.issuccess)
                 {
                     dtResend = getCodeResend.data;
+                }
+
+                TResult getCodeTimeOut = Globals.ProductionData.getDataPO.Get_Codes_Sent_Timeout(Globals.ProductionData.orderNo);
+
+                if (getCodeTimeOut.issuccess)
+                {
+                    dtTimeout = getCodeTimeOut.data;
                 }
 
                 this.InvokeIfRequired(() =>

@@ -300,7 +300,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiLabel7.Name = "uiLabel7";
             this.uiLabel7.Size = new System.Drawing.Size(115, 27);
             this.uiLabel7.TabIndex = 9;
-            this.uiLabel7.Text = "Lỗi đọc";
+            this.uiLabel7.Text = "Khác";
             this.uiLabel7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiLabel8
@@ -698,6 +698,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opLedC2.Location = new System.Drawing.Point(67, 2);
             this.opLedC2.Margin = new System.Windows.Forms.Padding(2);
             this.opLedC2.Name = "opLedC2";
+            this.opLedC2.On = false;
             this.opLedC2.Size = new System.Drawing.Size(40, 42);
             this.opLedC2.TabIndex = 0;
             this.opLedC2.Text = "uiLedBulb2";
@@ -759,7 +760,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opLedC1.Location = new System.Drawing.Point(67, 2);
             this.opLedC1.Margin = new System.Windows.Forms.Padding(2);
             this.opLedC1.Name = "opLedC1";
-            this.opLedC1.On = false;
             this.opLedC1.Size = new System.Drawing.Size(40, 42);
             this.opLedC1.TabIndex = 0;
             this.opLedC1.Text = "uiLedBulb1";
@@ -822,7 +822,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opLedPLC.Location = new System.Drawing.Point(68, 2);
             this.opLedPLC.Margin = new System.Windows.Forms.Padding(2);
             this.opLedPLC.Name = "opLedPLC";
-            this.opLedPLC.On = false;
             this.opLedPLC.Size = new System.Drawing.Size(41, 42);
             this.opLedPLC.TabIndex = 0;
             this.opLedPLC.Text = "uiLedBulb3";
