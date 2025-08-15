@@ -165,6 +165,24 @@
       <DependentUpon>FMain.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\DatabaseHelper.cs" />
+    <Compile Include="Views\Database\PCodeSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Database\PCodeSearch.Designer.cs">
+      <DependentUpon>PCodeSearch.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Views\Database\PCodeSearch.resx">
+      <DependentUpon>PCodeSearch.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="Views\Database\POrderNoViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Database\POrderNoViewer.Designer.cs">
+      <DependentUpon>POrderNoViewer.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Views\Database\POrderNoViewer.resx">
+      <DependentUpon>POrderNoViewer.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Infrastructure\Globals.cs" />
     <Compile Include="Production\ProductionHelper.cs" />
     <Compile Include="Program.cs" />
