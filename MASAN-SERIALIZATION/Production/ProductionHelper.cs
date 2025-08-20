@@ -487,7 +487,7 @@ namespace MASAN_SERIALIZATION.Production
                         
                         if (table.Rows.Count > 0)
                         {
-                            return new TResult(true, "Lấy PO thành công.", 0, table);
+                            return new TResult(true, "Lấy PO thành công.", table.Rows.Count, table);
                         }
                         else
                         {

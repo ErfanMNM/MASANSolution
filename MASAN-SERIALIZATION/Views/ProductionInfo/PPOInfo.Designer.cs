@@ -69,10 +69,6 @@
             this.btnProductionDate = new Sunny.UI.UISymbolButton();
             this.btnPO = new Sunny.UI.UISymbolButton();
             this.opTer = new Sunny.UI.UIRichTextBox();
-            this.uiTableLayoutPanel6 = new Sunny.UI.UITableLayoutPanel();
-            this.opCZRunCount = new Sunny.UI.UIPanel();
-            this.uiPanel3 = new Sunny.UI.UIPanel();
-            this.opProductName = new Sunny.UI.UIPanel();
             this.uiGroupBox1 = new Sunny.UI.UIGroupBox();
             this.uiTableLayoutPanel8 = new Sunny.UI.UITableLayoutPanel();
             this.opAWSSentWating = new Sunny.UI.UIPanel();
@@ -87,6 +83,10 @@
             this.opPassCount = new Sunny.UI.UIPanel();
             this.opFailCount = new Sunny.UI.UIPanel();
             this.opAWSFullOKCount = new Sunny.UI.UIPanel();
+            this.uiTableLayoutPanel6 = new Sunny.UI.UITableLayoutPanel();
+            this.opCZRunCount = new Sunny.UI.UIPanel();
+            this.uiPanel3 = new Sunny.UI.UIPanel();
+            this.opProductName = new Sunny.UI.UIPanel();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel2.SuspendLayout();
@@ -95,9 +95,9 @@
             this.uiPanel13.SuspendLayout();
             this.uiTableLayoutPanel4.SuspendLayout();
             this.uiTableLayoutPanel5.SuspendLayout();
-            this.uiTableLayoutPanel6.SuspendLayout();
             this.uiGroupBox1.SuspendLayout();
             this.uiTableLayoutPanel8.SuspendLayout();
+            this.uiTableLayoutPanel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // uiTitlePanel1
@@ -507,6 +507,7 @@
             // 
             // ipProductionDate
             // 
+            this.ipProductionDate.DateFormat = "dd-MM-yyyy HH:mm:ss";
             this.ipProductionDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ipProductionDate.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
             this.ipProductionDate.FillColor2 = System.Drawing.Color.Blue;
@@ -525,7 +526,7 @@
             this.ipProductionDate.SymbolNormal = 61555;
             this.ipProductionDate.SymbolSize = 24;
             this.ipProductionDate.TabIndex = 1;
-            this.ipProductionDate.Text = "2025-07-11 09:33:59";
+            this.ipProductionDate.Text = "11-07-2025 09:33:59";
             this.ipProductionDate.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipProductionDate.Value = new System.DateTime(2025, 7, 11, 9, 33, 59, 0);
             this.ipProductionDate.Watermark = "";
@@ -854,72 +855,6 @@
             this.opTer.TabIndex = 14;
             this.opTer.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // uiTableLayoutPanel6
-            // 
-            this.uiTableLayoutPanel6.ColumnCount = 3;
-            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.75558F));
-            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 74.24442F));
-            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 74F));
-            this.uiTableLayoutPanel6.Controls.Add(this.opCZRunCount, 2, 0);
-            this.uiTableLayoutPanel6.Controls.Add(this.uiPanel3, 0, 0);
-            this.uiTableLayoutPanel6.Controls.Add(this.opProductName, 1, 0);
-            this.uiTableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel6.Location = new System.Drawing.Point(1, 312);
-            this.uiTableLayoutPanel6.Margin = new System.Windows.Forms.Padding(1);
-            this.uiTableLayoutPanel6.Name = "uiTableLayoutPanel6";
-            this.uiTableLayoutPanel6.RowCount = 1;
-            this.uiTableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel6.Size = new System.Drawing.Size(836, 47);
-            this.uiTableLayoutPanel6.TabIndex = 10;
-            this.uiTableLayoutPanel6.TagString = null;
-            // 
-            // opCZRunCount
-            // 
-            this.opCZRunCount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opCZRunCount.FillColor = System.Drawing.Color.White;
-            this.opCZRunCount.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.opCZRunCount.Location = new System.Drawing.Point(763, 2);
-            this.opCZRunCount.Margin = new System.Windows.Forms.Padding(2);
-            this.opCZRunCount.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opCZRunCount.Name = "opCZRunCount";
-            this.opCZRunCount.Radius = 1;
-            this.opCZRunCount.Size = new System.Drawing.Size(71, 43);
-            this.opCZRunCount.TabIndex = 85;
-            this.opCZRunCount.Text = "-";
-            this.opCZRunCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel3
-            // 
-            this.uiPanel3.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel3.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel3.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel3.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel3.Name = "uiPanel3";
-            this.uiPanel3.Radius = 1;
-            this.uiPanel3.RectColor = System.Drawing.Color.MediumBlue;
-            this.uiPanel3.Size = new System.Drawing.Size(192, 43);
-            this.uiPanel3.TabIndex = 81;
-            this.uiPanel3.Text = "Tên sản phẩm (productName)";
-            this.uiPanel3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opProductName
-            // 
-            this.opProductName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opProductName.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opProductName.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.opProductName.ForeColor = System.Drawing.Color.White;
-            this.opProductName.Location = new System.Drawing.Point(198, 2);
-            this.opProductName.Margin = new System.Windows.Forms.Padding(2);
-            this.opProductName.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opProductName.Name = "opProductName";
-            this.opProductName.Radius = 1;
-            this.opProductName.Size = new System.Drawing.Size(561, 43);
-            this.opProductName.TabIndex = 80;
-            this.opProductName.Text = "-";
-            this.opProductName.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // uiGroupBox1
             // 
             this.uiGroupBox1.Controls.Add(this.uiTableLayoutPanel8);
@@ -1158,6 +1093,72 @@
             this.opAWSFullOKCount.Text = "-";
             this.opAWSFullOKCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // uiTableLayoutPanel6
+            // 
+            this.uiTableLayoutPanel6.ColumnCount = 3;
+            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.75558F));
+            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 74.24442F));
+            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 74F));
+            this.uiTableLayoutPanel6.Controls.Add(this.opCZRunCount, 2, 0);
+            this.uiTableLayoutPanel6.Controls.Add(this.uiPanel3, 0, 0);
+            this.uiTableLayoutPanel6.Controls.Add(this.opProductName, 1, 0);
+            this.uiTableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel6.Location = new System.Drawing.Point(1, 312);
+            this.uiTableLayoutPanel6.Margin = new System.Windows.Forms.Padding(1);
+            this.uiTableLayoutPanel6.Name = "uiTableLayoutPanel6";
+            this.uiTableLayoutPanel6.RowCount = 1;
+            this.uiTableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel6.Size = new System.Drawing.Size(836, 47);
+            this.uiTableLayoutPanel6.TabIndex = 10;
+            this.uiTableLayoutPanel6.TagString = null;
+            // 
+            // opCZRunCount
+            // 
+            this.opCZRunCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opCZRunCount.FillColor = System.Drawing.Color.White;
+            this.opCZRunCount.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.opCZRunCount.Location = new System.Drawing.Point(763, 2);
+            this.opCZRunCount.Margin = new System.Windows.Forms.Padding(2);
+            this.opCZRunCount.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opCZRunCount.Name = "opCZRunCount";
+            this.opCZRunCount.Radius = 1;
+            this.opCZRunCount.Size = new System.Drawing.Size(71, 43);
+            this.opCZRunCount.TabIndex = 85;
+            this.opCZRunCount.Text = "-";
+            this.opCZRunCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiPanel3
+            // 
+            this.uiPanel3.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
+            this.uiPanel3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.uiPanel3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
+            this.uiPanel3.Location = new System.Drawing.Point(2, 2);
+            this.uiPanel3.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel3.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel3.Name = "uiPanel3";
+            this.uiPanel3.Radius = 1;
+            this.uiPanel3.RectColor = System.Drawing.Color.MediumBlue;
+            this.uiPanel3.Size = new System.Drawing.Size(192, 43);
+            this.uiPanel3.TabIndex = 81;
+            this.uiPanel3.Text = "Tên sản phẩm (productName)";
+            this.uiPanel3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // opProductName
+            // 
+            this.opProductName.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opProductName.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
+            this.opProductName.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.opProductName.ForeColor = System.Drawing.Color.White;
+            this.opProductName.Location = new System.Drawing.Point(198, 2);
+            this.opProductName.Margin = new System.Windows.Forms.Padding(2);
+            this.opProductName.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opProductName.Name = "opProductName";
+            this.opProductName.Radius = 1;
+            this.opProductName.Size = new System.Drawing.Size(561, 43);
+            this.opProductName.TabIndex = 80;
+            this.opProductName.Text = "-";
+            this.opProductName.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // PPOInfo
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1176,9 +1177,9 @@
             this.uiPanel13.ResumeLayout(false);
             this.uiTableLayoutPanel4.ResumeLayout(false);
             this.uiTableLayoutPanel5.ResumeLayout(false);
-            this.uiTableLayoutPanel6.ResumeLayout(false);
             this.uiGroupBox1.ResumeLayout(false);
             this.uiTableLayoutPanel8.ResumeLayout(false);
+            this.uiTableLayoutPanel6.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

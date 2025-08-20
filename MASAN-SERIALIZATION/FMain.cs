@@ -50,6 +50,7 @@ namespace MASAN_SERIALIZATION
         #region Constructor
         public FMain()
         {
+            Thread.Sleep(1000); // Delay to ensure all resources are loaded properly
             InitializeComponent();
             
             Globals.Log = new LogHelper<e_LogType>(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MASAN-SERIALIZATION", "Logs", "applog.tl"));

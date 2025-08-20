@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static MASAN_SERIALIZATION.Production.ProductionOrder;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace MASAN_SERIALIZATION.Views.ProductionInfo
@@ -245,6 +246,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         private void HandleStartState()
         {
             TResult lastPOResult = Globals.ProductionData.getDataPO.GetLastPO();
+
             if (lastPOResult.issuccess)
             {
                 ProcessLastPOSuccess(lastPOResult);
@@ -731,7 +733,17 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         public void RenderOrderInfo()
         {
             TResult orderInfoResult = Globals.ProductionData.getfromMES.ProductionOrder_Detail(ipOrderNO.Text);
-            
+            //lấy thông tin productionDate đã chỉnh
+            var POlog = Globals.ProductionData.getDataPO.Get_PO_Run_History_By_OrderNo(ipOrderNO.Text);
+            if (POlog.issucess && POlog.logPO.Rows.Count > 0)
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    ipProductionDate.Value = DateTime.Parse(POlog.logPO.Rows[0]["productionDate"].ToString());
+                });
+                
+            }
+
             if (!orderInfoResult.issuccess)
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
@@ -789,7 +801,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 opFactory.Text = row["factory"].ToString();
                 opSite.Text = row["site"].ToString();
                 opUOM.Text = row["uom"].ToString();
-                ipProductionDate.Value = DateTime.Parse(row["productionDate"].ToString());
+                //ipProductionDate.Value = DateTime.Parse(row["productionDate"].ToString());
             });
         }
 
@@ -982,6 +994,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 }
 
                 ResetAndCalculateCounters(recordsResult);
+
                 SaveToDatabase();
             }
             catch (Exception ex)
@@ -1036,7 +1049,8 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         {
             try
             {
-                var productionDateUtc = DateTime.ParseExact(ipProductionDate.Text, "yyyy-MM-dd HH:mm:ss", null).ToUniversalTime();
+                var productionDateUtc = DateTime.ParseExact(ipProductionDate.Text, "dd-MM-yyyy HH:mm:ss", null);
+
                 var saveResult = Globals.ProductionData.Save_PO(ipOrderNO.SelectedText, 
                     productionDateUtc.ToString("yyyy-MM-dd HH:mm:ss.fff"), Globals.CurrentUser.Username);
 

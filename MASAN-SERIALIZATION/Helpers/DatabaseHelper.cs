@@ -1,3 +1,4 @@
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,7 +9,7 @@ namespace MASAN_SERIALIZATION.Helpers
 {
     public class DatabaseHelper
     {
-        private const string PODatabasePath = @"C:\MasanSerialization\Server_Service\po.db";
+        private const string PODatabasePath = @"C:\MasanSerialization\Server_Service\data";
         private const string PODatabasesFolder = @"C:\MasanSerialization\PODatabases\";
 
         public class POInfo
@@ -50,43 +51,30 @@ namespace MASAN_SERIALIZATION.Helpers
         public List<POInfo> GetAllPOInfo()
         {
             var poList = new List<POInfo>();
-            
+            string folderPath = PODatabasePath;
+
             try
             {
-                if (!File.Exists(PODatabasePath))
+                if (!Directory.Exists(PODatabasePath))
                 {
-                    throw new FileNotFoundException($"Database not found: {PODatabasePath}");
+                    throw new DirectoryNotFoundException($"Folder not found: {folderPath}");
                 }
 
-                using (var connection = new SQLiteConnection($"Data Source={PODatabasePath};Version=3;"))
+                // Lấy tất cả file .json trong folder
+                foreach (var file in Directory.GetFiles(folderPath, "*.json"))
                 {
-                    connection.Open();
-                    string query = "SELECT * FROM POInfo";
-                    
-                    using (var command = new SQLiteCommand(query, connection))
-                    using (var reader = command.ExecuteReader())
+                    try
                     {
-                        while (reader.Read())
+                        string jsonContent = File.ReadAllText(file);
+                        var po = JsonConvert.DeserializeObject<POInfo>(jsonContent);
+                        if (po != null)
                         {
-                            poList.Add(new POInfo
-                            {
-                                Id = Convert.ToInt32(reader["id"]),
-                                OrderNo = reader["orderNo"]?.ToString(),
-                                Site = reader["site"]?.ToString(),
-                                Factory = reader["factory"]?.ToString(),
-                                ProductionLine = reader["productionLine"]?.ToString(),
-                                ProductionDate = reader["productionDate"]?.ToString(),
-                                Shift = reader["shift"]?.ToString(),
-                                OrderQty = reader["orderQty"] != DBNull.Value ? Convert.ToInt32(reader["orderQty"]) : 0,
-                                LotNumber = reader["lotNumber"]?.ToString(),
-                                ProductCode = reader["productCode"]?.ToString(),
-                                ProductName = reader["productName"]?.ToString(),
-                                GTIN = reader["GTIN"]?.ToString(),
-                                CustomerOrderNo = reader["customerOrderNo"]?.ToString(),
-                                Uom = reader["uom"]?.ToString(),
-                                LastUpdated = reader["lastUpdated"]?.ToString()
-                            });
+                            poList.Add(po);
                         }
+                    }
+                    catch (Exception innerEx)
+                    {
+                        throw new Exception($"Error parsing file {file}: {innerEx.Message}");
                     }
                 }
             }
