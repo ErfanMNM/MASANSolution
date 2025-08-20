@@ -374,7 +374,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     if (Globals.ProductionData.counter.carton_Packing_Count == AppConfigs.Current.cartonPack)
                     {
                         //kiểm tra thùng mới có mã chưa, nếu chưa có thì dừng line
-                        Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out cartonData);
+                        if(Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out cartonData))
+                        {
+
+                        }
                         if (cartonData.cartonCode == "0")
                         {
                             //chưa được quét mã bắt đầu => dừng line, 
