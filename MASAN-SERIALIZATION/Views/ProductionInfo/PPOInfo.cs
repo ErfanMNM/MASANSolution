@@ -799,7 +799,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 this.InvokeIfRequired(() =>
                 {
-                    SetCountersToLoading();
+                    //SetCountersToLoading();
                 });
 
                 Task.Delay(1000).Wait();

@@ -28,7 +28,7 @@ namespace MASAN_SERIALIZATION.Production
         public ProductionOrder()
         {
             poAPIServerPath = @"C:\MasanSerialization\Server_Service\";
-            poAPIServerFileName = "po.db";
+            poAPIServerFileName = "po1.db";
             Create_POLogDatabases();
         }
         #endregion

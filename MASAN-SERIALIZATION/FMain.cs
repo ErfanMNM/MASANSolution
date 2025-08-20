@@ -99,7 +99,7 @@ namespace MASAN_SERIALIZATION
             catch (Exception ex)
             {
                 Globals.Log.WriteLogAsync("System", e_LogType.Error, ErrorCodes.Main.INIT_UI_FAILED + ex);
-                this.ShowErrorTip($"[{ErrorCodes.Main.INIT_UI_FAILED}] {ErrorCodes.GetErrorDescription(ErrorCodes.Main.INIT_UI_FAILED)}: {ex.Message}");
+                this.ShowErrorDialog($"[{ErrorCodes.Main.INIT_UI_FAILED}] {ErrorCodes.GetErrorDescription(ErrorCodes.Main.INIT_UI_FAILED)}: {ex.Message}");
             }
         }
 
@@ -153,7 +153,7 @@ namespace MASAN_SERIALIZATION
             catch (Exception ex)
             {
                 Globals.Log.WriteLogAsync("System", e_LogType.Error, ErrorCodes.Main.INIT_CONTROLS_FAILED + ex);
-                this.ShowErrorTip($"[{ErrorCodes.Main.INIT_CONTROLS_FAILED}] {ErrorCodes.GetErrorDescription(ErrorCodes.Main.INIT_CONTROLS_FAILED)}: {ex.Message}");
+                this.ShowErrorDialog($"[{ErrorCodes.Main.INIT_CONTROLS_FAILED}] {ErrorCodes.GetErrorDescription(ErrorCodes.Main.INIT_CONTROLS_FAILED)}: {ex.Message}");
             }
         }
 
@@ -174,7 +174,7 @@ namespace MASAN_SERIALIZATION
             catch (Exception ex)
             {
                 Globals.Log.WriteLogAsync("System", e_LogType.Error, ErrorCodes.Main.INIT_PAGES_FAILED + ex);
-                this.ShowErrorTip($"[{ErrorCodes.Main.INIT_PAGES_FAILED}] {ErrorCodes.GetErrorDescription(ErrorCodes.Main.INIT_PAGES_FAILED)}: {ex.Message}");
+                this.ShowErrorDialog($"[{ErrorCodes.Main.INIT_PAGES_FAILED}] {ErrorCodes.GetErrorDescription(ErrorCodes.Main.INIT_PAGES_FAILED)}: {ex.Message}");
             }
         }
         #endregion
@@ -428,7 +428,7 @@ namespace MASAN_SERIALIZATION
                     catch (Exception ex)
                     {
                         Globals.Log.WriteLogAsync("System", e_LogType.Error, ErrorCodes.Main.MAIN_PROCESS_ERROR + ex);
-                        this.ShowErrorTip($"[{ErrorCodes.Main.MAIN_PROCESS_ERROR}] {ErrorCodes.GetErrorDescription(ErrorCodes.Main.MAIN_PROCESS_ERROR)}: {ex.Message}");
+                        this.ShowErrorDialog($"[{ErrorCodes.Main.MAIN_PROCESS_ERROR}] {ErrorCodes.GetErrorDescription(ErrorCodes.Main.MAIN_PROCESS_ERROR)}: {ex.Message}");
                     }
                     Thread.Sleep(100);
                 }
