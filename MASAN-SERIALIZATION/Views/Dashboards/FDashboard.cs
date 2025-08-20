@@ -950,19 +950,19 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                             if (getCartons.count == 0)
                             {
-                                //nếu không có mã thùng thì tạo một thùng mới đầu tiên
-                                ProductionCartonData cartonData_a = new ProductionCartonData
-                                {
-                                    cartonCode = "0", //chưa có mã thùng
-                                    orderNo = Globals.ProductionData.orderNo,
-                                    Activate_User = Globals.CurrentUser.Username,
-                                    Activate_Datetime = "0",
-                                    Start_Datetime = "0",
-                                    cartonID = 1, //tạo thùng đầu tiên
-                                    Production_Datetime = "0"
-                                };
-                                Globals_Database.Dictionary_ProductionCarton_Data.Add(cartonData_a.cartonID, cartonData_a);
-                                Globals.Production_State = e_Production_State.Running;
+                                ////nếu không có mã thùng thì tạo một thùng mới đầu tiên
+                                //ProductionCartonData cartonData_a = new ProductionCartonData
+                                //{
+                                //    cartonCode = "0", //chưa có mã thùng
+                                //    orderNo = Globals.ProductionData.orderNo,
+                                //    Activate_User = Globals.CurrentUser.Username,
+                                //    Activate_Datetime = "0",
+                                //    Start_Datetime = "0",
+                                //    cartonID = 1, //tạo thùng đầu tiên
+                                //    Production_Datetime = "0"
+                                //};
+                                //Globals_Database.Dictionary_ProductionCarton_Data.Add(cartonData_a.cartonID, cartonData_a);
+                                //Globals.Production_State = e_Production_State.Running;
 
                                 return;
                             }
