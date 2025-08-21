@@ -186,7 +186,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                         {
                             UpdateStatusMessage("Đơn hàng đã hoàn thành, Vui lòng chọn đơn hàng khác.", Color.Red);
                             btnPO.Enabled = true;
-                            btnTestMode.Enabled = false;
+                            btnClosePO.Enabled = false;
                             btnRUN.Enabled = false;
                             btnProductionDate.Enabled = false;
                         }
@@ -238,7 +238,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 this.InvokeIfRequired(() => {
                     btnPO.Enabled = true;
-                    btnTestMode.Enabled = true;
+                    btnClosePO.Enabled = true;
                 });
             }
         }
@@ -362,7 +362,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 {
                     btnProductionDate.Enabled = true;
                     btnPO.Enabled = false;
-                    btnTestMode.Enabled = false;
+                    btnClosePO.Enabled = false;
                 }
             });
         }
@@ -381,7 +381,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 {
                     btnProductionDate.Enabled = false;
                     btnPO.Enabled = true;
-                    btnTestMode.Enabled = false;
+                    btnClosePO.Enabled = false;
                     btnRUN.Enabled = false;
                 }
             });
@@ -1082,7 +1082,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 UpdateStatusMessage($"Đơn hàng {ipOrderNO.SelectedText} đã được lưu thành công.", Color.Green);
                 
                 btnPO.Enabled = true;
-                btnTestMode.Enabled = true;
+                btnClosePO.Enabled = true;
                 btnRUN.Enabled = true;
                 btnPO.Text = "Đổi PO";
             });
@@ -1132,7 +1132,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     btnPO.Text = "Lưu PO";
                     btnPO.Symbol = 61639;
 
-                    btnTestMode.Enabled = false;
+                    btnClosePO.Enabled = false;
                     btnRUN.Enabled = false;
                 }
             });
@@ -1149,7 +1149,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
                 btnPO.Enabled = false;
                 btnProductionDate.Enabled = false;
-                btnTestMode.Enabled = false;
+                btnClosePO.Enabled = false;
             });
         }
 
@@ -1163,13 +1163,13 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     btnPO.FillColor = Color.FromArgb(52, 152, 219);
                     btnPO.Text = "Chọn PO";
                     btnPO.Symbol = 61508;
-                    btnTestMode.Enabled = true;
+                    btnClosePO.Enabled = true;
                     btnProductionDate.Enabled = false;
                 }
                 else
                 {
                     btnPO.Enabled = false;
-                    btnTestMode.Enabled = false;
+                    btnClosePO.Enabled = false;
                     btnProductionDate.Enabled = true;
                 }
 
@@ -1188,5 +1188,10 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         }
 
         #endregion
+
+        private void uiGroupBox1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

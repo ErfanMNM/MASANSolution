@@ -350,11 +350,17 @@ namespace MASAN_SERIALIZATION.Views.Database
 
         private void txtSearchManual_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                btnSearch_Click(sender, e);
-                e.Handled = true;
-            }
+            //if (e.KeyCode == Keys.Enter)
+            //{
+            //    btnSearch_Click(sender, e);
+            //    e.Handled = true;
+            //}
+        }
+
+        private void txtSearchManual_DoubleClick(object sender, EventArgs e)
+        {
+            //bật bàn phím ảo
+
         }
     }
 }

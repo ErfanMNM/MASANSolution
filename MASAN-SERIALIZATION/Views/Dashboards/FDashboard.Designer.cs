@@ -99,6 +99,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.Camera_Sub = new SpT.Communications.TCP.TCPClient(this.components);
             this.OMRON_PLC = new SPMS1.OmronPLC_Hsl(this.components);
             this.WK_Update_UI = new System.ComponentModel.BackgroundWorker();
+            this.OMRON_PLC_02 = new SPMS1.OmronPLC_Hsl(this.components);
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTitlePanel5.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -698,7 +699,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opLedC2.Location = new System.Drawing.Point(67, 2);
             this.opLedC2.Margin = new System.Windows.Forms.Padding(2);
             this.opLedC2.Name = "opLedC2";
-            this.opLedC2.On = false;
             this.opLedC2.Size = new System.Drawing.Size(40, 42);
             this.opLedC2.TabIndex = 0;
             this.opLedC2.Text = "uiLedBulb2";
@@ -760,6 +760,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opLedC1.Location = new System.Drawing.Point(67, 2);
             this.opLedC1.Margin = new System.Windows.Forms.Padding(2);
             this.opLedC1.Name = "opLedC1";
+            this.opLedC1.On = false;
             this.opLedC1.Size = new System.Drawing.Size(40, 42);
             this.opLedC1.TabIndex = 0;
             this.opLedC1.Text = "uiLedBulb1";
@@ -822,6 +823,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opLedPLC.Location = new System.Drawing.Point(68, 2);
             this.opLedPLC.Margin = new System.Windows.Forms.Padding(2);
             this.opLedPLC.Name = "opLedPLC";
+            this.opLedPLC.On = false;
             this.opLedPLC.Size = new System.Drawing.Size(41, 42);
             this.opLedPLC.TabIndex = 0;
             this.opLedPLC.Text = "uiLedBulb3";
@@ -938,7 +940,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.tabPage2.Controls.Add(this.opHis2);
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(200, 60);
+            this.tabPage2.Size = new System.Drawing.Size(459, 405);
             this.tabPage2.TabIndex = 3;
             this.tabPage2.Text = "Lịch sử";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -955,7 +957,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opHis2.Name = "opHis2";
             this.opHis2.Padding = new System.Windows.Forms.Padding(2);
             this.opHis2.ShowText = false;
-            this.opHis2.Size = new System.Drawing.Size(200, 60);
+            this.opHis2.Size = new System.Drawing.Size(459, 405);
             this.opHis2.TabIndex = 0;
             this.opHis2.Text = "uiListBox1";
             // 
@@ -964,7 +966,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.tabPage3.Controls.Add(this.opHisCS);
             this.tabPage3.Location = new System.Drawing.Point(0, 40);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(200, 60);
+            this.tabPage3.Size = new System.Drawing.Size(459, 405);
             this.tabPage3.TabIndex = 4;
             this.tabPage3.Text = "Lịch sử phân làn";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -981,7 +983,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opHisCS.Name = "opHisCS";
             this.opHisCS.Padding = new System.Windows.Forms.Padding(2);
             this.opHisCS.ShowText = false;
-            this.opHisCS.Size = new System.Drawing.Size(200, 60);
+            this.opHisCS.Size = new System.Drawing.Size(459, 405);
             this.opHisCS.TabIndex = 1;
             this.opHisCS.Text = "uiListBox1";
             // 
@@ -1148,6 +1150,15 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             // 
             this.WK_Update_UI.WorkerSupportsCancellation = true;
             // 
+            // OMRON_PLC_02
+            // 
+            this.OMRON_PLC_02.PLC_IP = "127.0.0.1";
+            this.OMRON_PLC_02.PLC_PORT = 9600;
+            this.OMRON_PLC_02.PLC_Ready_DM = "D16";
+            this.OMRON_PLC_02.PLC_STATUS = SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect;
+            this.OMRON_PLC_02.Ready = 0;
+            this.OMRON_PLC_02.Time_Update = 1500;
+            // 
             // FDashboard
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1257,5 +1268,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private Sunny.UI.UIPanel opC1_State;
         private Sunny.UI.UISymbolButton btnClearNoti;
         private Sunny.UI.UISymbolButton btnClearPLC;
+        private SPMS1.OmronPLC_Hsl OMRON_PLC_02;
     }
 }

@@ -129,4 +129,7 @@
   <metadata name="WK_Update_UI.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>411, 16</value>
   </metadata>
+  <metadata name="OMRON_PLC_02.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>542, 16</value>
+  </metadata>
 </root>

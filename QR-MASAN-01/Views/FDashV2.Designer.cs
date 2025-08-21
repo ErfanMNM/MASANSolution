@@ -916,7 +916,7 @@
             this.tabPage2.Controls.Add(this.opHis2);
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(200, 60);
+            this.tabPage2.Size = new System.Drawing.Size(459, 405);
             this.tabPage2.TabIndex = 3;
             this.tabPage2.Text = "Lịch sử 2";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -933,7 +933,7 @@
             this.opHis2.Name = "opHis2";
             this.opHis2.Padding = new System.Windows.Forms.Padding(2);
             this.opHis2.ShowText = false;
-            this.opHis2.Size = new System.Drawing.Size(200, 60);
+            this.opHis2.Size = new System.Drawing.Size(459, 405);
             this.opHis2.TabIndex = 0;
             this.opHis2.Text = "uiListBox1";
             // 

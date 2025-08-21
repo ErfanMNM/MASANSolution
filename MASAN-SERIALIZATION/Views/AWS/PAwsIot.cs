@@ -522,5 +522,10 @@ namespace MASAN_SERIALIZATION.Views.AWS
         {
             this.ShowInfoDialog("Thông báo", opRecive.SelectedItem.ToString());
         }
+
+        private void uiTitlePanel7_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

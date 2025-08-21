@@ -68,6 +68,7 @@
             this.uiPanel1.Padding = new System.Windows.Forms.Padding(10);
             this.uiPanel1.Size = new System.Drawing.Size(901, 85);
             this.uiPanel1.TabIndex = 1;
+            this.uiPanel1.Text = null;
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // txtScannedCode
@@ -142,6 +143,7 @@
             this.txtSearchManual.TabIndex = 1;
             this.txtSearchManual.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.txtSearchManual.Watermark = "Nhập mã để tìm kiếm...";
+            this.txtSearchManual.DoubleClick += new System.EventHandler(this.txtSearchManual_DoubleClick);
             this.txtSearchManual.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearchManual_KeyDown);
             // 
             // lblSearchManual
@@ -190,7 +192,7 @@
             this.lblSearchResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(56)))), ((int)(((byte)(56)))));
             this.lblSearchResult.Location = new System.Drawing.Point(15, 15);
             this.lblSearchResult.Name = "lblSearchResult";
-            this.lblSearchResult.Size = new System.Drawing.Size(141, 20);
+            this.lblSearchResult.Size = new System.Drawing.Size(169, 20);
             this.lblSearchResult.TabIndex = 0;
             this.lblSearchResult.Text = "📋 Kết quả tìm kiếm:";
             // 
