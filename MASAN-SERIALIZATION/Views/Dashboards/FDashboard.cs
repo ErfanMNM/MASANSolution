@@ -314,7 +314,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
 
                 //nếu số lượng chai trong thùng đã đủ thì tạo thùng mới
-                if (Globals.ProductionData.counter.carton_Packing_Count == AppConfigs.Current.cartonPack)
+                if (Globals.ProductionData.counter.carton_Packing_Count == AppConfigs.Current.cartonPack -1)
                 {
                     cache_CartonID++;
                     cache_CartonCount = 0; //đặt lại số lượng chai trong thùng
@@ -348,14 +348,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     //nâng ID thùng lên 1, và tạo thùng mới
                     Globals.ProductionData.counter.cartonID = cache_CartonID; //cập nhật ID thùng
                     Globals.ProductionData.counter.carton_Packing_Count = cache_CartonCount; //cập nhật số lượng chai trong thùng
-
-                    ////kết thúc thùng chẵn cũ
-                    //cartonData.cartonCode = s.Trim();
-                    //cartonData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
-                    //Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData);
-                    //lấy mã thùng cũ 
-                    Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(cache_CartonID-1, out ProductionCartonData cartonDataz);
-                    Globals_Database.Activate_Carton.Enqueue(cartonDataz.cartonCode);
+                    
                 }
 
                 //gửi lên PLC thành công
@@ -366,15 +359,21 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     _produtionCodeData.Sub_Camera_Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"); // Cập nhật thời gian kích hoạt từ camera phụ
 
 
+
                     Enqueue_Product_To_SQLite(_data, _produtionCodeData); //thêm vào hàng chờ lưu sqlite
                     Enqueue_Product_To_Record(_data, e_Production_Status.Pass, true, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false, Globals.ProductionData.counter.cartonID);
                     Send_Result_Content_CSub(e_Production_Status.Pass, _data);
 
+                    
+
                     //kiểm tra sớm thùng đã hết chưa, chuyển thùng mới từ đây
                     if (Globals.ProductionData.counter.carton_Packing_Count == AppConfigs.Current.cartonPack)
                     {
+
+                        Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(cache_CartonID - 1, out ProductionCartonData cartonDataz);
+                        Globals_Database.Activate_Carton.Enqueue(cartonDataz.cartonCode);
                         //kiểm tra thùng mới có mã chưa, nếu chưa có thì dừng line
-                        if(Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out cartonData))
+                        if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out cartonData))
                         {
 
                         }
