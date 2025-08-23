@@ -53,7 +53,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         }
         #endregion
 
-        #region Camera Event Handlers
+        #region  Device Event Handlers
         private void CameraMain_ClientCallBack(enumClient state, string data)
         {
             switch (state)
@@ -135,6 +135,27 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         }
 
         private void OMRON_PLC_PLCStatus_OnChange(object sender, PLCStatusEventArgs e)
+        {
+            switch (e.Status)
+            {
+                case PLCStatus.Connecting:
+                    if (!Globals.PLC_Connected)
+                    {
+                        Globals.PLC_Connected = true;
+                    }
+                    break;
+                case PLCStatus.Disconnect:
+                    if (Globals.PLC_Connected)
+                    {
+                        Globals.PLC_Connected = false;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void OMRON_PLC_2_PLCStatus_OnChange(object sender, PLCStatusEventArgs e)
         {
             switch (e.Status)
             {
@@ -245,7 +266,15 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
             if (_data.IsNullOrEmpty())
             {
-                bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                bool stp = false;
+                if(AppConfigs.Current.PLC_Duo_Mode)
+                {
+                    stp = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
+                }
+                else
+                {
+                    stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                }
                 Send_Result_Content_CSub(e_Production_Status.Error, _data);
                 Enqueue_Product_To_Record(_data, e_Production_Status.Error, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                 return;
@@ -254,7 +283,16 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
             if (_data == "FAIL")
             {
-                bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                bool stp = false;
+                if (AppConfigs.Current.PLC_Duo_Mode)
+                {
+                    stp = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
+                }
+                else
+                {
+                    stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                }
+
                 Send_Result_Content_CSub(e_Production_Status.ReadFail, _data);
                 Enqueue_Product_To_Record(_data, e_Production_Status.ReadFail, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                 return;
@@ -272,8 +310,17 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 //chưa kích hoạt từ camera chính => Loại sản phẩm
                 if (_produtionCodeData.Main_Camera_Status == "0")
                 {
-                    bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
-                                                                                     //gửi vào hàng chờ thêm record
+                    bool stp = false; // Gửi dữ liệu loại sản phẩm đến PLC
+                    if (AppConfigs.Current.PLC_Duo_Mode)
+                    {
+                        stp = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
+                    }
+                    else
+                    {
+                        stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                    }
+
+                    //gửi vào hàng chờ thêm record
                     Enqueue_Product_To_Record(_data, e_Production_Status.ReadFail, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                     return;
                 }
@@ -284,7 +331,16 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     if (_produtionCartonData1.cartonCode == "0")
                     {
                         //nếu thùng hiện tại đã có mã thì không cần xử lý tiếp
-                        Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
+                        bool stp = false; // Gửi dữ liệu loại sản phẩm đến PLC
+                        if (AppConfigs.Current.PLC_Duo_Mode)
+                        {
+                            stp = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
+                        }
+                        else
+                        {
+                            stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                        }
+                        //Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
                         Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                         Send_Result_Content_CSub(e_Production_Status.Error, _data);
 
@@ -352,7 +408,16 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 }
 
                 //gửi lên PLC thành công
-                if (Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), sendCode))
+                bool successSend = false;
+                if (AppConfigs.Current.PLC_Duo_Mode)
+                {
+                    successSend = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), sendCode);
+                }
+                else
+                {
+                    successSend = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), sendCode);
+                }
+                if (successSend)
                 {
                     cache_CartonCount++; //tăng số lượng chai trong thùng
                     Globals.ProductionData.counter.carton_Packing_Count = cache_CartonCount; //cập nhật số lượng chai trong thùng                                                     
@@ -404,7 +469,16 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
 
             //loại sản phẩm ngay lập tức
-            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
+            bool stp2 = false;
+            if (AppConfigs.Current.PLC_Duo_Mode)
+            {
+                stp2 = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
+            }
+            else
+            {
+                stp2 = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+            }
+            //Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
             Send_Result_Content_CSub(e_Production_Status.NotFound, _data);
             //gửi vào hàng chờ thêm record
             Enqueue_Product_To_Record(_data, e_Production_Status.NotFound, true, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
@@ -530,6 +604,28 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 return false;
             }
         }
+
+        public bool Send_To_PLC_2(string DM, string _data)
+        {
+            try
+            {
+                OperateResult write = OMRON_PLC_02.plc.Write(DM, int.Parse(_data));
+                if (write.IsSuccess)
+                {
+                    return true;
+                }
+                else
+                {
+                    DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.PlcError, "Lỗi D024 khi gửi dữ liệu đến PLC 2", write.Message);
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.PlcError, "Lỗi D025 khi gửi dữ liệu đến PLC 2", ExceptionToJson(ex));
+                return false;
+            }
+        }
         #endregion
 
         #region Initialization
@@ -546,15 +642,31 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 Camera_Sub.Connect();
 
                 OMRON_PLC.PLC_IP = PLCAddress.Get("PLC_IP");
+                OMRON_PLC_02.PLC_IP = PLCAddress.Get("PLC2_IP");
 
-                if(AppConfigs.Current.PLC_Test_Mode)
+
+                if (AppConfigs.Current.PLC_Test_Mode)
                 {
                     OMRON_PLC.PLC_IP = "127.0.0.1";
+                    OMRON_PLC_02.PLC_IP = "127.0.0.1";
+                    OMRON_PLC_02.PLC_PORT = 9001;
                 }
+
                 OMRON_PLC.PLC_PORT = PLCAddress.Get("PLC_PORT").ToInt32();
                 OMRON_PLC.PLC_Ready_DM = PLCAddress.Get("PLC_Ready_DM");
                 OMRON_PLC.Time_Update = 1000;
+
+                OMRON_PLC_02.PLC_PORT = PLCAddress.Get("PLC2_PORT").ToInt32();
+                OMRON_PLC_02.PLC_Ready_DM = PLCAddress.Get("PLC2_Ready_DM");
+                OMRON_PLC_02.Time_Update = 1000;
+
                 OMRON_PLC.InitPLC();
+
+                if (AppConfigs.Current.PLC_Duo_Mode)
+                {
+                    OMRON_PLC_02.InitPLC();
+                }
+
             }
             catch (Exception ex)
             {
@@ -949,19 +1061,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                             if (getCartons.count == 0)
                             {
-                                ////nếu không có mã thùng thì tạo một thùng mới đầu tiên
-                                //ProductionCartonData cartonData_a = new ProductionCartonData
-                                //{
-                                //    cartonCode = "0", //chưa có mã thùng
-                                //    orderNo = Globals.ProductionData.orderNo,
-                                //    Activate_User = Globals.CurrentUser.Username,
-                                //    Activate_Datetime = "0",
-                                //    Start_Datetime = "0",
-                                //    cartonID = 1, //tạo thùng đầu tiên
-                                //    Production_Datetime = "0"
-                                //};
-                                //Globals_Database.Dictionary_ProductionCarton_Data.Add(cartonData_a.cartonID, cartonData_a);
-                                //Globals.Production_State = e_Production_State.Running;
 
                                 return;
                             }

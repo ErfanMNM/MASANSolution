@@ -76,7 +76,7 @@ namespace MASAN_SERIALIZATION.Views.Database
             // 
             this.btnSearch.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
-            this.btnSearch.Location = new System.Drawing.Point(520, 40);
+            this.btnSearch.Location = new System.Drawing.Point(780, 40);
             this.btnSearch.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(110, 30);
@@ -95,7 +95,7 @@ namespace MASAN_SERIALIZATION.Views.Database
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Padding = new System.Windows.Forms.Padding(5);
             this.txtSearch.ShowText = false;
-            this.txtSearch.Size = new System.Drawing.Size(500, 30);
+            this.txtSearch.Size = new System.Drawing.Size(758, 30);
             this.txtSearch.TabIndex = 1;
             this.txtSearch.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.txtSearch.Watermark = "Nhập mã, Enter để tìm...";
@@ -207,6 +207,7 @@ namespace MASAN_SERIALIZATION.Views.Database
             // pagination
             // 
             this.pagination.ButtonFillSelectedColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(128)))), ((int)(((byte)(204)))));
+            this.pagination.ButtonStyleInherited = false;
             this.pagination.Dock = System.Windows.Forms.DockStyle.Right;
             this.pagination.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.pagination.Location = new System.Drawing.Point(179, 5);

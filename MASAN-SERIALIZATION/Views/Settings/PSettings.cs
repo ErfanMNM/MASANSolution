@@ -303,7 +303,9 @@ namespace MASAN_SERIALIZATION.Views.Settings
                 { "cartonOfset", "Carton Offset" },
                 { "Auto_Send_AWS", "Tự động gửi AWS" },
                 { "APP_Mode", "Chế độ ứng dụng" },
-                { "cartonAutoStart", "Chỉ quét thùng 1 lần" }
+                { "cartonAutoStart", "Chỉ quét thùng 1 lần" },
+                { "PLC_Test_Mode", "Chế độ kiểm tra PLC" },
+                { "PLC_Duo_Mode", "Chế độ PLC đôi" }
             };
 
             return displayNames.ContainsKey(propertyName) ? displayNames[propertyName] : propertyName;

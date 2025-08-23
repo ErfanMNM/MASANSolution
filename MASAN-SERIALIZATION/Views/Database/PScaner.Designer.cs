@@ -50,7 +50,6 @@
             this.uiHeaderPanel = new Sunny.UI.UIHeaderButton();
             this.uiPanel1.SuspendLayout();
             this.uiPanel2.SuspendLayout();
-            this.uiStatusPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvSearchResult)).BeginInit();
             this.uiPanel3.SuspendLayout();
             this.SuspendLayout();
@@ -83,7 +82,7 @@
             this.txtScannedCode.Padding = new System.Windows.Forms.Padding(5);
             this.txtScannedCode.ReadOnly = true;
             this.txtScannedCode.ShowText = false;
-            this.txtScannedCode.Size = new System.Drawing.Size(500, 30);
+            this.txtScannedCode.Size = new System.Drawing.Size(873, 30);
             this.txtScannedCode.TabIndex = 1;
             this.txtScannedCode.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.txtScannedCode.Watermark = "Mã sản phẩm sẽ hiển thị ở đây...";
@@ -120,7 +119,7 @@
             // 
             this.btnSearch.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-            this.btnSearch.Location = new System.Drawing.Point(430, 45);
+            this.btnSearch.Location = new System.Drawing.Point(768, 47);
             this.btnSearch.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(120, 30);
@@ -139,7 +138,7 @@
             this.txtSearchManual.Name = "txtSearchManual";
             this.txtSearchManual.Padding = new System.Windows.Forms.Padding(5);
             this.txtSearchManual.ShowText = false;
-            this.txtSearchManual.Size = new System.Drawing.Size(400, 30);
+            this.txtSearchManual.Size = new System.Drawing.Size(746, 30);
             this.txtSearchManual.TabIndex = 1;
             this.txtSearchManual.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.txtSearchManual.Watermark = "Nhập mã để tìm kiếm...";
@@ -159,17 +158,16 @@
             // 
             // uiStatusPanel
             // 
-            this.uiStatusPanel.Controls.Add(this.lblStatus);
             this.uiStatusPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.uiStatusPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiStatusPanel.Location = new System.Drawing.Point(0, 518);
+            this.uiStatusPanel.Location = new System.Drawing.Point(0, 538);
             this.uiStatusPanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.uiStatusPanel.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiStatusPanel.Name = "uiStatusPanel";
             this.uiStatusPanel.Padding = new System.Windows.Forms.Padding(10, 5, 10, 5);
             this.uiStatusPanel.Radius = 0;
             this.uiStatusPanel.RectSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Top;
-            this.uiStatusPanel.Size = new System.Drawing.Size(901, 30);
+            this.uiStatusPanel.Size = new System.Drawing.Size(901, 10);
             this.uiStatusPanel.TabIndex = 4;
             this.uiStatusPanel.Text = null;
             this.uiStatusPanel.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
@@ -179,7 +177,7 @@
             this.lblStatus.AutoSize = true;
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
             this.lblStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(56)))), ((int)(((byte)(56)))));
-            this.lblStatus.Location = new System.Drawing.Point(10, 8);
+            this.lblStatus.Location = new System.Drawing.Point(4, 287);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(164, 18);
             this.lblStatus.TabIndex = 0;
@@ -241,11 +239,12 @@
             this.dgvSearchResult.RowTemplate.Height = 29;
             this.dgvSearchResult.SelectedIndex = -1;
             this.dgvSearchResult.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvSearchResult.Size = new System.Drawing.Size(870, 220);
+            this.dgvSearchResult.Size = new System.Drawing.Size(870, 227);
             this.dgvSearchResult.TabIndex = 1;
             // 
             // uiPanel3
             // 
+            this.uiPanel3.Controls.Add(this.lblStatus);
             this.uiPanel3.Controls.Add(this.dgvSearchResult);
             this.uiPanel3.Controls.Add(this.lblSearchResult);
             this.uiPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -255,7 +254,7 @@
             this.uiPanel3.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel3.Name = "uiPanel3";
             this.uiPanel3.Padding = new System.Windows.Forms.Padding(10);
-            this.uiPanel3.Size = new System.Drawing.Size(901, 298);
+            this.uiPanel3.Size = new System.Drawing.Size(901, 318);
             this.uiPanel3.TabIndex = 3;
             this.uiPanel3.Text = null;
             this.uiPanel3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -298,8 +297,6 @@
             this.uiPanel1.PerformLayout();
             this.uiPanel2.ResumeLayout(false);
             this.uiPanel2.PerformLayout();
-            this.uiStatusPanel.ResumeLayout(false);
-            this.uiStatusPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvSearchResult)).EndInit();
             this.uiPanel3.ResumeLayout(false);
             this.uiPanel3.PerformLayout();
