@@ -17,6 +17,11 @@ namespace MASAN_SERIALIZATION.Views.Database
 
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.header = new Sunny.UI.UIHeaderButton();
             this.top = new Sunny.UI.UIPanel();
             this.btnBrowse = new Sunny.UI.UIButton();
@@ -44,9 +49,14 @@ namespace MASAN_SERIALIZATION.Views.Database
             this.header.Location = new System.Drawing.Point(0, 0);
             this.header.MinimumSize = new System.Drawing.Size(1, 1);
             this.header.Name = "header";
+            this.header.Padding = new System.Windows.Forms.Padding(0, 8, 0, 3);
+            this.header.Radius = 0;
+            this.header.RadiusSides = Sunny.UI.UICornerRadiusSides.None;
+            this.header.RectSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.None;
             this.header.Size = new System.Drawing.Size(900, 50);
             this.header.TabIndex = 0;
             this.header.Text = "Xem dữ liệu từ orderNo.db";
+            this.header.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             // 
             // top
             // 
@@ -59,11 +69,14 @@ namespace MASAN_SERIALIZATION.Views.Database
             this.top.Dock = System.Windows.Forms.DockStyle.Top;
             this.top.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.top.Location = new System.Drawing.Point(0, 50);
+            this.top.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.top.MinimumSize = new System.Drawing.Size(1, 1);
             this.top.Name = "top";
             this.top.Padding = new System.Windows.Forms.Padding(10);
             this.top.Size = new System.Drawing.Size(900, 110);
             this.top.TabIndex = 1;
+            this.top.Text = null;
+            this.top.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnBrowse
             // 
@@ -75,6 +88,7 @@ namespace MASAN_SERIALIZATION.Views.Database
             this.btnBrowse.Size = new System.Drawing.Size(120, 30);
             this.btnBrowse.TabIndex = 5;
             this.btnBrowse.Text = "Chọn file...";
+            this.btnBrowse.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
             // btnLoad
@@ -87,25 +101,32 @@ namespace MASAN_SERIALIZATION.Views.Database
             this.btnLoad.Size = new System.Drawing.Size(120, 30);
             this.btnLoad.TabIndex = 2;
             this.btnLoad.Text = "Tải dữ liệu";
+            this.btnLoad.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
             // 
             // cbOrderNo
             // 
+            this.cbOrderNo.DataSource = null;
             this.cbOrderNo.DropDownStyle = Sunny.UI.UIDropDownStyle.DropDownList;
             this.cbOrderNo.FillColor = System.Drawing.Color.White;
             this.cbOrderNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.cbOrderNo.ItemHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
+            this.cbOrderNo.ItemSelectForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
             this.cbOrderNo.Location = new System.Drawing.Point(100, 20);
             this.cbOrderNo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cbOrderNo.MinimumSize = new System.Drawing.Size(63, 0);
             this.cbOrderNo.Name = "cbOrderNo";
             this.cbOrderNo.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
             this.cbOrderNo.Size = new System.Drawing.Size(500, 30);
+            this.cbOrderNo.SymbolSize = 24;
             this.cbOrderNo.TabIndex = 1;
             this.cbOrderNo.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.cbOrderNo.Watermark = "";
             // 
             // lblOrderNo
             // 
             this.lblOrderNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
+            this.lblOrderNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
             this.lblOrderNo.Location = new System.Drawing.Point(15, 20);
             this.lblOrderNo.Name = "lblOrderNo";
             this.lblOrderNo.Size = new System.Drawing.Size(85, 30);
@@ -118,6 +139,7 @@ namespace MASAN_SERIALIZATION.Views.Database
             this.txtDbPath.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtDbPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
             this.txtDbPath.Location = new System.Drawing.Point(100, 65);
+            this.txtDbPath.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtDbPath.MinimumSize = new System.Drawing.Size(1, 16);
             this.txtDbPath.Name = "txtDbPath";
             this.txtDbPath.Padding = new System.Windows.Forms.Padding(5);
@@ -126,10 +148,12 @@ namespace MASAN_SERIALIZATION.Views.Database
             this.txtDbPath.Size = new System.Drawing.Size(640, 30);
             this.txtDbPath.TabIndex = 4;
             this.txtDbPath.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.txtDbPath.Watermark = "";
             // 
             // lblDbPath
             // 
             this.lblDbPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
+            this.lblDbPath.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
             this.lblDbPath.Location = new System.Drawing.Point(15, 65);
             this.lblDbPath.Name = "lblDbPath";
             this.lblDbPath.Size = new System.Drawing.Size(85, 30);
@@ -143,23 +167,61 @@ namespace MASAN_SERIALIZATION.Views.Database
             this.body.Dock = System.Windows.Forms.DockStyle.Fill;
             this.body.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.body.Location = new System.Drawing.Point(0, 160);
+            this.body.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.body.MinimumSize = new System.Drawing.Size(1, 1);
             this.body.Name = "body";
             this.body.Padding = new System.Windows.Forms.Padding(10);
             this.body.Size = new System.Drawing.Size(900, 340);
             this.body.TabIndex = 2;
+            this.body.Text = null;
+            this.body.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // grid
             // 
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            this.grid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.grid.BackgroundColor = System.Drawing.Color.White;
             this.grid.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.grid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(160)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.grid.DefaultCellStyle = dataGridViewCellStyle3;
             this.grid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grid.EnableHeadersVisualStyles = false;
+            this.grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(160)))), ((int)(((byte)(255)))));
             this.grid.Location = new System.Drawing.Point(10, 10);
             this.grid.Name = "grid";
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(160)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.grid.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.grid.RowHeadersVisible = false;
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.grid.RowsDefaultCellStyle = dataGridViewCellStyle5;
             this.grid.RowTemplate.Height = 28;
+            this.grid.SelectedIndex = -1;
             this.grid.Size = new System.Drawing.Size(880, 320);
+            this.grid.StripeOddColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
             this.grid.TabIndex = 0;
             // 
             // bottom
@@ -170,16 +232,20 @@ namespace MASAN_SERIALIZATION.Views.Database
             this.bottom.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.bottom.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.bottom.Location = new System.Drawing.Point(0, 500);
+            this.bottom.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.bottom.MinimumSize = new System.Drawing.Size(1, 1);
             this.bottom.Name = "bottom";
             this.bottom.Padding = new System.Windows.Forms.Padding(10, 5, 10, 5);
             this.bottom.Size = new System.Drawing.Size(900, 40);
             this.bottom.TabIndex = 3;
+            this.bottom.Text = null;
+            this.bottom.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblStatus
             // 
             this.lblStatus.Dock = System.Windows.Forms.DockStyle.Left;
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.lblStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
             this.lblStatus.Location = new System.Drawing.Point(10, 5);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(350, 30);
@@ -192,7 +258,8 @@ namespace MASAN_SERIALIZATION.Views.Database
             this.txtFilter.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtFilter.Dock = System.Windows.Forms.DockStyle.Right;
             this.txtFilter.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.txtFilter.Location = new System.Drawing.Point(600, 5);
+            this.txtFilter.Location = new System.Drawing.Point(530, 5);
+            this.txtFilter.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtFilter.MinimumSize = new System.Drawing.Size(1, 16);
             this.txtFilter.Name = "txtFilter";
             this.txtFilter.Padding = new System.Windows.Forms.Padding(5);
@@ -207,7 +274,8 @@ namespace MASAN_SERIALIZATION.Views.Database
             // 
             this.lblFilter.Dock = System.Windows.Forms.DockStyle.Right;
             this.lblFilter.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.lblFilter.Location = new System.Drawing.Point(530, 5);
+            this.lblFilter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            this.lblFilter.Location = new System.Drawing.Point(820, 5);
             this.lblFilter.Name = "lblFilter";
             this.lblFilter.Size = new System.Drawing.Size(70, 30);
             this.lblFilter.TabIndex = 0;
@@ -217,12 +285,13 @@ namespace MASAN_SERIALIZATION.Views.Database
             // POrderNoViewer
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.ClientSize = new System.Drawing.Size(900, 540);
             this.Controls.Add(this.body);
             this.Controls.Add(this.bottom);
             this.Controls.Add(this.top);
             this.Controls.Add(this.header);
             this.Name = "POrderNoViewer";
-            this.Size = new System.Drawing.Size(900, 540);
+            this.Text = "Tra Cứu";
             this.top.ResumeLayout(false);
             this.body.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();

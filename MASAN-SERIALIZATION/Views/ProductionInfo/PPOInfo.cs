@@ -735,6 +735,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             TResult orderInfoResult = Globals.ProductionData.getfromMES.ProductionOrder_Detail(ipOrderNO.Text);
             //lấy thông tin productionDate đã chỉnh
             var POlog = Globals.ProductionData.getDataPO.Get_PO_Run_History_By_OrderNo(ipOrderNO.Text);
+
             if (POlog.issucess && POlog.logPO.Rows.Count > 0)
             {
                 this.InvokeIfRequired(() =>

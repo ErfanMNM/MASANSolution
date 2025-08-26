@@ -442,12 +442,12 @@ namespace MASAN_SERIALIZATION.Production
                     foreach (var file in files)
                     {
                         string orderNo = Path.GetFileNameWithoutExtension(file);
-                        //kiểm tra có chứa chữ PO ở đầu khônh
-                        
-
+                        //kiểm tra có chứa chữ PO ở đầu không
                             DataRow row = table.NewRow();
                             row["orderNo"] = orderNo;
-                            table.Rows.Add(row);
+                        //kiểm tra xem có bị hủy không
+                       // var poDetailResult = 
+                        table.Rows.Add(row);
                         //}
                         
                     }

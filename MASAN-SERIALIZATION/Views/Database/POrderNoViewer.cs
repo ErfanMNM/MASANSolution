@@ -30,8 +30,6 @@ namespace MASAN_SERIALIZATION.Views.Database
         public POrderNoViewer()
         {
             InitializeComponent();
-            this.Text = "Xem dữ liệu orderNo.db";
-            this.Symbol = 61639; // database icon
             InitGrid();
             LoadOrderNos();
         }
