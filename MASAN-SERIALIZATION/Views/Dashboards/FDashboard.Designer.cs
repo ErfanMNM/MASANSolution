@@ -454,8 +454,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel15.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
             this.uiTableLayoutPanel15.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
             this.uiTableLayoutPanel15.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.uiTableLayoutPanel15.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.uiTableLayoutPanel15.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.uiTableLayoutPanel15.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 18.23899F));
+            this.uiTableLayoutPanel15.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.3522F));
             this.uiTableLayoutPanel15.Size = new System.Drawing.Size(355, 318);
             this.uiTableLayoutPanel15.TabIndex = 8;
             this.uiTableLayoutPanel15.TagString = null;
@@ -465,10 +465,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.btnClearNoti.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnClearNoti.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnClearNoti.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnClearNoti.Location = new System.Drawing.Point(3, 263);
+            this.btnClearNoti.Location = new System.Drawing.Point(3, 268);
             this.btnClearNoti.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnClearNoti.Name = "btnClearNoti";
-            this.btnClearNoti.Size = new System.Drawing.Size(136, 52);
+            this.btnClearNoti.Size = new System.Drawing.Size(136, 47);
             this.btnClearNoti.Symbol = 557528;
             this.btnClearNoti.TabIndex = 33;
             this.btnClearNoti.Text = "Xóa bảng";
@@ -482,7 +482,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opCaseCount.Margin = new System.Windows.Forms.Padding(2);
             this.opCaseCount.MinimumSize = new System.Drawing.Size(1, 1);
             this.opCaseCount.Name = "opCaseCount";
-            this.opCaseCount.Size = new System.Drawing.Size(209, 48);
+            this.opCaseCount.Size = new System.Drawing.Size(209, 53);
             this.opCaseCount.TabIndex = 31;
             this.opCaseCount.Text = "...";
             this.opCaseCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -495,7 +495,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel1.Name = "uiPanel1";
-            this.uiPanel1.Size = new System.Drawing.Size(138, 48);
+            this.uiPanel1.Size = new System.Drawing.Size(138, 53);
             this.uiPanel1.TabIndex = 30;
             this.uiPanel1.Text = "Carton Count";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -612,10 +612,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.btnClearPLC.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnClearPLC.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnClearPLC.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnClearPLC.Location = new System.Drawing.Point(145, 263);
+            this.btnClearPLC.Location = new System.Drawing.Point(145, 268);
             this.btnClearPLC.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnClearPLC.Name = "btnClearPLC";
-            this.btnClearPLC.Size = new System.Drawing.Size(207, 52);
+            this.btnClearPLC.Size = new System.Drawing.Size(207, 47);
             this.btnClearPLC.Symbol = 362171;
             this.btnClearPLC.TabIndex = 32;
             this.btnClearPLC.Text = "Xóa Lỗi PLC";

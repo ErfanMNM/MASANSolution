@@ -27,8 +27,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MASAN-SERIALIZATION", "MASAN-SERIALIZATION\MASAN-SERIALIZATION.csproj", "{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "sqlite-explorer", "sqlite-explorer\sqlite-explorer.esproj", "{FDE57E95-9E05-7BEC-AA5E-AFD7412A70D7}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,17 +121,6 @@ Global
 		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Release|x64.ActiveCfg = Release|Any CPU
 		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Release|x64.Build.0 = Release|Any CPU
-		{FDE57E95-9E05-7BEC-AA5E-AFD7412A70D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FDE57E95-9E05-7BEC-AA5E-AFD7412A70D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FDE57E95-9E05-7BEC-AA5E-AFD7412A70D7}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{FDE57E95-9E05-7BEC-AA5E-AFD7412A70D7}.Debug|x64.ActiveCfg = Debug|x64
-		{FDE57E95-9E05-7BEC-AA5E-AFD7412A70D7}.Debug|x64.Deploy.0 = Debug|x64
-		{FDE57E95-9E05-7BEC-AA5E-AFD7412A70D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FDE57E95-9E05-7BEC-AA5E-AFD7412A70D7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FDE57E95-9E05-7BEC-AA5E-AFD7412A70D7}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{FDE57E95-9E05-7BEC-AA5E-AFD7412A70D7}.Release|x64.ActiveCfg = Release|Any CPU
-		{FDE57E95-9E05-7BEC-AA5E-AFD7412A70D7}.Release|x64.Build.0 = Release|Any CPU
-		{FDE57E95-9E05-7BEC-AA5E-AFD7412A70D7}.Release|x64.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
