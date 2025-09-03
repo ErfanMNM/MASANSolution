@@ -303,7 +303,11 @@ namespace MASAN_SERIALIZATION.Views.Settings
                 { "cartonOfset", "Carton Offset" },
                 { "Auto_Send_AWS", "Tự động gửi AWS" },
                 { "APP_Mode", "Chế độ ứng dụng" },
-                { "cartonAutoStart", "Chỉ quét thùng 1 lần" },
+                { "cartonAutoStart", "Tự kích hoạt thùng" },
+                { "cartonScanerMode", "Chế độ quét thùng carton" },
+                { "cartonScaner_Only_Once", "Chỉ dùng 1 máy quét" },
+                { "cartonScanerTCP_IP", "IP máy quét thùng carton TCP" },
+                { "cartonScanerTCP_Port", "Cổng máy quét thùng carton TCP" },
                 { "PLC_Test_Mode", "Chế độ kiểm tra PLC" },
                 { "PLC_Duo_Mode", "Chế độ PLC đôi" }
             };

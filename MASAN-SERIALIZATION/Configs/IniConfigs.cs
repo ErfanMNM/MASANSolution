@@ -32,6 +32,8 @@ namespace MASAN_SERIALIZATION.Configs
 
         public int cartonScanerMode { get; set; } // Chế độ quét mã thùng carton (0: Manual, 1: Auto)
 
+        public bool cartonScaner_Only_Once { get; set; } // Bật/Tắt tính năng quét mã thùng carton qua cổng COM
+
         public string cartonScanerTCP_IP { get; set; } // Địa chỉ IP của máy quét mã thùng carton TCP
         public int cartonScanerTCP_Port { get; set; } // Cổng kết nối của máy quét mã thùng carton TCP
 
