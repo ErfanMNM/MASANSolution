@@ -87,6 +87,7 @@
             this.btnSend1 = new Sunny.UI.UISymbolButton();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.serialPort2 = new System.IO.Ports.SerialPort(this.components);
+            this.tcpClient1 = new SpT.Communications.TCP.TCPClient(this.components);
             this.mainContainer.SuspendLayout();
             this.scannerGroup.SuspendLayout();
             this.scannerContainer.SuspendLayout();
@@ -979,6 +980,12 @@
             this.btnSend1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnSend1.Click += new System.EventHandler(this.btnSend1_Click);
             // 
+            // tcpClient1
+            // 
+            this.tcpClient1.IP = "127.0.0.1";
+            this.tcpClient1.Port = 5566;
+            this.tcpClient1.ClientCallBack += new SpT.Communications.TCP.TCPClient.EventForClient(this.tcpClient1_ClientCallBack);
+            // 
             // PCartonDashboard
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1079,5 +1086,6 @@
         private Sunny.UI.UITextBox ipTest1;
         private Sunny.UI.UISymbolButton btnSend2;
         private Sunny.UI.UISymbolButton btnSend1;
+        private SpT.Communications.TCP.TCPClient tcpClient1;
     }
 }

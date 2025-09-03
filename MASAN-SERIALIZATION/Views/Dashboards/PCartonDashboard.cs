@@ -39,7 +39,25 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
         public void INIT()
         {
+            if(AppConfigs.Current.cartonScanerMode != 1)
+            {
+                _ScanConection01.SERIALPORT = serialPort1;
+                _ScanConection01.EVENT += _ScanConection01_EVENT;
+                _ScanConection01.LOAD();
+                _ScanConection01.CONNECT(AppConfigs.Current.HandScanCOM01);
 
+                _ScanConection02.SERIALPORT = serialPort2;
+                _ScanConection02.EVENT += _ScanConection02_EVENT;
+                _ScanConection02.LOAD();
+                _ScanConection02.CONNECT(AppConfigs.Current.HandScanCOM02);
+            }
+            else
+            {
+                tcpClient1.IP = AppConfigs.Current.cartonScanerTCP_IP;
+                tcpClient1.Port = AppConfigs.Current.cartonScanerTCP_Port;
+
+                tcpClient1.Connect();
+            }
             _ScanConection01.SERIALPORT = serialPort1;
             _ScanConection01.EVENT += _ScanConection01_EVENT;
             _ScanConection01.LOAD();
@@ -136,6 +154,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     {
                         opLane02.Items.Insert(0, s.Trim());
                     });
+
                     HandScan02_Process(s);
                     break;
             }
@@ -152,13 +171,17 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     }
                     break;
                 case e_Serial.Disconnected:
+
                     if (Globals.HandScan01_Connected)
                     {
                         Globals.HandScan01_Connected = false;
                     }
                     break;
                 case e_Serial.Recive:
-
+                    this.InvokeIfRequired(() =>
+                    {
+                        opLane01.Items.Insert(0, s.Trim());
+                    });
                     HandScan01_Process(s);
                     break;
 
@@ -335,6 +358,50 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private void btnSend2_Click(object sender, EventArgs e)
         {
             HandScan02_Process(ipTest2.Text);
+        }
+
+        private void tcpClient1_ClientCallBack(SpT.Communications.TCP.enumClient state, string data)
+        {
+            switch (state)
+            {
+                case SpT.Communications.TCP.enumClient.CONNECTED:
+                    this.InvokeIfRequired(() =>
+                    {
+                        opLane01.Items.Insert(0, "TCP Connected");
+                    });
+                    Globals.e_Hand_Scan_Carton_State = e_Camera_State.CONNECTED;
+                    break;
+                case SpT.Communications.TCP.enumClient.DISCONNECTED:
+                    this.InvokeIfRequired(() =>
+                    {
+                        opLane01.Items.Insert(0, "TCP Disconnected" );
+                    });
+                    Globals.e_Hand_Scan_Carton_State = e_Camera_State.DISCONNECTED;
+                    break;
+                case SpT.Communications.TCP.enumClient.RECEIVED:
+                    //phân tách ký tự <p> để lấy thùng bên nào ví dụ SC1<p>123456789 là thùng bên 1
+
+                    string lane = data.Split(new string[] { "<p>" }, StringSplitOptions.None)[0];
+                    string codeContent = data.Split(new string[] { "<p>" }, StringSplitOptions.None)[1];
+
+                    if (lane != "SC1")
+                    {
+                        HandScan01_Process(codeContent);
+                    }
+                    else
+                    {
+                        HandScan02_Process(codeContent);
+                    }
+
+                    break;
+                case SpT.Communications.TCP.enumClient.RECONNECT:
+                    this.InvokeIfRequired(() =>
+                    {
+                        opLane01.Items.Insert(0, "TCP Reconnect");
+                    });
+                    Globals.e_Hand_Scan_Carton_State = e_Camera_State.RECONNECTING;
+                    break;
+            }
         }
     }
 }

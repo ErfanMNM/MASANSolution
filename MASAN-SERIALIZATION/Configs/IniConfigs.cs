@@ -29,12 +29,20 @@ namespace MASAN_SERIALIZATION.Configs
         public string clientId { get; set; } // Điểm cuối AWS IoT
         public int cartonPack { get; set; } // Đường dẫn đến chứng chỉ của client
         public int cartonOfset { get; set; } // Số lượng sản phẩm trong một thùng carton
+
+        public int cartonScanerMode { get; set; } // Chế độ quét mã thùng carton (0: Manual, 1: Auto)
+
+        public string cartonScanerTCP_IP { get; set; } // Địa chỉ IP của máy quét mã thùng carton TCP
+        public int cartonScanerTCP_Port { get; set; } // Cổng kết nối của máy quét mã thùng carton TCP
+
         public bool Auto_Send_AWS { get; set; } // Tự động gửi dữ liệu lên AWS
         public int APP_Mode { get; set; } // Chế độ ứng dụng (0: Normal, 1: Test, 2: Debug)
         public bool cartonAutoStart { get; set; } // Tự động kích hoạt mã thùng carton
 
         public bool PLC_Test_Mode { get; set; } // Biến để kiểm tra kết nối PLC, mặc định là false
         public bool PLC_Duo_Mode { get; set; } // Biến để kiểm tra kết nối PLC, mặc định là false
+
+
 
 
         public override void SetDefault()
@@ -62,6 +70,10 @@ namespace MASAN_SERIALIZATION.Configs
             cartonAutoStart = false; // Mặc định tự động kích hoạt mã thùng carton
             PLC_Test_Mode = true; // Mặc định kiểm tra kết nối PLC là false
             PLC_Duo_Mode = false; // Mặc định kiểm tra kết nối PLC là false
+
+            cartonScanerMode = 0; // Mặc định chế độ quét mã thùng carton là Manual (0)
+            cartonScanerTCP_IP = "192.168.250.14";
+            cartonScanerTCP_Port = 5566;
         }
     }
 }
