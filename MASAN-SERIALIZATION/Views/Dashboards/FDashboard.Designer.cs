@@ -1152,7 +1152,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             // 
             // OMRON_PLC_02
             // 
-            this.OMRON_PLC_02.PLC_IP = "127.0.0.1";
+            this.OMRON_PLC_02.PLC_IP = "192.168.169.2";
             this.OMRON_PLC_02.PLC_PORT = 9600;
             this.OMRON_PLC_02.PLC_Ready_DM = "D16";
             this.OMRON_PLC_02.PLC_STATUS = SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect;

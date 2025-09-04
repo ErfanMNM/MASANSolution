@@ -33,6 +33,8 @@ namespace MASAN_SERIALIZATION.Configs
         public int cartonScanerMode { get; set; } // Chế độ quét mã thùng carton (0: Manual, 1: Auto)
 
         public bool cartonScaner_Only_Once { get; set; } // Bật/Tắt tính năng quét mã thùng carton qua cổng COM
+        public string cartonCode_Line01 { get; set; }
+        public string cartonCode_Line02 { get; set; }
 
         public string cartonScanerTCP_IP { get; set; } // Địa chỉ IP của máy quét mã thùng carton TCP
         public int cartonScanerTCP_Port { get; set; } // Cổng kết nối của máy quét mã thùng carton TCP
@@ -43,6 +45,8 @@ namespace MASAN_SERIALIZATION.Configs
 
         public bool PLC_Test_Mode { get; set; } // Biến để kiểm tra kết nối PLC, mặc định là false
         public bool PLC_Duo_Mode { get; set; } // Biến để kiểm tra kết nối PLC, mặc định là false
+
+        public string PLC_Address_Sheet_Name { get; set; }
 
 
 
@@ -76,6 +80,9 @@ namespace MASAN_SERIALIZATION.Configs
             cartonScanerMode = 0; // Mặc định chế độ quét mã thùng carton là Manual (0)
             cartonScanerTCP_IP = "192.168.250.14";
             cartonScanerTCP_Port = 5566;
+            PLC_Address_Sheet_Name = "PLC";
+            cartonCode_Line01 = "0";
+            cartonCode_Line02 = "1";
         }
     }
 }

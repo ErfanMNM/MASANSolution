@@ -142,7 +142,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
                     string[] topicsToSub = new[]
                                       {
-                                            "CZ/MIPWP501/response"
+                                            "CZ/"+AppConfigs.Current.clientId+"/response"
                                         };
 
                     awsClient.SubscribeMultiple(topicsToSub);

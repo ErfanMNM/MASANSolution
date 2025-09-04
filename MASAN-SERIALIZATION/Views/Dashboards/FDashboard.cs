@@ -160,15 +160,19 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             switch (e.Status)
             {
                 case PLCStatus.Connecting:
-                    if (!Globals.PLC_Connected)
+                    if (!Globals.PLC_Connected_02)
                     {
-                        Globals.PLC_Connected = true;
+                        Globals.PLC_Connected_02 = true;
                     }
                     break;
                 case PLCStatus.Disconnect:
-                    if (Globals.PLC_Connected)
+                    this.InvokeIfRequired(() =>
                     {
-                        Globals.PLC_Connected = false;
+                        ipConsole.Items.Insert(0, "Chế độ 2 PLC");
+                    });
+                    if (Globals.PLC_Connected_02)
+                    {
+                        Globals.PLC_Connected_02 = false;
                     }
                     break;
                 default:
@@ -204,7 +208,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 return;
             }
 
-            _data = _data.Replace("<GS>", "\u001D").Replace("<RS>", "\u001E").Replace("<US>", "\u001F");
+            _data = _data.Replace("<GS>", "\u001D").Replace("<RS>", "\u001E").Replace("<US>", "\u001F").Replace(";", "");
 
             if (Globals_Database.Dictionary_ProductionCode_Data.TryGetValue(_data, out ProductionCodeData _produtionCodeData))
             {
@@ -298,7 +302,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 return;
             }
 
-            _data = _data.Replace("<GS>", "\u001D").Replace("<RS>", "\u001E").Replace("<US>", "\u001F");
+            _data = _data.Replace("<GS>", "\u001D").Replace("<RS>", "\u001E").Replace("<US>", "\u001F").Replace(";","");
+
+
 
             //kiểm tra mã có tồn tại hay không
             if (Globals_Database.Dictionary_ProductionCode_Data.TryGetValue(_data, out ProductionCodeData _produtionCodeData))
@@ -665,7 +671,19 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 if (AppConfigs.Current.PLC_Duo_Mode)
                 {
-                    OMRON_PLC_02.InitPLC();
+                    try
+                    {
+                        OMRON_PLC_02.InitPLC();
+                    }
+                    catch (Exception e)
+                    {
+                        this.InvokeIfRequired(() =>
+                        {
+                            ipConsole.Items.Insert(0, "Chế độ 2 PLC" + e.Message);
+                        });
+                    }
+                    
+                    
                 }
 
             }
@@ -787,33 +805,69 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         }
         public void UpdatePLCState()
         {
-            this.InvokeIfRequired(() =>
+            if(AppConfigs.Current.PLC_Duo_Mode)
             {
-                if (Globals.PLC_Connected)
+                this.InvokeIfRequired(() =>
                 {
-                    if (opPLC_State.Text != "Tốt")
+                    if (Globals.PLC_Connected && Globals.PLC_Connected_02)
                     {
-                        opLedPLC.Blink = false;
-                        opPLC_State.Text = "Tốt";
-                        opPLC_State.FillColor = Color.White;
-                        opPLC_State.RectColor = Color.Green;
-                        opLedPLC.Color = Color.Green;
-                        opLedPLC.On = true;
+                        if (opPLC_State.Text != "Tốt2")
+                        {
+                            opLedPLC.Blink = false;
+                            opPLC_State.Text = "Tốt2";
+                            opPLC_State.FillColor = Color.White;
+                            opPLC_State.RectColor = Color.Green;
+                            opLedPLC.Color = Color.Green;
+                            opLedPLC.On = true;
+                        }
                     }
-                }
-                else
+                    else
+                    {
+                        if (opPLC_State.Text != "Lỗi")
+                        {
+                            opLedPLC.Blink = true;
+                            opPLC_State.Text = "Lỗi";
+                            opPLC_State.FillColor = Color.MistyRose;
+                            opPLC_State.RectColor = Color.Red;
+                            opLedPLC.Color = Color.Red;
+                            opLedPLC.On = true;
+                        }
+                    }
+                });
+            }
+            else
+            {
+                this.InvokeIfRequired(() =>
                 {
-                    if (opPLC_State.Text != "Lỗi")
+                    if (Globals.PLC_Connected)
                     {
-                        opLedPLC.Blink = true;
-                        opPLC_State.Text = "Lỗi";
-                        opPLC_State.FillColor = Color.MistyRose;
-                        opPLC_State.RectColor = Color.Red;
-                        opLedPLC.Color = Color.Red;
-                        opLedPLC.On = true;
+                        if (opPLC_State.Text != "Tốt1")
+                        {
+                            opLedPLC.Blink = false;
+                            opPLC_State.Text = "Tốt1";
+                            opPLC_State.FillColor = Color.White;
+                            opPLC_State.RectColor = Color.Green;
+                            opLedPLC.Color = Color.Green;
+                            opLedPLC.On = true;
+                        }
                     }
-                }
-            });
+                    else
+                    {
+                        if (opPLC_State.Text != "Lỗi")
+                        {
+                            opLedPLC.Blink = true;
+                            opPLC_State.Text = "Lỗi";
+                            opPLC_State.FillColor = Color.MistyRose;
+                            opPLC_State.RectColor = Color.Red;
+                            opLedPLC.Color = Color.Red;
+                            opLedPLC.On = true;
+                        }
+                    }
+                });
+            }
+            
+            
+            
         }
         public void UpdateCounterUI()
         {
@@ -864,6 +918,20 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         
         private void ProcessRunningState()
         {
+
+            if (AppConfigs.Current.PLC_Duo_Mode)
+            {
+
+                    OperateResult ws = OMRON_PLC_02.plc.Write(PLCAddress.Get("PLC2_Alarm_DM_C1"), 0);
+
+            }
+            else
+            {
+
+                    OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 0);
+
+            }
+
             //kiểm tra thùng hiện tại có mã chưa
             if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonData))
             {
@@ -909,18 +977,23 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         }
 
 
-        public bool state01 = false;
-        public bool state02 = false;
+        public int state01 = 0;
+        public int state02 = 0;
         private void ProcessPauseState()
         {
-            state01 = state02 = false;
+
+            state01 = state02 = 0;
             //kiểm tra thùng hiện tại có mã chưa
             if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonData))
             {
                 if (cartonData.cartonCode != "0")
                 {
-                    state01 = true;
+                    state01 = 2;
                    //Globals.Production_State = e_Production_State.Running; //nếu thùng hiện tại đã có mã thì chuyển sang running
+                }
+                else
+                {
+                    state01 = 1;
                 }
             }
 
@@ -931,22 +1004,80 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 {
                     if (cartonData2.cartonCode != "0")
                     {
-                        state02 = true;
+                        state02 = 2;
                         //Globals.Production_State = e_Production_State.Running; //nếu thùng sắp tới đã có mã thì chuyển sang running
                     }else
                     {
-                        state02 = false;
+                        state02 = 1;
                     }
                 }
                 else
                                     {
-                    state02 = true; //nếu chưa đến lúc chuyển thùng thì cứ chạy bình thường
+                    state02 = 2; //nếu chưa đến lúc chuyển thùng thì cứ chạy bình thường
                 }
             }
+            else
+            {
+                //thùng cuối cùng không tồn tại
+                state02 = 2;
+            }
 
-            if (state02 && state01)
+            if (state02 == 2 && state01 == 2)
             {
                 Globals.Production_State = e_Production_State.Running;
+            }
+            if (state01 == 1)
+            {
+                
+
+                if(AppConfigs.Current.PLC_Duo_Mode)
+                {
+                    if (Globals.ProductionData.counter.cartonID % 2 == 0)
+                    {
+                        OperateResult ws = OMRON_PLC_02.plc.Write(PLCAddress.Get("PLC2_Alarm_DM_C1"), 3);
+                    }
+                    else
+                    {
+                        OperateResult ws = OMRON_PLC_02.plc.Write(PLCAddress.Get("PLC2_Alarm_DM_C1"), 2);
+                    }
+                }
+                else
+                {
+                    if (Globals.ProductionData.counter.cartonID % 2 == 0)
+                    {
+                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 3);
+                    }
+                    else
+                    {
+                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 2);
+                    }
+                }
+                
+            }
+            if (state02 == 1)
+            {
+                if (AppConfigs.Current.PLC_Duo_Mode)
+                {
+                    if (Globals.ProductionData.counter.cartonID % 2 == 0)
+                    {
+                        OperateResult ws = OMRON_PLC_02.plc.Write(PLCAddress.Get("PLC2_Alarm_DM_C1"), 2);
+                    }
+                    else
+                    {
+                        OperateResult ws = OMRON_PLC_02.plc.Write(PLCAddress.Get("PLC2_Alarm_DM_C1"), 3);
+                    }
+                }
+                else
+                {
+                    if (Globals.ProductionData.counter.cartonID % 2 == 0)
+                    {
+                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 2);
+                    }
+                    else
+                    {
+                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 3);
+                    }
+                }
             }
         }
 
@@ -1254,7 +1385,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                     bool isCartonReady4 = false;
                     bool isCartonReady5 = false;
-                    //kiểm tra thùng đang xếp chốt mã chưa
+                    //kiểm tra thùng đang xếp xếp hết chưa
                     if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonData5))
                     {
                        if(cartonData5.Activate_Datetime != "0")
@@ -1272,7 +1403,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         }
                     }
 
-                    if (isCartonReady4 && isCartonReady5)
+                    if (Globals.ProductionData.counter.cartonID > Globals.ProductionData.orderQty.ToInt32() / AppConfigs.Current.cartonPack)
                     {
                         //nếu thùng đang xếp đã chốt mã và thùng cũ đã chốt mã thì chuyển sang Completed
                         Globals.Production_State = e_Production_State.Check_After_Completed;
@@ -1524,6 +1655,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 Thread.Sleep(5000); // Đợi 1 giây để PLC xử lý lệnh
                 OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Clear_DM"), 1); // Gửi lệnh reset counter về 0
+                if(AppConfigs.Current.PLC_Duo_Mode)
+                {
+                    OMRON_PLC_02.plc.Write(PLCAddress.Get("PLC2_Clear_DM"), 1); // Gửi lệnh reset counter về 0
+                }
                 this.InvokeIfRequired(() =>
                 {
                     btnClearPLC.Enabled = true; // Kích hoạt lại nút sau khi hoàn thành

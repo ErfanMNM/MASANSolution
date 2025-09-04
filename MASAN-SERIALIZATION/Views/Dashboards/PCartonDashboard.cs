@@ -155,11 +155,16 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         opLane02.Items.Insert(0, s.Trim());
                     });
 
+                    if (AppConfigs.Current.cartonScaner_Only_Once)
+                    { 
+                        break;
+                    }
                     HandScan02_Process(s);
                     break;
             }
         }
 
+        string saveLine = AppConfigs.Current.cartonCode_Line01;
         private void _ScanConection01_EVENT(e_Serial e, string s)
         {
             switch (e)
@@ -181,8 +186,48 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     this.InvokeIfRequired(() =>
                     {
                         opLane01.Items.Insert(0, s.Trim());
+                        opLane01.Items.Insert(0, saveLine);
                     });
-                    HandScan01_Process(s);
+
+                    if (AppConfigs.Current.cartonScaner_Only_Once)
+                    {
+                        if (s.Contains(AppConfigs.Current.cartonCode_Line01) || s.Contains(AppConfigs.Current.cartonCode_Line02))
+                        {
+                            
+                            saveLine = s.Trim();
+                            this.InvokeIfRequired(() =>
+                            {
+
+                                opLane01.Items.Insert(0, "Đổi Line " + saveLine);
+                            });
+                        }
+                        else
+                        {
+                            if(saveLine.Contains(AppConfigs.Current.cartonCode_Line01))
+                            {
+                                this.InvokeIfRequired(() =>
+                                {
+
+                                    opLane01.Items.Insert(0, "Xử lý Lane 01" + saveLine);
+                                });
+                                HandScan01_Process(s.Trim());
+                            }
+                            else if (saveLine.Contains(AppConfigs.Current.cartonCode_Line02))
+                            {
+                                this.InvokeIfRequired(() =>
+                                {
+
+                                    opLane01.Items.Insert(0, "Xử lý Lane 02" + saveLine);
+                                });
+                                HandScan02_Process(s.Trim());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        HandScan01_Process(s);
+                    }
+                    
                     break;
 
             }

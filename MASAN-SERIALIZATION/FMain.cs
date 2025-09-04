@@ -114,7 +114,7 @@ namespace MASAN_SERIALIZATION
                 PLCAddress.Init(
                     "credentials.json",
                     "1V2xjY6AA4URrtcwUorQE54Ud5KyI7Ev2hpDPMMcXVTI",
-                    "PLC!A1:C100"
+                    AppConfigs.Current.PLC_Address_Sheet_Name+"!A1:C100"
                 );
             }
             catch (Exception ex)
@@ -350,10 +350,15 @@ namespace MASAN_SERIALIZATION
         private void HandleActiveStatusDisplay()
         {
             Globals.APP_Ready = true;
+
+            if(!AppConfigs.Current.PLC_Duo_Mode)
+            {
+                Globals.PLC_Connected_02 = true;
+            }
             
             if (Globals.CameraMain_State != e_Camera_State.CONNECTED || 
                 Globals.CameraSub_State != e_Camera_State.CONNECTED || 
-                Globals.PLC_Connected != true)
+                Globals.PLC_Connected != true || Globals.PLC_Connected_02 != true)
             {
                 Globals.Device_Ready = false;
                 this.InvokeIfRequired(() =>

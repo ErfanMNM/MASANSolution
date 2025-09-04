@@ -47,6 +47,8 @@ namespace MASAN_SERIALIZATION
         public static e_Camera_State e_Hand_Scan_Carton_State { get; set; } = e_Camera_State.DISCONNECTED;
 
         public static bool PLC_Connected { get; set; } = false; // Biến toàn cục để kiểm tra kết nối PLC
+
+        public static bool PLC_Connected_02 { get; set; } = false;
         public static PLCCounter CameraMain_PLC_Counter { get; set; } = new PLCCounter(); // Biến toàn cục để lưu trữ thông tin đếm sản phẩm từ camera chính
 
         public static  string Canhbao { get; set; } = string.Empty; // Biến toàn cục để lưu trữ cảnh báo từ camera chính
