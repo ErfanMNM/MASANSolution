@@ -183,21 +183,26 @@ namespace MASAN_SERIALIZATION
         #endregion
 
         #region Private Methods - UI Operations
+        private Rectangle prevBounds;
+
         private void ToggleFullScreen()
         {
-            if (this.WindowState != FormWindowState.Maximized)
+            if (FormBorderStyle != FormBorderStyle.None)
             {
-                this.Tag = this.WindowState;
-                this.WindowState = FormWindowState.Normal;
-                this.FormBorderStyle = FormBorderStyle.None;
-                this.WindowState = FormWindowState.Maximized;
+                // Lưu trạng thái cũ
+                prevBounds = Bounds;
+                FormBorderStyle = FormBorderStyle.None;
+                WindowState = FormWindowState.Normal; // reset
+                Bounds = Screen.FromControl(this).Bounds; // full màn hình (bao gồm taskbar)
             }
             else
             {
-                this.WindowState = (FormWindowState)this.Tag;
-                this.FormBorderStyle = FormBorderStyle.Sizable;
+                // Trả lại
+                FormBorderStyle = FormBorderStyle.Sizable;
+                Bounds = prevBounds;
             }
         }
+
         #endregion
 
         #region Private Methods - State Processing

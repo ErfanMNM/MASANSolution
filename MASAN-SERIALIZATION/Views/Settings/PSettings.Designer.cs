@@ -35,8 +35,8 @@ namespace MASAN_SERIALIZATION.Views.Settings
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.uc_UserSetting1 = new SpT.Auth.uc_UserSetting();
             this.uc_UserManager1 = new SpT.Auth.uc_UserManager();
-            this.tabPageDynamic = new System.Windows.Forms.TabPage();
             this.uiTabControl1 = new Sunny.UI.UITabControl();
+            this.tabPageDynamic = new System.Windows.Forms.TabPage();
             this.uiPanel1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.uiTabControl1.SuspendLayout();
@@ -105,7 +105,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
             this.tabPage1.Controls.Add(this.uc_UserManager1);
             this.tabPage1.Location = new System.Drawing.Point(0, 40);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(200, 60);
+            this.tabPage1.Size = new System.Drawing.Size(840, 552);
             this.tabPage1.TabIndex = 1;
             this.tabPage1.Text = "👤 Người dùng";
             // 
@@ -143,16 +143,6 @@ namespace MASAN_SERIALIZATION.Views.Settings
             this.uc_UserManager1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             this.uc_UserManager1.OnAction += new System.EventHandler<SpT.Auth.LoginActionEventArgs>(this.uc_UserManager1_OnAction);
             // 
-            // tabPageDynamic
-            // 
-            this.tabPageDynamic.AutoScroll = true;
-            this.tabPageDynamic.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
-            this.tabPageDynamic.Location = new System.Drawing.Point(0, 40);
-            this.tabPageDynamic.Name = "tabPageDynamic";
-            this.tabPageDynamic.Size = new System.Drawing.Size(840, 552);
-            this.tabPageDynamic.TabIndex = 0;
-            this.tabPageDynamic.Text = "⚙️ Cài đặt";
-            // 
             // uiTabControl1
             // 
             this.uiTabControl1.Controls.Add(this.tabPageDynamic);
@@ -174,6 +164,16 @@ namespace MASAN_SERIALIZATION.Views.Settings
             this.uiTabControl1.TabSelectedForeColor = System.Drawing.Color.White;
             this.uiTabControl1.TabUnSelectedForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(117)))), ((int)(((byte)(117)))));
             this.uiTabControl1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            // 
+            // tabPageDynamic
+            // 
+            this.tabPageDynamic.AutoScroll = true;
+            this.tabPageDynamic.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+            this.tabPageDynamic.Location = new System.Drawing.Point(0, 40);
+            this.tabPageDynamic.Name = "tabPageDynamic";
+            this.tabPageDynamic.Size = new System.Drawing.Size(840, 552);
+            this.tabPageDynamic.TabIndex = 0;
+            this.tabPageDynamic.Text = "⚙️ Cài đặt";
             // 
             // PSettings
             // 
@@ -202,7 +202,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
         private System.Windows.Forms.TabPage tabPage1;
         private SpT.Auth.uc_UserSetting uc_UserSetting1;
         private SpT.Auth.uc_UserManager uc_UserManager1;
-        private System.Windows.Forms.TabPage tabPageDynamic;
         private Sunny.UI.UITabControl uiTabControl1;
+        private System.Windows.Forms.TabPage tabPageDynamic;
     }
 }

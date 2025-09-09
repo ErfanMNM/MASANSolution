@@ -64,6 +64,8 @@ namespace MASAN_SERIALIZATION
     {
         public static Dictionary<string, ProductionCodeData> Dictionary_ProductionCode_Data { get; set; } = new Dictionary<string, ProductionCodeData>(); // Lưu trữ dữ liệu mã sản xuất
 
+        public static Dictionary<string, ProductionCodeData> Dictionary_ProductionCode_CameraSub_Data { get; set; } = new Dictionary<string, ProductionCodeData>();
+
         public static Dictionary<int, ProductionCartonData> Dictionary_ProductionCarton_Data { get; set; } = new Dictionary<int, ProductionCartonData>(); // Lưu trữ dữ liệu mã thùng sản xuất
 
         public static Queue<(string conten, ProductionCodeData data, bool duplicate)> Update_Product_To_SQLite_Queue = new Queue<(string content, ProductionCodeData data, bool duplicate)>();
