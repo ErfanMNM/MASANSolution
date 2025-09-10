@@ -1017,41 +1017,41 @@ namespace MASAN_SERIALIZATION.Production
                     }
                 }
 
-                //cập nhật lại mã CZ cho chắc
-                TResult getUniqueCodesMes = getfromMES.Get_Unique_Codes_MES(orderNo);
-                if (!getUniqueCodesMes.issuccess)
-                {
-                    return (false, getUniqueCodesMes.message);
-                }
-                DataTable poUniqueCodes = getUniqueCodesMes.data;
+                ////cập nhật lại mã CZ cho chắc
+                //TResult getUniqueCodesMes = getfromMES.Get_Unique_Codes_MES(orderNo);
+                //if (!getUniqueCodesMes.issuccess)
+                //{
+                //    return (false, getUniqueCodesMes.message);
+                //}
+                //DataTable poUniqueCodes = getUniqueCodesMes.data;
 
-                var getUniqueCodesRun = getDataPO.Get_Codes(orderNo);
-                if (!getUniqueCodesRun.issucess)
-                {
-                    return (false, getUniqueCodesRun.message);
-                }
-                DataTable czRunUniqueCodes = getUniqueCodesRun.Codes;
+                //var getUniqueCodesRun = getDataPO.Get_Codes(orderNo);
+                //if (!getUniqueCodesRun.issucess)
+                //{
+                //    return (false, getUniqueCodesRun.message);
+                //}
+                //DataTable czRunUniqueCodes = getUniqueCodesRun.Codes;
 
-                List<string> poCodes = poUniqueCodes.AsEnumerable().Select(row => row.Field<string>("Code")).ToList();
-                List<string> czRunCodes = czRunUniqueCodes.AsEnumerable().Select(row => row.Field<string>("Code")).ToList();
-                List<string> codesToAdd = poCodes.Except(czRunCodes).ToList();
+                //List<string> poCodes = poUniqueCodes.AsEnumerable().Select(row => row.Field<string>("Code")).ToList();
+                //List<string> czRunCodes = czRunUniqueCodes.AsEnumerable().Select(row => row.Field<string>("Code")).ToList();
+                //List<string> codesToAdd = poCodes.Except(czRunCodes).ToList();
 
-                if (codesToAdd.Count > 0)
-                {
-                    //tạo thư mục nếu chưa tồn tại
-                    string czRunPath = $"{poAPIServerPath}/codes/{orderNo}.db";
-                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
-                    {
-                        conn.Open();
-                        foreach (string code in codesToAdd)
-                        {
-                            string insertQuery = "INSERT INTO UniqueCodes (Code) VALUES (@Code)";
-                            var command = new SQLiteCommand(insertQuery, conn);
-                            command.Parameters.AddWithValue("@Code", code);
-                            command.ExecuteNonQuery();
-                        }
-                    }
-                }
+                //if (codesToAdd.Count > 0)
+                //{
+                //    //tạo thư mục nếu chưa tồn tại
+                //    string czRunPath = $"{poAPIServerPath}/codes/{orderNo}.db";
+                //    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                //    {
+                //        conn.Open();
+                //        foreach (string code in codesToAdd)
+                //        {
+                //            string insertQuery = "INSERT INTO UniqueCodes (Code) VALUES (@Code)";
+                //            var command = new SQLiteCommand(insertQuery, conn);
+                //            command.Parameters.AddWithValue("@Code", code);
+                //            command.ExecuteNonQuery();
+                //        }
+                //    }
+                //}
 
                 return (true, "Ghi PO thành công vào cơ sở dữ liệu.");
             }

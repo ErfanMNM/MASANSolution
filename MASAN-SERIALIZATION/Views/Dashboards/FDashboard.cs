@@ -365,13 +365,44 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         {
                             ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: AAA Mã thùng hiện tại chưa có, không xử lý tiếp.");
                             ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            this.ShowErrorNotifier("PC 012 Chưa có mã thùng, không xử lý tiếp.", false, 10000);
+                            //this.ShowErrorNotifier("PC 012 Chưa có mã thùng, không xử lý tiếp.", false, 10000);
                             Globals.Canhbao = "#Thùng đang chạy chưa có mã";
                         });
                         //Quăng về ready
                         Globals.Production_State = e_Production_State.Pause;
                         return;
                     }
+                }
+
+                //kiểm tra xem có quá số lượng trong thùng không
+                if (Globals.ProductionData.counter.carton_Packing_Count > AppConfigs.Current.cartonPack)
+                {
+                    //kiểm tra thùng mới có mã chưa, nếu chưa có thì dừng line
+                    if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out cartonData))
+                    {
+                        if (cartonData.cartonCode == "0")
+                        {
+                            //chưa được quét mã bắt đầu => dừng line, 
+                            //Quăng về pause
+                            Globals.Production_State = e_Production_State.Pause;
+                            this.InvokeIfRequired(() =>
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Chưa quét mã thùng, không xử lý tiếp.");
+                                Globals.Canhbao = "#Thùng đang xếp chưa có mã";
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                                //this.ShowErrorNotifier("#02 Thùng chuẩn bị xếp chưa có mã!");
+                            });
+                            return; //nếu thùng chưa có mã thì không xử lý tiếp
+                        }
+                    }
+                    //kích hoạt thùng mới
+                    Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(cache_CartonID, out ProductionCartonData cartonDataz);
+                    Globals_Database.Activate_Carton.Enqueue(cartonDataz.cartonCode);
+                    //nâng ID thùng lên 1, và tạo thùng mới
+                    Globals.ProductionData.counter.cartonID = cache_CartonID + 1; //cập nhật ID thùng
+                    Globals.ProductionData.counter.carton_Packing_Count = 0; //đặt lại số lượng chai trong thùng
+                    cache_CartonID = Globals.ProductionData.counter.cartonID;
+                    cache_CartonCount = Globals.ProductionData.counter.carton_Packing_Count;
                 }
 
                 //phân làn
@@ -423,7 +454,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                     ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Chưa quét mã thùng, không xử lý tiếp.");
                                     Globals.Canhbao = "#Thùng đang xếp chưa có mã";
                                     ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                                    this.ShowErrorNotifier("#02 Thùng chuẩn bị xếp chưa có mã!");
+                                    //this.ShowErrorNotifier("#02 Thùng chuẩn bị xếp chưa có mã!");
                                 });
                                 return; //nếu thùng chưa có mã thì không xử lý tiếp
                             }
@@ -664,7 +695,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
             catch (Exception ex)
             {
-                this.ShowErrorNotifier("Lỗi D001 khi khởi tạo thiết bị: " + ex.Message);
+                //this.ShowErrorNotifier("Lỗi D001 khi khởi tạo thiết bị: " + ex.Message);
             }
         }
 
@@ -677,7 +708,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
             catch (Exception ex)
             {
-                this.ShowErrorNotifier("Lỗi D002 khi khởi tạo task: " + ex.Message);
+                //this.ShowErrorNotifier("Lỗi D002 khi khởi tạo task: " + ex.Message);
             }
         }
         #endregion
@@ -877,7 +908,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 //ghi log lỗi
                 DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.PlcError, "Lỗi DA01068 khi đọc dữ liệu đếm từ PLC", readCount.Message);
-                this.ShowErrorNotifier($"Lỗi DA01068 khi đọc dữ liệu đếm từ PLC: {readCount.Message}");
+                //this.ShowErrorNotifier($"Lỗi DA01068 khi đọc dữ liệu đếm từ PLC: {readCount.Message}");
             }
 
             OperateResult<int[]> readf = OMRON_PLC.plc.ReadInt32(PLCAddress.Get("PLC_Total_Count_DM_C1"), 5);
@@ -918,7 +949,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     {
                         ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Chưa có mã thùng mới, không xử lý tiếp.");
                         ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                        this.ShowErrorNotifier("Thùng đang xếp Chưa có mã thùng, không xử lý tiếp.", false, 10000);
+                        //this.ShowErrorNotifier("Thùng đang xếp Chưa có mã thùng, không xử lý tiếp.", false, 10000);
                         Globals.Canhbao = "Thùng hiện tại chưa có mã";
                     });
                     return;
@@ -941,7 +972,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         {
                             ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Chưa có mã thùng mới, không xử lý tiếp.");
                             ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            this.ShowErrorNotifier("Thùng chuẩn bị xếp Chưa có mã thùng, không xử lý tiếp.", false, 10000);
+                            //this.ShowErrorNotifier("Thùng chuẩn bị xếp Chưa có mã thùng, không xử lý tiếp.", false, 10000);
                             Globals.Canhbao = "Thùng sắp tới chưa có mã";
                         });
                         return;
@@ -1154,7 +1185,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             {
                                 //ghi log lỗi
                                 DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error, "Lỗi DA01069 khi lấy dữ liệu mã sản phẩm", getCodes.message);
-                                this.ShowErrorNotifier($"Lỗi DA01069 khi lấy dữ liệu mã sản phẩm: {getCodes.message}");
+                                //this.ShowErrorNotifier($"Lỗi DA01069 khi lấy dữ liệu mã sản phẩm: {getCodes.message}");
                                 //chuyển trạng thái về error
                                 Globals.Production_State = e_Production_State.Error;
                             }
@@ -1227,7 +1258,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                     DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error, "Lỗi DA01070 khi lấy dữ liệu mã thùng", getCartons.message);
                                     this.InvokeIfRequired(() =>
                                     {
-                                        this.ShowErrorNotifier($"Lỗi DA01070 khi lấy dữ liệu mã thùng: {getCartons.message}");
+                                        //this.ShowErrorNotifier($"Lỗi DA01070 khi lấy dữ liệu mã thùng: {getCartons.message}");
                                     });
 
                                     //chuyển trạng thái về error
@@ -1320,7 +1351,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         {
                             //ghi log lỗi
                             DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error, "Lỗi DA01069 khi lấy dữ liệu mã sản phẩm", getCodes.message);
-                            this.ShowErrorNotifier($"Lỗi DA01069 khi lấy dữ liệu mã sản phẩm: {getCodes.message}");
+                            //this.ShowErrorNotifier($"Lỗi DA01069 khi lấy dữ liệu mã sản phẩm: {getCodes.message}");
                             //chuyển trạng thái về error
                             Globals.Production_State = e_Production_State.Error;
                         }
@@ -1363,6 +1394,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                     bool isCartonReady4 = false;
                     bool isCartonReady5 = false;
+
                     //kiểm tra thùng đang xếp xếp hết chưa
                     if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonData5))
                     {
@@ -1400,6 +1432,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     }
                     else
                     {
+                        Thread.Sleep(AppConfigs.Current.Time_Delay_Complete);
                         Globals.Production_State = e_Production_State.Completed;
                     }
 
@@ -1486,7 +1519,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 catch (Exception ex)
                 {
                     Globals.Log.WriteLogAsync("System", e_LogType.Error, $"Lỗi trong WK_Update_UI_DoWork: {ex.Message}");
-                    this.ShowErrorNotifier($"Lỗi DA0107 trong quá trình xử lý: {ex.Message}");
+                    //this.ShowErrorNotifier($"Lỗi DA0107 trong quá trình xử lý: {ex.Message}");
                 }
                 Thread.Sleep(100);
             }

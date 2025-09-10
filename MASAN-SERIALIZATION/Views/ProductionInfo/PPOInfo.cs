@@ -1033,7 +1033,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                     $"Lấy dữ liệu đơn hàng thất bại: {result.message}");
-                this.ShowErrorDialog($"Lỗi PP05: {result.message}");
+                this.ShowErrorDialog($"Lỗi PP05121: {result.message}");
                 Globals.Production_State = e_Production_State.NoSelectedPO;
             }
             return result;

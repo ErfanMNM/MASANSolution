@@ -48,6 +48,8 @@ namespace MASAN_SERIALIZATION.Configs
 
         public string PLC_Address_Sheet_Name { get; set; }
 
+        public int  Time_Delay_Complete { get; set; } // Thời gian delay sau khi hoàn thành một sản phẩm (tính bằng mili giây)
+
 
 
 
@@ -83,6 +85,8 @@ namespace MASAN_SERIALIZATION.Configs
             PLC_Address_Sheet_Name = "PLC";
             cartonCode_Line01 = "0";
             cartonCode_Line02 = "1";
+
+            Time_Delay_Complete = 10000; // Mặc định thời gian delay sau khi hoàn thành một sản phẩm là 500ms
         }
     }
 }
