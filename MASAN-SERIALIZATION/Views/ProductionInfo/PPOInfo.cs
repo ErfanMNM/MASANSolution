@@ -575,7 +575,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             if (Globals.Production_State == e_Production_State.Editing || Globals.Production_State == e_Production_State.Loading)
             {
                 Globals.Log.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.UserAction, $"Người dùng chọn đơn hàng: {ipOrderNO.Text}");
-                RenderOrderInfo();
+                Task.Run(()=> RenderOrderInfo());
             }
         }
 
@@ -1190,9 +1190,5 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         #endregion
 
-        private void uiGroupBox1_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

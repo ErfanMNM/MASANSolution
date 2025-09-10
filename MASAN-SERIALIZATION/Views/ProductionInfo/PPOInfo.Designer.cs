@@ -869,7 +869,7 @@
             this.uiGroupBox1.TabIndex = 15;
             this.uiGroupBox1.Text = "Thống kê cơ bản";
             this.uiGroupBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.uiGroupBox1.Click += new System.EventHandler(this.uiGroupBox1_Click);
+            
             // 
             // uiTableLayoutPanel8
             // 
