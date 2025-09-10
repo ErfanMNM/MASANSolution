@@ -252,12 +252,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         {
             Globals.productionData_Cs.counter.totalCount++;
 
-            //this.InvokeIfRequired(() =>
-            //{
-            //    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: #{Globals.ProductionData.counter.totalCount} Camera sub nhận dữ liệu: {_data}");
-            //    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-            //});
-
             if(Globals.Production_State != e_Production_State.Waiting_Stop)
             {
                 if (Globals.Production_State != e_Production_State.Running)
