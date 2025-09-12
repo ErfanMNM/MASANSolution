@@ -463,7 +463,7 @@
             this.btnSave.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(122, 49);
-            this.btnSave.Symbol = 559576;
+            this.btnSave.Symbol = 361926;
             this.btnSave.TabIndex = 0;
             this.btnSave.Text = "Áp dụng";
             this.btnSave.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);

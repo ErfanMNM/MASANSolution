@@ -2,7 +2,6 @@
 using QR_MASAN_01.Mid;
 using QR_MASAN_01.Views;
 using QR_MASAN_01.Views.MFI_Service;
-using QR_MASAN_01.Views.Printers;
 using QR_MASAN_01.Views.Scada;
 using QR_MASAN_01.Views.Settings;
 using SpT;
@@ -36,8 +35,7 @@ namespace QR_MASAN_01
         FDashboard _FDashboard = new FDashboard();
         //ScanQR scanQR = new ScanQR();
         ScanQR_V2 scanQR_V2 = new ScanQR_V2();
-        MyLanPrinter _myLanPrinter = new MyLanPrinter();
-        Printer_V7 _printer_V7 = new Printer_V7();
+
         FStatistics _FStatistics = new FStatistics();
         FSystemlogs FSystemlogs = new FSystemlogs();
         PLCSetting _f1PLC = new PLCSetting();
@@ -141,10 +139,10 @@ namespace QR_MASAN_01
             switch (Setting.Current.Printer_name)
             {
                 case "ML":
-                    uiNavMenu1.CreateNode(AddPage(_myLanPrinter, 1011));
+
                     break;
                 case "V7":
-                    uiNavMenu1.CreateNode(AddPage(_printer_V7, 1012));
+
                     break;
                 case "UC22":
                     //uiNavMenu1.CreateNode(AddPage(new F1Printer(), 1004));
