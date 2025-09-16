@@ -27,6 +27,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private LogHelper<e_LogType> _pageLogger;
         private int _processCounter = 10;
+        private bool IsRender = false;
 
         private readonly BackgroundWorker _mainProcessWorker = new BackgroundWorker()
         {
@@ -732,6 +733,8 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         public void RenderOrderInfo()
         {
+            IsRender = true;
+
             TResult orderInfoResult = Globals.ProductionData.getfromMES.ProductionOrder_Detail(ipOrderNO.Text);
             //lấy thông tin productionDate đã chỉnh
             var POlog = Globals.ProductionData.getDataPO.Get_PO_Run_History_By_OrderNo(ipOrderNO.Text);
@@ -750,6 +753,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                     $"Lấy thông tin đơn hàng thất bại: {orderInfoResult.message}");
                 this.ShowErrorDialog($"Lỗi PP06: {orderInfoResult.message}");
+                IsRender = false;
                 return;
             }
 
@@ -757,6 +761,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             TResult codeCountResult = GetCodeCount();
             UpdateOrderInfoUI(orderInfoResult, codeCountResult);
             LoadCountersAsync();
+            IsRender = false;
         }
 
         private void ValidateDatabaseFile(DataTable PO)
@@ -986,6 +991,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             try
             {
                 SaveProductionData();
+
                 TResult recordsResult = LoadProductionRecords();
 
                 if (!recordsResult.issuccess)
@@ -1028,6 +1034,11 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private TResult LoadProductionRecords()
         {
+            while(IsRender)
+            {
+                Task.Delay(500).Wait();
+            }
+
             TResult result = Globals.ProductionData.getDataPO.Get_Records(ipOrderNO.Text);
             if (!result.issuccess)
             {

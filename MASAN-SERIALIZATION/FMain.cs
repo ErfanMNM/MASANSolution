@@ -170,7 +170,7 @@ namespace MASAN_SERIALIZATION
                 _pCartonDashboard.INIT();
                 _pScaner.INIT();
                 _pSettings.INIT();
-                _pPLCSetting.INIT();
+                //_pPLCSetting.INIT();
                 _pProduction.START();
                 // optional: no heavy INIT needed for these pages
             }

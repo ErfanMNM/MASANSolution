@@ -442,8 +442,10 @@ namespace MASAN_SERIALIZATION.Production
                     foreach (var file in files)
                     {
                         string orderNo = Path.GetFileNameWithoutExtension(file);
-                        //kiểm tra có chứa chữ PO ở đầu không
-                            DataRow row = table.NewRow();
+
+                        //kiểm tra xem có chữ log không
+                        if (orderNo.ToLower().Contains("log")) continue;
+                        DataRow row = table.NewRow();
                             row["orderNo"] = orderNo;
                         //kiểm tra xem có bị hủy không
                        // var poDetailResult = 
@@ -648,6 +650,7 @@ namespace MASAN_SERIALIZATION.Production
                     {
                         return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
                     }
+
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         conn.Open();

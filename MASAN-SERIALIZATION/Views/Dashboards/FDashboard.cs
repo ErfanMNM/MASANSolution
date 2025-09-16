@@ -648,8 +648,23 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 Camera_Sub.Port = AppConfigs.Current.Camera_Sub_Port;
                 Camera_Sub.Connect();
 
-                OMRON_PLC.PLC_IP = PLCAddress.Get("PLC_IP");
-                OMRON_PLC_02.PLC_IP = PLCAddress.Get("PLC2_IP");
+                try
+                {
+                    OMRON_PLC.PLC_IP = PLCAddress.Get("PLC_IP");
+                    OMRON_PLC_02.PLC_IP = PLCAddress.Get("PLC2_IP");
+                    OMRON_PLC_02.PLC_PORT = PLCAddress.Get("PLC2_PORT").ToInt32();
+                    OMRON_PLC_02.PLC_Ready_DM = PLCAddress.Get("PLC2_Ready_DM");
+                    OMRON_PLC.PLC_PORT = PLCAddress.Get("PLC_PORT").ToInt32();
+                    OMRON_PLC.PLC_Ready_DM = PLCAddress.Get("PLC_Ready_DM");
+                }
+                catch
+                {
+                    this.InvokeIfRequired(() =>
+                    {
+                        ipConsole.Items.Insert(0, "Lỗi đọc cấu hình PLC");
+                    });
+                }
+
 
 
                 if (AppConfigs.Current.PLC_Test_Mode)
@@ -657,16 +672,12 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     OMRON_PLC.PLC_IP = "127.0.0.1";
                     OMRON_PLC_02.PLC_IP = "127.0.0.1";
                     OMRON_PLC_02.PLC_PORT = 9001;
+                    OMRON_PLC.PLC_PORT = 9000;
                 }
 
-                OMRON_PLC.PLC_PORT = PLCAddress.Get("PLC_PORT").ToInt32();
-                OMRON_PLC.PLC_Ready_DM = PLCAddress.Get("PLC_Ready_DM");
+                
                 OMRON_PLC.Time_Update = 1000;
-
-                OMRON_PLC_02.PLC_PORT = PLCAddress.Get("PLC2_PORT").ToInt32();
-                OMRON_PLC_02.PLC_Ready_DM = PLCAddress.Get("PLC2_Ready_DM");
                 OMRON_PLC_02.Time_Update = 1000;
-
                 OMRON_PLC.InitPLC();
 
                 if (AppConfigs.Current.PLC_Duo_Mode)
@@ -689,7 +700,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
             catch (Exception ex)
             {
-                //this.ShowErrorNotifier("Lỗi D001 khi khởi tạo thiết bị: " + ex.Message);
+                this.ShowErrorDialog("Lỗi D001 khi khởi tạo thiết bị: " + ex.Message);
             }
         }
 
