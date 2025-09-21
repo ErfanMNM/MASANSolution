@@ -977,7 +977,7 @@
             this.uiPanel1.RectColor = System.Drawing.Color.MediumBlue;
             this.uiPanel1.Size = new System.Drawing.Size(154, 30);
             this.uiPanel1.TabIndex = 81;
-            this.uiPanel1.Text = "Sản lượng tốt đã chạy";
+            this.uiPanel1.Text = "Mã tốt/Đã đóng thùng";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiPanel18

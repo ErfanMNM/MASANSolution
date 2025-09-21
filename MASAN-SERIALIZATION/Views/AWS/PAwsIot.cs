@@ -431,7 +431,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 this.InvokeIfRequired(() =>
                 {
                     //cập nhật giao diện
-                    opNotiboardAndSend.Items.Insert(0, $"🔄 [{DateTime.Now}] Đã kiểm tra dữ liệu gửi AWS.");
+                   // opNotiboardAndSend.Items.Insert(0, $"🔄 [{DateTime.Now}] Đã kiểm tra dữ liệu gửi AWS.");
                     if (opNotiboardAndSend.Items.Count > 50)
                     {
                         // Giới hạn số lượng mục hiển thị trong opNotiboardAndSend
@@ -558,6 +558,26 @@ namespace MASAN_SERIALIZATION.Views.AWS
         }
 
         private void uiTitlePanel7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void uiSymbolButton1_Click(object sender, EventArgs e)
+        {
+            TResult getCodeSendTimeOut = Globals.ProductionData.getDataPO.Get_Codes_Sent_Timeout(Globals.ProductionData.orderNo);
+
+            if (getCodeSendTimeOut.issuccess)
+            {
+                dtSends = getCodeSendTimeOut.data;
+            }
+
+            this.InvokeIfRequired(() =>
+            {
+                opNotiboardAndSend.Items.Insert(0, "Số mã chưa nhận trả về :" + getCodeSendTimeOut.count + getCodeSendTimeOut.message);
+            });
+        }
+
+        private void uiSymbolButton2_Click(object sender, EventArgs e)
         {
 
         }

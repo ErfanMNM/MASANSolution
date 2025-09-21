@@ -841,7 +841,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             this.InvokeIfRequired(() =>
             {
                 opCZRunCount.Text = counters.runCount.ToString();
-                opPassCount.Text = counters.passCount.ToString();
+                opPassCount.Text = counters.passCount.ToString() + "/" + counters.passCameraSub.ToString();
                 opFailCount.Text = counters.failCount.ToString();
                 opAWSFullOKCount.Text = counters.awsFullOKCount.ToString();
                 opAWSNotSent.Text = $"{counters.awsNotSent}/{counters.awsSentFailed}";
@@ -850,10 +850,12 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             });
         }
 
-        private (int runCount, int passCount, int failCount, int awsFullOKCount, int awsNotSent, int awsSentFailed, int awsSentWaiting) LoadCountersFromDatabase()
+        private (int runCount, int passCount, int failCount, int awsFullOKCount, int awsNotSent, int awsSentFailed, int awsSentWaiting, int passCameraSub) LoadCountersFromDatabase()
         {
             TResult runCountResult = GetRecordCount();
             TResult passCountResult = GetRecordCountByStatus(e_Production_Status.Pass);
+
+            TResult passCameraSub = GetRecordCountCameraSubByStatus(e_Production_Status.Pass);
             TResult failCountResult = GetRecordCountByStatus(e_Production_Status.Fail);
 
             TResult notfountCount = GetRecordCountByStatus(e_Production_Status.NotFound);
@@ -863,13 +865,13 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             int totalfailCount = failCountResult.count +
                 notfountCount.count + readfailCount.count + duplicateCount.count;
 
-            TResult awsFullOKResult = GetAWSRecordCount(e_AWS_Send_Status.Sent, e_AWS_Recive_Status.Waiting, "!=");
+            TResult awsFullOKResult = GetAWSRecordCount(e_AWS_Send_Status.Sent, e_AWS_Recive_Status.Pending, "!=");
             TResult awsNotSentResult = GetAWSRecordCount(e_AWS_Send_Status.Pending, e_AWS_Recive_Status.Pending, "=", "AND Status != 0 AND cartonCode != 'pending' AND cartonCode != '0' ");
-            TResult awsSentFailedResult = GetAWSRecordCount(e_AWS_Send_Status.Failed, e_AWS_Recive_Status.Waiting, "=", "AND Status != 0");
-            TResult awsSentWaitingResult = GetAWSRecordCount(e_AWS_Send_Status.Sent, e_AWS_Recive_Status.Waiting, "=");
+            TResult awsSentFailedResult = GetAWSRecordCount(e_AWS_Send_Status.Failed, e_AWS_Recive_Status.Pending, "=", "AND Status != 0");
+            TResult awsSentWaitingResult = GetAWSRecordCount(e_AWS_Send_Status.Sent, e_AWS_Recive_Status.Pending, "=");
 
             return (runCountResult.count, passCountResult.count, totalfailCount,
-                    awsFullOKResult.count, awsNotSentResult.count, awsSentFailedResult.count, awsSentWaitingResult.count);
+                    awsFullOKResult.count, awsNotSentResult.count, awsSentFailedResult.count, awsSentWaitingResult.count, passCameraSub.count);
         }
 
         private TResult GetRecordCount()
@@ -891,6 +893,18 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                     $"Lấy thông tin số lượng record {status} thất bại: {result.message}");
+                this.ShowErrorDialog($"Lỗi PP09-14: {result.message}");
+            }
+            return result;
+        }
+
+        private TResult GetRecordCountCameraSubByStatus(e_Production_Status status)
+        {
+            TResult result = Globals.ProductionData.getDataPO.Get_Record_Count_CameraSub_By_Status(ipOrderNO.Text, status);
+            if (!result.issuccess)
+            {
+                _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
+                    $"Lấy thông tin số lượng record camera phụ {status} thất bại: {result.message}");
                 this.ShowErrorDialog($"Lỗi PP09-14: {result.message}");
             }
             return result;

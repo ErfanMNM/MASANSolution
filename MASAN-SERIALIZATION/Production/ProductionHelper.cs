@@ -581,6 +581,35 @@ namespace MASAN_SERIALIZATION.Production
                 }
             }
 
+            public TResult Get_Record_Count_CameraSub_By_Status(string orderNO, e_Production_Status Production_Status)
+            {
+                try
+                {
+                    string czRunPath = $"{dataPath}/Record_CameraSub_{orderNO}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return new TResult(true, "Cơ sở dữ liệu ghi không tồn tại.");
+
+                    }
+
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = "SELECT COUNT(*) FROM Records WHERE Status = @Status";
+                        var command = new SQLiteCommand(query, conn);
+                        command.Parameters.AddWithValue("@Status", Production_Status.ToString());
+                        int count = Convert.ToInt32(command.ExecuteScalar());
+                        return (count > 0)
+                            ? new TResult(true, "Lấy số lượng bản ghi theo trạng thái thành công.", count)
+                            : new TResult(true, "Không có bản ghi nào trong cơ sở dữ liệu với trạng thái: " + Production_Status.ToString());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new TResult(false, $"Lỗi P06 khi lấy số lượng bản ghi theo trạng thái: {ex.Message}");
+                }
+            }
+
             //lấy số gửi AWS đã nhận recive
             public TResult Get_Record_Sent_Recive_Count(string orderNo, e_AWS_Send_Status Send, e_AWS_Recive_Status Recive, string Recive_Conditional = "=", string Conditional = "")
             {
@@ -611,35 +640,6 @@ namespace MASAN_SERIALIZATION.Production
 
             }
 
-            public TResult Get_Record_Sent_Recive(string orderNo, e_AWS_Send_Status Send, e_AWS_Recive_Status Recive, string Recive_Conditional = "=", string Conditional = "")
-            {
-                try
-                {
-                    string czRunPath = $"{dataPath}/{orderNo}.db";
-                    if (!File.Exists(czRunPath))
-                    {
-                        return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
-                    }
-                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
-                    {
-                        string query = $"SELECT * FROM UniqueCodes WHERE Send_Status =@send AND Recive_Status {Recive_Conditional} @recive {Conditional}; ";
-                        var command = new SQLiteCommand(query, conn);
-                        command.Parameters.AddWithValue("@send", Send.ToString());
-                        command.Parameters.AddWithValue("@recive", Recive.ToString());
-                        var adapter = new SQLiteDataAdapter(command);
-                        var table = new DataTable();
-                        adapter.Fill(table);
-                        return (table.Rows.Count > 0)
-                            ? new TResult(true, "Lấy danh sách bản ghi gửi AWS thành công.", 0, table)
-                            : new TResult(true, "Không có bản ghi nào trong cơ sở dữ liệu với trạng thái gửi: " + Send.ToString() + " và nhận: " + Recive.ToString());
-                    }
-                }
-                catch (Exception ex)
-                {
-                    return new TResult(false, $"Lỗi P08 khi lấy danh sách bản ghi gửi AWS: {ex.Message}");
-                }
-
-            }
 
             public TResult Get_Records(string orderNo)
             {
@@ -795,7 +795,7 @@ namespace MASAN_SERIALIZATION.Production
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         conn.Open();
-                        string query = $"SELECT * FROM UniqueCodes WHERE Status != 0 AND Send_Status == 'Sent' AND cartonCode != 'pending' AND Recive_Status = 'Pending";
+                        string query = $"SELECT * FROM UniqueCodes WHERE Status != 0 AND Send_Status == 'Sent' AND Recive_Status = 'Pending";
 
                         var command = new SQLiteCommand(query, conn);
                         var adapter = new SQLiteDataAdapter(command);

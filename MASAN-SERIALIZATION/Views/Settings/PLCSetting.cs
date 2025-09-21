@@ -628,26 +628,47 @@ namespace MASAN_SERIALIZATION.Views.Settings
         {
             if(AppConfigs.Current.PLC_Duo_Mode)
             {
+                //try
+                //{
+                //    string delayCamera = ipDelayTriger_CS.Text;
+                //    string delayReject = ipDelayReject_CS.Text;
+                //    string rejectStreng = ipRejectStreng_CS.Text;
+                //    PLC_Parameter_On_PC_CS.DelayCamera = delayCamera;
+                //    PLC_Parameter_On_PC_CS.DelayReject = delayReject;
+                //    PLC_Parameter_On_PC_CS.RejectStreng = rejectStreng;
+                //    string json = JsonConvert.SerializeObject(PLC_Parameter_On_PC_CS, Formatting.Indented);
+                //    Write_Recipe_To_File_CS(json);
+                //    OperateResult operateResult = omronPLC_Hsl2.plc.Write(PLCAddress.Get("PLC_Delay_Camera_DM_C1"), new int[] { int.Parse(delayCamera), int.Parse(delayReject), int.Parse(rejectStreng) });
+                //    e.Result = operateResult;
+                //}
+                //catch (Exception ex)
+                //{
+                //    e.Result = ex;
+                //}
 
+                this.ShowErrorDialog("Tính năng đang bị lỗi tạm thời!");
             }
-
-            try
+            else
             {
-                string delayCamera = ipDelayTriger_CS.Text;
-                string delayReject = ipDelayReject_CS.Text;
-                string rejectStreng = ipRejectStreng_CS.Text;
-                PLC_Parameter_On_PC_CS.DelayCamera = delayCamera;
-                PLC_Parameter_On_PC_CS.DelayReject = delayReject;
-                PLC_Parameter_On_PC_CS.RejectStreng = rejectStreng;
-                string json = JsonConvert.SerializeObject(PLC_Parameter_On_PC_CS, Formatting.Indented);
-                Write_Recipe_To_File_CS(json);
-                OperateResult operateResult = omronPLC_Hsl1.plc.Write(PLCAddress.Get("PLC_Delay_Camera_DM_C1"), new int[] { int.Parse(delayCamera), int.Parse(delayReject), int.Parse(rejectStreng) });
-                e.Result = operateResult;
+                try
+                {
+                    string delayCamera = ipDelayTriger_CS.Text;
+                    string delayReject = ipDelayReject_CS.Text;
+                    string rejectStreng = ipRejectStreng_CS.Text;
+                    PLC_Parameter_On_PC_CS.DelayCamera = delayCamera;
+                    PLC_Parameter_On_PC_CS.DelayReject = delayReject;
+                    PLC_Parameter_On_PC_CS.RejectStreng = rejectStreng;
+                    string json = JsonConvert.SerializeObject(PLC_Parameter_On_PC_CS, Formatting.Indented);
+                    Write_Recipe_To_File_CS(json);
+                    OperateResult operateResult = omronPLC_Hsl1.plc.Write(PLCAddress.Get("PLC_Delay_Camera_DM_C1"), new int[] { int.Parse(delayCamera), int.Parse(delayReject), int.Parse(rejectStreng) });
+                    e.Result = operateResult;
+                }
+                catch (Exception ex)
+                {
+                    e.Result = ex;
+                }
             }
-            catch (Exception ex)
-            {
-                e.Result = ex;
-            }
+           
         }
 
         private void bgwSavePLCCS_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -740,11 +761,6 @@ namespace MASAN_SERIALIZATION.Views.Settings
                 }
                 Thread.Sleep(500); // Cập nhật mỗi 0.5 giây
             }
-
-        }
-
-        private void btnDeleteCS_Click(object sender, EventArgs e)
-        {
 
         }
     }
