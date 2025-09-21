@@ -34,13 +34,13 @@ namespace MASAN_SERIALIZATION
         private PPOInfo _pProduction = new PPOInfo();
         private PStatictis _pStatictis = new PStatictis();
         private PCartonDashboard _pCartonDashboard = new PCartonDashboard();
-        private PAws _pAws1 = new PAws();
+        //private PAws _pAws1 = new PAws();
         private PAwsIot _pAws = new PAwsIot();
         private PSettings _pSettings = new PSettings();
         private PLCSetting _pPLCSetting = new PLCSetting();
-        private PScaner _pScaner = new PScaner();
+        //private PScaner _pScaner = new PScaner();
         //private PCodeSearch _pCodeSearch = new PCodeSearch();
-       // private POrderNoViewer _pOrderNoViewer = new POrderNoViewer();
+        //private POrderNoViewer _pOrderNoViewer = new POrderNoViewer();
         private DBBrowser _pDBBrowser = new DBBrowser();
         #endregion
 
@@ -138,7 +138,7 @@ namespace MASAN_SERIALIZATION
                 NavMenu.CreateNode(AddPage(_pAws, 1006));
                 NavMenu.CreateNode(AddPage(_pPLCSetting, 1007));
                 NavMenu.CreateNode(AddPage(_pSettings, 1008));
-                NavMenu.CreateNode(AddPage(_pAws1, 1009));
+               // NavMenu.CreateNode(AddPage(_pAws1, 1009));
                 // Database tools
                 //NavMenu.CreateNode(AddPage(_pCodeSearch, 1010));
                 //NavMenu.CreateNode(AddPage(_pOrderNoViewer, 1011));
@@ -150,7 +150,7 @@ namespace MASAN_SERIALIZATION
 
                 NavMenu.Visible = false;
                 NavMenu.Enabled = false;
-
+                        
                 Globals.AppRenderState = e_App_Render_State.LOGIN;
             }
             catch (Exception ex)
@@ -168,10 +168,11 @@ namespace MASAN_SERIALIZATION
                 _pDashboard.STARTUP();
                 _pStatictis.INIT();
                 _pCartonDashboard.INIT();
-                _pScaner.INIT();
+                //_pScaner.INIT();
                 _pSettings.INIT();
-                //_pPLCSetting.INIT();
+                _pPLCSetting.INIT();
                 _pProduction.START();
+                _pAws.START_AWS_Process();
                 // optional: no heavy INIT needed for these pages
             }
             catch (Exception ex)
@@ -192,7 +193,7 @@ namespace MASAN_SERIALIZATION
                 // Lưu trạng thái cũ
                 prevBounds = Bounds;
                 FormBorderStyle = FormBorderStyle.None;
-                WindowState = FormWindowState.Normal; // reset
+                WindowState = FormWindowState.Maximized; // reset
                 Bounds = Screen.FromControl(this).Bounds; // full màn hình (bao gồm taskbar)
             }
             else

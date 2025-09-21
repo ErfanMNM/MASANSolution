@@ -209,6 +209,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
+            return;
             Connect_AWS();
             bgw_send = new BackgroundWorker();
             bgw_send.WorkerSupportsCancellation = true;
@@ -265,6 +266,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
         private void btnSend_Click(object sender, EventArgs e)
         {
+            return;
             // run task hàm AWS_Send_Datatable
             if(!bgw_send.IsBusy)
             {
@@ -353,6 +355,32 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
         private void PAwsIot_Load(object sender, EventArgs e)
         {
+
+            //AWSIoTLog = new LogHelper<e_LogType>(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MASAN-SERIALIZATION", "Logs", "Pages", "AWSlog.ptl"));
+
+            //if (AppConfigs.Current.Auto_Send_AWS)
+            //{
+            //    //nếu bật AWS thì kết nối
+            //    Connect_AWS();
+
+            //    //khởi tạo background worker để gửi dữ liệu
+            //    bgw_process = new BackgroundWorker();
+            //    bgw_send = new BackgroundWorker();
+
+            //    bgw_process.WorkerSupportsCancellation = true;
+            //    bgw_process.DoWork += Bgw_process_DoWork;
+
+            //    bgw_process.RunWorkerAsync();
+
+            //    bgw_send = new BackgroundWorker();
+            //    bgw_send.WorkerSupportsCancellation = true;
+            //    bgw_send.DoWork += Bgw_send_DoWork;
+                
+            //}
+        }
+
+        public void START_AWS_Process()
+        {
             AWSIoTLog = new LogHelper<e_LogType>(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MASAN-SERIALIZATION", "Logs", "Pages", "AWSlog.ptl"));
 
             if (AppConfigs.Current.Auto_Send_AWS)
@@ -372,7 +400,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 bgw_send = new BackgroundWorker();
                 bgw_send.WorkerSupportsCancellation = true;
                 bgw_send.DoWork += Bgw_send_DoWork;
-                
+
             }
         }
 
@@ -431,6 +459,12 @@ namespace MASAN_SERIALIZATION.Views.AWS
                     {
                         AWS_Send_Datatable(dtResend);
                         dtResend = null; // Xóa dữ liệu resend sau khi gửi thành công
+                    }
+
+                    if(dtTimeout != null)
+                    {
+                        AWS_Send_Datatable(dtTimeout);
+                        dtTimeout = null;
                     }
                 }
 

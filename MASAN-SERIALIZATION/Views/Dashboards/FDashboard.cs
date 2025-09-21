@@ -664,15 +664,12 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         ipConsole.Items.Insert(0, "Lỗi đọc cấu hình PLC");
                     });
                 }
-
-
-
                 if (AppConfigs.Current.PLC_Test_Mode)
                 {
                     OMRON_PLC.PLC_IP = "127.0.0.1";
                     OMRON_PLC_02.PLC_IP = "127.0.0.1";
                     OMRON_PLC_02.PLC_PORT = 9001;
-                    OMRON_PLC.PLC_PORT = 9000;
+                    OMRON_PLC.PLC_PORT = 9600;
                 }
 
                 
@@ -938,7 +935,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
             else
             {
-
                     OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 0);
 
             }
@@ -1039,8 +1035,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
             if (state01 == 1)
             {
-                
-
                 if(AppConfigs.Current.PLC_Duo_Mode)
                 {
                     if (Globals.ProductionData.counter.cartonID % 2 == 0)
@@ -1104,6 +1098,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
             if(Globals.Production_State != e_Production_State.Running)
             {
+                
                 OperateResult writeStart = OMRON_PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);//gửi lệnh bắt đầu = 0
             }
             else
@@ -1113,11 +1108,29 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
             if (Globals.Production_State == e_Production_State.Running || Globals.Production_State == e_Production_State.Waiting_Stop)
             {
-                OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Conveyor_ENA_DM"), 1);
+                if (AppConfigs.Current.PLC_Duo_Mode)
+                {
+                    OperateResult ws = OMRON_PLC_02.plc.Write(PLCAddress.Get("PLC2_Conveyor_ENA_DM"), 1);
+                }
+                else
+                {
+                    OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Conveyor_ENA_DM"), 1);
+                    //OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 1);
+                }
+                
             }
             else
             {
-                OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Conveyor_ENA_DM"), 0);
+                if (AppConfigs.Current.PLC_Duo_Mode)
+                {
+                    OperateResult ws = OMRON_PLC_02.plc.Write(PLCAddress.Get("PLC2_Conveyor_ENA_DM"), 0);
+                }
+                else
+                {
+                    OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Conveyor_ENA_DM"), 0);
+                    //OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 1);
+                }
+                // OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Conveyor_ENA_DM"), 0);
             }
 
             //Đẩy dữ liệu vào dictionary

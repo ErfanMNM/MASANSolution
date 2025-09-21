@@ -68,18 +68,18 @@
             this.W = new Sunny.UI.UIButton();
             this.Q = new Sunny.UI.UIButton();
             this.uiTableLayoutPanel6 = new Sunny.UI.UITableLayoutPanel();
-            this.uiTableLayoutPanel7 = new Sunny.UI.UITableLayoutPanel();
-            this.btnClear = new Sunny.UI.UISymbolButton();
-            this.Close = new Sunny.UI.UISymbolButton();
-            this.uiTableLayoutPanel8 = new Sunny.UI.UITableLayoutPanel();
-            this.btnEyePass = new Sunny.UI.UISymbolButton();
-            this.uiPanel1 = new Sunny.UI.UIPanel();
-            this.ipUsername = new Sunny.UI.UITextBox();
             this.uiTableLayoutPanel9 = new Sunny.UI.UITableLayoutPanel();
             this.ipPassword = new Sunny.UI.UITextBox();
             this.uiPanel2 = new Sunny.UI.UIPanel();
             this.uiPanel3 = new Sunny.UI.UIPanel();
             this.ipRole = new Sunny.UI.UIComboBox();
+            this.uiTableLayoutPanel7 = new Sunny.UI.UITableLayoutPanel();
+            this.btnClear = new Sunny.UI.UISymbolButton();
+            this.Close = new Sunny.UI.UISymbolButton();
+            this.uiTableLayoutPanel8 = new Sunny.UI.UITableLayoutPanel();
+            this.ipUsername = new Sunny.UI.UITextBox();
+            this.btnEyePass = new Sunny.UI.UISymbolButton();
+            this.uiPanel1 = new Sunny.UI.UIPanel();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel5.SuspendLayout();
@@ -87,9 +87,9 @@
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTableLayoutPanel2.SuspendLayout();
             this.uiTableLayoutPanel6.SuspendLayout();
+            this.uiTableLayoutPanel9.SuspendLayout();
             this.uiTableLayoutPanel7.SuspendLayout();
             this.uiTableLayoutPanel8.SuspendLayout();
-            this.uiTableLayoutPanel9.SuspendLayout();
             this.SuspendLayout();
             // 
             // uiTitlePanel1
@@ -854,127 +854,6 @@
             this.uiTableLayoutPanel6.TabIndex = 6;
             this.uiTableLayoutPanel6.TagString = null;
             // 
-            // uiTableLayoutPanel7
-            // 
-            this.uiTableLayoutPanel7.ColumnCount = 3;
-            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 84.06504F));
-            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15.93496F));
-            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 47F));
-            this.uiTableLayoutPanel7.Controls.Add(this.btnClear, 1, 0);
-            this.uiTableLayoutPanel7.Controls.Add(this.Close, 2, 0);
-            this.uiTableLayoutPanel7.Controls.Add(this.uiTableLayoutPanel8, 0, 0);
-            this.uiTableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel7.Location = new System.Drawing.Point(2, 2);
-            this.uiTableLayoutPanel7.Margin = new System.Windows.Forms.Padding(2);
-            this.uiTableLayoutPanel7.Name = "uiTableLayoutPanel7";
-            this.uiTableLayoutPanel7.RowCount = 1;
-            this.uiTableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel7.Size = new System.Drawing.Size(658, 68);
-            this.uiTableLayoutPanel7.TabIndex = 7;
-            this.uiTableLayoutPanel7.TagString = null;
-            // 
-            // btnClear
-            // 
-            this.btnClear.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnClear.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnClear.FillColor = System.Drawing.Color.Orange;
-            this.btnClear.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnClear.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.btnClear.Location = new System.Drawing.Point(516, 3);
-            this.btnClear.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btnClear.Name = "btnClear";
-            this.btnClear.Radius = 1;
-            this.btnClear.Size = new System.Drawing.Size(91, 62);
-            this.btnClear.Symbol = 61460;
-            this.btnClear.SymbolColor = System.Drawing.SystemColors.WindowText;
-            this.btnClear.TabIndex = 8;
-            this.btnClear.Text = "Xóa hết";
-            this.btnClear.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-            // 
-            // Close
-            // 
-            this.Close.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.Close.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Close.FillColor = System.Drawing.Color.OrangeRed;
-            this.Close.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.Close.Location = new System.Drawing.Point(613, 3);
-            this.Close.MinimumSize = new System.Drawing.Size(1, 1);
-            this.Close.Name = "Close";
-            this.Close.Radius = 1;
-            this.Close.Size = new System.Drawing.Size(42, 62);
-            this.Close.Symbol = 61453;
-            this.Close.TabIndex = 3;
-            this.Close.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.Close.Click += new System.EventHandler(this.Close_Click);
-            // 
-            // uiTableLayoutPanel8
-            // 
-            this.uiTableLayoutPanel8.ColumnCount = 3;
-            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 162F));
-            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 85.3026F));
-            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.69741F));
-            this.uiTableLayoutPanel8.Controls.Add(this.ipUsername, 1, 0);
-            this.uiTableLayoutPanel8.Controls.Add(this.btnEyePass, 2, 0);
-            this.uiTableLayoutPanel8.Controls.Add(this.uiPanel1, 0, 0);
-            this.uiTableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel8.Location = new System.Drawing.Point(2, 2);
-            this.uiTableLayoutPanel8.Margin = new System.Windows.Forms.Padding(2);
-            this.uiTableLayoutPanel8.Name = "uiTableLayoutPanel8";
-            this.uiTableLayoutPanel8.RowCount = 1;
-            this.uiTableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel8.Size = new System.Drawing.Size(509, 64);
-            this.uiTableLayoutPanel8.TabIndex = 9;
-            this.uiTableLayoutPanel8.TagString = null;
-            // 
-            // btnEyePass
-            // 
-            this.btnEyePass.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnEyePass.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnEyePass.FillColor = System.Drawing.Color.LightSeaGreen;
-            this.btnEyePass.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnEyePass.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.btnEyePass.Location = new System.Drawing.Point(461, 3);
-            this.btnEyePass.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btnEyePass.Name = "btnEyePass";
-            this.btnEyePass.Size = new System.Drawing.Size(45, 58);
-            this.btnEyePass.Symbol = 361552;
-            this.btnEyePass.SymbolColor = System.Drawing.SystemColors.WindowText;
-            this.btnEyePass.SymbolOffset = new System.Drawing.Point(-4, 0);
-            this.btnEyePass.SymbolSize = 26;
-            this.btnEyePass.TabIndex = 9;
-            this.btnEyePass.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnEyePass.Click += new System.EventHandler(this.btnEyePass_Click);
-            // 
-            // uiPanel1
-            // 
-            this.uiPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel1.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel1.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel1.Name = "uiPanel1";
-            this.uiPanel1.Size = new System.Drawing.Size(158, 60);
-            this.uiPanel1.TabIndex = 10;
-            this.uiPanel1.Text = "Tên tài khoản";
-            this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // ipUsername
-            // 
-            this.ipUsername.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.ipUsername.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ipUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.ipUsername.Location = new System.Drawing.Point(164, 2);
-            this.ipUsername.Margin = new System.Windows.Forms.Padding(2);
-            this.ipUsername.MinimumSize = new System.Drawing.Size(1, 16);
-            this.ipUsername.Name = "ipUsername";
-            this.ipUsername.Padding = new System.Windows.Forms.Padding(5);
-            this.ipUsername.ShowText = false;
-            this.ipUsername.Size = new System.Drawing.Size(292, 60);
-            this.ipUsername.TabIndex = 12;
-            this.ipUsername.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ipUsername.Watermark = "";
-            // 
             // uiTableLayoutPanel9
             // 
             this.uiTableLayoutPanel9.ColumnCount = 4;
@@ -1011,6 +890,8 @@
             this.ipPassword.TabIndex = 12;
             this.ipPassword.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipPassword.Watermark = "";
+            this.ipPassword.Click += new System.EventHandler(this.ipPassword_Click);
+            this.ipPassword.TextChanged += new System.EventHandler(this.ipPassword_TextChanged);
             // 
             // uiPanel2
             // 
@@ -1058,6 +939,128 @@
             this.ipRole.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipRole.Watermark = "";
             // 
+            // uiTableLayoutPanel7
+            // 
+            this.uiTableLayoutPanel7.ColumnCount = 3;
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 84.06504F));
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15.93496F));
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 48F));
+            this.uiTableLayoutPanel7.Controls.Add(this.btnClear, 1, 0);
+            this.uiTableLayoutPanel7.Controls.Add(this.Close, 2, 0);
+            this.uiTableLayoutPanel7.Controls.Add(this.uiTableLayoutPanel8, 0, 0);
+            this.uiTableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel7.Location = new System.Drawing.Point(2, 2);
+            this.uiTableLayoutPanel7.Margin = new System.Windows.Forms.Padding(2);
+            this.uiTableLayoutPanel7.Name = "uiTableLayoutPanel7";
+            this.uiTableLayoutPanel7.RowCount = 1;
+            this.uiTableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel7.Size = new System.Drawing.Size(658, 68);
+            this.uiTableLayoutPanel7.TabIndex = 7;
+            this.uiTableLayoutPanel7.TagString = null;
+            // 
+            // btnClear
+            // 
+            this.btnClear.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnClear.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnClear.FillColor = System.Drawing.Color.Orange;
+            this.btnClear.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnClear.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.btnClear.Location = new System.Drawing.Point(515, 3);
+            this.btnClear.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Radius = 1;
+            this.btnClear.Size = new System.Drawing.Size(91, 62);
+            this.btnClear.Symbol = 61460;
+            this.btnClear.SymbolColor = System.Drawing.SystemColors.WindowText;
+            this.btnClear.TabIndex = 8;
+            this.btnClear.Text = "Xóa hết";
+            this.btnClear.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // Close
+            // 
+            this.Close.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.Close.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Close.FillColor = System.Drawing.Color.OrangeRed;
+            this.Close.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.Close.Location = new System.Drawing.Point(612, 3);
+            this.Close.MinimumSize = new System.Drawing.Size(1, 1);
+            this.Close.Name = "Close";
+            this.Close.Radius = 1;
+            this.Close.Size = new System.Drawing.Size(43, 62);
+            this.Close.Symbol = 61453;
+            this.Close.TabIndex = 3;
+            this.Close.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.Close.Click += new System.EventHandler(this.Close_Click);
+            // 
+            // uiTableLayoutPanel8
+            // 
+            this.uiTableLayoutPanel8.ColumnCount = 3;
+            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 162F));
+            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 85.3026F));
+            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.69741F));
+            this.uiTableLayoutPanel8.Controls.Add(this.ipUsername, 1, 0);
+            this.uiTableLayoutPanel8.Controls.Add(this.btnEyePass, 2, 0);
+            this.uiTableLayoutPanel8.Controls.Add(this.uiPanel1, 0, 0);
+            this.uiTableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel8.Location = new System.Drawing.Point(2, 2);
+            this.uiTableLayoutPanel8.Margin = new System.Windows.Forms.Padding(2);
+            this.uiTableLayoutPanel8.Name = "uiTableLayoutPanel8";
+            this.uiTableLayoutPanel8.RowCount = 1;
+            this.uiTableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel8.Size = new System.Drawing.Size(508, 64);
+            this.uiTableLayoutPanel8.TabIndex = 9;
+            this.uiTableLayoutPanel8.TagString = null;
+            // 
+            // ipUsername
+            // 
+            this.ipUsername.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.ipUsername.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ipUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ipUsername.Location = new System.Drawing.Point(164, 2);
+            this.ipUsername.Margin = new System.Windows.Forms.Padding(2);
+            this.ipUsername.MinimumSize = new System.Drawing.Size(1, 16);
+            this.ipUsername.Name = "ipUsername";
+            this.ipUsername.Padding = new System.Windows.Forms.Padding(5);
+            this.ipUsername.ShowText = false;
+            this.ipUsername.Size = new System.Drawing.Size(291, 60);
+            this.ipUsername.TabIndex = 12;
+            this.ipUsername.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ipUsername.Watermark = "";
+            this.ipUsername.Click += new System.EventHandler(this.ipUsername_Click);
+            // 
+            // btnEyePass
+            // 
+            this.btnEyePass.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnEyePass.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnEyePass.FillColor = System.Drawing.Color.LightSeaGreen;
+            this.btnEyePass.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnEyePass.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.btnEyePass.Location = new System.Drawing.Point(460, 3);
+            this.btnEyePass.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnEyePass.Name = "btnEyePass";
+            this.btnEyePass.Size = new System.Drawing.Size(45, 58);
+            this.btnEyePass.Symbol = 361552;
+            this.btnEyePass.SymbolColor = System.Drawing.SystemColors.WindowText;
+            this.btnEyePass.SymbolOffset = new System.Drawing.Point(-4, 0);
+            this.btnEyePass.SymbolSize = 26;
+            this.btnEyePass.TabIndex = 9;
+            this.btnEyePass.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnEyePass.Click += new System.EventHandler(this.btnEyePass_Click);
+            // 
+            // uiPanel1
+            // 
+            this.uiPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel1.Location = new System.Drawing.Point(2, 2);
+            this.uiPanel1.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel1.Name = "uiPanel1";
+            this.uiPanel1.Size = new System.Drawing.Size(158, 60);
+            this.uiPanel1.TabIndex = 10;
+            this.uiPanel1.Text = "Tên tài khoản";
+            this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // EnterAddUser
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1075,9 +1078,9 @@
             this.uiTableLayoutPanel3.ResumeLayout(false);
             this.uiTableLayoutPanel2.ResumeLayout(false);
             this.uiTableLayoutPanel6.ResumeLayout(false);
+            this.uiTableLayoutPanel9.ResumeLayout(false);
             this.uiTableLayoutPanel7.ResumeLayout(false);
             this.uiTableLayoutPanel8.ResumeLayout(false);
-            this.uiTableLayoutPanel9.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

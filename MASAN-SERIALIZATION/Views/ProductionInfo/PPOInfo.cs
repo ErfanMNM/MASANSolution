@@ -846,6 +846,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 opAWSFullOKCount.Text = counters.awsFullOKCount.ToString();
                 opAWSNotSent.Text = $"{counters.awsNotSent}/{counters.awsSentFailed}";
                 opAWSSentWating.Text = counters.awsSentWaiting.ToString();
+                opCarton.Text = Globals.ProductionData.counter.cartonID.ToString() +"/" + Globals.ProductionData.orderQty.ToInt()/AppConfigs.Current.cartonPack;
             });
         }
 
@@ -1061,10 +1062,10 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         {
             try
             {
-                var productionDateUtc = DateTime.ParseExact(ipProductionDate.Text, "dd-MM-yyyy HH:mm:ss", null);
+               // var productionDateUtc = DateTime.ParseExact(ipProductionDate.Text, "dd-MM-yyyy HH:mm:ss", null);
 
-                var saveResult = Globals.ProductionData.Save_PO(ipOrderNO.SelectedText, 
-                    productionDateUtc.ToString("yyyy-MM-dd HH:mm:ss.fff"), Globals.CurrentUser.Username);
+                var saveResult = Globals.ProductionData.Save_PO(ipOrderNO.SelectedText,
+                    ipProductionDate.Text, Globals.CurrentUser.Username);
 
                 if (saveResult.issucces)
                 {

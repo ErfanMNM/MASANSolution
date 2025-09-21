@@ -57,17 +57,34 @@ namespace SpT.Diaglogs
             Shift.FillColor = isShiftEnabled ? Color.FromArgb(255, 128, 0) : Color.FromArgb(0, 122, 204);
             UpdateKeyboardKeys();
         }
-
+        int cursorPosition = 0;
         private void Button_Click(object sender, EventArgs e)
         {
-            int cursorPosition = ipUsername.SelectionStart; // Vị trí con trỏ
-            if (sender is UIButton button)
+
+            if (isUsernameFocus)
             {
-                string key = button.Text;
-                // Thêm khoảng trắng tại vị trí con trỏ
-                ipUsername.Text = ipUsername.Text.Insert(cursorPosition, key);
-                ipUsername.SelectionStart = cursorPosition + 1; // Di chuyển con trỏ
+                cursorPosition = ipUsername.SelectionStart; // Vị trí con trỏ
+                if (sender is UIButton button)
+                {
+                    string key = button.Text;
+                    // Thêm khoảng trắng tại vị trí con trỏ
+                    ipUsername.Text = ipUsername.Text.Insert(cursorPosition, key);
+                    ipUsername.SelectionStart = cursorPosition + 1; // Di chuyển con trỏ
+                }
             }
+            else if (isPasswordFocus)
+            {
+                cursorPosition = ipPassword.SelectionStart; // Vị trí con trỏ
+                if (sender is UIButton button1)
+                {
+                    string key = button1.Text;
+                    // Thêm khoảng trắng tại vị trí con trỏ
+                    ipPassword.Text = ipPassword.Text.Insert(cursorPosition, key);
+                    ipPassword.SelectionStart = cursorPosition + 1; // Di chuyển con trỏ
+                }
+            }
+
+
         }
 
         private void UpdateKeyboardKeys()
@@ -206,6 +223,24 @@ namespace SpT.Diaglogs
                 // Cập nhật biểu tượng nút
                 btnEyePass.Symbol = 361552; // Biểu tượng mắt đóng
             }
+        }
+
+        private void ipPassword_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+        bool isPasswordFocus = false;
+        bool isUsernameFocus = false;
+        private void ipPassword_Click(object sender, EventArgs e)
+        {
+            isPasswordFocus = true;
+            isUsernameFocus = false;
+        }
+
+        private void ipUsername_Click(object sender, EventArgs e)
+        {
+            isUsernameFocus = true;
+            isPasswordFocus = false;
         }
     }
 }

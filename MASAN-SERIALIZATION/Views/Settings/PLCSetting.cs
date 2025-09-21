@@ -69,8 +69,14 @@ namespace MASAN_SERIALIZATION.Views.Settings
             FirstCheck_CS();
             omronPLC_Hsl1.PLC_IP = PLCAddress.Get("PLC_IP");
             omronPLC_Hsl1.PLC_PORT = int.Parse(PLCAddress.Get("PLC_PORT").ToString());
-            omronPLC_Hsl1.InitPLC();
 
+            if(AppConfigs.Current.PLC_Test_Mode)
+            {
+                omronPLC_Hsl1.PLC_IP = "127.0.0.1";
+                omronPLC_Hsl1.PLC_PORT = 9600;
+            }
+
+            omronPLC_Hsl1.InitPLC();
             bgwUpdate.RunWorkerAsync();
             UpdateCBB();
 
@@ -79,6 +85,14 @@ namespace MASAN_SERIALIZATION.Views.Settings
 
         public void FirstCheck()
         {
+            PLC_Parameter defaultConfig;
+            defaultConfig = new PLC_Parameter
+            {
+                DelayCamera = "1000",
+                DelayReject = "2000",
+                RejectStreng = "20",
+            };
+
             if (!Directory.Exists("PLC_RECIPEs"))
             {
                 Directory.CreateDirectory("PLC_RECIPEs");
@@ -90,12 +104,12 @@ namespace MASAN_SERIALIZATION.Views.Settings
             }
             if (!File.Exists(defaultFilePath))
             {
-                SQLiteConnection.CreateFile(defaultFilePath);
-                CreateDefaultRecipeTable();
-                return;
+                //tạo file json mặc định
+                File.WriteAllText(defaultFilePath, JsonConvert.SerializeObject(defaultConfig, Formatting.Indented));
+               // return;
             }
             DataTable datatable = Get_Last_Select_Recipe();
-            PLC_Parameter defaultConfig;
+            
             if (datatable.Rows.Count >= 1)
             {
                 SelectRecipeName = datatable.Rows[0]["RecipeName"].ToString();
@@ -109,7 +123,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
             }
             else
             {
-                SelectRecipeName = "Default.rplc";
+                SelectRecipeName = "Default";
                 defaultConfig = new PLC_Parameter
                 {
                     DelayCamera = "1000",
@@ -122,6 +136,13 @@ namespace MASAN_SERIALIZATION.Views.Settings
 
         public void FirstCheck_CS()
         {
+            PLC_Parameter defaultConfig_CS;
+            defaultConfig_CS = new PLC_Parameter
+            {
+                DelayCamera = "1000",
+                DelayReject = "2000",
+                RejectStreng = "20",
+            };
             if (!Directory.Exists("PLC_RECIPEs_CS"))
             {
                 Directory.CreateDirectory("PLC_RECIPEs_CS");
@@ -133,12 +154,11 @@ namespace MASAN_SERIALIZATION.Views.Settings
             }
             if (!File.Exists(defaultFilePath_CS))
             {
-                SQLiteConnection.CreateFile(defaultFilePath_CS);
-                CreateDefaultRecipeTable_CS();
-                return;
+                //tạo file json mặc định
+                File.WriteAllText(defaultFilePath_CS, JsonConvert.SerializeObject(defaultConfig_CS, Formatting.Indented));
             }
             DataTable datatable = Get_Last_Select_Recipe_CS();
-            PLC_Parameter defaultConfig_CS;
+            
             if (datatable.Rows.Count >= 1)
             {
                 SelectRecipeName_CS = datatable.Rows[0]["RecipeName"].ToString();
@@ -152,7 +172,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
             }
             else
             {
-                SelectRecipeName_CS = "Default.rplc";
+                SelectRecipeName_CS = "Default";
                 defaultConfig_CS = new PLC_Parameter
                 {
                     DelayCamera = "1000",
@@ -192,15 +212,15 @@ namespace MASAN_SERIALIZATION.Views.Settings
         {
             string json = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
             File.WriteAllText(defaultFilePath, json);
-            SelectRecipeName = "Default.rplc";
+            SelectRecipeName = "Default";
             string RecipeValue = $"{defaultConfig.DelayCamera},{defaultConfig.DelayReject},{defaultConfig.RejectStreng}";
-            AddLogRecipe("Default.rplc", RecipeValue, "CREATE", "Operator");
-            AddLogRecipe("Default.rplc", RecipeValue, "SELECT", "Operator");
+            AddLogRecipe("Default", RecipeValue, "CREATE", "Operator");
+            AddLogRecipe("Default", RecipeValue, "SELECT", "Operator");
             PLC_Parameter_On_PC = defaultConfig;
         }
         public void Write_Recipe_To_File(string json)
         {
-            File.WriteAllText($"PLC_RECIPEs/{SelectRecipeName}", json);
+            File.WriteAllText($"PLC_RECIPEs/{SelectRecipeName}.rplc", json);
             AddLogRecipe(SelectRecipeName, json, "UPDATE", "Operator");
         }
         public void CreateLogTable(string Camera_Folder)
@@ -229,7 +249,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
             if (files.Length == 0)
             {
                 string json = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
-                File.WriteAllText($"PLC_RECIPEs/{SelectRecipeName}", json);
+                File.WriteAllText($"PLC_RECIPEs/{SelectRecipeName}.rplc", json);
                 AddLogRecipe(SelectRecipeName, $"{defaultConfig.DelayCamera},{defaultConfig.DelayReject},{defaultConfig.RejectStreng}", "CREATE", "Operator");
                 AddLogRecipe(SelectRecipeName, $"{defaultConfig.DelayCamera},{defaultConfig.DelayReject},{defaultConfig.RejectStreng}", "SELECT", "Operator");
                 PLC_Parameter_On_PC = defaultConfig;
@@ -240,14 +260,14 @@ namespace MASAN_SERIALIZATION.Views.Settings
                 if (!fileExists)
                 {
                     string json = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
-                    File.WriteAllText($"PLC_RECIPEs/{SelectRecipeName}", json);
+                    File.WriteAllText($"PLC_RECIPEs/{SelectRecipeName}.rplc", json);
                     AddLogRecipe(SelectRecipeName, $"{defaultConfig.DelayCamera},{defaultConfig.DelayReject},{defaultConfig.RejectStreng}", "CREATE", "Operator");
                     AddLogRecipe(SelectRecipeName, $"{defaultConfig.DelayCamera},{defaultConfig.DelayReject},{defaultConfig.RejectStreng}", "SELECT", "Operator");
                     PLC_Parameter_On_PC = defaultConfig;
                 }
                 else
                 {
-                    string jsonContent = File.ReadAllText($"PLC_RECIPEs/{SelectRecipeName}");
+                    string jsonContent = File.ReadAllText($"PLC_RECIPEs/{SelectRecipeName}.rplc");
                     PLC_Parameter_On_PC = JsonConvert.DeserializeObject<PLC_Parameter>(jsonContent);
                 }
             }
@@ -298,11 +318,11 @@ namespace MASAN_SERIALIZATION.Views.Settings
         {
             foreach (var file in Directory.GetFiles("PLC_RECIPEs", "*.rplc"))
             {
-                ipRecipe.Items.Add(Path.GetFileName(file));
+                ipRecipe.Items.Add(Path.GetFileName(file.Replace(".rplc","")));
             }
             if (ipRecipe.Items.Count == 0)
             {
-                ipRecipe.Items.Add("Default.rplc");
+                ipRecipe.Items.Add("Default");
             }
             ipRecipe.SelectedIndex = 0;
             if (ipRecipe.Items.Contains(SelectRecipeName))
@@ -311,15 +331,15 @@ namespace MASAN_SERIALIZATION.Views.Settings
             }
             else
             {
-                ipRecipe.SelectedItem = "Default.rplc";
+                ipRecipe.SelectedItem = "Default";
             }
             foreach (var file in Directory.GetFiles("PLC_RECIPEs_CS", "*.rplc"))
             {
-                ipRecipe_CS.Items.Add(Path.GetFileName(file));
+                ipRecipe_CS.Items.Add(Path.GetFileName(file.Replace(".rplc", "")));
             }
             if (ipRecipe_CS.Items.Count == 0)
             {
-                ipRecipe_CS.Items.Add("Default.rplc");
+                ipRecipe_CS.Items.Add("Default");
             }
             ipRecipe_CS.SelectedIndex = 0;
             if (ipRecipe_CS.Items.Contains(SelectRecipeName_CS))
@@ -328,7 +348,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
             }
             else
             {
-                ipRecipe_CS.SelectedItem = "Default.rplc";
+                ipRecipe_CS.SelectedItem = "Default";
             }
         }
 
@@ -361,7 +381,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
             if (ipRecipe.SelectedText.Length > 3)
             {
                 SelectRecipeName = ipRecipe.SelectedText;
-                string jsonContent = File.ReadAllText($"PLC_RECIPEs/{SelectRecipeName}");
+                string jsonContent = File.ReadAllText($"PLC_RECIPEs/{SelectRecipeName}.rplc");
                 PLC_Parameter az = JsonConvert.DeserializeObject<PLC_Parameter>(jsonContent);
                 ipDelayTriger.Text = az.DelayCamera;
                 ipDelayReject.Text = az.DelayReject;
@@ -441,10 +461,10 @@ namespace MASAN_SERIALIZATION.Views.Settings
                     };
                     string json = JsonConvert.SerializeObject(newRecipe, Formatting.Indented);
                     File.WriteAllText($"PLC_RECIPEs/{enterText.TextValue}.rplc", json);
-                    AddLogRecipe(enterText.TextValue, $"{newRecipe.DelayCamera},{newRecipe.DelayReject},{newRecipe.RejectStreng}", "CREATE", Globals.CurrentUser.Username);
+                    AddLogRecipe(enterText.TextValue , $"{newRecipe.DelayCamera},{newRecipe.DelayReject},{newRecipe.RejectStreng}", "CREATE", Globals.CurrentUser.Username);
                     AddLogRecipe(enterText.TextValue, $"{newRecipe.DelayCamera},{newRecipe.DelayReject},{newRecipe.RejectStreng}", "SELECT", Globals.CurrentUser.Username);
                     ipRecipe.Items.Add(enterText.TextValue);
-                    SelectRecipeName = enterText.TextValue + ".rplc";
+                    SelectRecipeName = enterText.TextValue;
                     ipRecipe.SelectedItem = SelectRecipeName;
                     this.ShowSuccessDialog($"Đã tạo Recipe mới: {enterText.TextValue}");
                 };
@@ -454,19 +474,19 @@ namespace MASAN_SERIALIZATION.Views.Settings
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(SelectRecipeName) || SelectRecipeName == "Default.rplc")
+            if (string.IsNullOrEmpty(SelectRecipeName) || SelectRecipeName == "Default")
             {
                 this.ShowErrorDialog("Không thể xóa Recipe mặc định.");
                 return;
             }
-            string filePath = $"PLC_RECIPEs/{SelectRecipeName}";
+            string filePath = $"PLC_RECIPEs/{SelectRecipeName}.rplc";
             if (File.Exists(filePath))
             {
                 try
                 {
                     File.Delete(filePath);
                     ipRecipe.Items.Remove(SelectRecipeName);
-                    SelectRecipeName = "Default.rplc";
+                    SelectRecipeName = "Default";
                     ipRecipe.SelectedItem = SelectRecipeName;
                     PLC_Parameter_On_PC.DelayCamera = defaultConfig.DelayCamera;
                     PLC_Parameter_On_PC.DelayReject = defaultConfig.DelayReject;
@@ -495,10 +515,10 @@ namespace MASAN_SERIALIZATION.Views.Settings
         {
             string json = JsonConvert.SerializeObject(defaultConfig_CS, Formatting.Indented);
             File.WriteAllText(defaultFilePath_CS, json);
-            SelectRecipeName_CS = "Default.rplc";
+            SelectRecipeName_CS = "Default";
             string RecipeValue = $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}";
-            AddLogRecipe("Default.rplc", RecipeValue, "CREATE", "Operator");
-            AddLogRecipe("Default.rplc", RecipeValue, "SELECT", "Operator");
+            AddLogRecipe("Default", RecipeValue, "CREATE", "Operator");
+            AddLogRecipe("Default", RecipeValue, "SELECT", "Operator");
             PLC_Parameter_On_PC_CS = defaultConfig_CS;
         }
 
@@ -606,6 +626,11 @@ namespace MASAN_SERIALIZATION.Views.Settings
 
         private void bgwSavePLCCS_DoWork(object sender, DoWorkEventArgs e)
         {
+            if(AppConfigs.Current.PLC_Duo_Mode)
+            {
+
+            }
+
             try
             {
                 string delayCamera = ipDelayTriger_CS.Text;
@@ -664,7 +689,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
                     AddLogRecipe(enterText.TextValue, $"{newRecipe.DelayCamera},{newRecipe.DelayReject},{newRecipe.RejectStreng}", "CREATE", Globals.CurrentUser.Username);
                     AddLogRecipe(enterText.TextValue, $"{newRecipe.DelayCamera},{newRecipe.DelayReject},{newRecipe.RejectStreng}", "SELECT", Globals.CurrentUser.Username);
                     ipRecipe_CS.Items.Add(enterText.TextValue);
-                    SelectRecipeName_CS = enterText.TextValue + ".rplc";
+                    SelectRecipeName_CS = enterText.TextValue;
                     ipRecipe_CS.SelectedItem = SelectRecipeName;
                     this.ShowSuccessDialog($"Đã tạo Recipe mới: {enterText.TextValue}");
                 };
@@ -677,7 +702,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
             if (ipRecipe_CS.SelectedText.Length > 3)
             {
                 SelectRecipeName_CS = ipRecipe_CS.SelectedText;
-                string jsonContent = File.ReadAllText($"PLC_RECIPEs_CS/{SelectRecipeName_CS}");
+                string jsonContent = File.ReadAllText($"PLC_RECIPEs_CS/{SelectRecipeName_CS}.rplc");
                 PLC_Parameter az = JsonConvert.DeserializeObject<PLC_Parameter>(jsonContent);
                 ipDelayTriger_CS.Text = az.DelayCamera;
                 ipDelayReject_CS.Text = az.DelayReject;
@@ -715,6 +740,11 @@ namespace MASAN_SERIALIZATION.Views.Settings
                 }
                 Thread.Sleep(500); // Cập nhật mỗi 0.5 giây
             }
+
+        }
+
+        private void btnDeleteCS_Click(object sender, EventArgs e)
+        {
 
         }
     }

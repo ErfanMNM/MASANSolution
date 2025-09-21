@@ -362,5 +362,10 @@ namespace MASAN_SERIALIZATION.Views.Database
             //bật bàn phím ảo
 
         }
+
+        private void lblStatus_Click(object sender, EventArgs e)
+        {
+            this.ShowInfoDialog(lblStatus.Text);
+        }
     }
 }

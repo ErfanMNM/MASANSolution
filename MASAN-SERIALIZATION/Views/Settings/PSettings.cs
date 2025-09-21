@@ -305,6 +305,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
                 { "APP_Mode", "Chế độ ứng dụng" },
                 { "cartonAutoStart", "Tự kích hoạt thùng" },
                 { "cartonScanerMode", "Chế độ quét thùng carton" },
+                {"cartonWarning", "Ngưỡng cảnh báo thùng carton" },
                 { "cartonScaner_Only_Once", "Chỉ dùng 1 máy quét" },
                 { "cartonScanerTCP_IP", "IP máy quét thùng carton TCP" },
                 { "cartonScanerTCP_Port", "Cổng máy quét thùng carton TCP" },

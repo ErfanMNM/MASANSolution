@@ -448,5 +448,31 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     break;
             }
         }
+
+        private void btnNextCarton_Click(object sender, EventArgs e)
+        {
+
+            if(ipTest1.Text != "secrettantien512")
+            {
+                this.ShowErrorDialog("Vui lòng không nhấn thử");
+                return;
+            }
+            //kiểm tra thùng hiện tại đã có mã chưa
+            if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonData))
+            {
+                if (cartonData.cartonCode == "0")
+                {
+                    this.ShowErrorDialog("Thùng hiện tại chưa có mã thùng. Vui lòng quét mã thùng trước khi chuyển sang thùng mới.");
+                    return;
+                }
+            }
+
+
+            Globals.ProductionData.counter.cartonID += 1;
+            Globals.ProductionData.counter.carton_Packing_Count = 0;
+
+            //thêm thùng mới vào csdl
+
+        }
     }
 }

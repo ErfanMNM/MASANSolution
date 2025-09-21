@@ -417,6 +417,7 @@
             this.Padding = new System.Windows.Forms.Padding(0);
             this.ShowTitle = false;
             this.Text = "Main Form";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.ZoomScaleRect = new System.Drawing.Rectangle(15, 15, 677, 462);
             this.Load += new System.EventHandler(this.FMain_Load);
             this.footer.ResumeLayout(false);

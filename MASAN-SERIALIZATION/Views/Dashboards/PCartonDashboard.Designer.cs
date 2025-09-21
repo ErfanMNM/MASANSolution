@@ -88,6 +88,10 @@
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.serialPort2 = new System.IO.Ports.SerialPort(this.components);
             this.tcpClient1 = new SpT.Communications.TCP.TCPClient(this.components);
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.btnNextCarton = new Sunny.UI.UISymbolButton();
+            this.uiLabel4 = new Sunny.UI.UILabel();
+            this.uiLabel5 = new Sunny.UI.UILabel();
             this.mainContainer.SuspendLayout();
             this.scannerGroup.SuspendLayout();
             this.scannerContainer.SuspendLayout();
@@ -116,6 +120,7 @@
             this.debugGroup.SuspendLayout();
             this.debugContainer.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainContainer
@@ -811,6 +816,7 @@
             // uiTabControl1
             // 
             this.uiTabControl1.Controls.Add(this.tabPage1);
+            this.uiTabControl1.Controls.Add(this.tabPage3);
             this.uiTabControl1.Controls.Add(this.tabPage2);
             this.uiTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
@@ -913,7 +919,7 @@
             this.tabPage2.Controls.Add(this.btnSend1);
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(200, 60);
+            this.tabPage2.Size = new System.Drawing.Size(375, 111);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Test";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -986,6 +992,52 @@
             this.tcpClient1.Port = 5566;
             this.tcpClient1.ClientCallBack += new SpT.Communications.TCP.TCPClient.EventForClient(this.tcpClient1_ClientCallBack);
             // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.uiLabel5);
+            this.tabPage3.Controls.Add(this.uiLabel4);
+            this.tabPage3.Controls.Add(this.btnNextCarton);
+            this.tabPage3.Location = new System.Drawing.Point(0, 40);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(375, 111);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Tùy Chỉnh";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // btnNextCarton
+            // 
+            this.btnNextCarton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnNextCarton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnNextCarton.Location = new System.Drawing.Point(4, 3);
+            this.btnNextCarton.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnNextCarton.Name = "btnNextCarton";
+            this.btnNextCarton.Size = new System.Drawing.Size(367, 48);
+            this.btnNextCarton.Symbol = 61473;
+            this.btnNextCarton.TabIndex = 0;
+            this.btnNextCarton.Text = "Bắt đầu thùng mới";
+            this.btnNextCarton.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnNextCarton.Click += new System.EventHandler(this.btnNextCarton_Click);
+            // 
+            // uiLabel4
+            // 
+            this.uiLabel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiLabel4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            this.uiLabel4.Location = new System.Drawing.Point(3, 54);
+            this.uiLabel4.Name = "uiLabel4";
+            this.uiLabel4.Size = new System.Drawing.Size(368, 29);
+            this.uiLabel4.TabIndex = 1;
+            this.uiLabel4.Text = "Tính năng này sẽ ngưng việc đóng thùng hiện tại";
+            // 
+            // uiLabel5
+            // 
+            this.uiLabel5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiLabel5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            this.uiLabel5.Location = new System.Drawing.Point(4, 76);
+            this.uiLabel5.Name = "uiLabel5";
+            this.uiLabel5.Size = new System.Drawing.Size(368, 29);
+            this.uiLabel5.TabIndex = 2;
+            this.uiLabel5.Text = "Lập tức qua thùng mới để đóng";
+            // 
             // PCartonDashboard
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1022,6 +1074,7 @@
             this.debugGroup.ResumeLayout(false);
             this.debugContainer.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1087,5 +1140,9 @@
         private Sunny.UI.UISymbolButton btnSend2;
         private Sunny.UI.UISymbolButton btnSend1;
         private SpT.Communications.TCP.TCPClient tcpClient1;
+        private System.Windows.Forms.TabPage tabPage3;
+        private Sunny.UI.UILabel uiLabel5;
+        private Sunny.UI.UILabel uiLabel4;
+        private Sunny.UI.UISymbolButton btnNextCarton;
     }
 }

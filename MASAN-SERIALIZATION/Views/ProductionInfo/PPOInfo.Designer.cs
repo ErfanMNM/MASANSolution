@@ -507,7 +507,7 @@
             // 
             // ipProductionDate
             // 
-            this.ipProductionDate.DateFormat = "dd-MM-yyyy HH:mm:ss";
+            this.ipProductionDate.DateFormat = "yyyy-MM-dd HH:mm:ss.fff";
             this.ipProductionDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ipProductionDate.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
             this.ipProductionDate.FillColor2 = System.Drawing.Color.Blue;
@@ -516,7 +516,7 @@
             this.ipProductionDate.ForeColor = System.Drawing.Color.Black;
             this.ipProductionDate.Location = new System.Drawing.Point(196, 45);
             this.ipProductionDate.Margin = new System.Windows.Forms.Padding(2);
-            this.ipProductionDate.MaxLength = 19;
+            this.ipProductionDate.MaxLength = 23;
             this.ipProductionDate.MinimumSize = new System.Drawing.Size(63, 0);
             this.ipProductionDate.Name = "ipProductionDate";
             this.ipProductionDate.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
@@ -526,7 +526,7 @@
             this.ipProductionDate.SymbolNormal = 61555;
             this.ipProductionDate.SymbolSize = 24;
             this.ipProductionDate.TabIndex = 1;
-            this.ipProductionDate.Text = "11-07-2025 09:33:59";
+            this.ipProductionDate.Text = "2025-07-11 09:33:59.000";
             this.ipProductionDate.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipProductionDate.Value = new System.DateTime(2025, 7, 11, 9, 33, 59, 0);
             this.ipProductionDate.Watermark = "";
@@ -755,12 +755,12 @@
             this.uiTableLayoutPanel5.Controls.Add(this.btnProductionDate, 2, 0);
             this.uiTableLayoutPanel5.Controls.Add(this.btnPO, 1, 0);
             this.uiTableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel5.Location = new System.Drawing.Point(2, 209);
+            this.uiTableLayoutPanel5.Location = new System.Drawing.Point(2, 208);
             this.uiTableLayoutPanel5.Margin = new System.Windows.Forms.Padding(2);
             this.uiTableLayoutPanel5.Name = "uiTableLayoutPanel5";
             this.uiTableLayoutPanel5.RowCount = 1;
             this.uiTableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTableLayoutPanel5.Size = new System.Drawing.Size(828, 46);
+            this.uiTableLayoutPanel5.Size = new System.Drawing.Size(828, 47);
             this.uiTableLayoutPanel5.TabIndex = 11;
             this.uiTableLayoutPanel5.TagString = null;
             // 
@@ -776,7 +776,7 @@
             this.btnRUN.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnRUN.Name = "btnRUN";
             this.btnRUN.Radius = 8;
-            this.btnRUN.Size = new System.Drawing.Size(285, 42);
+            this.btnRUN.Size = new System.Drawing.Size(285, 43);
             this.btnRUN.Symbol = 61515;
             this.btnRUN.TabIndex = 4;
             this.btnRUN.Text = "BẮT ĐẦU SẢN XUẤT";
@@ -795,7 +795,7 @@
             this.btnClosePO.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnClosePO.Name = "btnClosePO";
             this.btnClosePO.Radius = 8;
-            this.btnClosePO.Size = new System.Drawing.Size(121, 42);
+            this.btnClosePO.Size = new System.Drawing.Size(121, 43);
             this.btnClosePO.Symbol = 561534;
             this.btnClosePO.TabIndex = 0;
             this.btnClosePO.Text = "Đóng PO";
@@ -813,7 +813,7 @@
             this.btnProductionDate.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnProductionDate.Name = "btnProductionDate";
             this.btnProductionDate.Radius = 8;
-            this.btnProductionDate.Size = new System.Drawing.Size(203, 42);
+            this.btnProductionDate.Size = new System.Drawing.Size(203, 43);
             this.btnProductionDate.Symbol = 559670;
             this.btnProductionDate.TabIndex = 1;
             this.btnProductionDate.Text = "Đổi Ngày Sản Xuất";
@@ -832,7 +832,7 @@
             this.btnPO.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnPO.Name = "btnPO";
             this.btnPO.Radius = 8;
-            this.btnPO.Size = new System.Drawing.Size(203, 42);
+            this.btnPO.Size = new System.Drawing.Size(203, 43);
             this.btnPO.Symbol = 61508;
             this.btnPO.SymbolSize = 44;
             this.btnPO.TabIndex = 3;
@@ -851,7 +851,7 @@
             this.opTer.Name = "opTer";
             this.opTer.Padding = new System.Windows.Forms.Padding(2);
             this.opTer.ShowText = false;
-            this.opTer.Size = new System.Drawing.Size(824, 53);
+            this.opTer.Size = new System.Drawing.Size(824, 52);
             this.opTer.TabIndex = 14;
             this.opTer.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -869,7 +869,6 @@
             this.uiGroupBox1.TabIndex = 15;
             this.uiGroupBox1.Text = "Thống kê cơ bản";
             this.uiGroupBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            
             // 
             // uiTableLayoutPanel8
             // 
@@ -1046,7 +1045,7 @@
             this.uiPanel2.RectColor = System.Drawing.Color.MediumBlue;
             this.uiPanel2.Size = new System.Drawing.Size(154, 30);
             this.uiPanel2.TabIndex = 82;
-            this.uiPanel2.Text = "Mã thùng đang đóng";
+            this.uiPanel2.Text = "Thùng đang đóng/Dự kiến";
             this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opPassCount

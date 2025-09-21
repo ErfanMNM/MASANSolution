@@ -182,6 +182,7 @@
             this.lblStatus.Size = new System.Drawing.Size(164, 18);
             this.lblStatus.TabIndex = 0;
             this.lblStatus.Text = "⚡ Sẵn sàng tìm kiếm...";
+            this.lblStatus.Click += new System.EventHandler(this.lblStatus_Click);
             // 
             // lblSearchResult
             // 

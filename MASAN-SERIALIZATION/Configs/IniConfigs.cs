@@ -29,6 +29,7 @@ namespace MASAN_SERIALIZATION.Configs
         public string clientId { get; set; } // Điểm cuối AWS IoT
         public int cartonPack { get; set; } // Đường dẫn đến chứng chỉ của client
         public int cartonOfset { get; set; } // Số lượng sản phẩm trong một thùng carton
+        public int cartonWarning { get; set; } // Ngưỡng cảnh báo số lượng sản phẩm trong thùng carton
 
         public int cartonScanerMode { get; set; } // Chế độ quét mã thùng carton (0: Manual, 1: Auto)
 
@@ -85,6 +86,7 @@ namespace MASAN_SERIALIZATION.Configs
             PLC_Address_Sheet_Name = "PLC";
             cartonCode_Line01 = "0";
             cartonCode_Line02 = "1";
+            cartonWarning = 5; // Mặc định ngưỡng cảnh báo số lượng sản phẩm trong thùng carton là 5
 
             Time_Delay_Complete = 10000; // Mặc định thời gian delay sau khi hoàn thành một sản phẩm là 500ms
         }
