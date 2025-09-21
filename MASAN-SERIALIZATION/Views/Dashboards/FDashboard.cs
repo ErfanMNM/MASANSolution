@@ -1111,7 +1111,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 OperateResult writeStart = OMRON_PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 1);//gửi lệnh bắt đầu = 1
             }
 
-            if (Globals.Production_State == e_Production_State.Running || Globals.Production_State == e_Production_State.Waiting_Stop)
+            if (Globals.Production_State == e_Production_State.Running || Globals.Production_State == e_Production_State.Waiting_Stop || Globals.Production_State == e_Production_State.Check_After_Completed)
             {
                 OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Conveyor_ENA_DM"), 1);
             }

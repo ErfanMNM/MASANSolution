@@ -606,23 +606,49 @@ namespace MASAN_SERIALIZATION.Views.Settings
 
         private void bgwSavePLCCS_DoWork(object sender, DoWorkEventArgs e)
         {
-            try
+            if(AppConfigs.Current.PLC_Duo_Mode)
             {
-                string delayCamera = ipDelayTriger_CS.Text;
-                string delayReject = ipDelayReject_CS.Text;
-                string rejectStreng = ipRejectStreng_CS.Text;
-                PLC_Parameter_On_PC_CS.DelayCamera = delayCamera;
-                PLC_Parameter_On_PC_CS.DelayReject = delayReject;
-                PLC_Parameter_On_PC_CS.RejectStreng = rejectStreng;
-                string json = JsonConvert.SerializeObject(PLC_Parameter_On_PC_CS, Formatting.Indented);
-                Write_Recipe_To_File_CS(json);
-                OperateResult operateResult = omronPLC_Hsl1.plc.Write(PLCAddress.Get("PLC_Delay_Camera_DM_C1"), new int[] { int.Parse(delayCamera), int.Parse(delayReject), int.Parse(rejectStreng) });
-                e.Result = operateResult;
+                //try
+                //{
+                //    string delayCamera = ipDelayTriger_CS.Text;
+                //    string delayReject = ipDelayReject_CS.Text;
+                //    string rejectStreng = ipRejectStreng_CS.Text;
+                //    PLC_Parameter_On_PC_CS.DelayCamera = delayCamera;
+                //    PLC_Parameter_On_PC_CS.DelayReject = delayReject;
+                //    PLC_Parameter_On_PC_CS.RejectStreng = rejectStreng;
+                //    string json = JsonConvert.SerializeObject(PLC_Parameter_On_PC_CS, Formatting.Indented);
+                //    Write_Recipe_To_File_CS(json);
+                //    OperateResult operateResult = omronPLC_Hsl2.plc.Write(PLCAddress.Get("PLC_Delay_Camera_DM_C1"), new int[] { int.Parse(delayCamera), int.Parse(delayReject), int.Parse(rejectStreng) });
+                //    e.Result = operateResult;
+                //}
+                //catch (Exception ex)
+                //{
+                //    e.Result = ex;
+                //}
+
+                this.ShowErrorDialog("Tính năng đang bị lỗi tạm thời!");
             }
-            catch (Exception ex)
+            else
             {
-                e.Result = ex;
+                try
+                {
+                    string delayCamera = ipDelayTriger_CS.Text;
+                    string delayReject = ipDelayReject_CS.Text;
+                    string rejectStreng = ipRejectStreng_CS.Text;
+                    PLC_Parameter_On_PC_CS.DelayCamera = delayCamera;
+                    PLC_Parameter_On_PC_CS.DelayReject = delayReject;
+                    PLC_Parameter_On_PC_CS.RejectStreng = rejectStreng;
+                    string json = JsonConvert.SerializeObject(PLC_Parameter_On_PC_CS, Formatting.Indented);
+                    Write_Recipe_To_File_CS(json);
+                    OperateResult operateResult = omronPLC_Hsl1.plc.Write(PLCAddress.Get("PLC_Delay_Camera_DM_C1"), new int[] { int.Parse(delayCamera), int.Parse(delayReject), int.Parse(rejectStreng) });
+                    e.Result = operateResult;
+                }
+                catch (Exception ex)
+                {
+                    e.Result = ex;
+                }
             }
+           
         }
 
         private void bgwSavePLCCS_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -716,6 +742,132 @@ namespace MASAN_SERIALIZATION.Views.Settings
                 Thread.Sleep(500); // Cập nhật mỗi 0.5 giây
             }
 
+        }
+
+        private void uiSymbolButton1_Click(object sender, EventArgs e)
+        {
+            if(!backgroundWorker1.IsBusy)
+            {
+                backgroundWorker1.RunWorkerAsync();
+            }
+            else
+            {
+                this.ShowErrorDialog("Đang trong quá trình cập nhật, vui lòng chờ!");
+            }
+
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                HslCommunication.Profinet.Omron.OmronFinsUdp plc = new HslCommunication.Profinet.Omron.OmronFinsUdp();
+                plc.CommunicationPipe = new HslCommunication.Core.Pipe.PipeUdpNet(ipCPLCIP.Text, ipCPLCIP.Text.ToInt())
+                {
+                    ReceiveTimeOut = 10000,    // 接收设备数据反馈的超时时间
+                    SleepTime = 0,
+                    SocketKeepAliveTime = -1,
+                    IsPersistentConnection = true,
+                };
+                plc.PlcType = HslCommunication.Profinet.Omron.OmronPlcType.CSCJ;
+                plc.SA1 = 1;
+                plc.GCT = 2;
+                plc.DA1 = 0;
+                plc.SID = 0;
+                plc.ByteTransform.DataFormat = HslCommunication.Core.DataFormat.CDAB;
+                plc.ByteTransform.IsStringReverseByteWord = true;
+
+                // 当前读取操作的代码 The code for the current read operation
+                OperateResult<int> read = plc.ReadInt32(uiNumPadTextBox5.Text);
+                if (read.IsSuccess)
+                {
+                    this.InvokeIfRequired(() =>
+                    {
+                        opValueCus.Text = read.Content.ToString();
+                    });
+                    
+                }
+                else
+                {
+                    this.InvokeIfRequired(() =>
+                    {
+                        opValueCus.Text = "Lỗi";
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ShowErrorDialog($"Lỗi khi kết nối PLC: {ex.Message}");
+
+            }
+        }
+
+        private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                HslCommunication.Profinet.Omron.OmronFinsUdp plc = new HslCommunication.Profinet.Omron.OmronFinsUdp();
+                plc.CommunicationPipe = new HslCommunication.Core.Pipe.PipeUdpNet(ipCPLCIP.Text, ipCPLCIP.Text.ToInt())
+                {
+                    ReceiveTimeOut = 10000,    // 接收设备数据反馈的超时时间
+                    SleepTime = 0,
+                    SocketKeepAliveTime = -1,
+                    IsPersistentConnection = true,
+                };
+                plc.PlcType = HslCommunication.Profinet.Omron.OmronPlcType.CSCJ;
+                plc.SA1 = 1;
+                plc.GCT = 2;
+                plc.DA1 = 0;
+                plc.SID = 0;
+                plc.ByteTransform.DataFormat = HslCommunication.Core.DataFormat.CDAB;
+                plc.ByteTransform.IsStringReverseByteWord = true;
+
+                // 当前写入操作的代码 The code for the current write operation
+                OperateResult write = plc.Write(uiNumPadTextBox5.Text, int.Parse(ipValueCust.Text));
+                if (write.IsSuccess)
+                {
+                    //Console.WriteLine("Write [D100] success");
+                }
+                else
+                {
+                    //Console.WriteLine("Write [D100] failed: " + write.Message);
+                }
+
+                // 当前读取操作的代码 The code for the current read operation
+                OperateResult<int> read = plc.ReadInt32(uiNumPadTextBox5.Text);
+                if (read.IsSuccess)
+                {
+                    this.InvokeIfRequired(() =>
+                    {
+                        opValueCus.Text = read.Content.ToString();
+                    });
+
+                }
+                else
+                {
+                    this.InvokeIfRequired(() =>
+                    {
+                        opValueCus.Text = "Lỗi";
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ShowErrorDialog($"Lỗi khi kết nối PLC: {ex.Message}");
+
+            }
+        }
+
+        private void uiSymbolButton2_Click(object sender, EventArgs e)
+        {
+            if (!backgroundWorker2.IsBusy)
+            {
+                backgroundWorker2.RunWorkerAsync();
+            }
+            else
+            {
+                this.ShowErrorDialog("Đang trong quá trình cập nhật, vui lòng chờ!");
+            }
         }
     }
 }
