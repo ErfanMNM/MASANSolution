@@ -36,7 +36,7 @@
             this.btnSend = new Sunny.UI.UISymbolButton();
             this.uiPanel1 = new Sunny.UI.UIPanel();
             this.uiSymbolButton1 = new Sunny.UI.UISymbolButton();
-            this.uiSymbolButton2 = new Sunny.UI.UISymbolButton();
+            this.opErr = new Sunny.UI.UIListBox();
             this.SuspendLayout();
             // 
             // opNotiboardAndSend
@@ -150,24 +150,26 @@
             this.uiSymbolButton1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.uiSymbolButton1.Click += new System.EventHandler(this.uiSymbolButton1_Click);
             // 
-            // uiSymbolButton2
+            // opErr
             // 
-            this.uiSymbolButton2.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uiSymbolButton2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiSymbolButton2.Location = new System.Drawing.Point(673, 579);
-            this.uiSymbolButton2.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiSymbolButton2.Name = "uiSymbolButton2";
-            this.uiSymbolButton2.Size = new System.Drawing.Size(155, 41);
-            this.uiSymbolButton2.TabIndex = 15;
-            this.uiSymbolButton2.Text = "Mã gửi khác 200";
-            this.uiSymbolButton2.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.uiSymbolButton2.Click += new System.EventHandler(this.uiSymbolButton2_Click);
+            this.opErr.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opErr.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
+            this.opErr.ItemSelectForeColor = System.Drawing.Color.White;
+            this.opErr.Location = new System.Drawing.Point(13, 406);
+            this.opErr.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.opErr.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opErr.Name = "opErr";
+            this.opErr.Padding = new System.Windows.Forms.Padding(2);
+            this.opErr.ShowText = false;
+            this.opErr.Size = new System.Drawing.Size(815, 153);
+            this.opErr.TabIndex = 11;
+            this.opErr.Text = "uiListBox1";
             // 
             // PAwsIot
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(840, 674);
-            this.Controls.Add(this.uiSymbolButton2);
+            this.Controls.Add(this.opErr);
             this.Controls.Add(this.uiSymbolButton1);
             this.Controls.Add(this.uiPanel1);
             this.Controls.Add(this.btnSend);
@@ -195,6 +197,6 @@
         private Sunny.UI.UISymbolButton btnSend;
         private Sunny.UI.UIPanel uiPanel1;
         private Sunny.UI.UISymbolButton uiSymbolButton1;
-        private Sunny.UI.UISymbolButton uiSymbolButton2;
+        private Sunny.UI.UIListBox opErr;
     }
 }
