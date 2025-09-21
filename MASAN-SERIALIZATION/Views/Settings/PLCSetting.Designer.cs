@@ -62,6 +62,12 @@
             this.uiTableLayoutPanel5 = new Sunny.UI.UITableLayoutPanel();
             this.uiTitlePanel5 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel6 = new Sunny.UI.UITableLayoutPanel();
+            this.uiTextBox2 = new Sunny.UI.UITextBox();
+            this.uiNumPadTextBox2 = new Sunny.UI.UINumPadTextBox();
+            this.uiPanel8 = new Sunny.UI.UIPanel();
+            this.uiTextBox1 = new Sunny.UI.UITextBox();
+            this.uiNumPadTextBox1 = new Sunny.UI.UINumPadTextBox();
+            this.uiPanel7 = new Sunny.UI.UIPanel();
             this.uiPanel4 = new Sunny.UI.UIPanel();
             this.uiPanel5 = new Sunny.UI.UIPanel();
             this.uiPanel6 = new Sunny.UI.UIPanel();
@@ -80,25 +86,19 @@
             this.uiTableLayoutPanel9 = new Sunny.UI.UITableLayoutPanel();
             this.btnNewCS = new Sunny.UI.UISymbolButton();
             this.ipRecipe_CS = new Sunny.UI.UIComboBox();
-            this.omronPLC_Hsl1 = new SPMS1.OmronPLC_Hsl(this.components);
-            this.omronPLC_Hsl2 = new SPMS1.OmronPLC_Hsl(this.components);
-            this.uiPanel7 = new Sunny.UI.UIPanel();
-            this.uiNumPadTextBox1 = new Sunny.UI.UINumPadTextBox();
-            this.uiTextBox1 = new Sunny.UI.UITextBox();
-            this.uiPanel8 = new Sunny.UI.UIPanel();
-            this.uiNumPadTextBox2 = new Sunny.UI.UINumPadTextBox();
-            this.uiTextBox2 = new Sunny.UI.UITextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.uiTableLayoutPanel10 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel11 = new Sunny.UI.UITableLayoutPanel();
+            this.uiNumPadTextBox5 = new Sunny.UI.UINumPadTextBox();
+            this.ipCPLPort = new Sunny.UI.UINumPadTextBox();
             this.uiPanel11 = new Sunny.UI.UIPanel();
             this.ipValueCust = new Sunny.UI.UINumPadTextBox();
             this.opValueCus = new Sunny.UI.UITextBox();
-            this.ipCPLPort = new Sunny.UI.UINumPadTextBox();
             this.ipCPLCIP = new Sunny.UI.UITextBox();
             this.uiSymbolButton1 = new Sunny.UI.UISymbolButton();
             this.uiSymbolButton2 = new Sunny.UI.UISymbolButton();
-            this.uiNumPadTextBox5 = new Sunny.UI.UINumPadTextBox();
+            this.omronPLC_Hsl1 = new SPMS1.OmronPLC_Hsl(this.components);
+            this.omronPLC_Hsl2 = new SPMS1.OmronPLC_Hsl(this.components);
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             this.uiTabControl1.SuspendLayout();
@@ -584,7 +584,7 @@
             this.tabPage2.Controls.Add(this.uiTableLayoutPanel4);
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(840, 612);
+            this.tabPage2.Size = new System.Drawing.Size(200, 60);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Camera Sau";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -601,7 +601,7 @@
             this.uiTableLayoutPanel4.RowCount = 2;
             this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 59.47712F));
             this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40.52288F));
-            this.uiTableLayoutPanel4.Size = new System.Drawing.Size(840, 612);
+            this.uiTableLayoutPanel4.Size = new System.Drawing.Size(200, 60);
             this.uiTableLayoutPanel4.TabIndex = 1;
             this.uiTableLayoutPanel4.TagString = null;
             // 
@@ -616,7 +616,7 @@
             this.uiTitlePanel4.Name = "uiTitlePanel4";
             this.uiTitlePanel4.Padding = new System.Windows.Forms.Padding(1, 35, 1, 1);
             this.uiTitlePanel4.ShowText = false;
-            this.uiTitlePanel4.Size = new System.Drawing.Size(196, 40);
+            this.uiTitlePanel4.Size = new System.Drawing.Size(196, 31);
             this.uiTitlePanel4.TabIndex = 3;
             this.uiTitlePanel4.Text = "ẢNH TỪ CAMERA SAU";
             this.uiTitlePanel4.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -629,7 +629,7 @@
             this.webView22.Dock = System.Windows.Forms.DockStyle.Fill;
             this.webView22.Location = new System.Drawing.Point(1, 35);
             this.webView22.Name = "webView22";
-            this.webView22.Size = new System.Drawing.Size(194, 4);
+            this.webView22.Size = new System.Drawing.Size(194, 0);
             this.webView22.TabIndex = 0;
             this.webView22.ZoomFactor = 1D;
             // 
@@ -641,12 +641,12 @@
             this.uiTableLayoutPanel5.Controls.Add(this.uiTitlePanel5, 0, 0);
             this.uiTableLayoutPanel5.Controls.Add(this.uiTitlePanel6, 1, 0);
             this.uiTableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel5.Location = new System.Drawing.Point(2, 46);
+            this.uiTableLayoutPanel5.Location = new System.Drawing.Point(2, 37);
             this.uiTableLayoutPanel5.Margin = new System.Windows.Forms.Padding(2);
             this.uiTableLayoutPanel5.Name = "uiTableLayoutPanel5";
             this.uiTableLayoutPanel5.RowCount = 1;
             this.uiTableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel5.Size = new System.Drawing.Size(196, 12);
+            this.uiTableLayoutPanel5.Size = new System.Drawing.Size(196, 21);
             this.uiTableLayoutPanel5.TabIndex = 4;
             this.uiTableLayoutPanel5.TagString = null;
             // 
@@ -661,7 +661,7 @@
             this.uiTitlePanel5.Name = "uiTitlePanel5";
             this.uiTitlePanel5.Padding = new System.Windows.Forms.Padding(1, 35, 1, 1);
             this.uiTitlePanel5.ShowText = false;
-            this.uiTitlePanel5.Size = new System.Drawing.Size(105, 8);
+            this.uiTitlePanel5.Size = new System.Drawing.Size(105, 17);
             this.uiTitlePanel5.TabIndex = 4;
             this.uiTitlePanel5.Text = "THÔNG SỐ PLC";
             this.uiTitlePanel5.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -694,9 +694,119 @@
             this.uiTableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.uiTableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.uiTableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.uiTableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.uiTableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.uiTableLayoutPanel6.Size = new System.Drawing.Size(103, 0);
             this.uiTableLayoutPanel6.TabIndex = 0;
             this.uiTableLayoutPanel6.TagString = null;
+            // 
+            // uiTextBox2
+            // 
+            this.uiTextBox2.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.uiTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTextBox2.FillDisableColor = System.Drawing.Color.White;
+            this.uiTextBox2.FillReadOnlyColor = System.Drawing.Color.White;
+            this.uiTextBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTextBox2.Location = new System.Drawing.Point(75, -17);
+            this.uiTextBox2.Margin = new System.Windows.Forms.Padding(2);
+            this.uiTextBox2.Minimum = 0D;
+            this.uiTextBox2.MinimumSize = new System.Drawing.Size(1, 16);
+            this.uiTextBox2.Name = "uiTextBox2";
+            this.uiTextBox2.Padding = new System.Windows.Forms.Padding(5);
+            this.uiTextBox2.ReadOnly = true;
+            this.uiTextBox2.ShowText = false;
+            this.uiTextBox2.Size = new System.Drawing.Size(26, 16);
+            this.uiTextBox2.TabIndex = 14;
+            this.uiTextBox2.Text = "0";
+            this.uiTextBox2.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiTextBox2.Watermark = "";
+            // 
+            // uiNumPadTextBox2
+            // 
+            this.uiNumPadTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiNumPadTextBox2.FillColor = System.Drawing.Color.White;
+            this.uiNumPadTextBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiNumPadTextBox2.Location = new System.Drawing.Point(40, -17);
+            this.uiNumPadTextBox2.Margin = new System.Windows.Forms.Padding(2);
+            this.uiNumPadTextBox2.Minimum = 0D;
+            this.uiNumPadTextBox2.MinimumSize = new System.Drawing.Size(63, 0);
+            this.uiNumPadTextBox2.Name = "uiNumPadTextBox2";
+            this.uiNumPadTextBox2.NumPadType = Sunny.UI.NumPadType.Integer;
+            this.uiNumPadTextBox2.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
+            this.uiNumPadTextBox2.Size = new System.Drawing.Size(63, 16);
+            this.uiNumPadTextBox2.SymbolDropDown = 557532;
+            this.uiNumPadTextBox2.SymbolNormal = 557532;
+            this.uiNumPadTextBox2.SymbolSize = 30;
+            this.uiNumPadTextBox2.TabIndex = 13;
+            this.uiNumPadTextBox2.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiNumPadTextBox2.Watermark = "";
+            // 
+            // uiPanel8
+            // 
+            this.uiPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel8.Location = new System.Drawing.Point(2, -17);
+            this.uiPanel8.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel8.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel8.Name = "uiPanel8";
+            this.uiPanel8.Size = new System.Drawing.Size(34, 16);
+            this.uiPanel8.TabIndex = 12;
+            this.uiPanel8.Text = "Độ trễ bộ phân làn 02";
+            this.uiPanel8.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiTextBox1
+            // 
+            this.uiTextBox1.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.uiTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTextBox1.FillDisableColor = System.Drawing.Color.White;
+            this.uiTextBox1.FillReadOnlyColor = System.Drawing.Color.White;
+            this.uiTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTextBox1.Location = new System.Drawing.Point(75, -37);
+            this.uiTextBox1.Margin = new System.Windows.Forms.Padding(2);
+            this.uiTextBox1.Minimum = 0D;
+            this.uiTextBox1.MinimumSize = new System.Drawing.Size(1, 16);
+            this.uiTextBox1.Name = "uiTextBox1";
+            this.uiTextBox1.Padding = new System.Windows.Forms.Padding(5);
+            this.uiTextBox1.ReadOnly = true;
+            this.uiTextBox1.ShowText = false;
+            this.uiTextBox1.Size = new System.Drawing.Size(26, 16);
+            this.uiTextBox1.TabIndex = 11;
+            this.uiTextBox1.Text = "0";
+            this.uiTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiTextBox1.Watermark = "";
+            // 
+            // uiNumPadTextBox1
+            // 
+            this.uiNumPadTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiNumPadTextBox1.FillColor = System.Drawing.Color.White;
+            this.uiNumPadTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiNumPadTextBox1.Location = new System.Drawing.Point(40, -37);
+            this.uiNumPadTextBox1.Margin = new System.Windows.Forms.Padding(2);
+            this.uiNumPadTextBox1.Minimum = 0D;
+            this.uiNumPadTextBox1.MinimumSize = new System.Drawing.Size(63, 0);
+            this.uiNumPadTextBox1.Name = "uiNumPadTextBox1";
+            this.uiNumPadTextBox1.NumPadType = Sunny.UI.NumPadType.Integer;
+            this.uiNumPadTextBox1.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
+            this.uiNumPadTextBox1.Size = new System.Drawing.Size(63, 16);
+            this.uiNumPadTextBox1.SymbolDropDown = 557532;
+            this.uiNumPadTextBox1.SymbolNormal = 557532;
+            this.uiNumPadTextBox1.SymbolSize = 30;
+            this.uiNumPadTextBox1.TabIndex = 10;
+            this.uiNumPadTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiNumPadTextBox1.Watermark = "";
+            // 
+            // uiPanel7
+            // 
+            this.uiPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel7.Location = new System.Drawing.Point(2, -37);
+            this.uiPanel7.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel7.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel7.Name = "uiPanel7";
+            this.uiPanel7.Size = new System.Drawing.Size(34, 16);
+            this.uiPanel7.TabIndex = 9;
+            this.uiPanel7.Text = "Độ trễ bộ phân làn 01";
+            this.uiPanel7.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiPanel4
             // 
@@ -715,7 +825,7 @@
             // 
             this.uiPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiPanel5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel5.Location = new System.Drawing.Point(2, 2);
+            this.uiPanel5.Location = new System.Drawing.Point(2, -11);
             this.uiPanel5.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel5.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel5.Name = "uiPanel5";
@@ -728,7 +838,7 @@
             // 
             this.uiPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiPanel6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel6.Location = new System.Drawing.Point(2, 2);
+            this.uiPanel6.Location = new System.Drawing.Point(2, -24);
             this.uiPanel6.Margin = new System.Windows.Forms.Padding(2);
             this.uiPanel6.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiPanel6.Name = "uiPanel6";
@@ -742,7 +852,7 @@
             this.ipDelayTriger_CS.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ipDelayTriger_CS.FillColor = System.Drawing.Color.White;
             this.ipDelayTriger_CS.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.ipDelayTriger_CS.Location = new System.Drawing.Point(172, 2);
+            this.ipDelayTriger_CS.Location = new System.Drawing.Point(40, 2);
             this.ipDelayTriger_CS.Margin = new System.Windows.Forms.Padding(2);
             this.ipDelayTriger_CS.Minimum = 0D;
             this.ipDelayTriger_CS.MinimumSize = new System.Drawing.Size(63, 0);
@@ -762,7 +872,7 @@
             this.ipDelayReject_CS.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ipDelayReject_CS.FillColor = System.Drawing.Color.White;
             this.ipDelayReject_CS.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.ipDelayReject_CS.Location = new System.Drawing.Point(40, 2);
+            this.ipDelayReject_CS.Location = new System.Drawing.Point(40, -11);
             this.ipDelayReject_CS.Margin = new System.Windows.Forms.Padding(2);
             this.ipDelayReject_CS.Minimum = 0D;
             this.ipDelayReject_CS.MinimumSize = new System.Drawing.Size(63, 0);
@@ -782,7 +892,7 @@
             this.ipRejectStreng_CS.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ipRejectStreng_CS.FillColor = System.Drawing.Color.White;
             this.ipRejectStreng_CS.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.ipRejectStreng_CS.Location = new System.Drawing.Point(40, 2);
+            this.ipRejectStreng_CS.Location = new System.Drawing.Point(40, -24);
             this.ipRejectStreng_CS.Margin = new System.Windows.Forms.Padding(2);
             this.ipRejectStreng_CS.Minimum = 0D;
             this.ipRejectStreng_CS.MinimumSize = new System.Drawing.Size(63, 0);
@@ -804,7 +914,7 @@
             this.opDelayTriger_CS.FillDisableColor = System.Drawing.Color.White;
             this.opDelayTriger_CS.FillReadOnlyColor = System.Drawing.Color.White;
             this.opDelayTriger_CS.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opDelayTriger_CS.Location = new System.Drawing.Point(330, 2);
+            this.opDelayTriger_CS.Location = new System.Drawing.Point(75, 2);
             this.opDelayTriger_CS.Margin = new System.Windows.Forms.Padding(2);
             this.opDelayTriger_CS.Minimum = 0D;
             this.opDelayTriger_CS.MinimumSize = new System.Drawing.Size(1, 16);
@@ -825,7 +935,7 @@
             this.opDelayReject_CS.FillDisableColor = System.Drawing.Color.White;
             this.opDelayReject_CS.FillReadOnlyColor = System.Drawing.Color.White;
             this.opDelayReject_CS.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opDelayReject_CS.Location = new System.Drawing.Point(75, 2);
+            this.opDelayReject_CS.Location = new System.Drawing.Point(75, -11);
             this.opDelayReject_CS.Margin = new System.Windows.Forms.Padding(2);
             this.opDelayReject_CS.Minimum = 0D;
             this.opDelayReject_CS.MinimumSize = new System.Drawing.Size(1, 16);
@@ -846,7 +956,7 @@
             this.opRejectStreng_CS.FillDisableColor = System.Drawing.Color.White;
             this.opRejectStreng_CS.FillReadOnlyColor = System.Drawing.Color.White;
             this.opRejectStreng_CS.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opRejectStreng_CS.Location = new System.Drawing.Point(75, 2);
+            this.opRejectStreng_CS.Location = new System.Drawing.Point(75, -24);
             this.opRejectStreng_CS.Margin = new System.Windows.Forms.Padding(2);
             this.opRejectStreng_CS.Minimum = 0D;
             this.opRejectStreng_CS.MinimumSize = new System.Drawing.Size(1, 16);
@@ -865,13 +975,13 @@
             this.uiTitlePanel6.Controls.Add(this.uiTableLayoutPanel7);
             this.uiTitlePanel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTitlePanel6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiTitlePanel6.Location = new System.Drawing.Point(467, 2);
+            this.uiTitlePanel6.Location = new System.Drawing.Point(111, 2);
             this.uiTitlePanel6.Margin = new System.Windows.Forms.Padding(2);
             this.uiTitlePanel6.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiTitlePanel6.Name = "uiTitlePanel6";
             this.uiTitlePanel6.Padding = new System.Windows.Forms.Padding(1, 35, 1, 1);
             this.uiTitlePanel6.ShowText = false;
-            this.uiTitlePanel6.Size = new System.Drawing.Size(83, 8);
+            this.uiTitlePanel6.Size = new System.Drawing.Size(83, 17);
             this.uiTitlePanel6.TabIndex = 5;
             this.uiTitlePanel6.Text = "ĐIỀU CHỈNH";
             this.uiTitlePanel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -934,7 +1044,7 @@
             this.btnUpCS.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnUpCS.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnUpCS.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnUpCS.Location = new System.Drawing.Point(131, 3);
+            this.btnUpCS.Location = new System.Drawing.Point(29, 3);
             this.btnUpCS.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnUpCS.Name = "btnUpCS";
             this.btnUpCS.Size = new System.Drawing.Size(17, 1);
@@ -950,7 +1060,7 @@
             this.btnDeleteCS.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnDeleteCS.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.btnDeleteCS.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnDeleteCS.Location = new System.Drawing.Point(241, 3);
+            this.btnDeleteCS.Location = new System.Drawing.Point(52, 3);
             this.btnDeleteCS.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnDeleteCS.Name = "btnDeleteCS";
             this.btnDeleteCS.Size = new System.Drawing.Size(20, 1);
@@ -958,7 +1068,6 @@
             this.btnDeleteCS.TabIndex = 2;
             this.btnDeleteCS.Text = "Xóa";
             this.btnDeleteCS.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnDeleteCS.Click += new System.EventHandler(this.btnDeleteCS_Click);
             // 
             // uiTableLayoutPanel9
             // 
@@ -985,7 +1094,7 @@
             this.btnNewCS.FillPressColor = System.Drawing.Color.Green;
             this.btnNewCS.FillSelectedColor = System.Drawing.Color.Green;
             this.btnNewCS.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnNewCS.Location = new System.Drawing.Point(252, 3);
+            this.btnNewCS.Location = new System.Drawing.Point(55, 3);
             this.btnNewCS.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnNewCS.Name = "btnNewCS";
             this.btnNewCS.Size = new System.Drawing.Size(17, 1);
@@ -1015,132 +1124,6 @@
             this.ipRecipe_CS.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipRecipe_CS.Watermark = "";
             this.ipRecipe_CS.SelectedIndexChanged += new System.EventHandler(this.ipRecipe_CS_SelectedIndexChanged);
-            // 
-            // omronPLC_Hsl1
-            // 
-            this.omronPLC_Hsl1.PLC_IP = "127.0.0.1";
-            this.omronPLC_Hsl1.PLC_PORT = 9600;
-            this.omronPLC_Hsl1.PLC_Ready_DM = "D16";
-            this.omronPLC_Hsl1.PLC_STATUS = SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect;
-            this.omronPLC_Hsl1.Ready = 0;
-            this.omronPLC_Hsl1.Time_Update = 300;
-            // 
-            // omronPLC_Hsl2
-            // 
-            this.omronPLC_Hsl2.PLC_IP = "127.0.0.1";
-            this.omronPLC_Hsl2.PLC_PORT = 9600;
-            this.omronPLC_Hsl2.PLC_Ready_DM = "D16";
-            this.omronPLC_Hsl2.PLC_STATUS = SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect;
-            this.omronPLC_Hsl2.Ready = 0;
-            this.omronPLC_Hsl2.Time_Update = 300;
-            // 
-            // uiPanel7
-            // 
-            this.uiPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel7.Location = new System.Drawing.Point(2, 122);
-            this.uiPanel7.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel7.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel7.Name = "uiPanel7";
-            this.uiPanel7.Size = new System.Drawing.Size(166, 36);
-            this.uiPanel7.TabIndex = 9;
-            this.uiPanel7.Text = "Độ trễ bộ phân làn 01";
-            this.uiPanel7.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiNumPadTextBox1
-            // 
-            this.uiNumPadTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiNumPadTextBox1.FillColor = System.Drawing.Color.White;
-            this.uiNumPadTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiNumPadTextBox1.Location = new System.Drawing.Point(172, 122);
-            this.uiNumPadTextBox1.Margin = new System.Windows.Forms.Padding(2);
-            this.uiNumPadTextBox1.Minimum = 0D;
-            this.uiNumPadTextBox1.MinimumSize = new System.Drawing.Size(63, 0);
-            this.uiNumPadTextBox1.Name = "uiNumPadTextBox1";
-            this.uiNumPadTextBox1.NumPadType = Sunny.UI.NumPadType.Integer;
-            this.uiNumPadTextBox1.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
-            this.uiNumPadTextBox1.Size = new System.Drawing.Size(154, 36);
-            this.uiNumPadTextBox1.SymbolDropDown = 557532;
-            this.uiNumPadTextBox1.SymbolNormal = 557532;
-            this.uiNumPadTextBox1.SymbolSize = 30;
-            this.uiNumPadTextBox1.TabIndex = 10;
-            this.uiNumPadTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.uiNumPadTextBox1.Watermark = "";
-            // 
-            // uiTextBox1
-            // 
-            this.uiTextBox1.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.uiTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTextBox1.FillDisableColor = System.Drawing.Color.White;
-            this.uiTextBox1.FillReadOnlyColor = System.Drawing.Color.White;
-            this.uiTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiTextBox1.Location = new System.Drawing.Point(330, 122);
-            this.uiTextBox1.Margin = new System.Windows.Forms.Padding(2);
-            this.uiTextBox1.Minimum = 0D;
-            this.uiTextBox1.MinimumSize = new System.Drawing.Size(1, 16);
-            this.uiTextBox1.Name = "uiTextBox1";
-            this.uiTextBox1.Padding = new System.Windows.Forms.Padding(5);
-            this.uiTextBox1.ReadOnly = true;
-            this.uiTextBox1.ShowText = false;
-            this.uiTextBox1.Size = new System.Drawing.Size(127, 36);
-            this.uiTextBox1.TabIndex = 11;
-            this.uiTextBox1.Text = "0";
-            this.uiTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.uiTextBox1.Watermark = "";
-            // 
-            // uiPanel8
-            // 
-            this.uiPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel8.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel8.Location = new System.Drawing.Point(2, 162);
-            this.uiPanel8.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel8.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel8.Name = "uiPanel8";
-            this.uiPanel8.Size = new System.Drawing.Size(166, 40);
-            this.uiPanel8.TabIndex = 12;
-            this.uiPanel8.Text = "Độ trễ bộ phân làn 02";
-            this.uiPanel8.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiNumPadTextBox2
-            // 
-            this.uiNumPadTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiNumPadTextBox2.FillColor = System.Drawing.Color.White;
-            this.uiNumPadTextBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiNumPadTextBox2.Location = new System.Drawing.Point(172, 162);
-            this.uiNumPadTextBox2.Margin = new System.Windows.Forms.Padding(2);
-            this.uiNumPadTextBox2.Minimum = 0D;
-            this.uiNumPadTextBox2.MinimumSize = new System.Drawing.Size(63, 0);
-            this.uiNumPadTextBox2.Name = "uiNumPadTextBox2";
-            this.uiNumPadTextBox2.NumPadType = Sunny.UI.NumPadType.Integer;
-            this.uiNumPadTextBox2.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
-            this.uiNumPadTextBox2.Size = new System.Drawing.Size(154, 40);
-            this.uiNumPadTextBox2.SymbolDropDown = 557532;
-            this.uiNumPadTextBox2.SymbolNormal = 557532;
-            this.uiNumPadTextBox2.SymbolSize = 30;
-            this.uiNumPadTextBox2.TabIndex = 13;
-            this.uiNumPadTextBox2.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.uiNumPadTextBox2.Watermark = "";
-            // 
-            // uiTextBox2
-            // 
-            this.uiTextBox2.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.uiTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTextBox2.FillDisableColor = System.Drawing.Color.White;
-            this.uiTextBox2.FillReadOnlyColor = System.Drawing.Color.White;
-            this.uiTextBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiTextBox2.Location = new System.Drawing.Point(330, 162);
-            this.uiTextBox2.Margin = new System.Windows.Forms.Padding(2);
-            this.uiTextBox2.Minimum = 0D;
-            this.uiTextBox2.MinimumSize = new System.Drawing.Size(1, 16);
-            this.uiTextBox2.Name = "uiTextBox2";
-            this.uiTextBox2.Padding = new System.Windows.Forms.Padding(5);
-            this.uiTextBox2.ReadOnly = true;
-            this.uiTextBox2.ShowText = false;
-            this.uiTextBox2.Size = new System.Drawing.Size(127, 40);
-            this.uiTextBox2.TabIndex = 14;
-            this.uiTextBox2.Text = "0";
-            this.uiTextBox2.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.uiTextBox2.Watermark = "";
             // 
             // tabPage3
             // 
@@ -1193,6 +1176,48 @@
             this.uiTableLayoutPanel11.Size = new System.Drawing.Size(651, 309);
             this.uiTableLayoutPanel11.TabIndex = 1;
             this.uiTableLayoutPanel11.TagString = null;
+            // 
+            // uiNumPadTextBox5
+            // 
+            this.uiNumPadTextBox5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiNumPadTextBox5.FillColor = System.Drawing.Color.White;
+            this.uiNumPadTextBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiNumPadTextBox5.Location = new System.Drawing.Point(2, 63);
+            this.uiNumPadTextBox5.Margin = new System.Windows.Forms.Padding(2);
+            this.uiNumPadTextBox5.Minimum = 0D;
+            this.uiNumPadTextBox5.MinimumSize = new System.Drawing.Size(63, 0);
+            this.uiNumPadTextBox5.Name = "uiNumPadTextBox5";
+            this.uiNumPadTextBox5.NumPadType = Sunny.UI.NumPadType.Integer;
+            this.uiNumPadTextBox5.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
+            this.uiNumPadTextBox5.Size = new System.Drawing.Size(175, 57);
+            this.uiNumPadTextBox5.SymbolDropDown = 557532;
+            this.uiNumPadTextBox5.SymbolNormal = 557532;
+            this.uiNumPadTextBox5.SymbolSize = 30;
+            this.uiNumPadTextBox5.TabIndex = 18;
+            this.uiNumPadTextBox5.Text = "D100";
+            this.uiNumPadTextBox5.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiNumPadTextBox5.Watermark = "";
+            // 
+            // ipCPLPort
+            // 
+            this.ipCPLPort.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ipCPLPort.FillColor = System.Drawing.Color.White;
+            this.ipCPLPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ipCPLPort.Location = new System.Drawing.Point(437, 2);
+            this.ipCPLPort.Margin = new System.Windows.Forms.Padding(2);
+            this.ipCPLPort.Minimum = 0D;
+            this.ipCPLPort.MinimumSize = new System.Drawing.Size(63, 0);
+            this.ipCPLPort.Name = "ipCPLPort";
+            this.ipCPLPort.NumPadType = Sunny.UI.NumPadType.Integer;
+            this.ipCPLPort.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
+            this.ipCPLPort.Size = new System.Drawing.Size(212, 57);
+            this.ipCPLPort.SymbolDropDown = 557532;
+            this.ipCPLPort.SymbolNormal = 557532;
+            this.ipCPLPort.SymbolSize = 30;
+            this.ipCPLPort.TabIndex = 16;
+            this.ipCPLPort.Text = "9600";
+            this.ipCPLPort.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ipCPLPort.Watermark = "";
             // 
             // uiPanel11
             // 
@@ -1248,27 +1273,6 @@
             this.opValueCus.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.opValueCus.Watermark = "";
             // 
-            // ipCPLPort
-            // 
-            this.ipCPLPort.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ipCPLPort.FillColor = System.Drawing.Color.White;
-            this.ipCPLPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.ipCPLPort.Location = new System.Drawing.Point(437, 2);
-            this.ipCPLPort.Margin = new System.Windows.Forms.Padding(2);
-            this.ipCPLPort.Minimum = 0D;
-            this.ipCPLPort.MinimumSize = new System.Drawing.Size(63, 0);
-            this.ipCPLPort.Name = "ipCPLPort";
-            this.ipCPLPort.NumPadType = Sunny.UI.NumPadType.Integer;
-            this.ipCPLPort.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
-            this.ipCPLPort.Size = new System.Drawing.Size(212, 57);
-            this.ipCPLPort.SymbolDropDown = 557532;
-            this.ipCPLPort.SymbolNormal = 557532;
-            this.ipCPLPort.SymbolSize = 30;
-            this.ipCPLPort.TabIndex = 16;
-            this.ipCPLPort.Text = "9600";
-            this.ipCPLPort.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ipCPLPort.Watermark = "";
-            // 
             // ipCPLCIP
             // 
             this.ipCPLCIP.Cursor = System.Windows.Forms.Cursors.IBeam;
@@ -1312,26 +1316,23 @@
             this.uiSymbolButton2.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.uiSymbolButton2.Click += new System.EventHandler(this.uiSymbolButton2_Click);
             // 
-            // uiNumPadTextBox5
+            // omronPLC_Hsl1
             // 
-            this.uiNumPadTextBox5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiNumPadTextBox5.FillColor = System.Drawing.Color.White;
-            this.uiNumPadTextBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiNumPadTextBox5.Location = new System.Drawing.Point(2, 63);
-            this.uiNumPadTextBox5.Margin = new System.Windows.Forms.Padding(2);
-            this.uiNumPadTextBox5.Minimum = 0D;
-            this.uiNumPadTextBox5.MinimumSize = new System.Drawing.Size(63, 0);
-            this.uiNumPadTextBox5.Name = "uiNumPadTextBox5";
-            this.uiNumPadTextBox5.NumPadType = Sunny.UI.NumPadType.Integer;
-            this.uiNumPadTextBox5.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
-            this.uiNumPadTextBox5.Size = new System.Drawing.Size(175, 57);
-            this.uiNumPadTextBox5.SymbolDropDown = 557532;
-            this.uiNumPadTextBox5.SymbolNormal = 557532;
-            this.uiNumPadTextBox5.SymbolSize = 30;
-            this.uiNumPadTextBox5.TabIndex = 18;
-            this.uiNumPadTextBox5.Text = "D100";
-            this.uiNumPadTextBox5.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.uiNumPadTextBox5.Watermark = "";
+            this.omronPLC_Hsl1.PLC_IP = "127.0.0.1";
+            this.omronPLC_Hsl1.PLC_PORT = 9600;
+            this.omronPLC_Hsl1.PLC_Ready_DM = "D16";
+            this.omronPLC_Hsl1.PLC_STATUS = SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect;
+            this.omronPLC_Hsl1.Ready = 0;
+            this.omronPLC_Hsl1.Time_Update = 300;
+            // 
+            // omronPLC_Hsl2
+            // 
+            this.omronPLC_Hsl2.PLC_IP = "127.0.0.1";
+            this.omronPLC_Hsl2.PLC_PORT = 9600;
+            this.omronPLC_Hsl2.PLC_Ready_DM = "D16";
+            this.omronPLC_Hsl2.PLC_STATUS = SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect;
+            this.omronPLC_Hsl2.Ready = 0;
+            this.omronPLC_Hsl2.Time_Update = 300;
             // 
             // backgroundWorker1
             // 

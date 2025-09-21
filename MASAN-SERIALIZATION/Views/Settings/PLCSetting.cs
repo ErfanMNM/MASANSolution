@@ -763,5 +763,118 @@ namespace MASAN_SERIALIZATION.Views.Settings
             }
 
         }
+
+        private void uiSymbolButton1_Click(object sender, EventArgs e)
+        {
+            if(!backgroundWorker1.IsBusy)
+            {
+backgroundWorker1.RunWorkerAsync();
+            }
+            else
+            {
+                this.ShowErrorDialog("Đang đọc dữ liệu, vui lòng chờ!");
+            }
+
+
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                HslCommunication.Profinet.Omron.OmronFinsUdp plc = new HslCommunication.Profinet.Omron.OmronFinsUdp();
+                plc.CommunicationPipe = new HslCommunication.Core.Pipe.PipeUdpNet(ipCPLCIP.Text, ipCPLCIP.Text.ToInt())
+                {
+                    ReceiveTimeOut = 10000,    // 接收设备数据反馈的超时时间
+                    SleepTime = 0,
+                    SocketKeepAliveTime = -1,
+                    IsPersistentConnection = true,
+                };
+                plc.PlcType = HslCommunication.Profinet.Omron.OmronPlcType.CSCJ;
+                plc.SA1 = 1;
+                plc.GCT = 2;
+                plc.DA1 = 0;
+                plc.SID = 0;
+                plc.ByteTransform.DataFormat = HslCommunication.Core.DataFormat.CDAB;
+                plc.ByteTransform.IsStringReverseByteWord = true;
+
+                // 当前读取操作的代码 The code for the current read operation
+                OperateResult<int> read = plc.ReadInt32(uiNumPadTextBox5.Text);
+                if (read.IsSuccess)
+                {
+                    opValueCus.Text = read.Content.ToString();
+                }
+                else
+                {
+                    opValueCus.Text = "Lỗi";
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ShowErrorDialog($"Lỗi khi kết nối PLC: {ex.Message}");
+
+            }
+        }
+
+        private void uiSymbolButton2_Click(object sender, EventArgs e)
+        {
+            if (!backgroundWorker2.IsBusy)
+            {
+                backgroundWorker2.RunWorkerAsync();
+            }
+            else
+            {
+                this.ShowErrorDialog("Đang ghi dữ liệu, vui lòng chờ!");
+            }
+        }
+
+        private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                HslCommunication.Profinet.Omron.OmronFinsUdp plc = new HslCommunication.Profinet.Omron.OmronFinsUdp();
+                plc.CommunicationPipe = new HslCommunication.Core.Pipe.PipeUdpNet(ipCPLCIP.Text, ipCPLCIP.Text.ToInt())
+                {
+                    ReceiveTimeOut = 10000,    // 接收设备数据反馈的超时时间
+                    SleepTime = 0,
+                    SocketKeepAliveTime = -1,
+                    IsPersistentConnection = true,
+                };
+                plc.PlcType = HslCommunication.Profinet.Omron.OmronPlcType.CSCJ;
+                plc.SA1 = 1;
+                plc.GCT = 2;
+                plc.DA1 = 0;
+                plc.SID = 0;
+                plc.ByteTransform.DataFormat = HslCommunication.Core.DataFormat.CDAB;
+                plc.ByteTransform.IsStringReverseByteWord = true;
+
+                // 当前写入操作的代码 The code for the current write operation
+                OperateResult write = plc.Write(uiNumPadTextBox5.Text, int.Parse(ipValueCust.Text));
+                if (write.IsSuccess)
+                {
+                    //Console.WriteLine("Write [D100] success");
+                }
+                else
+                {
+                    //Console.WriteLine("Write [D100] failed: " + write.Message);
+                }
+
+                // 当前读取操作的代码 The code for the current read operation
+                OperateResult<int> read = plc.ReadInt32(uiNumPadTextBox5.Text);
+                if (read.IsSuccess)
+                {
+                    opValueCus.Text = read.Content.ToString();
+                }
+                else
+                {
+                    opValueCus.Text = "Lỗi";
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ShowErrorDialog($"Lỗi khi kết nối PLC: {ex.Message}");
+
+            }
+        }
     }
 }
