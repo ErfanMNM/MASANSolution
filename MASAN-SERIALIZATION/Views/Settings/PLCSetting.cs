@@ -783,7 +783,7 @@ backgroundWorker1.RunWorkerAsync();
             try
             {
                 HslCommunication.Profinet.Omron.OmronFinsUdp plc = new HslCommunication.Profinet.Omron.OmronFinsUdp();
-                plc.CommunicationPipe = new HslCommunication.Core.Pipe.PipeUdpNet(ipCPLCIP.Text, ipCPLCIP.Text.ToInt())
+                plc.CommunicationPipe = new HslCommunication.Core.Pipe.PipeUdpNet(ipCPLCIP.Text, ipCPLPort.Text.ToInt())
                 {
                     ReceiveTimeOut = 10000,    // 接收设备数据反馈的超时时间
                     SleepTime = 0,
@@ -833,7 +833,7 @@ backgroundWorker1.RunWorkerAsync();
             try
             {
                 HslCommunication.Profinet.Omron.OmronFinsUdp plc = new HslCommunication.Profinet.Omron.OmronFinsUdp();
-                plc.CommunicationPipe = new HslCommunication.Core.Pipe.PipeUdpNet(ipCPLCIP.Text, ipCPLCIP.Text.ToInt())
+                plc.CommunicationPipe = new HslCommunication.Core.Pipe.PipeUdpNet(ipCPLCIP.Text, ipCPLPort.Text.ToInt())
                 {
                     ReceiveTimeOut = 10000,    // 接收设备数据反馈的超时时间
                     SleepTime = 0,

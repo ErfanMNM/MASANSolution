@@ -800,6 +800,7 @@
             this.btnClosePO.TabIndex = 0;
             this.btnClosePO.Text = "Đóng PO";
             this.btnClosePO.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnClosePO.Click += new System.EventHandler(this.btnClosePO_Click);
             // 
             // btnProductionDate
             // 

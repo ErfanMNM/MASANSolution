@@ -445,6 +445,12 @@ namespace MASAN_SERIALIZATION.Production
 
                         //kiểm tra xem có chữ log không
                         if (orderNo.ToLower().Contains("log")) continue;
+
+                        //kiểm tra xem có chữ delete không
+                        if (orderNo.ToLower().Contains("delete")) continue;
+
+                        //kiểm tra xem có chữ complete không
+                        if (orderNo.ToLower().Contains("complete")) continue;
                         DataRow row = table.NewRow();
                             row["orderNo"] = orderNo;
                         //kiểm tra xem có bị hủy không
@@ -554,9 +560,10 @@ namespace MASAN_SERIALIZATION.Production
 
             public TResult Get_Record_Count_By_Status(string orderNO, e_Production_Status Production_Status)
             {
+                string czRunPath = "";
                 try
                 {
-                    string czRunPath = $"{dataPath}/Record_{orderNO}.db";
+                     czRunPath = $"{dataPath}/Record_{orderNO}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(true, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -566,7 +573,7 @@ namespace MASAN_SERIALIZATION.Production
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         conn.Open();
-                        string query = "SELECT COUNT(*) FROM Records WHERE Status = @Status";
+                        string query = "SELECT COUNT(*) FROM `Records` WHERE Status = @Status";
                         var command = new SQLiteCommand(query, conn);
                         command.Parameters.AddWithValue("@Status", Production_Status.ToString());
                         int count = Convert.ToInt32(command.ExecuteScalar());
@@ -577,7 +584,7 @@ namespace MASAN_SERIALIZATION.Production
                 }
                 catch (Exception ex)
                 {
-                    return new TResult(false, $"Lỗi P06 khi lấy số lượng bản ghi theo trạng thái: {ex.Message}");
+                    return new TResult(false, $"Lỗi P06 khi lấy số lượng bản ghi theo trạng thái: {ex.Message}, {czRunPath}");
                 }
             }
 
@@ -595,7 +602,7 @@ namespace MASAN_SERIALIZATION.Production
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         conn.Open();
-                        string query = "SELECT COUNT(*) FROM Records WHERE Status = @Status";
+                        string query = "SELECT COUNT(*) FROM Records_CameraSub WHERE Status = @Status";
                         var command = new SQLiteCommand(query, conn);
                         command.Parameters.AddWithValue("@Status", Production_Status.ToString());
                         int count = Convert.ToInt32(command.ExecuteScalar());
@@ -606,7 +613,7 @@ namespace MASAN_SERIALIZATION.Production
                 }
                 catch (Exception ex)
                 {
-                    return new TResult(false, $"Lỗi P06 khi lấy số lượng bản ghi theo trạng thái: {ex.Message}");
+                    return new TResult(false, $"Lỗi P061 khi lấy số lượng bản ghi theo trạng thái: {ex.Message}");
                 }
             }
 

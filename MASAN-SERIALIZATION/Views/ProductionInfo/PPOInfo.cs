@@ -373,6 +373,11 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             return Globals.ProductionData.counter.passCount == Globals.ProductionData.orderQty.ToInt32();
         }
 
+        private bool IsOrderDeleted()
+        {
+            return Globals.ProductionData.getDataPO.Is_PO_Deleted(ipOrderNO.SelectedText);
+        }
+
         private void HandleCompletedOrder()
         {
             this.InvokeIfRequired(() =>
@@ -1216,5 +1221,9 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         #endregion
 
+        private void btnClosePO_Click(object sender, EventArgs e)
+        {
+            
+        }
     }
 }
