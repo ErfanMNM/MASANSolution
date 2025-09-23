@@ -389,6 +389,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             return; //nếu thùng chưa có mã thì không xử lý tiếp
                         }
                     }
+
                     //kích hoạt thùng mới
                     Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(cache_CartonID, out ProductionCartonData cartonDataz);
                     Globals_Database.Activate_Carton.Enqueue(cartonDataz.cartonCode);

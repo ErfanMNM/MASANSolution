@@ -170,6 +170,12 @@
     <Compile Include="Dialogs\Entertext.Designer.cs">
       <DependentUpon>Entertext.cs</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\POM.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\POM.Designer.cs">
+      <DependentUpon>POM.cs</DependentUpon>
+    </Compile>
     <Compile Include="Enums\eData.cs" />
     <Compile Include="Enums\eResult.cs" />
     <Compile Include="Enums\eState.cs" />
@@ -181,6 +187,12 @@
       <DependentUpon>FMain.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\DatabaseHelper.cs" />
+    <Compile Include="Views\Database\CheckVIP.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Database\CheckVIP.Designer.cs">
+      <DependentUpon>CheckVIP.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\Database\DBBrowser.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -193,6 +205,12 @@
     <Compile Include="Views\Database\PCodeSearch.Designer.cs">
       <DependentUpon>PCodeSearch.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Dialogs\POM.resx">
+      <DependentUpon>POM.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Database\CheckVIP.resx">
+      <DependentUpon>CheckVIP.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\Database\DBBrowser.resx">
       <DependentUpon>DBBrowser.cs</DependentUpon>
     </EmbeddedResource>

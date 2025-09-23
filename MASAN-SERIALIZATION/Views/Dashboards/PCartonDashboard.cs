@@ -229,7 +229,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     }
                     
                     break;
-
             }
 
 
@@ -472,6 +471,18 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             Globals.ProductionData.counter.carton_Packing_Count = 0;
 
             //thêm thùng mới vào csdl
+            ProductionCartonData cartonData1 = new ProductionCartonData();
+            cartonData1.cartonID = Globals_Database.Dictionary_ProductionCarton_Data.Count + 1;
+            cartonData1.cartonCode = "0";
+            cartonData1.Activate_Datetime = "0";
+            cartonData1.Activate_User = "0";
+            cartonData1.Production_Datetime = "0";
+            cartonData1.orderNo = Globals.ProductionData.orderNo;
+            cartonData1.Start_Datetime = "0";
+            Globals_Database.Dictionary_ProductionCarton_Data.Add(cartonData1.cartonID, cartonData1);
+            //thêm cái thùng mới vào cuối để đủ thùng
+            Globals.ProductionData.setDB.Insert_Carton(cartonData1, cartonData1.orderNo);
+
 
         }
     }

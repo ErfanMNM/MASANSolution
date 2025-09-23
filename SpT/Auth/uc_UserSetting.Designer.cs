@@ -37,7 +37,6 @@
             this.uiSymbolLabel3 = new Sunny.UI.UISymbolLabel();
             this.ipOTP = new Sunny.UI.UINumPadTextBox();
             this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
-            this.btn2FA = new Sunny.UI.UIPanel();
             this.ipComfirmNewPassword = new Sunny.UI.UITextBox();
             this.ipNewPassword = new Sunny.UI.UITextBox();
             this.ipOldPassword = new Sunny.UI.UITextBox();
@@ -49,6 +48,7 @@
             this.uiPanel5 = new Sunny.UI.UIPanel();
             this.uiPanel6 = new Sunny.UI.UIPanel();
             this.opRole = new Sunny.UI.UITextBox();
+            this.uiPanel7 = new Sunny.UI.UIPanel();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel3.SuspendLayout();
@@ -198,7 +198,6 @@
             this.uiTableLayoutPanel2.ColumnCount = 2;
             this.uiTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.33058F));
             this.uiTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 64.66942F));
-            this.uiTableLayoutPanel2.Controls.Add(this.btn2FA, 1, 4);
             this.uiTableLayoutPanel2.Controls.Add(this.ipComfirmNewPassword, 1, 3);
             this.uiTableLayoutPanel2.Controls.Add(this.ipNewPassword, 1, 2);
             this.uiTableLayoutPanel2.Controls.Add(this.ipOldPassword, 1, 1);
@@ -210,6 +209,7 @@
             this.uiTableLayoutPanel2.Controls.Add(this.uiPanel5, 0, 4);
             this.uiTableLayoutPanel2.Controls.Add(this.uiPanel6, 0, 5);
             this.uiTableLayoutPanel2.Controls.Add(this.opRole, 1, 5);
+            this.uiTableLayoutPanel2.Controls.Add(this.uiPanel7, 1, 4);
             this.uiTableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.uiTableLayoutPanel2.Name = "uiTableLayoutPanel2";
@@ -223,19 +223,6 @@
             this.uiTableLayoutPanel2.Size = new System.Drawing.Size(484, 254);
             this.uiTableLayoutPanel2.TabIndex = 1;
             this.uiTableLayoutPanel2.TagString = null;
-            // 
-            // btn2FA
-            // 
-            this.btn2FA.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn2FA.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btn2FA.Location = new System.Drawing.Point(173, 170);
-            this.btn2FA.Margin = new System.Windows.Forms.Padding(2);
-            this.btn2FA.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btn2FA.Name = "btn2FA";
-            this.btn2FA.Size = new System.Drawing.Size(309, 38);
-            this.btn2FA.TabIndex = 11;
-            this.btn2FA.Text = "Nhấn đúp để xem mã 2FA";
-            this.btn2FA.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ipComfirmNewPassword
             // 
@@ -409,6 +396,19 @@
             this.opRole.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.opRole.Watermark = "";
             // 
+            // uiPanel7
+            // 
+            this.uiPanel7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiPanel7.Location = new System.Drawing.Point(175, 173);
+            this.uiPanel7.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiPanel7.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel7.Name = "uiPanel7";
+            this.uiPanel7.Size = new System.Drawing.Size(305, 32);
+            this.uiPanel7.TabIndex = 11;
+            this.uiPanel7.Text = "Hiện Mã 2FA";
+            this.uiPanel7.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.uiPanel7.Click += new System.EventHandler(this.uiPanel7_Click);
+            // 
             // uc_UserSetting
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -447,6 +447,6 @@
         private Sunny.UI.UITextBox ipOldPassword;
         private Sunny.UI.UITextBox ipUserName;
         private Sunny.UI.UITextBox opRole;
-        private Sunny.UI.UIPanel btn2FA;
+        private Sunny.UI.UIPanel uiPanel7;
     }
 }

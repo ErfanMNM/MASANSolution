@@ -1,5 +1,6 @@
 using Google.Apis.Util;
 using MASAN_SERIALIZATION.Configs;
+using MASAN_SERIALIZATION.Dialogs;
 using MASAN_SERIALIZATION.Enums;
 using MASAN_SERIALIZATION.Production;
 using MASAN_SERIALIZATION.Utils;
@@ -324,9 +325,10 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void HandleOrderNotInList()
         {
+            SetEditMode();
             this.ShowErrorDialog("Lỗi PP041: Đơn hàng không tồn tại trong danh sách, Vui lòng chọn đơn hàng khác.");
             _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, "Đơn hàng không tồn tại trong danh sách");
-            SetEditMode();
+            
             Globals.Production_State = e_Production_State.NoSelectedPO;
         }
 
@@ -370,7 +372,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private bool IsOrderCompleted()
         {
-            return Globals.ProductionData.counter.passCount == Globals.ProductionData.orderQty.ToInt32();
+            return Globals.ProductionData.counter.passCount == Globals.ProductionData.orderQty.ToInt32() && Globals.ProductionData.counter.passCount > 0;
         }
 
         private bool IsOrderDeleted()
@@ -503,10 +505,9 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             switch (Globals.Production_State)
             {
                 case e_Production_State.NoSelectedPO:
-                    SetEditMode();
-                    Globals.Production_State = e_Production_State.Editing;
+                    HandlePOClickInEditingState();
+                   // Globals.Production_State = e_Production_State.Editing;
                     break;
-
                 case e_Production_State.Ready:
                     HandlePOClickInReadyState();
                     break;
@@ -1030,8 +1031,6 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     $"Lỗi khi lưu thông tin đơn hàng: {ex.Message}");
                 this.ShowErrorDialog($"Lỗi PP088: {ex.Message}");
             }
-
-            
         }
 
         private void SaveProductionData()
@@ -1164,7 +1163,8 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     btnPO.Text = "Lưu PO";
                     btnPO.Symbol = 61639;
 
-                    btnClosePO.Enabled = false;
+                    btnClosePO.Enabled = true;
+                    btnClosePO.Text = "Tải lại PO";
                     btnRUN.Enabled = false;
                 }
             });
@@ -1223,7 +1223,50 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void btnClosePO_Click(object sender, EventArgs e)
         {
-            
+            if(Globals.Production_State == e_Production_State.Editing)
+            {
+                Globals.ProductionData.getfromMES.MES_Load_OrderNo_ToComboBox(ipOrderNO);
+                //ghi logs người dùng load lại danh sách PO
+                _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.UserAction, "Người dùng load lại danh sách đơn hàng từ MES");
+                return;
+            }
+            //xóa PO
+            if (Globals.CurrentUser.Role != "Admin")
+            {
+                this.ShowErrorDialog("Lỗi PP403: Bạn không có quyền xóa đơn hàng, Vui lòng liên hệ quản trị viên.");
+                return;
+            }
+
+            if(Globals.ProductionData.orderNo == "PO001")
+            {
+                this.ShowErrorDialog("PO mặc định không thể xóa");
+                return;
+            }
+
+            using (var dialog = new Pom_dialog())
+            {
+                dialog.Key2FA = Globals.CurrentUser.Key2FA;
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    //thực hiện thao tác xóa PO
+
+                    //ghi logs người dùng xác nhận xóa PO
+                    _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.UserAction, $"Người dùng xác nhận xóa đơn hàng {Globals.ProductionData.orderNo} với lý do: {dialog.lydo}");
+
+                    Globals.ProductionData.Delete_PO(Globals.ProductionData.orderNo, Globals.CurrentUser.Username);
+                    //chuyển sang chế độ NOPO
+                    SetEditMode();
+                    Globals.ProductionData.getfromMES.MES_Load_OrderNo_ToComboBox(ipOrderNO);
+                    Globals.Production_State = e_Production_State.NoSelectedPO;
+                    
+                }
+                else
+                {
+                    //nếu không đồng ý thì không làm gì cả
+                    return;
+                }
+            }
+
         }
     }
 }

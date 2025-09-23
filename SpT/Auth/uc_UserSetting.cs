@@ -1,6 +1,7 @@
 ﻿using SpT.Diaglogs;
 using SpT.Logs;
 using Sunny.UI;
+using SpT.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -348,6 +349,48 @@ namespace SpT.Auth
                     ipComfirmNewPassword.Text = enterText.TextValue;
                 };
                 enterText.ShowDialog();
+            }
+        }
+
+        private void uiPanel7_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (userData == null || string.IsNullOrWhiteSpace(userData.Username))
+                {
+                    OnUserAction?.Invoke(this, new LoginActionEventArgs
+                    {
+                        Status = false,
+                        Message = "Không tìm thấy thông tin người dùng để tạo mã QR."
+                    });
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(userData.Key2FA))
+                {
+                    OnUserAction?.Invoke(this, new LoginActionEventArgs
+                    {
+                        Status = false,
+                        Message = "Chưa có khóa 2FA cho tài khoản này."
+                    });
+                    return;
+                }
+
+                string issuer = "MASAN-CZ Code-SA";
+                string otpauth = TwoFAHelper.GenerateQrCodeUri(userData.Key2FA, userData.Username, issuer);
+
+                using (var dlg = new QrCodeDialog(otpauth, $"QR 2FA cho {userData.Username}"))
+                {
+                    dlg.ShowDialog(FindForm());
+                }
+            }
+            catch (Exception ex)
+            {
+                OnUserAction?.Invoke(this, new LoginActionEventArgs
+                {
+                    Status = false,
+                    Message = $"Lỗi khi hiển thị mã QR: {ex.Message}"
+                });
             }
         }
     }

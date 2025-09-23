@@ -161,7 +161,7 @@
             this.opErr.Name = "opErr";
             this.opErr.Padding = new System.Windows.Forms.Padding(2);
             this.opErr.ShowText = false;
-            this.opErr.Size = new System.Drawing.Size(815, 153);
+            this.opErr.Size = new System.Drawing.Size(815, 212);
             this.opErr.TabIndex = 11;
             this.opErr.Text = "uiListBox1";
             // 

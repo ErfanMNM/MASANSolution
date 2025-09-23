@@ -38,6 +38,7 @@ namespace MASAN_SERIALIZATION
         private PAwsIot _pAws = new PAwsIot();
         private PSettings _pSettings = new PSettings();
         private PLCSetting _pPLCSetting = new PLCSetting();
+        private CheckVIP CheckVIP = new CheckVIP();
         //private PScaner _pScaner = new PScaner();
         //private PCodeSearch _pCodeSearch = new PCodeSearch();
         //private POrderNoViewer _pOrderNoViewer = new POrderNoViewer();
@@ -143,6 +144,7 @@ namespace MASAN_SERIALIZATION
                 //NavMenu.CreateNode(AddPage(_pCodeSearch, 1010));
                 //NavMenu.CreateNode(AddPage(_pOrderNoViewer, 1011));
                 NavMenu.CreateNode(AddPage(_pDBBrowser, 1012));
+                NavMenu.CreateNode(AddPage(CheckVIP, 1013));
                 NavMenu.CreateNode(AddPage(_pLogin, 2001));
 
                 NavMenu.SelectPage(2001);

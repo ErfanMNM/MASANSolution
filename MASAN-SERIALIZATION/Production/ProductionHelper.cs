@@ -454,7 +454,20 @@ namespace MASAN_SERIALIZATION.Production
                         DataRow row = table.NewRow();
                             row["orderNo"] = orderNo;
                         //kiểm tra xem có bị hủy không
-                       // var poDetailResult = 
+                        using (var conn = new SQLiteConnection($"Data Source={POLog_dbPath};Version=3;"))
+                        {
+                            string query = "SELECT COUNT(*) FROM PO WHERE orderNO = @orderNo AND Action = 'Deleted'";
+                            var command = new SQLiteCommand(query, conn);
+                            command.Parameters.AddWithValue("@orderNo", orderNo);
+                            conn.Open();
+                            int count = Convert.ToInt32(command.ExecuteScalar());
+                            if (count > 0)
+                            {
+                                //nếu bị hủy thì bỏ qua
+                                continue;
+                            }
+                        }
+
                         table.Rows.Add(row);
                         //}
                         
@@ -480,6 +493,65 @@ namespace MASAN_SERIALIZATION.Production
         #region Production Data Access
         public class GetDataPO
         {
+            public TResult getCodeInfo(string Code, string OrderNo)
+            {
+                try
+                {
+                    string czRunPath = $"{dataPath}/{OrderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
+                    }
+
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = "SELECT * FROM UniqueCodes WHERE Code = @Code";
+                        var command = new SQLiteCommand(query, conn);
+                        command.Parameters.AddWithValue("@Code", Code);
+                        var adapter = new SQLiteDataAdapter(command);
+                        var table = new DataTable();
+                        adapter.Fill(table);
+                        return (table.Rows.Count > 0)
+                            ? new TResult(true, "Lấy thông tin mã CZ thành công.", table.Rows.Count, table)
+                            : new TResult(false, "Không tìm thấy mã CZ: " + Code);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new TResult(false, $"Lỗi P05401 khi lấy thông tin mã CZ: {ex.Message}");
+                }
+            }
+
+            public TResult getCodeInfoWithCartonCode(string OrderNo, string cartonCode)
+            {
+                try
+                {
+                    string czRunPath = $"{dataPath}/{OrderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
+                    }
+
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = "SELECT * FROM UniqueCodes WHERE cartonCode = @carton";
+                        var command = new SQLiteCommand(query, conn);
+                        command.Parameters.AddWithValue("@carton", cartonCode);
+                        var adapter = new SQLiteDataAdapter(command);
+                        var table = new DataTable();
+                        adapter.Fill(table);
+                        return (table.Rows.Count > 0)
+                            ? new TResult(true, "Lấy thông tin mã CZ thành công.", table.Rows.Count, table)
+                            : new TResult(false, "Không tìm thấy");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new TResult(false, $"Lỗi P05401 khi lấy thông tin mã CZ: {ex.Message}");
+                }
+            }
             public TResult GetLastPO()
             {
                 try
@@ -789,7 +861,6 @@ namespace MASAN_SERIALIZATION.Production
                 }
             }
 
-
             public TResult Get_Codes_Sent_Timeout(string orderNo)
             {
                 try
@@ -1034,6 +1105,31 @@ namespace MASAN_SERIALIZATION.Production
                 return (false, $"Lỗi P06 khi ghi PO vào cơ sở dữ liệu: {ex.Message}");
             }
         }
+
+        public TResult Delete_PO(string orderNo, string userName)
+        {
+            try
+            {
+                using (var conn = new SQLiteConnection($"Data Source={POLog_dbPath};Version=3;"))
+                {
+                    conn.Open();
+                    string insertQuery = @"
+                        INSERT INTO PO (orderNO, productionDate, Action, UserName, Counter, Timestamp, Timeunix)
+                        VALUES (@orderNo, '', 'Deleted', @UserName, '{}', @Timestamp, @Timeunix)";
+                    var command = new SQLiteCommand(insertQuery, conn);
+                    command.Parameters.AddWithValue("@orderNo", orderNo);
+                    command.Parameters.AddWithValue("@UserName", userName);
+                    command.Parameters.AddWithValue("@Timestamp", DateTime.UtcNow.ToString("o"));
+                    command.Parameters.AddWithValue("@Timeunix", ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeMilliseconds());
+                    command.ExecuteNonQuery();
+                }
+                return new TResult(true, "Xóa PO thành công vào cơ sở dữ liệu.");
+            }
+            catch (Exception ex)
+            {
+                return new TResult(false, $"Lỗi P08 khi xóa PO vào cơ sở dữ liệu: {ex.Message}");
+            }
+        }
         public class PostDB
         {
 
@@ -1160,7 +1256,6 @@ namespace MASAN_SERIALIZATION.Production
                 }
 
             }
-
 
             public void Insert_Record_Camera_Sub(ProductionCodeData_Record productionCodeData_Record, string orderNo)
             {
