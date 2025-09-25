@@ -1,6 +1,7 @@
 ﻿using DATALOGIC_SCAN;
 using MASAN_SERIALIZATION.Configs;
 using MASAN_SERIALIZATION.Production;
+using MASAN_SERIALIZATION.Utils;
 using Sunny.UI;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ZXing.QrCode.Internal;
 
 namespace MASAN_SERIALIZATION.Views.Database
 {
@@ -47,7 +49,7 @@ namespace MASAN_SERIALIZATION.Views.Database
                         string scannedCode = s.Trim();
                         if(scan ==1)
                         {
-                            return;
+                            break;
                         }
 
                         ProcessScannedCode(scannedCode);
@@ -59,11 +61,15 @@ namespace MASAN_SERIALIZATION.Views.Database
         
         public void ProcessScannedCode(string Code)
         {
+            this.InvokeIfRequired(new Action(() => {
+             ipCode.Text = Code;
+             opCodeInfo.Text = "Đang tìm mã...";
+            }));
             Task.Run(() =>
             {
                 scan = 1;
                 TResult resultCode = Globals.ProductionData.getDataPO.getCodeInfo(ipCode.Text.Trim(), Globals.ProductionData.orderNo);
-                uiDataGridView1.DataSource = null;
+                uiDataGridView1.ClearAll();
                 if (resultCode.issuccess)
                 {
                     TResult resultVIP = Globals.ProductionData.getDataPO.getCodeInfoWithCartonCode(Globals.ProductionData.orderNo, resultCode.data.Rows[0]["cartonCode"].ToString());
@@ -72,7 +78,8 @@ namespace MASAN_SERIALIZATION.Views.Database
                     {
                         if (resultVIP.issuccess)
                         {
-                            uiDataGridView1.DataSource = resultVIP.data;
+
+                                uiDataGridView1.DataSource = resultVIP.data;
                         }
                         opCodeInfo.Text = $"MÃ: {resultCode.data.Rows[0]["Code"].ToString()} | Trạng thái :{resultCode.data.Rows[0]["Status"].ToString()} | Thời gian kích hoạt : {resultCode.data.Rows[0]["ActivateDate"].ToString()}";
                         opCaseCode.Text = $"MÃ THÙNG: {resultCode.data.Rows[0]["cartonCode"].ToString()}";
@@ -96,10 +103,19 @@ namespace MASAN_SERIALIZATION.Views.Database
 
         private void btnfind_Click(object sender, EventArgs e)
         {
+            if(scan == 1)
+            {
+                return;
+            }
+            this.InvokeIfRequired(new Action(() => {
+                //ipCode.Text = Code;
+                opCodeInfo.Text = "Đang tìm mã...";
+            }));
             Task.Run(() =>
             {
+                scan = 1;
                TResult resultCode = Globals.ProductionData.getDataPO.getCodeInfo(ipCode.Text.Trim(), Globals.ProductionData.orderNo);
-                uiDataGridView1.DataSource = null;
+                uiDataGridView1.ClearAll();
                 if (resultCode.issuccess)
                 {
                     TResult resultVIP = Globals.ProductionData.getDataPO.getCodeInfoWithCartonCode(Globals.ProductionData.orderNo, resultCode.data.Rows[0]["cartonCode"].ToString());
@@ -125,7 +141,7 @@ namespace MASAN_SERIALIZATION.Views.Database
                     }));
                 }
 
-
+scan = 0;
 
             });
         }

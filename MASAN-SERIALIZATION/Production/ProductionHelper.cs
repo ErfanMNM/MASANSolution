@@ -506,7 +506,7 @@ namespace MASAN_SERIALIZATION.Production
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         conn.Open();
-                        string query = "SELECT * FROM UniqueCodes WHERE Code = @Code";
+                        string query = "SELECT * FROM UniqueCodes WHERE Code Like @Code";
                         var command = new SQLiteCommand(query, conn);
                         command.Parameters.AddWithValue("@Code", Code);
                         var adapter = new SQLiteDataAdapter(command);
@@ -748,6 +748,34 @@ namespace MASAN_SERIALIZATION.Production
                 }
             }
 
+            public TResult Get_Records_CameraSub(string orderNo)
+            {
+                try
+                {
+                    string czRunPath = $"{dataPath}/Record_CameraSub_{orderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return new TResult(false, "Cơ sở dữ liệu ghi camera phụ không tồn tại.");
+                    }
+
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = "SELECT * FROM Records_CameraSub";
+                        var adapter = new SQLiteDataAdapter(query, conn);
+                        var table = new DataTable();
+                        adapter.Fill(table);
+                        return (table.Rows.Count > 0)
+                            ? new TResult(true, "Lấy danh sách bản ghi camera phụ thành công.", 0, table)
+                            : new TResult(true, "Không có bản ghi nào trong cơ sở dữ liệu camera phụ.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new TResult(false, $"Lỗi PH08CS khi lấy danh sách bản ghi camera phụ: {ex.Message}");
+                }
+            }
+
             //lấy danh sách thùng 
             public TResult Get_Cartons(string orderNo)
             {
@@ -873,7 +901,7 @@ namespace MASAN_SERIALIZATION.Production
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         conn.Open();
-                        string query = $"SELECT * FROM UniqueCodes WHERE Status != 0 AND Send_Status == 'Sent' AND Recive_Status = 'Pending";
+                        string query = $"SELECT * FROM UniqueCodes WHERE Status != 0 AND Send_Status == 'Sent' AND Recive_Status = 'Pending'";
 
                         var command = new SQLiteCommand(query, conn);
                         var adapter = new SQLiteDataAdapter(command);

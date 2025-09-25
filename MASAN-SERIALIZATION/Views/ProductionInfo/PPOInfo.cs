@@ -627,7 +627,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         private void PrepareProductionData()
         {
             Thread.Sleep(1000);
-            TResult recordsResult = Globals.ProductionData.getDataPO.Get_Records(ipOrderNO.Text);
+            TResult recordsResult = Globals.ProductionData.getDataPO.Get_Records_CameraSub(ipOrderNO.Text);
             
             if (!recordsResult.issuccess)
             {
@@ -852,7 +852,8 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 opAWSFullOKCount.Text = counters.awsFullOKCount.ToString();
                 opAWSNotSent.Text = $"{counters.awsNotSent}/{counters.awsSentFailed}";
                 opAWSSentWating.Text = counters.awsSentWaiting.ToString();
-                opCarton.Text = Globals.ProductionData.counter.cartonID.ToString() +"/" + Globals.ProductionData.orderQty.ToInt()/AppConfigs.Current.cartonPack;
+                // Sử dụng dữ liệu từ camera sub để hiển thị carton
+                opCarton.Text = Globals.ProductionData.counter.cartonID.ToString() +"/" + Globals.ProductionData.orderQty.ToInt()/AppConfigs.Current.cartonPack + " (CS)";
             });
         }
 
@@ -997,12 +998,57 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             }
             else
             {
-                int packingCount = Globals.ProductionData.counter.passCount % AppConfigs.Current.cartonPack;
-                Globals.ProductionData.counter.carton_Packing_Count = packingCount;
-                
-                Globals.ProductionData.counter.cartonID = packingCount == 0
-                    ? Globals.ProductionData.counter.passCount / AppConfigs.Current.cartonPack
-                    : (Globals.ProductionData.counter.passCount / AppConfigs.Current.cartonPack) + 1;
+                // Với Records_CameraSub, cartonID được lấy trực tiếp từ database
+                // Tìm cartonID lớn nhất từ các record Pass
+                TResult recordsResult = Globals.ProductionData.getDataPO.Get_Records_CameraSub(ipOrderNO.Text);
+                if (recordsResult.issuccess && recordsResult.data != null && recordsResult.data.Rows.Count > 0)
+                {
+                    int maxCartonID = 0;
+                    foreach (DataRow row in recordsResult.data.Rows)
+                    {
+                        if (row["Status"].ToString() == e_Production_Status.Pass.ToString())
+                        {
+                            int currentCartonID = Convert.ToInt32(row["cartonID"]);
+                            if (currentCartonID > maxCartonID)
+                            {
+                                maxCartonID = currentCartonID;
+                            }
+                        }
+                    }
+                    
+                    // Tính số sản phẩm trong thùng hiện tại
+                    int productsInCurrentCarton = 0;
+                    foreach (DataRow row in recordsResult.data.Rows)
+                    {
+                        if (row["Status"].ToString() == e_Production_Status.Pass.ToString() 
+                            && Convert.ToInt32(row["cartonID"]) == maxCartonID)
+                        {
+                            productsInCurrentCarton++;
+                        }
+                    }
+                    
+                    // Nếu thùng hiện tại đã đầy, chuyển sang thùng mới
+                    if (productsInCurrentCarton >= AppConfigs.Current.cartonPack)
+                    {
+                        Globals.ProductionData.counter.cartonID = maxCartonID + 1;
+                        Globals.ProductionData.counter.carton_Packing_Count = 0;
+                    }
+                    else
+                    {
+                        Globals.ProductionData.counter.cartonID = maxCartonID;
+                        Globals.ProductionData.counter.carton_Packing_Count = productsInCurrentCarton;
+                    }
+                }
+                else
+                {
+                    // Fallback về cách tính cũ nếu không có dữ liệu camera sub
+                    int packingCount = Globals.ProductionData.counter.passCount % AppConfigs.Current.cartonPack;
+                    Globals.ProductionData.counter.carton_Packing_Count = packingCount;
+                    
+                    Globals.ProductionData.counter.cartonID = packingCount == 0
+                        ? Globals.ProductionData.counter.passCount / AppConfigs.Current.cartonPack
+                        : (Globals.ProductionData.counter.passCount / AppConfigs.Current.cartonPack) + 1;
+                }
             }
         }
 
@@ -1058,7 +1104,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 Task.Delay(500).Wait();
             }
 
-            TResult result = Globals.ProductionData.getDataPO.Get_Records(ipOrderNO.Text);
+            TResult result = Globals.ProductionData.getDataPO.Get_Records_CameraSub(ipOrderNO.Text);
             if (!result.issuccess)
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 

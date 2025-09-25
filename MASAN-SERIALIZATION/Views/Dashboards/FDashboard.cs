@@ -199,7 +199,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 return;
             }
 
-            _data = _data.Replace("<GS>", "\u001D").Replace("<RS>", "\u001E").Replace("<US>", "\u001F").Replace(";", "");
+            _data = _data.Replace("<GS>", "\u001D").Replace("<RS>", "\u001E").Replace("<US>", "\u001F");
 
             if (Globals_Database.Dictionary_ProductionCode_Data.TryGetValue(_data, out ProductionCodeData _produtionCodeData))
             {
@@ -309,7 +309,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 return;
             }
 
-            _data = _data.Replace("<GS>", "\u001D").Replace("<RS>", "\u001E").Replace("<US>", "\u001F").Replace(";","");
+            _data = _data.Replace("<GS>", "\u001D").Replace("<RS>", "\u001E").Replace("<US>", "\u001F");
 
             //kiểm tra mã có tồn tại hay không
             if (Globals_Database.Dictionary_ProductionCode_Data.TryGetValue(_data, out ProductionCodeData _produtionCodeData))

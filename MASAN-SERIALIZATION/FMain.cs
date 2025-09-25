@@ -175,6 +175,7 @@ namespace MASAN_SERIALIZATION
                 _pPLCSetting.INIT();
                 _pProduction.START();
                 _pAws.START_AWS_Process();
+                //CheckVIP.START();
                 // optional: no heavy INIT needed for these pages
             }
             catch (Exception ex)
