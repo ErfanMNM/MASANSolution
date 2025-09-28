@@ -946,6 +946,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
         public void GetCounterFromPLC ()
         {
+            // Đọc counter cho CameraMain (luôn từ PLC chính)
             OperateResult<int[]> readCount = OMRON_PLC.plc.ReadInt32(PLCAddress.Get("PLC_Total_Count_DM_C2"), 5);
             if (readCount.IsSuccess)
             {
@@ -960,55 +961,109 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 //ghi log lỗi
                 DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.PlcError, "Lỗi DA01068 khi đọc dữ liệu đếm từ PLC", readCount.Message);
-                //this.ShowErrorNotifier($"Lỗi DA01068 khi đọc dữ liệu đếm từ PLC: {readCount.Message}");
             }
 
-            OperateResult<int[]> readf = OMRON_PLC.plc.ReadInt32(PLCAddress.Get("PLC_Total_Count_DM_C1"), 5);
-            if (readf.IsSuccess)
+            // Đọc counter cho CameraSub - Hỗ trợ PLC Duo Mode
+            OperateResult<int[]> readCameraSub;
+            string plcAddress;
+
+            if (AppConfigs.Current.PLC_Duo_Mode)
+            {
+                // Đọc từ PLC2 khi ở chế độ Duo
+                plcAddress = PLCAddress.Get("PLC2_Total_Count_DM_C1");
+                readCameraSub = OMRON_PLC_02.plc.ReadInt32(plcAddress, 5);
+            }
+            else
+            {
+                // Đọc từ PLC chính khi không ở chế độ Duo
+                plcAddress = PLCAddress.Get("PLC_Total_Count_DM_C1");
+                readCameraSub = OMRON_PLC.plc.ReadInt32(plcAddress, 5);
+            }
+
+            if (readCameraSub.IsSuccess)
             {
                 // Cập nhật các giá trị đếm từ PLC cho CameraSub
-                Globals.CameraSub_PLC_Counter.total = readf.Content[0]; // Tổng số sản phẩm đã sản xuất
-                Globals.CameraSub_PLC_Counter.camera_read_fail = readf.Content[1]; // Số sản phẩm đã loại bỏ
-                Globals.CameraSub_PLC_Counter.total_pass = readf.Content[2]; // Số sản phẩm đã kích hoạt
-                Globals.CameraSub_PLC_Counter.timeout = readf.Content[3]; // Số sản phẩm bị timeout
-                Globals.CameraSub_PLC_Counter.total_failed = readf.Content[4] + readf.Content[1]; // Số lượng sản phẩm thất bại
+                Globals.CameraSub_PLC_Counter.total = readCameraSub.Content[0]; // Tổng số sản phẩm đã sản xuất
+                Globals.CameraSub_PLC_Counter.camera_read_fail = readCameraSub.Content[1]; // Số sản phẩm đã loại bỏ
+                Globals.CameraSub_PLC_Counter.total_pass = readCameraSub.Content[2]; // Số sản phẩm đã kích hoạt
+                Globals.CameraSub_PLC_Counter.timeout = readCameraSub.Content[3]; // Số sản phẩm bị timeout
+                Globals.CameraSub_PLC_Counter.total_failed = readCameraSub.Content[4] + readCameraSub.Content[1]; // Số lượng sản phẩm thất bại
 
                 this.InvokeIfRequired( () =>
                 {
                     opFailC2.Value = readCount.Content[4] + readCount.Content[1];
                 } );
             }
+            else
+            {
+                // Ghi log lỗi khi đọc CameraSub counter
+                DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.PlcError,
+                    $"Lỗi DA01069 khi đọc dữ liệu đếm CameraSub từ PLC{(AppConfigs.Current.PLC_Duo_Mode ? "2" : "")} [{plcAddress}]",
+                    readCameraSub.Message);
+            }
         }
 
-        // Hàm kiểm tra timeout cho CameraSub với polling approach
+        // Hàm kiểm tra timeout cho CameraSub với polling approach - Hỗ trợ PLC Duo Mode
         public bool CheckCameraSubTimeout(string productCode, int expectedPassCountIncrease = 1)
         {
             try
             {
+                // Kiểm tra xem có bật tính năng timeout không
+                if (!AppConfigs.Current.CameraSub_Timeout_Enabled)
+                {
+                    if (AppConfigs.Current.CameraSub_Timeout_Log_Enabled)
+                    {
+                        this.InvokeIfRequired(() =>
+                        {
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS TIMEOUT DISABLED - Bỏ qua kiểm tra timeout cho mã {productCode}");
+                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                        });
+                    }
+                    return false; // Không timeout - tính năng bị tắt
+                }
+
                 // Lưu snapshot counter trước khi gửi
                 int passCountBefore = Globals.CameraSub_PLC_Counter.total_pass;
 
-                // Thông số polling
-                int pollingIntervalMs = 10; // Đọc PLC mỗi 10ms
-                int timeoutMs = 500; // Timeout sau 500ms
-                int maxPolls = timeoutMs / pollingIntervalMs; // 50 lần polling
+                // Thông số polling từ AppConfigs
+                int pollingIntervalMs = AppConfigs.Current.CameraSub_Polling_Interval_Ms;
+                int timeoutMs = AppConfigs.Current.CameraSub_Timeout_Ms;
+                int maxPolls = timeoutMs / pollingIntervalMs;
                 int pollCount = 0;
 
                 DateTime startTime = DateTime.Now;
 
-                this.InvokeIfRequired(() =>
+                if (AppConfigs.Current.CameraSub_Timeout_Log_Enabled)
                 {
-                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS POLLING - Bắt đầu monitor PLC cho mã {productCode}");
-                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                });
+                    this.InvokeIfRequired(() =>
+                    {
+                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS POLLING - Bắt đầu monitor PLC cho mã {productCode} (Duo: {AppConfigs.Current.PLC_Duo_Mode})");
+                        ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                    });
+                }
+
+                // Xác định PLC address dựa trên PLC_Duo_Mode
+                string plcAddress = AppConfigs.Current.PLC_Duo_Mode ?
+                    PLCAddress.Get("PLC2_Total_Count_DM_C1") :
+                    PLCAddress.Get("PLC_Total_Count_DM_C1");
 
                 // Polling loop
                 while (pollCount < maxPolls)
                 {
                     pollCount++;
 
-                    // Đọc counter từ PLC
-                    OperateResult<int[]> readCheck = OMRON_PLC.plc.ReadInt32(PLCAddress.Get("PLC_Total_Count_DM_C1"), 5);
+                    OperateResult<int[]> readCheck;
+
+                    // Đọc từ PLC hoặc PLC2 tùy theo cấu hình
+                    if (AppConfigs.Current.PLC_Duo_Mode)
+                    {
+                        readCheck = OMRON_PLC_02.plc.ReadInt32(plcAddress, 5);
+                    }
+                    else
+                    {
+                        readCheck = OMRON_PLC.plc.ReadInt32(plcAddress, 5);
+                    }
+
                     if (readCheck.IsSuccess)
                     {
                         int passCountCurrent = readCheck.Content[2]; // Pass count
@@ -1020,11 +1075,14 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             // Success - PLC đã xử lý thành công
                             TimeSpan processingTime = DateTime.Now - startTime;
 
-                            this.InvokeIfRequired(() =>
+                            if (AppConfigs.Current.CameraSub_Timeout_Log_Enabled)
                             {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS SUCCESS - Mã {productCode} xử lý thành công sau {processingTime.TotalMilliseconds:F0}ms (poll #{pollCount})");
-                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                            });
+                                this.InvokeIfRequired(() =>
+                                {
+                                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS SUCCESS - Mã {productCode} xử lý thành công sau {processingTime.TotalMilliseconds:F0}ms (poll #{pollCount}) [PLC{(AppConfigs.Current.PLC_Duo_Mode ? "2" : "")}]");
+                                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                                });
+                            }
 
                             // Cập nhật counter local
                             Globals.CameraSub_PLC_Counter.total_pass = passCountCurrent;
@@ -1041,7 +1099,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                             this.InvokeIfRequired(() =>
                             {
-                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS TIMEOUT - PLC báo timeout cho mã {productCode} sau {processingTime.TotalMilliseconds:F0}ms (poll #{pollCount})");
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS TIMEOUT - PLC{(AppConfigs.Current.PLC_Duo_Mode ? "2" : "")} báo timeout cho mã {productCode} sau {processingTime.TotalMilliseconds:F0}ms (poll #{pollCount})");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                             });
 
@@ -1059,14 +1117,14 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     else
                     {
                         // Không đọc được PLC, ghi log nhưng tiếp tục polling
-                        if (pollCount % 10 == 0) // Log mỗi 10 lần polling để tránh spam
+                        if (AppConfigs.Current.CameraSub_Timeout_Log_Enabled && (pollCount % 10 == 0)) // Log mỗi 10 lần polling để tránh spam
                         {
                             DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.PlcError,
-                                $"Lỗi CS03 đọc PLC lần {pollCount} cho mã {productCode}", readCheck.Message);
+                                $"Lỗi CS03 đọc PLC{(AppConfigs.Current.PLC_Duo_Mode ? "2" : "")} lần {pollCount} cho mã {productCode}", readCheck.Message);
                         }
                     }
 
-                    // Delay 10ms trước lần đọc tiếp theo
+                    // Delay theo config trước lần đọc tiếp theo
                     Thread.Sleep(pollingIntervalMs);
                 }
 
@@ -1075,12 +1133,12 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 this.InvokeIfRequired(() =>
                 {
-                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS TIMEOUT - Mã {productCode} không có response từ PLC sau {totalTime.TotalMilliseconds:F0}ms ({pollCount} polls)");
+                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS TIMEOUT - Mã {productCode} không có response từ PLC{(AppConfigs.Current.PLC_Duo_Mode ? "2" : "")} sau {totalTime.TotalMilliseconds:F0}ms ({pollCount} polls)");
                     ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                 });
 
                 DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.PlcError,
-                    $"CS TIMEOUT - Mã {productCode} timeout sau {pollCount} polls",
+                    $"CS TIMEOUT - Mã {productCode} timeout sau {pollCount} polls từ PLC{(AppConfigs.Current.PLC_Duo_Mode ? "2" : "")}",
                     $"Expected pass increase: {expectedPassCountIncrease}, Total time: {totalTime.TotalMilliseconds:F0}ms");
 
                 return true; // Timeout
@@ -1091,6 +1149,396 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     "Lỗi CS04 trong CheckCameraSubTimeout polling", ExceptionToJson(ex));
                 return false; // Lỗi, giả định không timeout
             }
+        }
+
+        // TEST METHOD - Thử nghiệm timeout mechanism
+        public void TestCameraSubTimeoutMechanism()
+        {
+            try
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: ========== BẮT ĐẦU TEST TIMEOUT MECHANISM ==========");
+                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                });
+
+                // Test Case 1: Simulate normal successful case
+                TestCase_NormalSuccess();
+                Thread.Sleep(1000);
+
+                // Test Case 2: Simulate timeout case
+                TestCase_Timeout();
+                Thread.Sleep(1000);
+
+                // Test Case 3: Test với mã giả
+                TestCase_WithFakeCode();
+
+                this.InvokeIfRequired(() =>
+                {
+                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: ========== KẾT THÚC TEST ==========");
+                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                });
+            }
+            catch (Exception ex)
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: TEST ERROR - {ex.Message}");
+                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                });
+            }
+        }
+
+        private void TestCase_NormalSuccess()
+        {
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: --- TEST CASE 1: Normal Success ---");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Đọc counter hiện tại
+            GetCounterFromPLC();
+            int currentPass = Globals.CameraSub_PLC_Counter.total_pass;
+
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Current Pass Count: {currentPass}");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Giả lập gửi PLC (không thực sự gửi, chỉ test polling)
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Giả lập gửi Pass command đến PLC...");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Test timeout check
+            bool isTimeout = CheckCameraSubTimeout("TEST_SUCCESS_001");
+
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Kết quả: {(isTimeout ? "TIMEOUT" : "SUCCESS")}");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+        }
+
+        private void TestCase_Timeout()
+        {
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: --- TEST CASE 2: Timeout Simulation ---");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Lưu counter hiện tại
+            int originalPass = Globals.CameraSub_PLC_Counter.total_pass;
+
+            // Giả lập không có response từ PLC (không thay đổi counter)
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Giả lập PLC không response...");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Test với timeout ngắn hơn
+            bool isTimeout = CheckCameraSubTimeoutShort("TEST_TIMEOUT_002", 100); // 100ms timeout
+
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Kết quả: {(isTimeout ? "TIMEOUT (Expected)" : "SUCCESS (Unexpected)")}");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+        }
+
+        private void TestCase_WithFakeCode()
+        {
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: --- TEST CASE 3: With Fake Product Code ---");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Simulate CameraSub_Process với mã fake
+            string fakeCode = $"FAKE_{DateTime.Now:HHmmss}";
+
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Testing với mã giả: {fakeCode}");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Test full flow
+            TestFullCameraSubFlow(fakeCode);
+        }
+
+        // Helper method: Test timeout với thời gian ngắn hơn
+        private bool CheckCameraSubTimeoutShort(string productCode, int timeoutMs)
+        {
+            try
+            {
+                int passCountBefore = Globals.CameraSub_PLC_Counter.total_pass;
+                int pollingIntervalMs = 10;
+                int maxPolls = timeoutMs / pollingIntervalMs;
+                int pollCount = 0;
+                DateTime startTime = DateTime.Now;
+
+                while (pollCount < maxPolls)
+                {
+                    pollCount++;
+
+                    OperateResult<int[]> readCheck = OMRON_PLC.plc.ReadInt32(PLCAddress.Get("PLC_Total_Count_DM_C1"), 5);
+                    if (readCheck.IsSuccess)
+                    {
+                        int passCountCurrent = readCheck.Content[2];
+                        if (passCountCurrent > passCountBefore)
+                        {
+                            return false; // Success
+                        }
+                    }
+
+                    Thread.Sleep(pollingIntervalMs);
+                }
+
+                // Timeout
+                TimeSpan totalTime = DateTime.Now - startTime;
+                this.InvokeIfRequired(() =>
+                {
+                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: SHORT TIMEOUT - {productCode} sau {totalTime.TotalMilliseconds:F0}ms");
+                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                });
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: TEST ERROR - {ex.Message}");
+                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                });
+                return false;
+            }
+        }
+
+        // Helper method: Test full CameraSub flow
+        private void TestFullCameraSubFlow(string testCode)
+        {
+            try
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Bắt đầu full flow test cho {testCode}");
+                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                });
+
+                // Giả lập gửi PLC
+                this.InvokeIfRequired(() =>
+                {
+                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Giả lập Send_To_PLC cho {testCode}");
+                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                });
+
+                // Test timeout check
+                bool isTimeout = CheckCameraSubTimeout(testCode);
+
+                // Log kết quả
+                this.InvokeIfRequired(() =>
+                {
+                    if (isTimeout)
+                    {
+                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: FULL FLOW - {testCode} bị TIMEOUT, sẽ hủy thêm vào thùng");
+                    }
+                    else
+                    {
+                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: FULL FLOW - {testCode} SUCCESS, sẽ thêm vào thùng");
+                    }
+                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                });
+
+            }
+            catch (Exception ex)
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: FULL FLOW ERROR - {ex.Message}");
+                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                });
+            }
+        }
+
+        // SIMPLE TEST METHOD - Gọi trực tiếp để test nhanh - Hỗ trợ cấu hình
+        public void SimpleTestTimeout()
+        {
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: ========== SIMPLE TEST TIMEOUT ==========");
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Config - Timeout Enabled: {AppConfigs.Current.CameraSub_Timeout_Enabled}");
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Config - Timeout Ms: {AppConfigs.Current.CameraSub_Timeout_Ms}");
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Config - Polling Interval: {AppConfigs.Current.CameraSub_Polling_Interval_Ms}ms");
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Config - PLC Duo Mode: {AppConfigs.Current.PLC_Duo_Mode}");
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Config - Log Enabled: {AppConfigs.Current.CameraSub_Timeout_Log_Enabled}");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Test với mã đơn giản
+            string testCode = "SIMPLE_TEST_" + DateTime.Now.ToString("HHmmss");
+
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Testing mã: {testCode}");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Đọc counter trước test
+            GetCounterFromPLC();
+            int beforePass = Globals.CameraSub_PLC_Counter.total_pass;
+            int beforeTimeout = Globals.CameraSub_PLC_Counter.timeout;
+
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Counter trước test - Pass: {beforePass}, Timeout: {beforeTimeout}");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Chạy test
+            bool result = CheckCameraSubTimeout(testCode);
+
+            // Đọc counter sau test
+            GetCounterFromPLC();
+            int afterPass = Globals.CameraSub_PLC_Counter.total_pass;
+            int afterTimeout = Globals.CameraSub_PLC_Counter.timeout;
+
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Counter sau test - Pass: {afterPass}, Timeout: {afterTimeout}");
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Kết quả test: {(result ? "TIMEOUT" : "SUCCESS")}");
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: ========== KẾT THÚC SIMPLE TEST ==========");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+        }
+
+        // Test với cấu hình khác nhau
+        public void TestWithDifferentConfigs()
+        {
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: ========== TEST VỚI CÁC CẤU HÌNH KHÁC NHAU ==========");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Test 1: Timeout disabled
+            TestTimeoutDisabled();
+            Thread.Sleep(1000);
+
+            // Test 2: Fast polling
+            TestFastPolling();
+            Thread.Sleep(1000);
+
+            // Test 3: PLC Duo Mode toggle
+            TestPLCDuoModeToggle();
+
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: ========== KẾT THÚC TEST CẤU HÌNH ==========");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+        }
+
+        private void TestTimeoutDisabled()
+        {
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: --- TEST: Timeout Disabled ---");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Backup original setting
+            bool originalSetting = AppConfigs.Current.CameraSub_Timeout_Enabled;
+
+            // Disable timeout
+            AppConfigs.Current.CameraSub_Timeout_Enabled = false;
+
+            bool result = CheckCameraSubTimeout("TEST_DISABLED");
+
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Kết quả (nên là SUCCESS vì disabled): {(result ? "TIMEOUT" : "SUCCESS")}");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Restore original setting
+            AppConfigs.Current.CameraSub_Timeout_Enabled = originalSetting;
+        }
+
+        private void TestFastPolling()
+        {
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: --- TEST: Fast Polling (5ms) ---");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Backup original settings
+            int originalInterval = AppConfigs.Current.CameraSub_Polling_Interval_Ms;
+            int originalTimeout = AppConfigs.Current.CameraSub_Timeout_Ms;
+
+            // Set fast polling
+            AppConfigs.Current.CameraSub_Polling_Interval_Ms = 5; // 5ms
+            AppConfigs.Current.CameraSub_Timeout_Ms = 100; // 100ms total
+
+            bool result = CheckCameraSubTimeout("TEST_FAST_POLL");
+
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Kết quả Fast Polling: {(result ? "TIMEOUT" : "SUCCESS")}");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Restore original settings
+            AppConfigs.Current.CameraSub_Polling_Interval_Ms = originalInterval;
+            AppConfigs.Current.CameraSub_Timeout_Ms = originalTimeout;
+        }
+
+        private void TestPLCDuoModeToggle()
+        {
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: --- TEST: PLC Duo Mode Toggle ---");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Backup original setting
+            bool originalDuoMode = AppConfigs.Current.PLC_Duo_Mode;
+
+            // Test với PLC_Duo_Mode = false
+            AppConfigs.Current.PLC_Duo_Mode = false;
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Testing với PLC Duo Mode = false");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+            bool result1 = CheckCameraSubTimeout("TEST_PLC_SINGLE");
+
+            // Test với PLC_Duo_Mode = true
+            AppConfigs.Current.PLC_Duo_Mode = true;
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Testing với PLC Duo Mode = true");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+            bool result2 = CheckCameraSubTimeout("TEST_PLC_DUO");
+
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Kết quả Single PLC: {(result1 ? "TIMEOUT" : "SUCCESS")}");
+                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Kết quả Duo PLC: {(result2 ? "TIMEOUT" : "SUCCESS")}");
+                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+            });
+
+            // Restore original setting
+            AppConfigs.Current.PLC_Duo_Mode = originalDuoMode;
         }
         
         private void ProcessRunningState()
@@ -1880,7 +2328,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         #region Event Handlers
         private void oporderNO_Click(object sender, EventArgs e)
         {
+            // Toggle thread state (existing functionality)
             offThread = !offThread;
+
+            // Run timeout test when clicking orderNO (for testing purposes)
+            Task.Run(() => TestCameraSubTimeoutMechanism());
         }
 
         private void btnClearPLC_Click(object sender, EventArgs e)

@@ -51,6 +51,12 @@ namespace MASAN_SERIALIZATION.Configs
 
         public int  Time_Delay_Complete { get; set; } // Thời gian delay sau khi hoàn thành một sản phẩm (tính bằng mili giây)
 
+        // CameraSub Timeout Settings
+        public bool CameraSub_Timeout_Enabled { get; set; } // Bật/Tắt tính năng kiểm tra timeout cho CameraSub
+        public int CameraSub_Timeout_Ms { get; set; } // Thời gian timeout cho CameraSub (ms)
+        public int CameraSub_Polling_Interval_Ms { get; set; } // Thời gian polling interval cho CameraSub (ms)
+        public bool CameraSub_Timeout_Log_Enabled { get; set; } // Bật/Tắt log chi tiết cho timeout checking
+
 
 
 
@@ -89,6 +95,12 @@ namespace MASAN_SERIALIZATION.Configs
             cartonWarning = 5; // Mặc định ngưỡng cảnh báo số lượng sản phẩm trong thùng carton là 5
 
             Time_Delay_Complete = 10000; // Mặc định thời gian delay sau khi hoàn thành một sản phẩm là 500ms
+
+            // CameraSub Timeout Settings - Default values
+            CameraSub_Timeout_Enabled = true; // Mặc định bật tính năng timeout checking
+            CameraSub_Timeout_Ms = 500; // Mặc định timeout 500ms
+            CameraSub_Polling_Interval_Ms = 10; // Mặc định polling mỗi 10ms
+            CameraSub_Timeout_Log_Enabled = true; // Mặc định bật log chi tiết
         }
     }
 }
