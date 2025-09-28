@@ -92,6 +92,7 @@ namespace MASAN_SERIALIZATION
         public string cartonCode { get; set; } // Mã code thùng
         public string Activate_User { get; set; } // Mã id thùng trong csdl
         public string Main_Camera_Status { get; set; } // 0: Chưa kích hoạt,Active là 1, reject là -1
+        public string Sub_Camera_Status { get; set; } // 0: Chưa kích hoạt từ camera phụ, 1: Đã kích hoạt, -1: Lỗi
         public string Sub_Camera_Activate_Datetime { get; set; } // 0: Chưa kích hoạt,Active là 1, reject là -1
         public string Activate_Datetime { get; set; } // Thời gian kích hoạt
         public string Production_Datetime { get; set; } // Thời gian sản xuất

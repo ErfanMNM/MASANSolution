@@ -311,13 +311,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
             _data = _data.Replace("<GS>", "\u001D").Replace("<RS>", "\u001E").Replace("<US>", "\u001F");
 
-            //kiểm tra mã có tồn tại hay không
+            //kiểm tra mã có tồn tại hay không trong Dictionary chính (CameraMain)
             if (Globals_Database.Dictionary_ProductionCode_Data.TryGetValue(_data, out ProductionCodeData _produtionCodeData))
             {
-                ProductionCartonData cartonData = new ProductionCartonData();
-                int cache_CartonID = Globals.ProductionData.counter.cartonID;
-                int cache_CartonCount = Globals.ProductionData.counter.carton_Packing_Count;
-
                 //chưa kích hoạt từ camera chính => Loại sản phẩm
                 if (_produtionCodeData.Main_Camera_Status == "0")
                 {
@@ -335,6 +331,32 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     Enqueue_Product_To_Record(_data, e_Production_Status.ReadFail, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                     return;
                 }
+
+                // Kiểm tra trùng lặp trong Dictionary CameraSub
+                if (Globals_Database.Dictionary_ProductionCode_CameraSub_Data.TryGetValue(_data, out ProductionCodeData _produtionCodeDataCS))
+                {
+                    // Kiểm tra xem đã được CameraSub scan chưa
+                    if (_produtionCodeDataCS.Sub_Camera_Status != "0")
+                    {
+                        // Đã được scan => Duplicate
+                        bool stp = false;
+                        if (AppConfigs.Current.PLC_Duo_Mode)
+                        {
+                            stp = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
+                        }
+                        else
+                        {
+                            stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                        }
+                        Send_Result_Content_CSub(e_Production_Status.Duplicate, _data);
+                        Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
+                        return;
+                    }
+                }
+
+                ProductionCartonData cartonData = new ProductionCartonData();
+                int cache_CartonID = Globals.ProductionData.counter.cartonID;
+                int cache_CartonCount = Globals.ProductionData.counter.carton_Packing_Count;
 
                 //kiểm tra xem thùng đang đóng đã kích hoạt chưa, nếu chưa dừng băng tải
                 if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData _produtionCartonData1))
@@ -425,8 +447,16 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 if (successSend)
                 {
                     cache_CartonCount++; //tăng số lượng chai trong thùng
-                    Globals.ProductionData.counter.carton_Packing_Count = cache_CartonCount; //cập nhật số lượng chai trong thùng                                                     
+                    Globals.ProductionData.counter.carton_Packing_Count = cache_CartonCount; //cập nhật số lượng chai trong thùng
                     _produtionCodeData.Sub_Camera_Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"); // Cập nhật thời gian kích hoạt từ camera phụ
+
+                    // Cập nhật trạng thái CameraSub đã scan thành công
+                    if (Globals_Database.Dictionary_ProductionCode_CameraSub_Data.TryGetValue(_data, out ProductionCodeData _produtionCodeDataCS_Update))
+                    {
+                        _produtionCodeDataCS_Update.Sub_Camera_Status = "1"; // Đánh dấu đã được scan bởi CameraSub
+                        _produtionCodeDataCS_Update.Sub_Camera_Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
+                    }
+
                     //active thùng
 
                     Enqueue_Product_To_SQLite(_data, _produtionCodeData); //thêm vào hàng chờ lưu sqlite
@@ -1192,10 +1222,29 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                             codeID = codeID.ToInt32(),
                                             cartonCode = cartonCode, //sẽ cập nhật sau khi gửi xuống PLC
                                             Main_Camera_Status = status, //chưa kích hoạt
+                                            Sub_Camera_Status = "0", //chưa kích hoạt từ camera phụ
                                             Activate_User = activateUser, //sẽ cập nhật sau khi kích hoạt
                                             Sub_Camera_Activate_Datetime = subCameraDatetime, //chưa kích hoạt
                                             Activate_Datetime = activateDatetime, //sẽ cập nhật sau khi kích hoạt
                                             Production_Datetime = productionDate, //ngày sản xuất sửa lại khi kích hoạt
+                                        });
+                                    }
+
+                                    // Thêm vào Dictionary cho CameraSub để kiểm tra trùng lặp
+                                    if (!Globals_Database.Dictionary_ProductionCode_CameraSub_Data.ContainsKey(code))
+                                    {
+                                        Globals_Database.Dictionary_ProductionCode_CameraSub_Data.Add(code, new ProductionCodeData
+                                        {
+                                            orderNo = Globals.ProductionData.orderNo,
+                                            Code = code,
+                                            codeID = codeID.ToInt32(),
+                                            cartonCode = cartonCode,
+                                            Main_Camera_Status = status,
+                                            Sub_Camera_Status = "0", //khởi tạo chưa được scan bởi camera phụ
+                                            Activate_User = activateUser,
+                                            Sub_Camera_Activate_Datetime = subCameraDatetime,
+                                            Activate_Datetime = activateDatetime,
+                                            Production_Datetime = productionDate,
                                         });
                                     }
                                 }
@@ -1358,10 +1407,29 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                         codeID = codeID.ToInt32(),
                                         cartonCode = cartonCode, //sẽ cập nhật sau khi gửi xuống PLC
                                         Main_Camera_Status = status, //chưa kích hoạt
+                                        Sub_Camera_Status = "0", //chưa kích hoạt từ camera phụ
                                         Activate_User = activateUser, //sẽ cập nhật sau khi kích hoạt
                                         Sub_Camera_Activate_Datetime = subCameraDatetime, //chưa kích hoạt
                                         Activate_Datetime = activateDatetime, //sẽ cập nhật sau khi kích hoạt
                                         Production_Datetime = productionDate, //ngày sản xuất sửa lại khi kích hoạt
+                                    });
+                                }
+
+                                // Thêm vào Dictionary cho CameraSub để kiểm tra trùng lặp
+                                if (!Globals_Database.Dictionary_ProductionCode_CameraSub_Data.ContainsKey(code))
+                                {
+                                    Globals_Database.Dictionary_ProductionCode_CameraSub_Data.Add(code, new ProductionCodeData
+                                    {
+                                        orderNo = Globals.ProductionData.orderNo,
+                                        Code = code,
+                                        codeID = codeID.ToInt32(),
+                                        cartonCode = cartonCode,
+                                        Main_Camera_Status = status,
+                                        Sub_Camera_Status = "0", //khởi tạo chưa được scan bởi camera phụ
+                                        Activate_User = activateUser,
+                                        Sub_Camera_Activate_Datetime = subCameraDatetime,
+                                        Activate_Datetime = activateDatetime,
+                                        Production_Datetime = productionDate,
                                     });
                                 }
                             }

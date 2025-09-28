@@ -296,7 +296,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
                     status = Status.ToInt32(),
                     activate_datetime = activateDate,
                     production_date = productionDate,
-                    thing_name = "MIPWP501"
+                    thing_name = "MIPWP502"
                 };
                 string json = JsonConvert.SerializeObject(payload);
                 var rs = awsClient.Publish_V2("CZ/data", json);
