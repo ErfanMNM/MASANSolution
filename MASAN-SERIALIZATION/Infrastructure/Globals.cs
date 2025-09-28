@@ -51,6 +51,8 @@ namespace MASAN_SERIALIZATION
         public static bool PLC_Connected_02 { get; set; } = false;
         public static PLCCounter CameraMain_PLC_Counter { get; set; } = new PLCCounter(); // Biến toàn cục để lưu trữ thông tin đếm sản phẩm từ camera chính
 
+        public static PLCCounter CameraSub_PLC_Counter { get; set; } = new PLCCounter(); // Biến toàn cục để lưu trữ thông tin đếm sản phẩm từ camera phụ
+
         public static  string Canhbao { get; set; } = string.Empty; // Biến toàn cục để lưu trữ cảnh báo từ camera chính
 
         public static bool test { get; set; } = false; // Biến toàn cục để kiểm tra trạng thái test
@@ -131,6 +133,7 @@ namespace MASAN_SERIALIZATION
         public int total_pass { get; set; } = 0; // Tổng số sản phẩm đã sản xuất thành công
         public int total_failed { get; set; } = 0; // Tổng số sản phẩm đã sản xuất thất bại
         public int camera_read_fail { get; set; } = 0; // Số lượng sản phẩm không đọc được từ camera
+        public int timeout { get; set; } = 0; // Số lượng sản phẩm bị timeout
     }
 
     public static class CameraMain_HMI

@@ -446,6 +446,24 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 if (successSend)
                 {
+                    // Kiểm tra timeout sau khi gửi PLC thành công
+                    bool isTimeout = CheckCameraSubTimeout(_data);
+                    if (isTimeout)
+                    {
+                        // Timeout detected - hủy thêm vào thùng
+                        Send_Result_Content_CSub(e_Production_Status.Error, _data);
+                        Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
+
+                        this.InvokeIfRequired(() =>
+                        {
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS TIMEOUT - Mã {_data} bị PLC timeout, hủy thêm vào thùng");
+                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                        });
+
+                        return; // Dừng xử lý
+                    }
+
+                    // Không timeout - tiếp tục xử lý bình thường
                     cache_CartonCount++; //tăng số lượng chai trong thùng
                     Globals.ProductionData.counter.carton_Packing_Count = cache_CartonCount; //cập nhật số lượng chai trong thùng
                     _produtionCodeData.Sub_Camera_Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"); // Cập nhật thời gian kích hoạt từ camera phụ
@@ -933,8 +951,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 // Cập nhật các giá trị đếm từ PLC
                 Globals.CameraMain_PLC_Counter.total = readCount.Content[0]; // Tổng số sản phẩm đã sản xuất
-                Globals.CameraMain_PLC_Counter.total_pass = readCount.Content[2]; // Số sản phẩm đã kích hoạt
                 Globals.CameraMain_PLC_Counter.camera_read_fail = readCount.Content[1]; // Số sản phẩm đã loại bỏ
+                Globals.CameraMain_PLC_Counter.total_pass = readCount.Content[2]; // Số sản phẩm đã kích hoạt
+                Globals.CameraMain_PLC_Counter.timeout = readCount.Content[3]; // Số sản phẩm bị timeout
                 Globals.CameraMain_PLC_Counter.total_failed = readCount.Content[4] + readCount.Content[1]; // Số lượng sản phẩm không đọc được từ camera
             }
             else
@@ -947,11 +966,130 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             OperateResult<int[]> readf = OMRON_PLC.plc.ReadInt32(PLCAddress.Get("PLC_Total_Count_DM_C1"), 5);
             if (readf.IsSuccess)
             {
-                //Globals.cam
+                // Cập nhật các giá trị đếm từ PLC cho CameraSub
+                Globals.CameraSub_PLC_Counter.total = readf.Content[0]; // Tổng số sản phẩm đã sản xuất
+                Globals.CameraSub_PLC_Counter.camera_read_fail = readf.Content[1]; // Số sản phẩm đã loại bỏ
+                Globals.CameraSub_PLC_Counter.total_pass = readf.Content[2]; // Số sản phẩm đã kích hoạt
+                Globals.CameraSub_PLC_Counter.timeout = readf.Content[3]; // Số sản phẩm bị timeout
+                Globals.CameraSub_PLC_Counter.total_failed = readf.Content[4] + readf.Content[1]; // Số lượng sản phẩm thất bại
+
                 this.InvokeIfRequired( () =>
                 {
                     opFailC2.Value = readCount.Content[4] + readCount.Content[1];
                 } );
+            }
+        }
+
+        // Hàm kiểm tra timeout cho CameraSub với polling approach
+        public bool CheckCameraSubTimeout(string productCode, int expectedPassCountIncrease = 1)
+        {
+            try
+            {
+                // Lưu snapshot counter trước khi gửi
+                int passCountBefore = Globals.CameraSub_PLC_Counter.total_pass;
+
+                // Thông số polling
+                int pollingIntervalMs = 10; // Đọc PLC mỗi 10ms
+                int timeoutMs = 500; // Timeout sau 500ms
+                int maxPolls = timeoutMs / pollingIntervalMs; // 50 lần polling
+                int pollCount = 0;
+
+                DateTime startTime = DateTime.Now;
+
+                this.InvokeIfRequired(() =>
+                {
+                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS POLLING - Bắt đầu monitor PLC cho mã {productCode}");
+                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                });
+
+                // Polling loop
+                while (pollCount < maxPolls)
+                {
+                    pollCount++;
+
+                    // Đọc counter từ PLC
+                    OperateResult<int[]> readCheck = OMRON_PLC.plc.ReadInt32(PLCAddress.Get("PLC_Total_Count_DM_C1"), 5);
+                    if (readCheck.IsSuccess)
+                    {
+                        int passCountCurrent = readCheck.Content[2]; // Pass count
+                        int timeoutCountCurrent = readCheck.Content[3]; // Timeout count
+
+                        // Kiểm tra xem pass count đã tăng chưa
+                        if (passCountCurrent >= (passCountBefore + expectedPassCountIncrease))
+                        {
+                            // Success - PLC đã xử lý thành công
+                            TimeSpan processingTime = DateTime.Now - startTime;
+
+                            this.InvokeIfRequired(() =>
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS SUCCESS - Mã {productCode} xử lý thành công sau {processingTime.TotalMilliseconds:F0}ms (poll #{pollCount})");
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                            });
+
+                            // Cập nhật counter local
+                            Globals.CameraSub_PLC_Counter.total_pass = passCountCurrent;
+                            Globals.CameraSub_PLC_Counter.timeout = timeoutCountCurrent;
+
+                            return false; // Không timeout
+                        }
+
+                        // Kiểm tra xem timeout count có tăng không (PLC báo timeout)
+                        if (timeoutCountCurrent > Globals.CameraSub_PLC_Counter.timeout)
+                        {
+                            // PLC báo timeout
+                            TimeSpan processingTime = DateTime.Now - startTime;
+
+                            this.InvokeIfRequired(() =>
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS TIMEOUT - PLC báo timeout cho mã {productCode} sau {processingTime.TotalMilliseconds:F0}ms (poll #{pollCount})");
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                            });
+
+                            // Cập nhật counter local
+                            Globals.CameraSub_PLC_Counter.timeout = timeoutCountCurrent;
+                            Globals.CameraSub_PLC_Counter.total_pass = passCountCurrent;
+
+                            return true; // Có timeout
+                        }
+
+                        // Cập nhật counter local cho lần đọc này
+                        Globals.CameraSub_PLC_Counter.total_pass = passCountCurrent;
+                        Globals.CameraSub_PLC_Counter.timeout = timeoutCountCurrent;
+                    }
+                    else
+                    {
+                        // Không đọc được PLC, ghi log nhưng tiếp tục polling
+                        if (pollCount % 10 == 0) // Log mỗi 10 lần polling để tránh spam
+                        {
+                            DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.PlcError,
+                                $"Lỗi CS03 đọc PLC lần {pollCount} cho mã {productCode}", readCheck.Message);
+                        }
+                    }
+
+                    // Delay 10ms trước lần đọc tiếp theo
+                    Thread.Sleep(pollingIntervalMs);
+                }
+
+                // Hết thời gian timeout - không có response từ PLC
+                TimeSpan totalTime = DateTime.Now - startTime;
+
+                this.InvokeIfRequired(() =>
+                {
+                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS TIMEOUT - Mã {productCode} không có response từ PLC sau {totalTime.TotalMilliseconds:F0}ms ({pollCount} polls)");
+                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                });
+
+                DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.PlcError,
+                    $"CS TIMEOUT - Mã {productCode} timeout sau {pollCount} polls",
+                    $"Expected pass increase: {expectedPassCountIncrease}, Total time: {totalTime.TotalMilliseconds:F0}ms");
+
+                return true; // Timeout
+            }
+            catch (Exception ex)
+            {
+                DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error,
+                    "Lỗi CS04 trong CheckCameraSubTimeout polling", ExceptionToJson(ex));
+                return false; // Lỗi, giả định không timeout
             }
         }
         
