@@ -164,7 +164,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     if (Globals.PLC_Connected_02)
                     {
                         Globals.PLC_Connected_02 = false;
-                    }
+                    } 
                     break;
                 default:
                     break;
@@ -1594,6 +1594,70 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             Globals.Canhbao = "Thùng sắp tới chưa có mã";
                         });
                         return;
+                    }
+                }
+                
+            }
+
+            bool canhbao = false;
+            //kiểm tra bật cảnh báo sớm
+            if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out ProductionCartonData cartonData21))
+            {
+                if (Globals.ProductionData.counter.carton_Packing_Count >= (AppConfigs.Current.cartonPack - AppConfigs.Current.cartonWarning))
+                {
+                    if (cartonData2.cartonCode == "0")
+                    {
+                        if(canhbao == false)
+                        {
+                            canhbao = true;
+                            this.InvokeIfRequired(() =>
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Cảnh báo thùng sắp tới chưa có mã thùng.");
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                                //this.ShowErrorNotifier("Cảnh báo thùng sắp tới chưa có mã thùng.", false, 10000);
+                                Globals.Canhbao = "Thùng sắp tới chưa có mã";
+                            });
+
+                            if (AppConfigs.Current.PLC_Duo_Mode)
+                            {
+                                if (Globals.ProductionData.counter.cartonID % 2 == 0)
+                                {
+                                    OperateResult ws = OMRON_PLC_02.plc.Write(PLCAddress.Get("PLC2_Alarm_DM_C1"), 3);
+                                }
+                                else
+                                {
+                                    OperateResult ws = OMRON_PLC_02.plc.Write(PLCAddress.Get("PLC2_Alarm_DM_C1"), 2);
+                                }
+                            }
+                            else
+                            {
+                                if (Globals.ProductionData.counter.cartonID % 2 == 0)
+                                {
+                                    OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 3);
+                                }
+                                else
+                                {
+                                    OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 2);
+                                }
+                            }
+                        }
+                        return;
+                    }
+                }
+
+            }
+            else
+            {
+                if(canhbao)
+                {
+                    canhbao = false;
+                    if (AppConfigs.Current.PLC_Duo_Mode)
+                    {
+                        OperateResult ws = OMRON_PLC_02.plc.Write(PLCAddress.Get("PLC2_Alarm_DM_C1"), 3);
+                    }
+                    else
+                    {
+                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 0);
                     }
                 }
                 

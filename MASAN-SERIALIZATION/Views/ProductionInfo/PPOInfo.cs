@@ -1314,5 +1314,34 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             }
 
         }
+
+        private void btnReport_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Kiểm tra xem có đơn hàng nào được chọn không
+                if (string.IsNullOrEmpty(ipOrderNO.Text) || ipOrderNO.Text == "TO-123-123")
+                {
+                    this.ShowWarningDialog("Vui lòng chọn đơn hàng trước khi xem báo cáo!");
+                    return;
+                }
+
+                // Ghi log người dùng nhấn nút báo cáo
+                Globals.Log.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.UserAction,
+                    $"Người dùng nhấn nút xem báo cáo chi tiết cho đơn hàng: {ipOrderNO.Text}");
+
+                // Tạo và hiển thị form báo cáo
+                using (var reportForm = new Views.Reports.ProductionReportForm(ipOrderNO.Text))
+                {
+                    reportForm.ShowDialog(this);
+                }
+            }
+            catch (Exception ex)
+            {
+                _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
+                    $"Lỗi khi mở báo cáo chi tiết: {ex.Message}");
+                this.ShowErrorDialog($"Lỗi khi mở báo cáo chi tiết: {ex.Message}");
+            }
+        }
     }
 }

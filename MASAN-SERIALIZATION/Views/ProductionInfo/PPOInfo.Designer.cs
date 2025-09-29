@@ -68,7 +68,6 @@
             this.btnClosePO = new Sunny.UI.UISymbolButton();
             this.btnProductionDate = new Sunny.UI.UISymbolButton();
             this.btnPO = new Sunny.UI.UISymbolButton();
-            this.opTer = new Sunny.UI.UIRichTextBox();
             this.uiGroupBox1 = new Sunny.UI.UIGroupBox();
             this.uiTableLayoutPanel8 = new Sunny.UI.UITableLayoutPanel();
             this.opAWSSentWating = new Sunny.UI.UIPanel();
@@ -87,6 +86,9 @@
             this.opCZRunCount = new Sunny.UI.UIPanel();
             this.uiPanel3 = new Sunny.UI.UIPanel();
             this.opProductName = new Sunny.UI.UIPanel();
+            this.uiTableLayoutPanel7 = new Sunny.UI.UITableLayoutPanel();
+            this.opTer = new Sunny.UI.UIRichTextBox();
+            this.btnReport = new Sunny.UI.UISymbolButton();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel2.SuspendLayout();
@@ -98,6 +100,7 @@
             this.uiGroupBox1.SuspendLayout();
             this.uiTableLayoutPanel8.SuspendLayout();
             this.uiTableLayoutPanel6.SuspendLayout();
+            this.uiTableLayoutPanel7.SuspendLayout();
             this.SuspendLayout();
             // 
             // uiTitlePanel1
@@ -730,8 +733,8 @@
             this.uiTableLayoutPanel4.ColumnCount = 1;
             this.uiTableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.uiTableLayoutPanel4.Controls.Add(this.uiTableLayoutPanel5, 0, 2);
-            this.uiTableLayoutPanel4.Controls.Add(this.opTer, 0, 1);
             this.uiTableLayoutPanel4.Controls.Add(this.uiGroupBox1, 0, 0);
+            this.uiTableLayoutPanel4.Controls.Add(this.uiTableLayoutPanel7, 0, 1);
             this.uiTableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTableLayoutPanel4.Location = new System.Drawing.Point(3, 363);
             this.uiTableLayoutPanel4.Name = "uiTableLayoutPanel4";
@@ -840,21 +843,6 @@
             this.btnPO.Text = "Chọn PO";
             this.btnPO.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnPO.Click += new System.EventHandler(this.btnPO_Click);
-            // 
-            // opTer
-            // 
-            this.opTer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opTer.FillColor = System.Drawing.Color.White;
-            this.opTer.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.opTer.Location = new System.Drawing.Point(4, 149);
-            this.opTer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.opTer.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opTer.Name = "opTer";
-            this.opTer.Padding = new System.Windows.Forms.Padding(2);
-            this.opTer.ShowText = false;
-            this.opTer.Size = new System.Drawing.Size(824, 52);
-            this.opTer.TabIndex = 14;
-            this.opTer.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiGroupBox1
             // 
@@ -1160,6 +1148,52 @@
             this.opProductName.Text = "-";
             this.opProductName.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // uiTableLayoutPanel7
+            // 
+            this.uiTableLayoutPanel7.ColumnCount = 2;
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 84.38257F));
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15.61743F));
+            this.uiTableLayoutPanel7.Controls.Add(this.opTer, 0, 0);
+            this.uiTableLayoutPanel7.Controls.Add(this.btnReport, 1, 0);
+            this.uiTableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel7.Location = new System.Drawing.Point(3, 147);
+            this.uiTableLayoutPanel7.Name = "uiTableLayoutPanel7";
+            this.uiTableLayoutPanel7.RowCount = 1;
+            this.uiTableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel7.Size = new System.Drawing.Size(826, 56);
+            this.uiTableLayoutPanel7.TabIndex = 16;
+            this.uiTableLayoutPanel7.TagString = null;
+            // 
+            // opTer
+            // 
+            this.opTer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opTer.FillColor = System.Drawing.Color.White;
+            this.opTer.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.opTer.Location = new System.Drawing.Point(4, 5);
+            this.opTer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.opTer.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opTer.Name = "opTer";
+            this.opTer.Padding = new System.Windows.Forms.Padding(2);
+            this.opTer.ShowText = false;
+            this.opTer.Size = new System.Drawing.Size(689, 46);
+            this.opTer.TabIndex = 16;
+            this.opTer.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btnReport
+            // 
+            this.btnReport.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnReport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnReport.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnReport.Location = new System.Drawing.Point(700, 3);
+            this.btnReport.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnReport.Name = "btnReport";
+            this.btnReport.Size = new System.Drawing.Size(123, 50);
+            this.btnReport.Symbol = 61787;
+            this.btnReport.TabIndex = 3;
+            this.btnReport.Text = "Báo Cáo";
+            this.btnReport.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnReport.Click += new System.EventHandler(this.btnReport_Click);
+            // 
             // PPOInfo
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1181,6 +1215,7 @@
             this.uiGroupBox1.ResumeLayout(false);
             this.uiTableLayoutPanel8.ResumeLayout(false);
             this.uiTableLayoutPanel6.ResumeLayout(false);
+            this.uiTableLayoutPanel7.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1223,7 +1258,6 @@
         private Sunny.UI.UISymbolButton btnClosePO;
         private Sunny.UI.UISymbolButton btnProductionDate;
         private Sunny.UI.UISymbolButton btnPO;
-        private Sunny.UI.UIRichTextBox opTer;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel6;
         private Sunny.UI.UIPanel opCZRunCount;
         private Sunny.UI.UIPanel uiPanel3;
@@ -1246,5 +1280,8 @@
         private Sunny.UI.UIPanel opPassCount;
         private Sunny.UI.UIPanel opFailCount;
         private Sunny.UI.UIPanel opAWSFullOKCount;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel7;
+        private Sunny.UI.UIRichTextBox opTer;
+        private Sunny.UI.UISymbolButton btnReport;
     }
 }

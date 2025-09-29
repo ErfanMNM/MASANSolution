@@ -614,7 +614,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
 
         public void Write_Recipe_To_File_CS(string json)
         {
-            File.WriteAllText($"PLC_RECIPEs/{SelectRecipeName_CS}", json);
+            File.WriteAllText($"PLC_RECIPEs/{SelectRecipeName_CS}.json", json);
             AddLogRecipe(SelectRecipeName, json, "UPDATE", "Operator");
         }
 
@@ -768,7 +768,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
         {
             if(!backgroundWorker1.IsBusy)
             {
-backgroundWorker1.RunWorkerAsync();
+                backgroundWorker1.RunWorkerAsync();
             }
             else
             {
@@ -785,7 +785,7 @@ backgroundWorker1.RunWorkerAsync();
                 HslCommunication.Profinet.Omron.OmronFinsUdp plc = new HslCommunication.Profinet.Omron.OmronFinsUdp();
                 plc.CommunicationPipe = new HslCommunication.Core.Pipe.PipeUdpNet(ipCPLCIP.Text, ipCPLPort.Text.ToInt())
                 {
-                    ReceiveTimeOut = 10000,    // 接收设备数据反馈的超时时间
+                    ReceiveTimeOut = 10000,
                     SleepTime = 0,
                     SocketKeepAliveTime = -1,
                     IsPersistentConnection = true,
@@ -797,8 +797,6 @@ backgroundWorker1.RunWorkerAsync();
                 plc.SID = 0;
                 plc.ByteTransform.DataFormat = HslCommunication.Core.DataFormat.CDAB;
                 plc.ByteTransform.IsStringReverseByteWord = true;
-
-                // 当前读取操作的代码 The code for the current read operation
                 OperateResult<int> read = plc.ReadInt32(uiNumPadTextBox5.Text);
                 if (read.IsSuccess)
                 {
@@ -835,7 +833,7 @@ backgroundWorker1.RunWorkerAsync();
                 HslCommunication.Profinet.Omron.OmronFinsUdp plc = new HslCommunication.Profinet.Omron.OmronFinsUdp();
                 plc.CommunicationPipe = new HslCommunication.Core.Pipe.PipeUdpNet(ipCPLCIP.Text, ipCPLPort.Text.ToInt())
                 {
-                    ReceiveTimeOut = 10000,    // 接收设备数据反馈的超时时间
+                    ReceiveTimeOut = 10000,
                     SleepTime = 0,
                     SocketKeepAliveTime = -1,
                     IsPersistentConnection = true,
@@ -848,18 +846,17 @@ backgroundWorker1.RunWorkerAsync();
                 plc.ByteTransform.DataFormat = HslCommunication.Core.DataFormat.CDAB;
                 plc.ByteTransform.IsStringReverseByteWord = true;
 
-                // 当前写入操作的代码 The code for the current write operation
+
                 OperateResult write = plc.Write(uiNumPadTextBox5.Text, int.Parse(ipValueCust.Text));
                 if (write.IsSuccess)
                 {
-                    //Console.WriteLine("Write [D100] success");
+
                 }
                 else
                 {
-                    //Console.WriteLine("Write [D100] failed: " + write.Message);
+
                 }
 
-                // 当前读取操作的代码 The code for the current read operation
                 OperateResult<int> read = plc.ReadInt32(uiNumPadTextBox5.Text);
                 if (read.IsSuccess)
                 {
