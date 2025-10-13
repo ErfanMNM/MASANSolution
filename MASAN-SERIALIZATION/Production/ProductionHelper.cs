@@ -1077,6 +1077,153 @@ namespace MASAN_SERIALIZATION.Production
                 }
             }
 
+            /// <summary>
+            /// Kiểm tra số lượng mã trong dictionary (UniqueCodes) với số lượng từ MES
+            /// </summary>
+            public TResult Check_Dictionary_Codes_Count(string orderNo)
+            {
+                try
+                {
+                    string czRunPath = $"{dataPath}/{orderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return new TResult(false, "Database dictionary chưa tồn tại.", 0);
+                    }
+
+                    // Lấy số lượng mã trong dictionary
+                    int dictionaryCount = 0;
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = "SELECT COUNT(*) FROM UniqueCodes";
+                        var command = new SQLiteCommand(query, conn);
+                        dictionaryCount = Convert.ToInt32(command.ExecuteScalar());
+                    }
+
+                    return new TResult(true, $"Dictionary có {dictionaryCount} mã.", dictionaryCount);
+                }
+                catch (Exception ex)
+                {
+                    return new TResult(false, $"Lỗi khi kiểm tra dictionary: {ex.Message}", 0);
+                }
+            }
+
+            /// <summary>
+            /// Lấy danh sách các mã đã có trong dictionary
+            /// </summary>
+            public TResult Get_Existing_Codes_In_Dictionary(string orderNo)
+            {
+                try
+                {
+                    string czRunPath = $"{dataPath}/{orderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return new TResult(false, "Database dictionary chưa tồn tại.");
+                    }
+
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = "SELECT Code FROM UniqueCodes";
+                        var adapter = new SQLiteDataAdapter(query, conn);
+                        var table = new DataTable();
+                        adapter.Fill(table);
+
+                        return new TResult(true, $"Lấy {table.Rows.Count} mã từ dictionary thành công.", table.Rows.Count, table);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new TResult(false, $"Lỗi khi lấy danh sách mã từ dictionary: {ex.Message}");
+                }
+            }
+
+            /// <summary>
+            /// Kiểm tra và bổ sung mã thiếu vào dictionary từ MES
+            /// </summary>
+            public TResult Check_And_Add_Missing_Codes_To_Dictionary(string orderNo, GetfromMES getfromMES)
+            {
+                try
+                {
+                    string czRunPath = $"{dataPath}/{orderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return new TResult(false, "Database dictionary chưa tồn tại.");
+                    }
+
+                    // Lấy số lượng mã từ MES
+                    var mesCountResult = getfromMES.Get_Unique_Code_MES_Count(orderNo);
+                    if (!mesCountResult.issuccess)
+                    {
+                        return new TResult(false, $"Không thể lấy số lượng mã từ MES: {mesCountResult.message}");
+                    }
+                    int mesCount = mesCountResult.count;
+
+                    // Lấy số lượng mã trong dictionary
+                    var dictCountResult = Check_Dictionary_Codes_Count(orderNo);
+                    if (!dictCountResult.issuccess)
+                    {
+                        return new TResult(false, $"Không thể kiểm tra dictionary: {dictCountResult.message}");
+                    }
+                    int dictCount = dictCountResult.count;
+
+                    // Nếu đủ số lượng thì không cần làm gì
+                    if (dictCount >= mesCount)
+                    {
+                        return new TResult(true, $"Dictionary đã đủ số lượng mã ({dictCount}/{mesCount}).", dictCount);
+                    }
+
+                    // Nếu thiếu, lấy danh sách mã từ MES
+                    var mesCodesResult = getfromMES.Get_Unique_Codes_MES(orderNo);
+                    if (!mesCodesResult.issuccess)
+                    {
+                        return new TResult(false, $"Không thể lấy danh sách mã từ MES: {mesCodesResult.message}");
+                    }
+
+                    // Lấy danh sách mã đã có trong dictionary
+                    var existingCodesResult = Get_Existing_Codes_In_Dictionary(orderNo);
+                    HashSet<string> existingCodes = new HashSet<string>();
+                    if (existingCodesResult.issuccess && existingCodesResult.data != null)
+                    {
+                        foreach (DataRow row in existingCodesResult.data.Rows)
+                        {
+                            existingCodes.Add(row["Code"].ToString());
+                        }
+                    }
+
+                    // Thêm các mã thiếu vào dictionary
+                    int addedCount = 0;
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        using (var transaction = conn.BeginTransaction())
+                        {
+                            foreach (DataRow row in mesCodesResult.data.Rows)
+                            {
+                                string code = row["code"].ToString();
+
+                                // Chỉ thêm nếu chưa tồn tại
+                                if (!existingCodes.Contains(code))
+                                {
+                                    string insertQuery = "INSERT INTO UniqueCodes (Code) VALUES (@Code)";
+                                    var command = new SQLiteCommand(insertQuery, conn, transaction);
+                                    command.Parameters.AddWithValue("@Code", code);
+                                    command.ExecuteNonQuery();
+                                    addedCount++;
+                                }
+                            }
+                            transaction.Commit();
+                        }
+                    }
+
+                    return new TResult(true, $"Đã bổ sung {addedCount} mã thiếu vào dictionary. Tổng: {dictCount + addedCount}/{mesCount}", addedCount);
+                }
+                catch (Exception ex)
+                {
+                    return new TResult(false, $"Lỗi khi kiểm tra và bổ sung mã: {ex.Message}");
+                }
+            }
+
         }
 
         #endregion

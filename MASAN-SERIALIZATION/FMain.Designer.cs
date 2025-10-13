@@ -336,7 +336,7 @@
             // LogoImg
             // 
             this.LogoImg.BackColor = System.Drawing.Color.Transparent;
-            this.LogoImg.BackgroundImage = global::MASAN_SERIALIZATION.Properties.Resources.LogoTanTien;
+            //this.LogoImg.BackgroundImage = global::MASAN_SERIALIZATION.Properties.Resources.LogoTanTien;
             this.LogoImg.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.LogoImg.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.LogoImg.Location = new System.Drawing.Point(4, 5);

@@ -1,4 +1,3 @@
-using Google.Apis.Util;
 using MASAN_SERIALIZATION.Configs;
 using MASAN_SERIALIZATION.Dialogs;
 using MASAN_SERIALIZATION.Enums;
@@ -7,18 +6,13 @@ using MASAN_SERIALIZATION.Utils;
 using SpT.Logs;
 using Sunny.UI;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static MASAN_SERIALIZATION.Production.ProductionOrder;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace MASAN_SERIALIZATION.Views.ProductionInfo
 {
@@ -259,6 +253,94 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             }
         }
 
+        /// <summary>
+        /// Kiểm tra PO đang chạy dở dang và kiểm tra dictionary
+        /// </summary>
+        private void CheckRunningPOAndDictionary(string orderNo)
+        {
+            try
+            {
+                // 1. Kiểm tra xem PO có đang chạy dở dang không (có records chưa?)
+                TResult recordCountResult = Globals.ProductionData.getDataPO.Get_Record_Count(orderNo);
+
+                if (recordCountResult.issuccess && recordCountResult.count > 0)
+                {
+                    this.InvokeIfRequired(() =>
+                    {
+                        UpdateStatusMessage($"Phát hiện PO đang chạy dở dang với {recordCountResult.count} bản ghi. Đang kiểm tra dictionary...", Color.Orange);
+                    });
+
+                    _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Info,
+                        $"Phát hiện PO {orderNo} đang chạy dở dang với {recordCountResult.count} bản ghi");
+                }
+
+                // 2. Kiểm tra dictionary có đủ số mã không
+                TResult mesCountResult = Globals.ProductionData.getfromMES.Get_Unique_Code_MES_Count(orderNo);
+                TResult dictCountResult = Globals.ProductionData.getDataPO.Check_Dictionary_Codes_Count(orderNo);
+
+                if (mesCountResult.issuccess && dictCountResult.issuccess)
+                {
+                    int mesCount = mesCountResult.count;
+                    int dictCount = dictCountResult.count;
+
+                    if (dictCount < mesCount)
+                    {
+                        int missingCount = mesCount - dictCount;
+
+                        this.InvokeIfRequired(() =>
+                        {
+                            UpdateStatusMessage($"Dictionary thiếu {missingCount} mã ({dictCount}/{mesCount}). Đang bổ sung...", Color.Red);
+                        });
+
+                        _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Warning,
+                            $"Dictionary thiếu {missingCount} mã. Đang bổ sung từ MES...");
+
+                        // 3. Bổ sung mã thiếu vào dictionary
+                        TResult addResult = Globals.ProductionData.getDataPO.Check_And_Add_Missing_Codes_To_Dictionary(
+                            orderNo, Globals.ProductionData.getfromMES);
+
+                        if (addResult.issuccess)
+                        {
+                            this.InvokeIfRequired(() =>
+                            {
+                                UpdateStatusMessage($"Đã bổ sung {addResult.count} mã vào dictionary thành công!", Color.Green);
+                                this.ShowSuccessTip($"Đã bổ sung {addResult.count} mã thiếu vào dictionary");
+                            });
+
+                            _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Info,
+                                $"Đã bổ sung {addResult.count} mã vào dictionary thành công. {addResult.message}");
+                        }
+                        else
+                        {
+                            this.InvokeIfRequired(() =>
+                            {
+                                UpdateStatusMessage($"Lỗi khi bổ sung mã: {addResult.message}", Color.Red);
+                                this.ShowErrorDialog($"Lỗi PP_DICT001: {addResult.message}");
+                            });
+
+                            _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
+                                $"Lỗi khi bổ sung mã vào dictionary: {addResult.message}");
+                        }
+                    }
+                    else
+                    {
+                        _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Info,
+                            $"Dictionary đã đủ số lượng mã ({dictCount}/{mesCount})");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
+                    $"Lỗi khi kiểm tra PO và dictionary: {ex.Message}");
+
+                this.InvokeIfRequired(() =>
+                {
+                    this.ShowErrorDialog($"Lỗi PP_CHECK001: {ex.Message}");
+                });
+            }
+        }
+
         private void ProcessLastPOSuccess(TResult lastPO)
         {
             Globals.Production_State = e_Production_State.Checking_PO_Info;
@@ -270,6 +352,9 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             TResult orderDetailResult = Globals.ProductionData.getfromMES.ProductionOrder_Detail(Globals.ProductionData.orderNo);
             if (orderDetailResult.issuccess && ipOrderNO.Items.Count > 0)
             {
+                // Kiểm tra PO đang chạy dở dang và kiểm tra dictionary
+                Task.Run(() => CheckRunningPOAndDictionary(Globals.ProductionData.orderNo));
+
                 Globals.Production_State = e_Production_State.Loading;
             }
             else
