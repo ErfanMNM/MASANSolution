@@ -2376,6 +2376,29 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         //lấy tất cả các sp trong record camer sub có status = pass và carton id = 
                         DataTable code_record = Globals.ProductionData.getDataPO.Get_Product_Carton_Records(Globals.ProductionData.orderNo, productionCartonData.cartonID).Records;
 
+                        //đếm số lượng sản phẩm trong thùng
+                        int product_in_carton = code_record.Rows.Count;
+
+                        //nếu số lượng sản phẩm trong thùng khác với cấu hình thì dừng sản xuất và báo lỗi
+                        if (product_in_carton != AppConfigs.Current.cartonPack)
+                        {
+                            //ghi log lỗi
+                            DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error, "Lỗi DA01073: Số lượng sản phẩm trong thùng không đúng", $"Mã thùng: {cartonCode}, Số lượng sản phẩm trong thùng: {product_in_carton}, Số lượng cấu hình: {AppConfigs.Current.cartonPack}");
+                            //nếu lớn hơn thì báo lỗi
+
+                            if (product_in_carton > AppConfigs.Current.cartonPack)
+                            {
+                                //nếu lớn hơn thì báo lỗi
+                                Globals.Production_State = e_Production_State.DuSanPham;
+                                //hiện dialog lỗi
+                                
+                                return;
+                            }
+                            //nếu nhỏ hơn thì báo lỗi
+                            Globals.Production_State = e_Production_State.ThieuSanPham;
+                            return;
+                        }
+
                         //cập nhật mã thùng cho tất cả các sản phẩm trong db chính
                         foreach (DataRow codeRow in code_record.Rows)
                         {

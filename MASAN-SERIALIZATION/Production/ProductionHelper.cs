@@ -1748,6 +1748,8 @@ namespace MASAN_SERIALIZATION.Production
         Editting_ProductionDate,
         Saving,
         Error,
+        DuSanPham,
+        ThieuSanPham,
         Pushing_to_Dic,
         Checking_Queue,
         Pause,

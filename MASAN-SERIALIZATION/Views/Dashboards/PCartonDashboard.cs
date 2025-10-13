@@ -485,5 +485,53 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
 
         }
+
+        private void uiSymbolButton1_Click(object sender, EventArgs e)
+        {
+            // Kiểm tra và kích hoạt thùng liên tục trước đó nếu chưa được kích hoạt
+            CheckAndActivatePreviousCarton();
+        }
+
+        /// <summary>
+        /// Kiểm tra thùng liên tục trước đó, nếu chưa kích hoạt thì tự động kích hoạt
+        /// </summary>
+        private void CheckAndActivatePreviousCarton()
+        {
+            try
+            {
+                Globals.Log.WriteLogAsync("System", e_LogType.Info, "Bắt đầu kiểm tra thùng liên tục chưa kích hoạt");
+
+                // Chờ một chút để đảm bảo dữ liệu đã được load
+                Thread.Sleep(2000);
+
+                // Kiểm tra xem có đơn hàng nào đang hoạt động không
+                if (string.IsNullOrEmpty(Globals.ProductionData.orderNo))
+                {
+                    Globals.Log.WriteLogAsync("System", e_LogType.Info, "Không có đơn hàng đang hoạt động, bỏ qua kiểm tra thùng");
+                    return;
+                }
+
+                if(Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID - 1 , out ProductionCartonData cartonData))
+                {
+                    this.ShowInfoDialog($"Kiểm tra thùng ID={cartonData.cartonID}, Code={cartonData.cartonCode}, Start={cartonData.Start_Datetime}, Production={cartonData.Production_Datetime}");
+
+                    if (cartonData.cartonCode != "0" &&
+                        cartonData.Start_Datetime != "0" &&
+                        cartonData.Production_Datetime == "0")
+                    {
+                        // Thêm vào hàng đợi kích hoạt
+                        Globals_Database.Activate_Carton.Enqueue(cartonData.cartonCode);
+                        Globals.Log.WriteLogAsync("System", e_LogType.Info,
+                            $"Tự động kích hoạt thùng ID={cartonData.cartonID}, Code={cartonData.cartonCode}");
+                        this.ShowSuccessDialog($"Đã tự động kích hoạt thùng ID={cartonData.cartonID}, Code={cartonData.cartonCode}");
+                    }
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                Globals.Log.WriteLogAsync("System", e_LogType.Error, "Lỗi khi kiểm tra và kích hoạt thùng tự động: " + ex.Message);
+            }
+        }
     }
 }

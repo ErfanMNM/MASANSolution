@@ -80,6 +80,10 @@
             this.uiLabel1 = new Sunny.UI.UILabel();
             this.uiLabel2 = new Sunny.UI.UILabel();
             this.uiLabel3 = new Sunny.UI.UILabel();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.uiLabel5 = new Sunny.UI.UILabel();
+            this.uiLabel4 = new Sunny.UI.UILabel();
+            this.btnNextCarton = new Sunny.UI.UISymbolButton();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.ipTest2 = new Sunny.UI.UITextBox();
             this.ipTest1 = new Sunny.UI.UITextBox();
@@ -88,10 +92,7 @@
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.serialPort2 = new System.IO.Ports.SerialPort(this.components);
             this.tcpClient1 = new SpT.Communications.TCP.TCPClient(this.components);
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.btnNextCarton = new Sunny.UI.UISymbolButton();
-            this.uiLabel4 = new Sunny.UI.UILabel();
-            this.uiLabel5 = new Sunny.UI.UILabel();
+            this.uiSymbolButton1 = new Sunny.UI.UISymbolButton();
             this.mainContainer.SuspendLayout();
             this.scannerGroup.SuspendLayout();
             this.scannerContainer.SuspendLayout();
@@ -119,8 +120,8 @@
             this.tabPage1.SuspendLayout();
             this.debugGroup.SuspendLayout();
             this.debugContainer.SuspendLayout();
-            this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainContainer
@@ -911,6 +912,53 @@
             this.uiLabel3.Text = "Debug 3: -";
             this.uiLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.uiSymbolButton1);
+            this.tabPage3.Controls.Add(this.uiLabel5);
+            this.tabPage3.Controls.Add(this.uiLabel4);
+            this.tabPage3.Controls.Add(this.btnNextCarton);
+            this.tabPage3.Location = new System.Drawing.Point(0, 40);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(375, 111);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Tùy Chỉnh";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // uiLabel5
+            // 
+            this.uiLabel5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiLabel5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            this.uiLabel5.Location = new System.Drawing.Point(4, 76);
+            this.uiLabel5.Name = "uiLabel5";
+            this.uiLabel5.Size = new System.Drawing.Size(214, 29);
+            this.uiLabel5.TabIndex = 2;
+            this.uiLabel5.Text = "Lập tức qua thùng mới để đóng";
+            // 
+            // uiLabel4
+            // 
+            this.uiLabel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiLabel4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
+            this.uiLabel4.Location = new System.Drawing.Point(3, 54);
+            this.uiLabel4.Name = "uiLabel4";
+            this.uiLabel4.Size = new System.Drawing.Size(215, 29);
+            this.uiLabel4.TabIndex = 1;
+            this.uiLabel4.Text = "Tính năng này sẽ ngưng việc đóng thùng hiện tại";
+            // 
+            // btnNextCarton
+            // 
+            this.btnNextCarton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnNextCarton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnNextCarton.Location = new System.Drawing.Point(4, 3);
+            this.btnNextCarton.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnNextCarton.Name = "btnNextCarton";
+            this.btnNextCarton.Size = new System.Drawing.Size(214, 48);
+            this.btnNextCarton.Symbol = 61473;
+            this.btnNextCarton.TabIndex = 0;
+            this.btnNextCarton.Text = "Bắt đầu thùng mới";
+            this.btnNextCarton.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnNextCarton.Click += new System.EventHandler(this.btnNextCarton_Click);
+            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.ipTest2);
@@ -992,51 +1040,19 @@
             this.tcpClient1.Port = 5566;
             this.tcpClient1.ClientCallBack += new SpT.Communications.TCP.TCPClient.EventForClient(this.tcpClient1_ClientCallBack);
             // 
-            // tabPage3
+            // uiSymbolButton1
             // 
-            this.tabPage3.Controls.Add(this.uiLabel5);
-            this.tabPage3.Controls.Add(this.uiLabel4);
-            this.tabPage3.Controls.Add(this.btnNextCarton);
-            this.tabPage3.Location = new System.Drawing.Point(0, 40);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(375, 111);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Tùy Chỉnh";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // btnNextCarton
-            // 
-            this.btnNextCarton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnNextCarton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnNextCarton.Location = new System.Drawing.Point(4, 3);
-            this.btnNextCarton.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btnNextCarton.Name = "btnNextCarton";
-            this.btnNextCarton.Size = new System.Drawing.Size(367, 48);
-            this.btnNextCarton.Symbol = 61473;
-            this.btnNextCarton.TabIndex = 0;
-            this.btnNextCarton.Text = "Bắt đầu thùng mới";
-            this.btnNextCarton.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnNextCarton.Click += new System.EventHandler(this.btnNextCarton_Click);
-            // 
-            // uiLabel4
-            // 
-            this.uiLabel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiLabel4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
-            this.uiLabel4.Location = new System.Drawing.Point(3, 54);
-            this.uiLabel4.Name = "uiLabel4";
-            this.uiLabel4.Size = new System.Drawing.Size(368, 29);
-            this.uiLabel4.TabIndex = 1;
-            this.uiLabel4.Text = "Tính năng này sẽ ngưng việc đóng thùng hiện tại";
-            // 
-            // uiLabel5
-            // 
-            this.uiLabel5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiLabel5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(48)))), ((int)(((byte)(48)))));
-            this.uiLabel5.Location = new System.Drawing.Point(4, 76);
-            this.uiLabel5.Name = "uiLabel5";
-            this.uiLabel5.Size = new System.Drawing.Size(368, 29);
-            this.uiLabel5.TabIndex = 2;
-            this.uiLabel5.Text = "Lập tức qua thùng mới để đóng";
+            this.uiSymbolButton1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton1.Location = new System.Drawing.Point(224, 3);
+            this.uiSymbolButton1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton1.Name = "uiSymbolButton1";
+            this.uiSymbolButton1.Size = new System.Drawing.Size(147, 48);
+            this.uiSymbolButton1.Symbol = 61473;
+            this.uiSymbolButton1.TabIndex = 3;
+            this.uiSymbolButton1.Text = "Kiểm tra";
+            this.uiSymbolButton1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.uiSymbolButton1.Click += new System.EventHandler(this.uiSymbolButton1_Click);
             // 
             // PCartonDashboard
             // 
@@ -1073,8 +1089,8 @@
             this.tabPage1.ResumeLayout(false);
             this.debugGroup.ResumeLayout(false);
             this.debugContainer.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1144,5 +1160,6 @@
         private Sunny.UI.UILabel uiLabel5;
         private Sunny.UI.UILabel uiLabel4;
         private Sunny.UI.UISymbolButton btnNextCarton;
+        private Sunny.UI.UISymbolButton uiSymbolButton1;
     }
 }

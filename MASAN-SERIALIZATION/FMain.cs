@@ -177,6 +177,8 @@ namespace MASAN_SERIALIZATION
                 _pAws.START_AWS_Process();
                 //CheckVIP.START();
                 // optional: no heavy INIT needed for these pages
+
+                
             }
             catch (Exception ex)
             {
@@ -184,6 +186,8 @@ namespace MASAN_SERIALIZATION
                 this.ShowErrorDialog($"[{ErrorCodes.Main.INIT_PAGES_FAILED}] {ErrorCodes.GetErrorDescription(ErrorCodes.Main.INIT_PAGES_FAILED)}: {ex.Message}");
             }
         }
+
+        
         #endregion
 
         #region Private Methods - UI Operations
