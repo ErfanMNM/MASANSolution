@@ -32,8 +32,8 @@ namespace MASAN_SERIALIZATION.Views.Reports
             this.uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
             this.uiGroupBox1 = new Sunny.UI.UIGroupBox();
             this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
-            this.lblOrderNo = new Sunny.UI.UILabel();
             this.uiLabel2 = new Sunny.UI.UILabel();
+            this.lblOrderNo = new Sunny.UI.UILabel();
             this.uiLabel3 = new Sunny.UI.UILabel();
             this.lblProductName = new Sunny.UI.UILabel();
             this.uiLabel5 = new Sunny.UI.UILabel();
@@ -70,6 +70,8 @@ namespace MASAN_SERIALIZATION.Views.Reports
             this.lblMESFailed = new Sunny.UI.UILabel();
             this.uiLabel31 = new Sunny.UI.UILabel();
             this.lblMESWaiting = new Sunny.UI.UILabel();
+            this.uiGroupBox5 = new Sunny.UI.UIGroupBox();
+            this.txtProductionDateStats = new System.Windows.Forms.TextBox();
             this.uiTableLayoutPanel6 = new Sunny.UI.UITableLayoutPanel();
             this.btnRefresh = new Sunny.UI.UISymbolButton();
             this.btnClose = new Sunny.UI.UISymbolButton();
@@ -83,28 +85,30 @@ namespace MASAN_SERIALIZATION.Views.Reports
             this.uiTableLayoutPanel4.SuspendLayout();
             this.uiGroupBox4.SuspendLayout();
             this.uiTableLayoutPanel5.SuspendLayout();
+            this.uiGroupBox5.SuspendLayout();
             this.uiTableLayoutPanel6.SuspendLayout();
             this.SuspendLayout();
-            //
+            // 
             // uiTitlePanel1
-            //
+            // 
             this.uiTitlePanel1.Controls.Add(this.uiTableLayoutPanel1);
             this.uiTitlePanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTitlePanel1.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
             this.uiTitlePanel1.Location = new System.Drawing.Point(0, 35);
+            this.uiTitlePanel1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.uiTitlePanel1.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiTitlePanel1.Name = "uiTitlePanel1";
-            this.uiTitlePanel1.Padding = new System.Windows.Forms.Padding(0, 40, 0, 0);
+            this.uiTitlePanel1.Padding = new System.Windows.Forms.Padding(1, 40, 1, 1);
             this.uiTitlePanel1.ShowText = false;
-            this.uiTitlePanel1.Size = new System.Drawing.Size(900, 600);
+            this.uiTitlePanel1.Size = new System.Drawing.Size(900, 740);
             this.uiTitlePanel1.TabIndex = 0;
             this.uiTitlePanel1.Text = "📊 BÁO CÁO THÔNG TIN SẢN XUẤT CHI TIẾT";
             this.uiTitlePanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             this.uiTitlePanel1.TitleColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(125)))), ((int)(((byte)(50)))));
             this.uiTitlePanel1.TitleHeight = 40;
-            //
+            // 
             // uiTableLayoutPanel1
-            //
+            // 
             this.uiTableLayoutPanel1.ColumnCount = 2;
             this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -112,20 +116,22 @@ namespace MASAN_SERIALIZATION.Views.Reports
             this.uiTableLayoutPanel1.Controls.Add(this.uiGroupBox2, 1, 0);
             this.uiTableLayoutPanel1.Controls.Add(this.uiGroupBox3, 0, 1);
             this.uiTableLayoutPanel1.Controls.Add(this.uiGroupBox4, 1, 1);
-            this.uiTableLayoutPanel1.Controls.Add(this.uiTableLayoutPanel6, 0, 2);
+            this.uiTableLayoutPanel1.Controls.Add(this.uiGroupBox5, 0, 2);
+            this.uiTableLayoutPanel1.Controls.Add(this.uiTableLayoutPanel6, 0, 3);
             this.uiTableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel1.Location = new System.Drawing.Point(0, 40);
+            this.uiTableLayoutPanel1.Location = new System.Drawing.Point(1, 40);
             this.uiTableLayoutPanel1.Name = "uiTableLayoutPanel1";
-            this.uiTableLayoutPanel1.RowCount = 3;
-            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
-            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
-            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.uiTableLayoutPanel1.Size = new System.Drawing.Size(900, 560);
+            this.uiTableLayoutPanel1.RowCount = 4;
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 15F));
+            this.uiTableLayoutPanel1.Size = new System.Drawing.Size(898, 699);
             this.uiTableLayoutPanel1.TabIndex = 0;
             this.uiTableLayoutPanel1.TagString = null;
-            //
+            // 
             // uiGroupBox1
-            //
+            // 
             this.uiGroupBox1.Controls.Add(this.uiTableLayoutPanel2);
             this.uiGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiGroupBox1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
@@ -134,13 +140,13 @@ namespace MASAN_SERIALIZATION.Views.Reports
             this.uiGroupBox1.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiGroupBox1.Name = "uiGroupBox1";
             this.uiGroupBox1.Padding = new System.Windows.Forms.Padding(0, 32, 0, 0);
-            this.uiGroupBox1.Size = new System.Drawing.Size(442, 214);
+            this.uiGroupBox1.Size = new System.Drawing.Size(441, 199);
             this.uiGroupBox1.TabIndex = 0;
             this.uiGroupBox1.Text = "Thông tin đơn hàng";
             this.uiGroupBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // uiTableLayoutPanel2
-            //
+            // 
             this.uiTableLayoutPanel2.ColumnCount = 2;
             this.uiTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.uiTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
@@ -160,123 +166,123 @@ namespace MASAN_SERIALIZATION.Views.Reports
             this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.uiTableLayoutPanel2.Size = new System.Drawing.Size(442, 182);
+            this.uiTableLayoutPanel2.Size = new System.Drawing.Size(441, 167);
             this.uiTableLayoutPanel2.TabIndex = 0;
             this.uiTableLayoutPanel2.TagString = null;
-            //
-            // lblOrderNo
-            //
-            this.lblOrderNo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblOrderNo.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.lblOrderNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.lblOrderNo.Location = new System.Drawing.Point(179, 3);
-            this.lblOrderNo.Name = "lblOrderNo";
-            this.lblOrderNo.Size = new System.Drawing.Size(260, 39);
-            this.lblOrderNo.TabIndex = 1;
-            this.lblOrderNo.Text = "-";
-            this.lblOrderNo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // uiLabel2
-            //
+            // 
             this.uiLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel2.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.uiLabel2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiLabel2.Location = new System.Drawing.Point(3, 3);
+            this.uiLabel2.Location = new System.Drawing.Point(3, 0);
             this.uiLabel2.Name = "uiLabel2";
-            this.uiLabel2.Size = new System.Drawing.Size(170, 39);
+            this.uiLabel2.Size = new System.Drawing.Size(170, 41);
             this.uiLabel2.TabIndex = 0;
             this.uiLabel2.Text = "Số đơn hàng:";
             this.uiLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
+            // lblOrderNo
+            // 
+            this.lblOrderNo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblOrderNo.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.lblOrderNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
+            this.lblOrderNo.Location = new System.Drawing.Point(179, 0);
+            this.lblOrderNo.Name = "lblOrderNo";
+            this.lblOrderNo.Size = new System.Drawing.Size(259, 41);
+            this.lblOrderNo.TabIndex = 1;
+            this.lblOrderNo.Text = "-";
+            this.lblOrderNo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // uiLabel3
-            //
+            // 
             this.uiLabel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel3.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.uiLabel3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiLabel3.Location = new System.Drawing.Point(3, 45);
+            this.uiLabel3.Location = new System.Drawing.Point(3, 41);
             this.uiLabel3.Name = "uiLabel3";
-            this.uiLabel3.Size = new System.Drawing.Size(170, 39);
+            this.uiLabel3.Size = new System.Drawing.Size(170, 41);
             this.uiLabel3.TabIndex = 2;
             this.uiLabel3.Text = "Tên sản phẩm:";
             this.uiLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblProductName
-            //
+            // 
             this.lblProductName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblProductName.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.lblProductName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.lblProductName.Location = new System.Drawing.Point(179, 45);
+            this.lblProductName.Location = new System.Drawing.Point(179, 41);
             this.lblProductName.Name = "lblProductName";
-            this.lblProductName.Size = new System.Drawing.Size(260, 39);
+            this.lblProductName.Size = new System.Drawing.Size(259, 41);
             this.lblProductName.TabIndex = 3;
             this.lblProductName.Text = "-";
             this.lblProductName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // uiLabel5
-            //
+            // 
             this.uiLabel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel5.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.uiLabel5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiLabel5.Location = new System.Drawing.Point(3, 87);
+            this.uiLabel5.Location = new System.Drawing.Point(3, 82);
             this.uiLabel5.Name = "uiLabel5";
-            this.uiLabel5.Size = new System.Drawing.Size(170, 39);
+            this.uiLabel5.Size = new System.Drawing.Size(170, 41);
             this.uiLabel5.TabIndex = 4;
             this.uiLabel5.Text = "Số lượng yêu cầu:";
             this.uiLabel5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblOrderQty
-            //
+            // 
             this.lblOrderQty.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblOrderQty.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.lblOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.lblOrderQty.Location = new System.Drawing.Point(179, 87);
+            this.lblOrderQty.Location = new System.Drawing.Point(179, 82);
             this.lblOrderQty.Name = "lblOrderQty";
-            this.lblOrderQty.Size = new System.Drawing.Size(260, 39);
+            this.lblOrderQty.Size = new System.Drawing.Size(259, 41);
             this.lblOrderQty.TabIndex = 5;
             this.lblOrderQty.Text = "-";
             this.lblOrderQty.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // uiLabel7
-            //
+            // 
             this.uiLabel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel7.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.uiLabel7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiLabel7.Location = new System.Drawing.Point(3, 129);
+            this.uiLabel7.Location = new System.Drawing.Point(3, 123);
             this.uiLabel7.Name = "uiLabel7";
-            this.uiLabel7.Size = new System.Drawing.Size(170, 50);
+            this.uiLabel7.Size = new System.Drawing.Size(170, 44);
             this.uiLabel7.TabIndex = 6;
             this.uiLabel7.Text = "Mã đơn khách hàng:";
             this.uiLabel7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblCustomerOrderNo
-            //
+            // 
             this.lblCustomerOrderNo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblCustomerOrderNo.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.lblCustomerOrderNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.lblCustomerOrderNo.Location = new System.Drawing.Point(179, 129);
+            this.lblCustomerOrderNo.Location = new System.Drawing.Point(179, 123);
             this.lblCustomerOrderNo.Name = "lblCustomerOrderNo";
-            this.lblCustomerOrderNo.Size = new System.Drawing.Size(260, 50);
+            this.lblCustomerOrderNo.Size = new System.Drawing.Size(259, 44);
             this.lblCustomerOrderNo.TabIndex = 7;
             this.lblCustomerOrderNo.Text = "-";
             this.lblCustomerOrderNo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // uiGroupBox2
-            //
+            // 
             this.uiGroupBox2.Controls.Add(this.uiTableLayoutPanel3);
             this.uiGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiGroupBox2.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.uiGroupBox2.Location = new System.Drawing.Point(454, 5);
+            this.uiGroupBox2.Location = new System.Drawing.Point(453, 5);
             this.uiGroupBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.uiGroupBox2.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiGroupBox2.Name = "uiGroupBox2";
             this.uiGroupBox2.Padding = new System.Windows.Forms.Padding(0, 32, 0, 0);
-            this.uiGroupBox2.Size = new System.Drawing.Size(442, 214);
+            this.uiGroupBox2.Size = new System.Drawing.Size(441, 199);
             this.uiGroupBox2.TabIndex = 1;
             this.uiGroupBox2.Text = "Thống kê sản xuất";
             this.uiGroupBox2.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // uiTableLayoutPanel3
-            //
+            // 
             this.uiTableLayoutPanel3.ColumnCount = 2;
             this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65F));
             this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35F));
@@ -299,147 +305,147 @@ namespace MASAN_SERIALIZATION.Views.Reports
             this.uiTableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.uiTableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.uiTableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.uiTableLayoutPanel3.Size = new System.Drawing.Size(442, 182);
+            this.uiTableLayoutPanel3.Size = new System.Drawing.Size(441, 167);
             this.uiTableLayoutPanel3.TabIndex = 0;
             this.uiTableLayoutPanel3.TagString = null;
-            //
+            // 
             // uiLabel9
-            //
+            // 
             this.uiLabel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel9.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.uiLabel9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiLabel9.Location = new System.Drawing.Point(3, 3);
+            this.uiLabel9.Location = new System.Drawing.Point(3, 0);
             this.uiLabel9.Name = "uiLabel9";
-            this.uiLabel9.Size = new System.Drawing.Size(281, 30);
+            this.uiLabel9.Size = new System.Drawing.Size(280, 33);
             this.uiLabel9.TabIndex = 0;
             this.uiLabel9.Text = "Tổng số sản phẩm đã chạy:";
             this.uiLabel9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblTotalRun
-            //
+            // 
             this.lblTotalRun.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblTotalRun.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblTotalRun.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(204)))), ((int)(((byte)(113)))));
-            this.lblTotalRun.Location = new System.Drawing.Point(290, 3);
+            this.lblTotalRun.Location = new System.Drawing.Point(289, 0);
             this.lblTotalRun.Name = "lblTotalRun";
-            this.lblTotalRun.Size = new System.Drawing.Size(149, 30);
+            this.lblTotalRun.Size = new System.Drawing.Size(149, 33);
             this.lblTotalRun.TabIndex = 1;
             this.lblTotalRun.Text = "0";
             this.lblTotalRun.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
+            // 
             // uiLabel11
-            //
+            // 
             this.uiLabel11.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel11.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.uiLabel11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiLabel11.Location = new System.Drawing.Point(3, 39);
+            this.uiLabel11.Location = new System.Drawing.Point(3, 33);
             this.uiLabel11.Name = "uiLabel11";
-            this.uiLabel11.Size = new System.Drawing.Size(281, 30);
+            this.uiLabel11.Size = new System.Drawing.Size(280, 33);
             this.uiLabel11.TabIndex = 2;
             this.uiLabel11.Text = "Số tốt:";
             this.uiLabel11.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblPassCount
-            //
+            // 
             this.lblPassCount.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPassCount.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblPassCount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(204)))), ((int)(((byte)(113)))));
-            this.lblPassCount.Location = new System.Drawing.Point(290, 39);
+            this.lblPassCount.Location = new System.Drawing.Point(289, 33);
             this.lblPassCount.Name = "lblPassCount";
-            this.lblPassCount.Size = new System.Drawing.Size(149, 30);
+            this.lblPassCount.Size = new System.Drawing.Size(149, 33);
             this.lblPassCount.TabIndex = 3;
             this.lblPassCount.Text = "0";
             this.lblPassCount.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
+            // 
             // uiLabel13
-            //
+            // 
             this.uiLabel13.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel13.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.uiLabel13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiLabel13.Location = new System.Drawing.Point(3, 75);
+            this.uiLabel13.Location = new System.Drawing.Point(3, 66);
             this.uiLabel13.Name = "uiLabel13";
-            this.uiLabel13.Size = new System.Drawing.Size(281, 30);
+            this.uiLabel13.Size = new System.Drawing.Size(280, 33);
             this.uiLabel13.TabIndex = 4;
             this.uiLabel13.Text = "Số đã phân làn:";
             this.uiLabel13.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblCameraSubCount
-            //
+            // 
             this.lblCameraSubCount.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblCameraSubCount.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblCameraSubCount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.lblCameraSubCount.Location = new System.Drawing.Point(290, 75);
+            this.lblCameraSubCount.Location = new System.Drawing.Point(289, 66);
             this.lblCameraSubCount.Name = "lblCameraSubCount";
-            this.lblCameraSubCount.Size = new System.Drawing.Size(149, 30);
+            this.lblCameraSubCount.Size = new System.Drawing.Size(149, 33);
             this.lblCameraSubCount.TabIndex = 5;
             this.lblCameraSubCount.Text = "0";
             this.lblCameraSubCount.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
+            // 
             // uiLabel15
-            //
+            // 
             this.uiLabel15.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel15.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.uiLabel15.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiLabel15.Location = new System.Drawing.Point(3, 111);
+            this.uiLabel15.Location = new System.Drawing.Point(3, 99);
             this.uiLabel15.Name = "uiLabel15";
-            this.uiLabel15.Size = new System.Drawing.Size(281, 30);
+            this.uiLabel15.Size = new System.Drawing.Size(280, 33);
             this.uiLabel15.TabIndex = 6;
             this.uiLabel15.Text = "Số thùng đã hoàn tất:";
             this.uiLabel15.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblCompletedCartons
-            //
+            // 
             this.lblCompletedCartons.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblCompletedCartons.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblCompletedCartons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(89)))), ((int)(((byte)(182)))));
-            this.lblCompletedCartons.Location = new System.Drawing.Point(290, 111);
+            this.lblCompletedCartons.Location = new System.Drawing.Point(289, 99);
             this.lblCompletedCartons.Name = "lblCompletedCartons";
-            this.lblCompletedCartons.Size = new System.Drawing.Size(149, 30);
+            this.lblCompletedCartons.Size = new System.Drawing.Size(149, 33);
             this.lblCompletedCartons.TabIndex = 7;
             this.lblCompletedCartons.Text = "0";
             this.lblCompletedCartons.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
+            // 
             // uiLabel17
-            //
+            // 
             this.uiLabel17.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel17.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.uiLabel17.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiLabel17.Location = new System.Drawing.Point(3, 147);
+            this.uiLabel17.Location = new System.Drawing.Point(3, 132);
             this.uiLabel17.Name = "uiLabel17";
-            this.uiLabel17.Size = new System.Drawing.Size(281, 32);
+            this.uiLabel17.Size = new System.Drawing.Size(280, 35);
             this.uiLabel17.TabIndex = 8;
             this.uiLabel17.Text = "Số gửi MES thành công:";
             this.uiLabel17.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblMESSuccess
-            //
+            // 
             this.lblMESSuccess.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblMESSuccess.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblMESSuccess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(204)))), ((int)(((byte)(113)))));
-            this.lblMESSuccess.Location = new System.Drawing.Point(290, 147);
+            this.lblMESSuccess.Location = new System.Drawing.Point(289, 132);
             this.lblMESSuccess.Name = "lblMESSuccess";
-            this.lblMESSuccess.Size = new System.Drawing.Size(149, 32);
+            this.lblMESSuccess.Size = new System.Drawing.Size(149, 35);
             this.lblMESSuccess.TabIndex = 9;
             this.lblMESSuccess.Text = "0";
             this.lblMESSuccess.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
+            // 
             // uiGroupBox3
-            //
+            // 
             this.uiGroupBox3.Controls.Add(this.uiTableLayoutPanel4);
             this.uiGroupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiGroupBox3.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.uiGroupBox3.Location = new System.Drawing.Point(4, 229);
+            this.uiGroupBox3.Location = new System.Drawing.Point(4, 214);
             this.uiGroupBox3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.uiGroupBox3.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiGroupBox3.Name = "uiGroupBox3";
             this.uiGroupBox3.Padding = new System.Windows.Forms.Padding(0, 32, 0, 0);
-            this.uiGroupBox3.Size = new System.Drawing.Size(442, 214);
+            this.uiGroupBox3.Size = new System.Drawing.Size(441, 199);
             this.uiGroupBox3.TabIndex = 2;
             this.uiGroupBox3.Text = "Thông tin thùng đang đóng";
             this.uiGroupBox3.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // uiTableLayoutPanel4
-            //
+            // 
             this.uiTableLayoutPanel4.ColumnCount = 2;
             this.uiTableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.uiTableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
@@ -459,123 +465,123 @@ namespace MASAN_SERIALIZATION.Views.Reports
             this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.uiTableLayoutPanel4.Size = new System.Drawing.Size(442, 182);
+            this.uiTableLayoutPanel4.Size = new System.Drawing.Size(441, 167);
             this.uiTableLayoutPanel4.TabIndex = 0;
             this.uiTableLayoutPanel4.TagString = null;
-            //
+            // 
             // uiLabel19
-            //
+            // 
             this.uiLabel19.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel19.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.uiLabel19.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiLabel19.Location = new System.Drawing.Point(3, 3);
+            this.uiLabel19.Location = new System.Drawing.Point(3, 0);
             this.uiLabel19.Name = "uiLabel19";
-            this.uiLabel19.Size = new System.Drawing.Size(259, 39);
+            this.uiLabel19.Size = new System.Drawing.Size(258, 41);
             this.uiLabel19.TabIndex = 0;
             this.uiLabel19.Text = "ID thùng hiện tại:";
             this.uiLabel19.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblCurrentCartonID
-            //
+            // 
             this.lblCurrentCartonID.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblCurrentCartonID.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
             this.lblCurrentCartonID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.lblCurrentCartonID.Location = new System.Drawing.Point(268, 3);
+            this.lblCurrentCartonID.Location = new System.Drawing.Point(267, 0);
             this.lblCurrentCartonID.Name = "lblCurrentCartonID";
-            this.lblCurrentCartonID.Size = new System.Drawing.Size(171, 39);
+            this.lblCurrentCartonID.Size = new System.Drawing.Size(171, 41);
             this.lblCurrentCartonID.TabIndex = 1;
             this.lblCurrentCartonID.Text = "0";
             this.lblCurrentCartonID.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
+            // 
             // uiLabel21
-            //
+            // 
             this.uiLabel21.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel21.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.uiLabel21.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiLabel21.Location = new System.Drawing.Point(3, 48);
+            this.uiLabel21.Location = new System.Drawing.Point(3, 41);
             this.uiLabel21.Name = "uiLabel21";
-            this.uiLabel21.Size = new System.Drawing.Size(259, 39);
+            this.uiLabel21.Size = new System.Drawing.Size(258, 41);
             this.uiLabel21.TabIndex = 2;
             this.uiLabel21.Text = "Số đã đóng / Tối đa:";
             this.uiLabel21.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblCurrentPackingCount
-            //
+            // 
             this.lblCurrentPackingCount.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblCurrentPackingCount.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblCurrentPackingCount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(89)))), ((int)(((byte)(182)))));
-            this.lblCurrentPackingCount.Location = new System.Drawing.Point(268, 48);
+            this.lblCurrentPackingCount.Location = new System.Drawing.Point(267, 41);
             this.lblCurrentPackingCount.Name = "lblCurrentPackingCount";
-            this.lblCurrentPackingCount.Size = new System.Drawing.Size(171, 39);
+            this.lblCurrentPackingCount.Size = new System.Drawing.Size(171, 41);
             this.lblCurrentPackingCount.TabIndex = 3;
             this.lblCurrentPackingCount.Text = "0/0";
             this.lblCurrentPackingCount.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
+            // 
             // uiLabel23
-            //
+            // 
             this.uiLabel23.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel23.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.uiLabel23.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiLabel23.Location = new System.Drawing.Point(3, 93);
+            this.uiLabel23.Location = new System.Drawing.Point(3, 82);
             this.uiLabel23.Name = "uiLabel23";
-            this.uiLabel23.Size = new System.Drawing.Size(259, 39);
+            this.uiLabel23.Size = new System.Drawing.Size(258, 41);
             this.uiLabel23.TabIndex = 4;
             this.uiLabel23.Text = "Tiến độ đóng gói:";
             this.uiLabel23.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblPackingPercentage
-            //
+            // 
             this.lblPackingPercentage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPackingPercentage.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblPackingPercentage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(204)))), ((int)(((byte)(113)))));
-            this.lblPackingPercentage.Location = new System.Drawing.Point(268, 93);
+            this.lblPackingPercentage.Location = new System.Drawing.Point(267, 82);
             this.lblPackingPercentage.Name = "lblPackingPercentage";
-            this.lblPackingPercentage.Size = new System.Drawing.Size(171, 39);
+            this.lblPackingPercentage.Size = new System.Drawing.Size(171, 41);
             this.lblPackingPercentage.TabIndex = 5;
             this.lblPackingPercentage.Text = "0%";
             this.lblPackingPercentage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
+            // 
             // uiLabel25
-            //
+            // 
             this.uiLabel25.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel25.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.uiLabel25.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiLabel25.Location = new System.Drawing.Point(3, 138);
+            this.uiLabel25.Location = new System.Drawing.Point(3, 123);
             this.uiLabel25.Name = "uiLabel25";
-            this.uiLabel25.Size = new System.Drawing.Size(259, 41);
+            this.uiLabel25.Size = new System.Drawing.Size(258, 44);
             this.uiLabel25.TabIndex = 6;
             this.uiLabel25.Text = "Trạng thái thùng:";
             this.uiLabel25.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblCartonStatus
-            //
+            // 
             this.lblCartonStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblCartonStatus.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.lblCartonStatus.ForeColor = System.Drawing.Color.Gray;
-            this.lblCartonStatus.Location = new System.Drawing.Point(268, 138);
+            this.lblCartonStatus.Location = new System.Drawing.Point(267, 123);
             this.lblCartonStatus.Name = "lblCartonStatus";
-            this.lblCartonStatus.Size = new System.Drawing.Size(171, 41);
+            this.lblCartonStatus.Size = new System.Drawing.Size(171, 44);
             this.lblCartonStatus.TabIndex = 7;
             this.lblCartonStatus.Text = "Chưa xác định";
             this.lblCartonStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
+            // 
             // uiGroupBox4
-            //
+            // 
             this.uiGroupBox4.Controls.Add(this.uiTableLayoutPanel5);
             this.uiGroupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiGroupBox4.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
-            this.uiGroupBox4.Location = new System.Drawing.Point(454, 229);
+            this.uiGroupBox4.Location = new System.Drawing.Point(453, 214);
             this.uiGroupBox4.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.uiGroupBox4.MinimumSize = new System.Drawing.Size(1, 1);
             this.uiGroupBox4.Name = "uiGroupBox4";
             this.uiGroupBox4.Padding = new System.Windows.Forms.Padding(0, 32, 0, 0);
-            this.uiGroupBox4.Size = new System.Drawing.Size(442, 214);
+            this.uiGroupBox4.Size = new System.Drawing.Size(441, 199);
             this.uiGroupBox4.TabIndex = 3;
             this.uiGroupBox4.Text = "Thông tin MES";
             this.uiGroupBox4.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // uiTableLayoutPanel5
-            //
+            // 
             this.uiTableLayoutPanel5.ColumnCount = 2;
             this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
             this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
@@ -592,101 +598,131 @@ namespace MASAN_SERIALIZATION.Views.Reports
             this.uiTableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.uiTableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.uiTableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.uiTableLayoutPanel5.Size = new System.Drawing.Size(442, 182);
+            this.uiTableLayoutPanel5.Size = new System.Drawing.Size(441, 167);
             this.uiTableLayoutPanel5.TabIndex = 0;
             this.uiTableLayoutPanel5.TagString = null;
-            //
+            // 
             // uiLabel27
-            //
+            // 
             this.uiLabel27.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel27.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.uiLabel27.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiLabel27.Location = new System.Drawing.Point(3, 3);
+            this.uiLabel27.Location = new System.Drawing.Point(3, 0);
             this.uiLabel27.Name = "uiLabel27";
-            this.uiLabel27.Size = new System.Drawing.Size(303, 54);
+            this.uiLabel27.Size = new System.Drawing.Size(302, 55);
             this.uiLabel27.TabIndex = 0;
             this.uiLabel27.Text = "Đang chờ gửi lên MES:";
             this.uiLabel27.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblMESPending
-            //
+            // 
             this.lblMESPending.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblMESPending.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblMESPending.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(156)))), ((int)(((byte)(18)))));
-            this.lblMESPending.Location = new System.Drawing.Point(312, 3);
+            this.lblMESPending.Location = new System.Drawing.Point(311, 0);
             this.lblMESPending.Name = "lblMESPending";
-            this.lblMESPending.Size = new System.Drawing.Size(127, 54);
+            this.lblMESPending.Size = new System.Drawing.Size(127, 55);
             this.lblMESPending.TabIndex = 1;
             this.lblMESPending.Text = "0";
             this.lblMESPending.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
+            // 
             // uiLabel29
-            //
+            // 
             this.uiLabel29.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel29.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.uiLabel29.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiLabel29.Location = new System.Drawing.Point(3, 63);
+            this.uiLabel29.Location = new System.Drawing.Point(3, 55);
             this.uiLabel29.Name = "uiLabel29";
-            this.uiLabel29.Size = new System.Drawing.Size(303, 54);
+            this.uiLabel29.Size = new System.Drawing.Size(302, 55);
             this.uiLabel29.TabIndex = 2;
             this.uiLabel29.Text = "Gửi thất bại (cần gửi lại):";
             this.uiLabel29.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblMESFailed
-            //
+            // 
             this.lblMESFailed.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblMESFailed.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblMESFailed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(76)))), ((int)(((byte)(60)))));
-            this.lblMESFailed.Location = new System.Drawing.Point(312, 63);
+            this.lblMESFailed.Location = new System.Drawing.Point(311, 55);
             this.lblMESFailed.Name = "lblMESFailed";
-            this.lblMESFailed.Size = new System.Drawing.Size(127, 54);
+            this.lblMESFailed.Size = new System.Drawing.Size(127, 55);
             this.lblMESFailed.TabIndex = 3;
             this.lblMESFailed.Text = "0";
             this.lblMESFailed.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
+            // 
             // uiLabel31
-            //
+            // 
             this.uiLabel31.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiLabel31.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.uiLabel31.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiLabel31.Location = new System.Drawing.Point(3, 123);
+            this.uiLabel31.Location = new System.Drawing.Point(3, 110);
             this.uiLabel31.Name = "uiLabel31";
-            this.uiLabel31.Size = new System.Drawing.Size(303, 56);
+            this.uiLabel31.Size = new System.Drawing.Size(302, 57);
             this.uiLabel31.TabIndex = 4;
             this.uiLabel31.Text = "Đang chờ trả về từ MES:";
             this.uiLabel31.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            //
+            // 
             // lblMESWaiting
-            //
+            // 
             this.lblMESWaiting.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblMESWaiting.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblMESWaiting.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.lblMESWaiting.Location = new System.Drawing.Point(312, 123);
+            this.lblMESWaiting.Location = new System.Drawing.Point(311, 110);
             this.lblMESWaiting.Name = "lblMESWaiting";
-            this.lblMESWaiting.Size = new System.Drawing.Size(127, 56);
+            this.lblMESWaiting.Size = new System.Drawing.Size(127, 57);
             this.lblMESWaiting.TabIndex = 5;
             this.lblMESWaiting.Text = "0";
             this.lblMESWaiting.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            //
+            // 
+            // uiGroupBox5
+            // 
+            this.uiTableLayoutPanel1.SetColumnSpan(this.uiGroupBox5, 2);
+            this.uiGroupBox5.Controls.Add(this.txtProductionDateStats);
+            this.uiGroupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiGroupBox5.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold);
+            this.uiGroupBox5.Location = new System.Drawing.Point(4, 423);
+            this.uiGroupBox5.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiGroupBox5.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiGroupBox5.Name = "uiGroupBox5";
+            this.uiGroupBox5.Padding = new System.Windows.Forms.Padding(5, 32, 5, 5);
+            this.uiGroupBox5.Size = new System.Drawing.Size(890, 164);
+            this.uiGroupBox5.TabIndex = 5;
+            this.uiGroupBox5.Text = "Thống kê theo ngày sản xuất";
+            this.uiGroupBox5.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // txtProductionDateStats
+            // 
+            this.txtProductionDateStats.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(249)))), ((int)(((byte)(255)))));
+            this.txtProductionDateStats.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtProductionDateStats.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtProductionDateStats.Font = new System.Drawing.Font("Consolas", 10F);
+            this.txtProductionDateStats.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
+            this.txtProductionDateStats.Location = new System.Drawing.Point(5, 32);
+            this.txtProductionDateStats.Name = "txtProductionDateStats";
+            this.txtProductionDateStats.ReadOnly = true;
+            this.txtProductionDateStats.Size = new System.Drawing.Size(880, 16);
+            this.txtProductionDateStats.TabIndex = 0;
+            this.txtProductionDateStats.Text = "Đang tải dữ liệu...";
+            // 
             // uiTableLayoutPanel6
-            //
+            // 
             this.uiTableLayoutPanel6.ColumnCount = 2;
+            this.uiTableLayoutPanel1.SetColumnSpan(this.uiTableLayoutPanel6, 2);
             this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70F));
             this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
             this.uiTableLayoutPanel6.Controls.Add(this.btnRefresh, 0, 0);
             this.uiTableLayoutPanel6.Controls.Add(this.btnClose, 1, 0);
-            this.uiTableLayoutPanel1.SetColumnSpan(this.uiTableLayoutPanel6, 2);
             this.uiTableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel6.Location = new System.Drawing.Point(3, 451);
+            this.uiTableLayoutPanel6.Location = new System.Drawing.Point(3, 595);
             this.uiTableLayoutPanel6.Name = "uiTableLayoutPanel6";
             this.uiTableLayoutPanel6.RowCount = 1;
             this.uiTableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTableLayoutPanel6.Size = new System.Drawing.Size(894, 106);
+            this.uiTableLayoutPanel6.Size = new System.Drawing.Size(892, 101);
             this.uiTableLayoutPanel6.TabIndex = 4;
             this.uiTableLayoutPanel6.TagString = null;
-            //
+            // 
             // btnRefresh
-            //
+            // 
             this.btnRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnRefresh.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnRefresh.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
@@ -696,42 +732,42 @@ namespace MASAN_SERIALIZATION.Views.Reports
             this.btnRefresh.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Radius = 8;
-            this.btnRefresh.Size = new System.Drawing.Size(617, 96);
+            this.btnRefresh.Size = new System.Drawing.Size(616, 91);
             this.btnRefresh.Symbol = 61473;
             this.btnRefresh.TabIndex = 0;
             this.btnRefresh.Text = "Cập nhật dữ liệu";
             this.btnRefresh.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
-            //
+            // 
             // btnClose
-            //
+            // 
             this.btnClose.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnClose.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnClose.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(76)))), ((int)(((byte)(60)))));
             this.btnClose.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
-            this.btnClose.Location = new System.Drawing.Point(629, 5);
+            this.btnClose.Location = new System.Drawing.Point(628, 5);
             this.btnClose.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnClose.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnClose.Name = "btnClose";
             this.btnClose.Radius = 8;
-            this.btnClose.Size = new System.Drawing.Size(261, 96);
+            this.btnClose.Size = new System.Drawing.Size(260, 91);
             this.btnClose.Symbol = 61453;
             this.btnClose.TabIndex = 1;
             this.btnClose.Text = "Đóng";
             this.btnClose.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-            //
+            // 
             // ProductionReportForm
-            //
+            // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(900, 635);
+            this.ClientSize = new System.Drawing.Size(900, 775);
             this.Controls.Add(this.uiTitlePanel1);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ProductionReportForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Báo Cáo Sản Xuất Chi Tiết";
-            this.ZoomScaleRect = new System.Drawing.Rectangle(22, 22, 900, 635);
+            this.ZoomScaleRect = new System.Drawing.Rectangle(22, 22, 900, 775);
             this.uiTitlePanel1.ResumeLayout(false);
             this.uiTableLayoutPanel1.ResumeLayout(false);
             this.uiGroupBox1.ResumeLayout(false);
@@ -742,6 +778,8 @@ namespace MASAN_SERIALIZATION.Views.Reports
             this.uiTableLayoutPanel4.ResumeLayout(false);
             this.uiGroupBox4.ResumeLayout(false);
             this.uiTableLayoutPanel5.ResumeLayout(false);
+            this.uiGroupBox5.ResumeLayout(false);
+            this.uiGroupBox5.PerformLayout();
             this.uiTableLayoutPanel6.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -791,6 +829,8 @@ namespace MASAN_SERIALIZATION.Views.Reports
         private Sunny.UI.UILabel lblMESFailed;
         private Sunny.UI.UILabel uiLabel31;
         private Sunny.UI.UILabel lblMESWaiting;
+        private Sunny.UI.UIGroupBox uiGroupBox5;
+        private System.Windows.Forms.TextBox txtProductionDateStats;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel6;
         private Sunny.UI.UISymbolButton btnRefresh;
         private Sunny.UI.UISymbolButton btnClose;

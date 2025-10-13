@@ -100,6 +100,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.OMRON_PLC = new SPMS1.OmronPLC_Hsl(this.components);
             this.WK_Update_UI = new System.ComponentModel.BackgroundWorker();
             this.OMRON_PLC_02 = new SPMS1.OmronPLC_Hsl(this.components);
+            this.subpr = new System.ComponentModel.BackgroundWorker();
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTitlePanel5.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -699,6 +700,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opLedC2.Location = new System.Drawing.Point(67, 2);
             this.opLedC2.Margin = new System.Windows.Forms.Padding(2);
             this.opLedC2.Name = "opLedC2";
+            this.opLedC2.On = false;
             this.opLedC2.Size = new System.Drawing.Size(40, 42);
             this.opLedC2.TabIndex = 0;
             this.opLedC2.Text = "uiLedBulb2";
@@ -760,7 +762,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opLedC1.Location = new System.Drawing.Point(67, 2);
             this.opLedC1.Margin = new System.Windows.Forms.Padding(2);
             this.opLedC1.Name = "opLedC1";
-            this.opLedC1.On = false;
             this.opLedC1.Size = new System.Drawing.Size(40, 42);
             this.opLedC1.TabIndex = 0;
             this.opLedC1.Text = "uiLedBulb1";
@@ -823,7 +824,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opLedPLC.Location = new System.Drawing.Point(68, 2);
             this.opLedPLC.Margin = new System.Windows.Forms.Padding(2);
             this.opLedPLC.Name = "opLedPLC";
-            this.opLedPLC.On = false;
             this.opLedPLC.Size = new System.Drawing.Size(41, 42);
             this.opLedPLC.TabIndex = 0;
             this.opLedPLC.Text = "uiLedBulb3";
@@ -1160,6 +1160,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.OMRON_PLC_02.Time_Update = 1500;
             this.OMRON_PLC_02.PLCStatus_OnChange += new System.EventHandler<SPMS1.OmronPLC_Hsl.PLCStatusEventArgs>(this.OMRON_PLC_2_PLCStatus_OnChange);
             // 
+            // subpr
+            // 
+            this.subpr.DoWork += new System.ComponentModel.DoWorkEventHandler(this.subpr_DoWork);
+            // 
             // FDashboard
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1270,5 +1274,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private Sunny.UI.UISymbolButton btnClearNoti;
         private Sunny.UI.UISymbolButton btnClearPLC;
         private SPMS1.OmronPLC_Hsl OMRON_PLC_02;
+        private System.ComponentModel.BackgroundWorker subpr;
     }
 }

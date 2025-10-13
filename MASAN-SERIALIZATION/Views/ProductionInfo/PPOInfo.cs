@@ -731,6 +731,8 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             ipProductionDate.ReadOnly = true;
             ipProductionDate.FillColor = Color.CornflowerBlue;
             ipProductionDate.ForeColor = Color.Black;
+
+            Globals.ProductionData.productionDate = ipProductionDate.Value.ToString("yyyy-MM-dd HH:mm:ss.fff");
         }
 
         #endregion

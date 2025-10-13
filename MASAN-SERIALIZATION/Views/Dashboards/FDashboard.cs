@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using static MASAN_SERIALIZATION.Utils.ExtensionMethods;
 using static SPMS1.OmronPLC_Hsl;
 
@@ -113,7 +114,26 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     break;
 
                 case enumClient.RECEIVED:
-                    Task.Run(() => CameraSub_Process(data));
+                    //Task.Run(() => CameraSub_Process(data));
+
+                    if (subpr.IsBusy)
+                    {
+                        this.InvokeIfRequired(() =>
+                        {
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS Bận, không xử lý mã: {data}");
+                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                        });
+
+                        //gửi loại sản phẩm
+                        // Timeout detected - hủy thêm vào thùng
+                        Send_Result_Content_CSub(e_Production_Status.Error, data);
+                        Enqueue_Product_To_Record(data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
+
+                    }
+                    else
+                    {
+                        subpr.RunWorkerAsync(data);
+                    }
                     break;
 
                 case enumClient.RECONNECT:
@@ -233,6 +253,17 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 }
                 else
                 {
+                    //if(AppConfigs.Current.TestMode)
+                    //{
+                    //    //thêm vào dic
+                    //    ProductionCodeData productionCodeDatanew = new ProductionCodeData();
+
+                    //    productionCodeDatanew.Production_Datetime = Globals.ProductionData.productionDate;
+                    //    productionCodeDatanew.Activate_Datetime = DateTime.Now.ToString("o");
+                    //    productionCodeDatanew.Code = _data;
+                    //    productionCodeDatanew.codeID = 
+
+                    ////}
                     Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
                     Send_Result_Content_CMain(e_Production_Status.Duplicate, _data);
                     Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, true, _produtionCodeData.Activate_Datetime, _produtionCodeData.Production_Datetime);
@@ -448,6 +479,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 {
                     // Kiểm tra timeout sau khi gửi PLC thành công
                     bool isTimeout = CheckCameraSubTimeout(_data);
+
                     if (isTimeout)
                     {
                         // Timeout detected - hủy thêm vào thùng
@@ -2436,8 +2468,14 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             PlcError,
             CameraError,
         }
+
         #endregion
 
+        private void subpr_DoWork(object sender, DoWorkEventArgs e)
+        {
+            string code = e.Argument as string;
 
+            CameraSub_Process(code);
+        }
     }
 }

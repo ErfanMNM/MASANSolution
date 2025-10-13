@@ -132,4 +132,7 @@
   <metadata name="OMRON_PLC_02.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>547, 16</value>
   </metadata>
+  <metadata name="subpr.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>689, 16</value>
+  </metadata>
 </root>

@@ -3,8 +3,10 @@ using MASAN_SERIALIZATION.Enums;
 using MASAN_SERIALIZATION.Production;
 using Sunny.UI;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace MASAN_SERIALIZATION.Views.Reports
@@ -51,6 +53,9 @@ namespace MASAN_SERIALIZATION.Views.Reports
 
                 // Lấy thông tin MES
                 LoadMESInfo();
+
+                // Lấy thống kê theo ProductionDate
+                LoadProductionDateStatistics();
 
             }
             catch (Exception ex)
@@ -153,6 +158,99 @@ namespace MASAN_SERIALIZATION.Views.Reports
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void LoadProductionDateStatistics()
+        {
+            try
+            {
+                // Lấy tất cả records từ CameraSub
+                var recordsResult = Globals.ProductionData.getDataPO.Get_Records_CameraSub(_orderNo);
+                if (!recordsResult.issuccess || recordsResult.data == null)
+                {
+                    return;
+                }
+
+                // Tạo dictionary để nhóm theo ProductionDate
+                var dateStats = new Dictionary<string, (int cartonCount, int bottleCount)>();
+
+                foreach (DataRow row in recordsResult.data.Rows)
+                {
+                    // Chỉ tính các sản phẩm Pass
+                    if (row["Status"].ToString() != e_Production_Status.Pass.ToString())
+                        continue;
+
+                    string productionDate = row["productionDate"].ToString();
+
+                    // Chuyển đổi định dạng ngày nếu cần
+                    if (DateTime.TryParse(productionDate, out DateTime date))
+                    {
+                        productionDate = date.ToString("yyyy-MM-dd");
+                    }
+
+                    if (!dateStats.ContainsKey(productionDate))
+                    {
+                        dateStats[productionDate] = (0, 0);
+                    }
+
+                    var current = dateStats[productionDate];
+
+                    // Đếm chai (mỗi record là 1 chai)
+                    int newBottleCount = current.bottleCount + 1;
+
+                    // Tính số thùng (mỗi cartonPack chai = 1 thùng)
+                    int newCartonCount = newBottleCount / AppConfigs.Current.cartonPack;
+
+                    dateStats[productionDate] = (newCartonCount, newBottleCount);
+                }
+
+                // Hiển thị kết quả
+                DisplayProductionDateStats(dateStats);
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi nhưng không hiển thị dialog để không ảnh hưởng đến việc load dữ liệu khác
+                System.Diagnostics.Debug.WriteLine($"Lỗi khi load thống kê theo ngày sản xuất: {ex.Message}");
+            }
+        }
+
+        private void DisplayProductionDateStats(Dictionary<string, (int cartonCount, int bottleCount)> dateStats)
+        {
+            // Sắp xếp theo ngày (giảm dần - ngày gần nhất ở trên)
+            var sortedStats = dateStats.OrderByDescending(x => x.Key).ToList();
+
+            // Tạo text hiển thị chi tiết
+            string statsText = "";
+
+            int totalCartons = 0;
+            int totalBottles = 0;
+
+            if (sortedStats.Count > 0)
+            {
+                foreach (var stat in sortedStats)
+                {
+                    statsText += $"📅 {stat.Key}  │  📦 Thùng: {stat.Value.cartonCount:N0}  │  🍾 Chai: {stat.Value.bottleCount:N0}\r\n";
+                    statsText += "─────────────────────────────────────────────────────────────\r\n";
+
+                    totalCartons += stat.Value.cartonCount;
+                    totalBottles += stat.Value.bottleCount;
+                }
+
+                statsText += $"\r\n";
+                statsText += $"╔═══════════════════════════ TỔNG CỘNG ════════════════════════╗\r\n";
+                statsText += $"║  📦 Tổng thùng: {totalCartons:N0}  │  🍾 Tổng chai: {totalBottles:N0}  │  📊 Số ngày: {sortedStats.Count}  ║\r\n";
+                statsText += $"╚════════════════════════════════════════════════════════════════╝";
+            }
+            else
+            {
+                statsText = "Chưa có dữ liệu thống kê theo ngày sản xuất.";
+            }
+
+            // Hiển thị vào TextBox
+            this.InvokeIfRequired(() =>
+            {
+                txtProductionDateStats.Text = statsText;
+            });
         }
     }
 }

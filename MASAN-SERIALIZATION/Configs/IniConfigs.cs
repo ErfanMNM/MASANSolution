@@ -56,6 +56,7 @@ namespace MASAN_SERIALIZATION.Configs
         public int CameraSub_Timeout_Ms { get; set; } // Thời gian timeout cho CameraSub (ms)
         public int CameraSub_Polling_Interval_Ms { get; set; } // Thời gian polling interval cho CameraSub (ms)
         public bool CameraSub_Timeout_Log_Enabled { get; set; } // Bật/Tắt log chi tiết cho timeout checking
+        public bool TestMode { get; set; } // Chế độ kiểm tra (Test Mode)
 
 
 
@@ -101,6 +102,7 @@ namespace MASAN_SERIALIZATION.Configs
             CameraSub_Timeout_Ms = 500; // Mặc định timeout 500ms
             CameraSub_Polling_Interval_Ms = 10; // Mặc định polling mỗi 10ms
             CameraSub_Timeout_Log_Enabled = true; // Mặc định bật log chi tiết
+            TestMode = false; // Mặc định không bật chế độ kiểm tra (Test Mode)
         }
     }
 }
