@@ -801,7 +801,7 @@
             this.btnClosePO.Size = new System.Drawing.Size(121, 43);
             this.btnClosePO.Symbol = 561534;
             this.btnClosePO.TabIndex = 0;
-            this.btnClosePO.Text = "Đóng PO";
+            this.btnClosePO.Text = "Xóa PO";
             this.btnClosePO.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnClosePO.Click += new System.EventHandler(this.btnClosePO_Click);
             // 
@@ -820,7 +820,7 @@
             this.btnProductionDate.Size = new System.Drawing.Size(203, 43);
             this.btnProductionDate.Symbol = 559670;
             this.btnProductionDate.TabIndex = 1;
-            this.btnProductionDate.Text = "Đổi Ngày Sản Xuất";
+            this.btnProductionDate.Text = "Sửa Ngày SX";
             this.btnProductionDate.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnProductionDate.Click += new System.EventHandler(this.btnProductionDate_Click);
             // 

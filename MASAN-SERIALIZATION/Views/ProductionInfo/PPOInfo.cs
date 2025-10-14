@@ -457,7 +457,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private bool IsOrderCompleted()
         {
-            return Globals.ProductionData.counter.passCount == Globals.ProductionData.orderQty.ToInt32() && Globals.ProductionData.counter.passCount > 0;
+            return Globals.ProductionData.counter.passCount >= Globals.ProductionData.orderQty.ToInt32() && Globals.ProductionData.counter.passCount > 0;
         }
 
         private bool IsOrderDeleted()
@@ -779,7 +779,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             ipProductionDate.ReadOnly = false;
             ipProductionDate.FillColor = Color.Yellow;
             ipProductionDate.ForeColor = Color.Black;
-            btnProductionDate.Text = "Lưu lại";
+            btnProductionDate.Text = "Lưu Ngày SX";
             btnProductionDate.FillColor = Color.Green;
             btnProductionDate.Symbol = 61508;
             btnProductionDate.Enabled = true;
@@ -811,7 +811,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void RestoreProductionDateMode()
         {
-            btnProductionDate.Text = "Chỉnh ngày sản xuất";
+            btnProductionDate.Text = "Sửa Ngày SX";
             btnProductionDate.FillColor = Color.CornflowerBlue;
             ipProductionDate.ReadOnly = true;
             ipProductionDate.FillColor = Color.CornflowerBlue;
@@ -940,7 +940,9 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 opAWSNotSent.Text = $"{counters.awsNotSent}/{counters.awsSentFailed}";
                 opAWSSentWating.Text = counters.awsSentWaiting.ToString();
                 // Sử dụng dữ liệu từ camera sub để hiển thị carton
-                opCarton.Text = Globals.ProductionData.counter.cartonID.ToString() +"/" + Globals.ProductionData.orderQty.ToInt()/AppConfigs.Current.cartonPack + " (CS)";
+                // Sử dụng opOrderQty.Text thay vì Globals.ProductionData.orderQty để hiển thị đúng khi chọn PO mới
+                int totalCartons = opOrderQty.Text.ToInt() > 0 ? opOrderQty.Text.ToInt() / AppConfigs.Current.cartonPack : 0;
+                opCarton.Text = Globals.ProductionData.counter.cartonID.ToString() + "/" + totalCartons + " (CS)";
             });
         }
 
@@ -1297,7 +1299,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     btnPO.Symbol = 61639;
 
                     btnClosePO.Enabled = true;
-                    btnClosePO.Text = "Tải lại PO";
+                    btnClosePO.Text = "Làm mới danh sách";
                     btnRUN.Enabled = false;
                 }
             });
@@ -1340,7 +1342,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
                 btnRUN.Enabled = true;
                 btnRUN.FillColor = Color.FromArgb(0, 192, 0);
-                btnRUN.Text = "Bắt đầu sản xuất";
+                btnRUN.Text = "Chạy sản xuất";
                 btnRUN.Symbol = 61515;
             });
         }
