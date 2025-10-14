@@ -74,7 +74,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     break;
 
                 case enumClient.RECEIVED:
-                    if (Globals.Production_State != e_Production_State.Running)
+                    if (Globals.Production_State == e_Production_State.Running || Globals.Production_State == e_Production_State.Waiting_Stop || Globals.Production_State == e_Production_State.Check_After_Completed )
+                    {
+                        Task.Run(() => CameraMain_Process(data));
+                    }
+                    else
                     {
                         this.InvokeIfRequired(() =>
                         {
@@ -83,7 +87,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         });
                         break;
                     }
-                    Task.Run(() => CameraMain_Process(data));
+                    
                     break;
 
                 case enumClient.RECONNECT:
@@ -132,7 +136,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     }
                     else
                     {
-                        subpr.RunWorkerAsync(data);
+                        if (Globals.Production_State == e_Production_State.Running || Globals.Production_State == e_Production_State.Waiting_Stop || Globals.Production_State == e_Production_State.Check_After_Completed)
+                        {
+                            subpr.RunWorkerAsync(data);
+                        }
+                            
                     }
                     break;
 
@@ -253,17 +261,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 }
                 else
                 {
-                    //if(AppConfigs.Current.TestMode)
-                    //{
-                    //    //thêm vào dic
-                    //    ProductionCodeData productionCodeDatanew = new ProductionCodeData();
-
-                    //    productionCodeDatanew.Production_Datetime = Globals.ProductionData.productionDate;
-                    //    productionCodeDatanew.Activate_Datetime = DateTime.Now.ToString("o");
-                    //    productionCodeDatanew.Code = _data;
-                    //    productionCodeDatanew.codeID = 
-
-                    ////}
                     Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
                     Send_Result_Content_CMain(e_Production_Status.Duplicate, _data);
                     Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, true, _produtionCodeData.Activate_Datetime, _produtionCodeData.Production_Datetime);
@@ -1607,7 +1604,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
             else
             {
-                //nhảy về lỗi
+                //thùng không tồn tại
                 Globals.Production_State = e_Production_State.Ready;
             }
             //kiểm tra thùng sắp tới có mã chưa
@@ -1695,7 +1692,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 
             }
         }
-
 
         public int state01 = 0;
         public int state02 = 0;

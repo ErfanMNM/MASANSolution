@@ -468,12 +468,51 @@ namespace MASAN_SERIALIZATION.Production
                             }
                         }
 
+                        //Kiểm tra số lượng sản phẩm đã gửi lên MES thành công
+                        try
+                        {
+                            //Đọc orderQty từ file JSON
+                            string jsonContent = File.ReadAllText(file);
+                            var jsonObj = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonContent);
+
+                            if (jsonObj != null && jsonObj.ContainsKey("orderQty"))
+                            {
+                                int orderQty = Convert.ToInt32(jsonObj["orderQty"]);
+
+                                //Kiểm tra database có tồn tại không
+                                string czRunPath = $"{dataPath}/{orderNo}.db";
+                                if (File.Exists(czRunPath))
+                                {
+                                    //Đếm số lượng sản phẩm đã gửi thành công (Send_Status = 'Sent' và Recive_Status = 'Sent' hoặc 200)
+                                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                                    {
+                                        conn.Open();
+                                        string query = @"SELECT COUNT(*) FROM UniqueCodes
+                                                        WHERE Send_Status = 'Sent'
+                                                        AND (Recive_Status = 'Sent' OR Recive_Status = '200')";
+                                        var command = new SQLiteCommand(query, conn);
+                                        int sentSuccessCount = Convert.ToInt32(command.ExecuteScalar());
+
+                                        //Nếu số lượng đã gửi >= orderQty thì bỏ qua PO này
+                                        if (sentSuccessCount >= orderQty)
+                                        {
+                                            continue;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            //Nếu có lỗi khi kiểm tra thì vẫn hiển thị PO này
+                        }
+
                         table.Rows.Add(row);
                         //}
-                        
+
                     }
                     DataRow emptyRow = table.NewRow();
-                    emptyRow["orderNo"] = "Chọn orderNO";
+                    emptyRow["orderNo"] = "PO001";
                     table.Rows.InsertAt(emptyRow, 0);
                     comboBox.DataSource = table;
                     comboBox.DisplayMember = "orderNo";
