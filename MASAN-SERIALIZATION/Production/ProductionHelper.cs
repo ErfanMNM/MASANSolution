@@ -56,7 +56,13 @@ namespace MASAN_SERIALIZATION.Production
         {
             get
             {
-                return $"{dataPath}";
+                // Nếu có orderNo thì dùng cấu trúc mới theo tháng/GTIN
+                if (!string.IsNullOrEmpty(orderNo) && orderNo != "-")
+                {
+                    return GetOrderBasePath(orderNo);
+                }
+                // Fallback về đường dẫn cũ nếu chưa có orderNo
+                return dataPath;
             }
         }
         #endregion
@@ -480,7 +486,7 @@ namespace MASAN_SERIALIZATION.Production
                                 int orderQty = Convert.ToInt32(jsonObj["orderQty"]);
 
                                 //Kiểm tra database có tồn tại không
-                                string czRunPath = $"{dataPath}/{orderNo}.db";
+                                string czRunPath = $"{GetOrderBasePath(orderNo)}/{orderNo}.db";
                                 if (File.Exists(czRunPath))
                                 {
                                     //Đếm số lượng sản phẩm đã gửi thành công (Send_Status = 'Sent' và Recive_Status = 'Sent' hoặc 200)
@@ -536,7 +542,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/{OrderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(OrderNo)}/{OrderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -566,7 +572,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/{OrderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(OrderNo)}/{OrderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -646,7 +652,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/Record_{orderNO}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNO)}/Record_{orderNO}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(false, "Không có PO nào trong cơ sở dữ liệu.");
@@ -674,7 +680,7 @@ namespace MASAN_SERIALIZATION.Production
                 string czRunPath = "";
                 try
                 {
-                     czRunPath = $"{dataPath}/Record_{orderNO}.db";
+                     czRunPath = $"{GetOrderBasePath(orderNO)}/Record_{orderNO}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(true, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -703,7 +709,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/Record_CameraSub_{orderNO}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNO)}/Record_CameraSub_{orderNO}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(true, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -733,7 +739,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {   //tạo thư mục nếu chưa tồn tại
-                    string czRunPath = $"{dataPath}/{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(true, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -763,7 +769,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/Record_{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -791,7 +797,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/Record_CameraSub_{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_CameraSub_{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(false, "Cơ sở dữ liệu ghi camera phụ không tồn tại.");
@@ -820,7 +826,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/carton_{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/carton_{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -845,7 +851,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return (false, null, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -872,7 +878,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -902,7 +908,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -932,7 +938,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(false, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -962,7 +968,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/carton_{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/carton_{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return (false, 0, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -987,7 +993,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/carton_{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/carton_{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return (false, null, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -1015,7 +1021,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/carton_{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/carton_{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return (false, 0, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -1041,7 +1047,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/Record_CameraSub_{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_CameraSub_{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return (false, 0, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -1067,7 +1073,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/Record_CameraSub_{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_CameraSub_{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return (false, null, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -1123,7 +1129,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(false, "Database dictionary chưa tồn tại.", 0);
@@ -1154,7 +1160,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(false, "Database dictionary chưa tồn tại.");
@@ -1184,7 +1190,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(false, "Database dictionary chưa tồn tại.");
@@ -1351,7 +1357,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/{orderNo}.db";
                     using (SQLiteConnection connection = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         connection.Open();
@@ -1385,7 +1391,7 @@ namespace MASAN_SERIALIZATION.Production
 
             public void Update_Active_Status_With_KV_where_KV (string key, string value, string wkey, string wvalue, string orderNo)
             {
-                string czRunPath = $"{dataPath}/{orderNo}.db";
+                string czRunPath = $"{GetOrderBasePath(orderNo)}/{orderNo}.db";
                 using (SQLiteConnection connection = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                 {
                     connection.Open();
@@ -1401,7 +1407,7 @@ namespace MASAN_SERIALIZATION.Production
 
             public void Insert_Record (ProductionCodeData_Record productionCodeData_Record, string orderNo)
             {
-                string czRunPath = $"{dataPath}/Record_{orderNo}.db";
+                string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_{orderNo}.db";
                 using (SQLiteConnection connection = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                 {
                     connection.Open();
@@ -1423,7 +1429,7 @@ namespace MASAN_SERIALIZATION.Production
 
             public void Insert_Carton (ProductionCartonData productionCartonData, string orderNo)
             {
-                string czRunPath = $"{dataPath}/carton_{orderNo}.db";
+                string czRunPath = $"{GetOrderBasePath(orderNo)}/carton_{orderNo}.db";
                 using (SQLiteConnection connection = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                 {
                     connection.Open();
@@ -1447,7 +1453,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{dataPath}/carton_{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/carton_{orderNo}.db";
                     using (SQLiteConnection connection = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         connection.Open();
@@ -1473,7 +1479,7 @@ namespace MASAN_SERIALIZATION.Production
 
             public void Insert_Record_Camera_Sub(ProductionCodeData_Record productionCodeData_Record, string orderNo)
             {
-                string czRunPath = $"{dataPath}/Record_CameraSub_{orderNo}.db";
+                string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_CameraSub_{orderNo}.db";
                 using (SQLiteConnection connection = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                 {
                     connection.Open();
@@ -1527,6 +1533,67 @@ namespace MASAN_SERIALIZATION.Production
                 }
             }
         }
+
+        /// <summary>
+        /// Lấy thông tin productionDate và GTIN từ orderNo
+        /// </summary>
+        private static (string productionDate, string gtin) GetPOInfo(string orderNo)
+        {
+            try
+            {
+                string jsonPath = Path.Combine(poMesJsonPODataPath, orderNo + ".json");
+                if (File.Exists(jsonPath))
+                {
+                    string jsonContent = File.ReadAllText(jsonPath);
+                    var jsonObj = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonContent);
+
+                    string productionDate = jsonObj.ContainsKey("productionDate") ? jsonObj["productionDate"].ToString() : string.Empty;
+                    string gtin = jsonObj.ContainsKey("gtin") ? jsonObj["gtin"].ToString() : string.Empty;
+
+                    return (productionDate, gtin);
+                }
+            }
+            catch { }
+
+            return (string.Empty, string.Empty);
+        }
+
+        /// <summary>
+        /// Lấy đường dẫn base cho database theo cấu trúc yyyy-MM/GTIN/
+        /// </summary>
+        public static string GetOrderBasePath(string orderNo)
+        {
+            var (productionDate, gtin) = GetPOInfo(orderNo);
+
+            if (string.IsNullOrEmpty(productionDate) || string.IsNullOrEmpty(gtin))
+            {
+                // Fallback về đường dẫn cũ nếu không lấy được thông tin
+                return dataPath;
+            }
+
+            try
+            {
+                // Parse productionDate để lấy yyyy-MM
+                DateTime date = DateTime.Parse(productionDate);
+                string monthFolder = date.ToString("yyyy-MM");
+
+                // Tạo đường dẫn: dataPath/yyyy-MM/GTIN/
+                string basePath = Path.Combine(dataPath, monthFolder, gtin);
+
+                // Tạo thư mục nếu chưa tồn tại
+                if (!Directory.Exists(basePath))
+                {
+                    Directory.CreateDirectory(basePath);
+                }
+
+                return basePath;
+            }
+            catch
+            {
+                // Fallback về đường dẫn cũ nếu có lỗi
+                return dataPath;
+            }
+        }
         #endregion
 
         #region Database File Management
@@ -1534,7 +1601,7 @@ namespace MASAN_SERIALIZATION.Production
         {
             //try
             //{//tạo thư mục nếu chưa tồn tại
-                string czRunPath = $"{dataPath}/{orderNo}.db";
+                string czRunPath = $"{GetOrderBasePath(orderNo)}/{orderNo}.db";
                 //kiểm tra xem thư mục đã tồn tại chưa, nếu chưa thì tạo mới
                 string directoryPath = Path.GetDirectoryName(czRunPath);
                 if (!Directory.Exists(directoryPath))
@@ -1600,7 +1667,7 @@ namespace MASAN_SERIALIZATION.Production
                 }
 
                 //Kiểm tra xem bảng ghi history tất cả các result của PO đã tồn tại hay chưa, nếu chưa thì tạo mới nếu chưa thì tạo mới ở C:/.ABC/MM-yy/Record_<orderNO>.db
-                string recordPath = $"{dataPath}/Record_{orderNo}.db";
+                string recordPath = $"{GetOrderBasePath(orderNo)}/Record_{orderNo}.db";
                 if (!File.Exists(recordPath))
                 {
                     using (var conn = new SQLiteConnection($"Data Source={recordPath};Version=3;"))
@@ -1626,7 +1693,7 @@ namespace MASAN_SERIALIZATION.Production
                     }
                 }
 
-                string recordCSPath = $"{dataPath}/Record_CameraSub_{orderNo}.db";
+                string recordCSPath = $"{GetOrderBasePath(orderNo)}/Record_CameraSub_{orderNo}.db";
                 if (!File.Exists(recordCSPath))
                 {
                     using (var conn = new SQLiteConnection($"Data Source={recordCSPath};Version=3;"))
@@ -1652,7 +1719,7 @@ namespace MASAN_SERIALIZATION.Production
                     }
                 }
 
-                string CartonPath = $"{dataPath}/carton_{orderNo}.db";
+                string CartonPath = $"{GetOrderBasePath(orderNo)}/carton_{orderNo}.db";
                 if (!File.Exists(CartonPath))
                 {
                 using (var conn = new SQLiteConnection($"Data Source={CartonPath};Version=3;"))
@@ -1701,7 +1768,7 @@ namespace MASAN_SERIALIZATION.Production
             }
 
             //kiểm tra xem bảng ghi history tất cả các result của PO đã tồn tại hay chưa, nếu chưa thì tạo mới nếu chưa thì tạo mới
-            string recordAWS = $"{dataPath}/Send_AWS_Record_{orderNo}.db";
+            string recordAWS = $"{GetOrderBasePath(orderNo)}/Send_AWS_Record_{orderNo}.db";
                 if (!File.Exists(recordAWS))
                 {
                     using (var conn = new SQLiteConnection($"Data Source={recordAWS};Version=3;"))
@@ -1729,7 +1796,7 @@ namespace MASAN_SERIALIZATION.Production
                 }
 
                 //kiểm tra xem bảng ghi history tất cả các result của PO đã tồn tại hay chưa, nếu chưa thì tạo mới nếu chưa thì tạo mới
-                string recive_AWS = $"{dataPath}/Recive_AWS_Record_{orderNo}.db";
+                string recive_AWS = $"{GetOrderBasePath(orderNo)}/Recive_AWS_Record_{orderNo}.db";
                 if (!File.Exists(recive_AWS))
                 {
                     using (var conn = new SQLiteConnection($"Data Source={recive_AWS};Version=3;"))

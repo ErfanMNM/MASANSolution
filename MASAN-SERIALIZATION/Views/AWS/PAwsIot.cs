@@ -473,12 +473,12 @@ namespace MASAN_SERIALIZATION.Views.AWS
         }
 
         // Thêm Send Record vào database
-        public void Insert_AWS_Send_Record(string messageId, string orderNo, string uniqueCode, string status, 
+        public void Insert_AWS_Send_Record(string messageId, string orderNo, string uniqueCode, string status,
                                           string activateDatetime, string productionDate, string thingName)
         {
             try
             {
-                string recordAWSPath = $@"C:/MasanSerialization/PODatabases/Send_AWS_Record_{orderNo}.db";
+                string recordAWSPath = $@"{ProductionOrder.GetOrderBasePath(orderNo)}/Send_AWS_Record_{orderNo}.db";
                 using (var conn = new SQLiteConnection($"Data Source={recordAWSPath};Version=3;"))
                 {
                     conn.Open();
@@ -521,7 +521,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
             try
             {
                 string orderNo = Globals.ProductionData.orderNo;
-                string reciveAWSPath = $@"C:/MasanSerialization/PODatabases/Recive_AWS_Record_{orderNo}.db";
+                string reciveAWSPath = $@"{ProductionOrder.GetOrderBasePath(orderNo)}/Recive_AWS_Record_{orderNo}.db";
                 using (var conn = new SQLiteConnection($"Data Source={reciveAWSPath};Version=3;"))
                 {
                     conn.Open();
