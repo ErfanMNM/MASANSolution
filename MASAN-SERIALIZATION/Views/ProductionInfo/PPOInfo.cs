@@ -1148,6 +1148,23 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 SaveProductionData();
 
+                // QUAN TRỌNG: Kiểm tra và tạo database trước khi load records
+                var checkDbResult = Globals.ProductionData.Check_Database_File(
+                    ipOrderNO.SelectedText,
+                    opOrderQty.Text);
+
+                if (!checkDbResult.issucess)
+                {
+                    _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
+                        $"Không thể tạo database: {checkDbResult.message}");
+                    this.InvokeIfRequired(() => {
+                        this.ShowErrorDialog($"Lỗi EA001: {checkDbResult.message}");
+                        UpdateStatusMessage("Không thể tạo file dữ liệu. Vui lòng kiểm tra lại.", Color.Red);
+                    });
+                    Globals.Production_State = e_Production_State.NoSelectedPO;
+                    return;
+                }
+
                 TResult recordsResult = LoadProductionRecords();
 
                 if (!recordsResult.issuccess)

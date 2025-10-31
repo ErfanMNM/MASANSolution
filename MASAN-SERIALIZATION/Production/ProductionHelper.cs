@@ -1548,7 +1548,7 @@ namespace MASAN_SERIALIZATION.Production
                     var jsonObj = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonContent);
 
                     string productionDate = jsonObj.ContainsKey("productionDate") ? jsonObj["productionDate"].ToString() : string.Empty;
-                    string gtin = jsonObj.ContainsKey("gtin") ? jsonObj["gtin"].ToString() : string.Empty;
+                    string gtin = jsonObj.ContainsKey("GTIN") ? jsonObj["GTIN"].ToString() : string.Empty;
 
                     return (productionDate, gtin);
                 }
@@ -1599,17 +1599,46 @@ namespace MASAN_SERIALIZATION.Production
         #region Database File Management
         public (bool issucess, string message) Check_Database_File(string orderNo, string orderQty)
         {
-            //try
-            //{//tạo thư mục nếu chưa tồn tại
-                string czRunPath = $"{GetOrderBasePath(orderNo)}/{orderNo}.db";
-                //kiểm tra xem thư mục đã tồn tại chưa, nếu chưa thì tạo mới
+            try
+            {
+                // Bước 1: Kiểm tra file JSON PO data tồn tại
+                string jsonPath = Path.Combine(poMesJsonPODataPath, orderNo + ".json");
+                if (!File.Exists(jsonPath))
+                {
+                    return (false, $"PH001: Không tìm thấy file JSON PO: {jsonPath}");
+                }
+
+                // Bước 2: Kiểm tra file codes JSON tồn tại
+                string codesJsonPath = Path.Combine(poMesJsonCodesPath, orderNo + ".json");
+                if (!File.Exists(codesJsonPath))
+                {
+                    return (false, $"PH002: Không tìm thấy file codes JSON: {codesJsonPath}");
+                }
+
+                // Bước 3: Lấy đường dẫn base (có thể tạo thư mục)
+                string basePath = GetOrderBasePath(orderNo);
+                if (string.IsNullOrEmpty(basePath))
+                {
+                    return (false, "PH003: Không thể xác định đường dẫn lưu trữ");
+                }
+
+                // Bước 4: Tạo đường dẫn file database chính
+                string czRunPath = Path.Combine(basePath, $"{orderNo}.db");
+                // Bước 5: Đảm bảo thư mục tồn tại
                 string directoryPath = Path.GetDirectoryName(czRunPath);
                 if (!Directory.Exists(directoryPath))
                 {
-                    Directory.CreateDirectory(directoryPath);
+                    try
+                    {
+                        Directory.CreateDirectory(directoryPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        return (false, $"PH004: Không thể tạo thư mục {directoryPath}: {ex.Message}");
+                    }
                 }
-                //kiểm tra xem file db đã tồn tại chưa, nếu chưa thì tạo mới
 
+                // Bước 6: Tạo file database chính nếu chưa tồn tại
                 if (!File.Exists(czRunPath))
                 {
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
@@ -1663,11 +1692,10 @@ namespace MASAN_SERIALIZATION.Production
                             }
                         }
                     }
-
                 }
 
-                //Kiểm tra xem bảng ghi history tất cả các result của PO đã tồn tại hay chưa, nếu chưa thì tạo mới nếu chưa thì tạo mới ở C:/.ABC/MM-yy/Record_<orderNO>.db
-                string recordPath = $"{GetOrderBasePath(orderNo)}/Record_{orderNo}.db";
+                // Bước 7: Kiểm tra và tạo các file database khác
+                string recordPath = Path.Combine(basePath, $"Record_{orderNo}.db");
                 if (!File.Exists(recordPath))
                 {
                     using (var conn = new SQLiteConnection($"Data Source={recordPath};Version=3;"))
@@ -1693,7 +1721,7 @@ namespace MASAN_SERIALIZATION.Production
                     }
                 }
 
-                string recordCSPath = $"{GetOrderBasePath(orderNo)}/Record_CameraSub_{orderNo}.db";
+                string recordCSPath = Path.Combine(basePath, $"Record_CameraSub_{orderNo}.db");
                 if (!File.Exists(recordCSPath))
                 {
                     using (var conn = new SQLiteConnection($"Data Source={recordCSPath};Version=3;"))
@@ -1719,7 +1747,7 @@ namespace MASAN_SERIALIZATION.Production
                     }
                 }
 
-                string CartonPath = $"{GetOrderBasePath(orderNo)}/carton_{orderNo}.db";
+                string CartonPath = Path.Combine(basePath, $"carton_{orderNo}.db");
                 if (!File.Exists(CartonPath))
                 {
                 using (var conn = new SQLiteConnection($"Data Source={CartonPath};Version=3;"))
@@ -1768,7 +1796,7 @@ namespace MASAN_SERIALIZATION.Production
             }
 
             //kiểm tra xem bảng ghi history tất cả các result của PO đã tồn tại hay chưa, nếu chưa thì tạo mới nếu chưa thì tạo mới
-            string recordAWS = $"{GetOrderBasePath(orderNo)}/Send_AWS_Record_{orderNo}.db";
+            string recordAWS = Path.Combine(basePath, $"Send_AWS_Record_{orderNo}.db");
                 if (!File.Exists(recordAWS))
                 {
                     using (var conn = new SQLiteConnection($"Data Source={recordAWS};Version=3;"))
@@ -1796,7 +1824,7 @@ namespace MASAN_SERIALIZATION.Production
                 }
 
                 //kiểm tra xem bảng ghi history tất cả các result của PO đã tồn tại hay chưa, nếu chưa thì tạo mới nếu chưa thì tạo mới
-                string recive_AWS = $"{GetOrderBasePath(orderNo)}/Recive_AWS_Record_{orderNo}.db";
+                string recive_AWS = Path.Combine(basePath, $"Recive_AWS_Record_{orderNo}.db");
                 if (!File.Exists(recive_AWS))
                 {
                     using (var conn = new SQLiteConnection($"Data Source={recive_AWS};Version=3;"))
@@ -1819,11 +1847,11 @@ namespace MASAN_SERIALIZATION.Production
                     }
                 }
                 return (true, "Kiểm tra và tạo cơ sở dữ liệu thành công.");
-            //}
-            //catch (Exception ex)
-            //{
-            //    return (false, $"Lỗi GC02 khi kiểm tra file cơ sở dữ liệu: {ex.Message}");
-            //}
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Lỗi GC02 khi kiểm tra file cơ sở dữ liệu: {ex.Message}");
+            }
 
         }
         #endregion
