@@ -247,9 +247,9 @@ function saveUniqueCodesToFile(orderNo, blockNo, uniqueCodes) {
  * @swagger
  * /api/orders:
  *   post:
- *     summary: Tạo hoặc cập nhật PO, khóa chính là orderNO.
- *              Lưu uniqueCode theo blockNo trùng sẽ tự động không lưu.
- *              Trả về số lượng mã mới, trùng và tổng số mã hiện có.    
+ *     summary: Tạo hoặc cập nhật PO. Lưu uniqueCode theo GTIN (1 GTIN có thể có nhiều orderNo).
+ *              uniqueCode là optional nếu GTIN đã có mã. Mã trùng sẽ tự động bỏ qua.
+ *              Trả về số lượng mã mới, trùng và tổng số mã hiện có.
  *     requestBody:
  *       required: true
  *       content:
@@ -258,7 +258,6 @@ function saveUniqueCodesToFile(orderNo, blockNo, uniqueCodes) {
  *             type: object
  *             required:
  *               - orderNo
- *               - uniqueCode
  *               - blockNo
  *               - site
  *               - factory
@@ -274,7 +273,7 @@ function saveUniqueCodesToFile(orderNo, blockNo, uniqueCodes) {
  *               - uom
  *             properties:
  *               orderNo: { type: string, example: "PO_001" }
- *               uniqueCode: { type: array, items: { type: string }, example: ["CODE001","CODE002"] }
+ *               uniqueCode: { type: array, items: { type: string }, example: ["CODE001","CODE002"], description: "Optional nếu GTIN đã có mã" }
  *               blockNo: { type: string, example: "BLOCK_001" }
  *               site: { type: string, example: "SITE_X" }
  *               factory: { type: string, example: "FACTORY_Y" }
@@ -301,18 +300,20 @@ app.post('/api/orders', async (req, res) => {
             productCode, productName, GTIN, customerOrderNo, uom
         } = req.body;
 
-        // Validation
+        // Validation - uniqueCode is optional if GTIN already has codes
+        const gtinHasCodes = fileManager.codesFileExists(GTIN);
+
         const requiredFields = {
-            orderNo, uniqueCode, blockNo, site, factory, productionLine,
+            orderNo, blockNo, site, factory, productionLine,
             productionDate, shift, orderQty, lotNumber,
             productCode, productName, GTIN, customerOrderNo, uom
         };
 
+        // Check required fields except uniqueCode
         for (const [key, value] of Object.entries(requiredFields)) {
             if (
                 value === undefined || value === null ||
-                (typeof value === 'string' && value.trim() === '') ||
-                (key === 'uniqueCode' && (!Array.isArray(value) || value.length === 0))
+                (typeof value === 'string' && value.trim() === '')
             ) {
                 return res.status(400).json({
                     message: `Trường '${key}' đang thiếu hoặc không hợp lệ.`,
@@ -321,7 +322,18 @@ app.post('/api/orders', async (req, res) => {
             }
         }
 
-        if (Array.isArray(uniqueCode)) {
+        // Check uniqueCode - required only if GTIN doesn't have codes yet
+        if (!gtinHasCodes) {
+            if (!Array.isArray(uniqueCode) || uniqueCode.length === 0) {
+                return res.status(400).json({
+                    message: `Trường 'uniqueCode' là bắt buộc vì GTIN '${GTIN}' chưa có mã nào.`,
+                    at: new Date().toISOString()
+                });
+            }
+        }
+
+        // Validate uniqueCode array if provided
+        if (uniqueCode && Array.isArray(uniqueCode)) {
             for (let i = 0; i < uniqueCode.length; i++) {
                 const code = uniqueCode[i];
                 if (typeof code !== 'string' || code.trim() === '') {
@@ -365,9 +377,12 @@ async function processOrderRequest(requestData) {
     try {
         // Log request
         saveRequestToFile(requestData);
-        
-        // Backup codes
-        const backupFileName = saveUniqueCodesToFile(orderNo, blockNo, uniqueCode);
+
+        // Backup codes nếu có uniqueCode
+        let backupFileName = null;
+        if (uniqueCode && Array.isArray(uniqueCode) && uniqueCode.length > 0) {
+            backupFileName = saveUniqueCodesToFile(GTIN, blockNo, uniqueCode);
+        }
 
         // Save/Update PO Info
         const poData = {
@@ -375,10 +390,10 @@ async function processOrderRequest(requestData) {
             orderQty, lotNumber, productCode, productName, GTIN,
             customerOrderNo, uom
         };
-        
+
         const existingPO = await fileManager.getPOInfo(orderNo);
         const savedPO = await fileManager.savePOInfo(poData);
-        
+
         // Log action
         const logData = {
             orderNo,
@@ -387,19 +402,32 @@ async function processOrderRequest(requestData) {
                 orderNo, site, factory, productionLine,
                 productionDate, shift, orderQty, lotNumber,
                 productCode, productName, GTIN, customerOrderNo, uom,
-                blockNo, codeCount: uniqueCode.length
+                blockNo, codeCount: uniqueCode ? uniqueCode.length : 0
             })
         };
-        
+
         await fileManager.savePOLog(logData);
 
-        // Process codes - chuyển {GS} thành ký tự GS thật
-        const processedCodes = uniqueCode.map(code => 
-            code.replace(/\<GS\>/g, String.fromCharCode(29))
-        );
+        // Process codes - chỉ lưu nếu có uniqueCode
+        let codeResult = null;
+        if (uniqueCode && Array.isArray(uniqueCode) && uniqueCode.length > 0) {
+            // Chuyển {GS} thành ký tự GS thật
+            const processedCodes = uniqueCode.map(code =>
+                code.replace(/\<GS\>/g, String.fromCharCode(29))
+            );
 
-        // Save codes và get thống kê
-        const codeResult = await fileManager.saveUniqueCodes(orderNo, blockNo, processedCodes);
+            // Save codes theo GTIN và get thống kê
+            codeResult = await fileManager.saveUniqueCodes(GTIN, blockNo, processedCodes);
+        } else {
+            // Nếu không có uniqueCode mới, lấy thống kê từ GTIN hiện có
+            const existingCodesCount = await fileManager.getCodesCount(GTIN);
+            codeResult = {
+                insertedCount: 0,
+                duplicateCount: 0,
+                totalExistingCount: existingCodesCount,
+                blockCount: existingCodesCount
+            };
+        }
         
         // Final result
         const result = {
@@ -506,9 +534,52 @@ app.get('/api/orders/logs', async (req, res) => {
 
 /**
  * @swagger
+ * /api/codes/{gtin}:
+ *   get:
+ *     summary: Lấy danh sách uniqueCode theo GTIN từ JSON
+ *     parameters:
+ *       - in: path
+ *         name: gtin
+ *         required: true
+ *         schema: { type: string }
+ *       - in: query
+ *         name: blockNo
+ *         schema: { type: string }
+ *         description: Lọc theo blockNo
+ *     responses:
+ *       200: { description: Thành công }
+ *       404: { description: Không tìm thấy codes }
+ */
+app.get('/api/codes/:gtin', async (req, res) => {
+    try {
+        const { gtin } = req.params;
+        const { blockNo } = req.query;
+
+        if (!fileManager.codesFileExists(gtin)) {
+            return res.status(404).json({ message: 'Không tìm thấy codes của GTIN này.' });
+        }
+
+        const codes = await fileManager.getUniqueCodes(gtin, blockNo);
+
+        res.json({
+            count: codes.length,
+            data: codes,
+            gtin,
+            blockNo: blockNo || 'all',
+            storage: 'JSON'
+        });
+
+    } catch (error) {
+        logError(error, `GET codes error for GTIN: ${req.params.gtin}`);
+        res.status(500).json({ message: 'Lỗi đọc mã từ JSON files.' });
+    }
+});
+
+/**
+ * @swagger
  * /api/orders/{orderNo}/codes:
  *   get:
- *     summary: Lấy danh sách uniqueCode của PO từ JSON
+ *     summary: Lấy danh sách uniqueCode của PO từ JSON (sẽ redirect sang GTIN)
  *     parameters:
  *       - in: path
  *         name: orderNo
@@ -520,24 +591,38 @@ app.get('/api/orders/logs', async (req, res) => {
  *         description: Lọc theo blockNo
  *     responses:
  *       200: { description: Thành công }
+ *       404: { description: Không tìm thấy PO hoặc codes }
  */
 app.get('/api/orders/:orderNo/codes', async (req, res) => {
     try {
         const { orderNo } = req.params;
         const { blockNo } = req.query;
-        
-        if (!fileManager.codesFileExists(orderNo)) {
-            return res.status(404).json({ message: 'Không tìm thấy codes của PO này.' });
+
+        // Lấy thông tin PO để get GTIN
+        const poInfo = await fileManager.getPOInfo(orderNo);
+        if (!poInfo) {
+            return res.status(404).json({ message: 'Không tìm thấy PO này.' });
         }
 
-        const codes = await fileManager.getUniqueCodes(orderNo, blockNo);
-        
-        res.json({ 
-            count: codes.length, 
+        const gtin = poInfo.GTIN;
+        if (!gtin) {
+            return res.status(404).json({ message: 'PO không có thông tin GTIN.' });
+        }
+
+        if (!fileManager.codesFileExists(gtin)) {
+            return res.status(404).json({ message: 'Không tìm thấy codes của GTIN này.' });
+        }
+
+        const codes = await fileManager.getUniqueCodes(gtin, blockNo);
+
+        res.json({
+            count: codes.length,
             data: codes,
             orderNo,
+            gtin,
             blockNo: blockNo || 'all',
-            storage: 'JSON'
+            storage: 'JSON',
+            note: 'Codes được lưu theo GTIN. Khuyến nghị sử dụng /api/codes/:gtin'
         });
 
     } catch (error) {

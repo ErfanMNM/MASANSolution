@@ -127,14 +127,14 @@ class FileManager {
         return results;
     }
 
-    // Codes Operations
-    async saveUniqueCodes(orderNo, blockNo, codes) {
-        const safeOrderNo = this.sanitizeFileName(orderNo);
-        const filePath = path.join(this.codesDir, `${safeOrderNo}.json`);
-        
+    // Codes Operations - Lưu theo GTIN
+    async saveUniqueCodes(gtin, blockNo, codes) {
+        const safeGTIN = this.sanitizeFileName(gtin);
+        const filePath = path.join(this.codesDir, `GTIN_${safeGTIN}.json`);
+
         // Read existing data
-        let existingData = await this.readFileWithRetry(filePath, { 
-            orderNo: orderNo,
+        let existingData = await this.readFileWithRetry(filePath, {
+            gtin: gtin,
             blocks: {},
             totalCodes: 0,
             lastUpdated: new Date().toISOString()
@@ -183,9 +183,9 @@ class FileManager {
         };
     }
 
-    async getUniqueCodes(orderNo, blockNo = null) {
-        const safeOrderNo = this.sanitizeFileName(orderNo);
-        const filePath = path.join(this.codesDir, `${safeOrderNo}.json`);
+    async getUniqueCodes(gtin, blockNo = null) {
+        const safeGTIN = this.sanitizeFileName(gtin);
+        const filePath = path.join(this.codesDir, `GTIN_${safeGTIN}.json`);
         
         const data = await this.readFileWithRetry(filePath);
         if (!data || !data.blocks) return [];
@@ -203,14 +203,14 @@ class FileManager {
         return allCodes.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     }
 
-    async getCodesCount(orderNo, blockNo = null) {
-        const codes = await this.getUniqueCodes(orderNo, blockNo);
+    async getCodesCount(gtin, blockNo = null) {
+        const codes = await this.getUniqueCodes(gtin, blockNo);
         return codes.length;
     }
 
-    async deleteBlockCodes(orderNo, blockNo) {
-        const safeOrderNo = this.sanitizeFileName(orderNo);
-        const filePath = path.join(this.codesDir, `${safeOrderNo}.json`);
+    async deleteBlockCodes(gtin, blockNo) {
+        const safeGTIN = this.sanitizeFileName(gtin);
+        const filePath = path.join(this.codesDir, `GTIN_${safeGTIN}.json`);
         
         const data = await this.readFileWithRetry(filePath);
         if (!data || !data.blocks || !data.blocks[blockNo]) {
@@ -291,10 +291,10 @@ class FileManager {
         return name.replace(/[^a-zA-Z0-9_\-]/g, '_');
     }
 
-    // Check if codes file exists for an order
-    codesFileExists(orderNo) {
-        const safeOrderNo = this.sanitizeFileName(orderNo);
-        const filePath = path.join(this.codesDir, `${safeOrderNo}.json`);
+    // Check if codes file exists for a GTIN
+    codesFileExists(gtin) {
+        const safeGTIN = this.sanitizeFileName(gtin);
+        const filePath = path.join(this.codesDir, `GTIN_${safeGTIN}.json`);
         return fs.existsSync(filePath);
     }
 
