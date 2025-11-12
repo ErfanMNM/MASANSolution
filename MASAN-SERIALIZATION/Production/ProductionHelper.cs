@@ -11,6 +11,24 @@ using System.Linq;
 
 namespace MASAN_SERIALIZATION.Production
 {
+    /// <summary>
+    /// ProductionOrder Class - Quản lý Production Order và Codes
+    ///
+    /// CƠ CHẾ LƯU TRỮ MÃ THEO GTIN (Cập nhật mới):
+    /// - API lưu uniqueCode theo GTIN thay vì theo orderNo
+    /// - Nhiều PO có cùng GTIN sẽ dùng chung 1 bộ mã
+    /// - Mỗi PO vẫn có database riêng để tracking (records, cartons...)
+    /// - Cấu trúc thư mục: yyyy-MM/GTIN/
+    ///   + Ví dụ: 2025-01/8931234567890/
+    ///     - PO001.db (database của PO001, chứa codes từ GTIN)
+    ///     - PO002.db (database của PO002, cũng chứa codes từ GTIN)
+    ///     - Record_PO001.db, carton_PO001.db, etc.
+    ///
+    /// LƯU Ý QUAN TRỌNG:
+    /// - Get_Unique_Codes_MES() và Get_Unique_Code_MES_Count() lấy codes theo GTIN
+    /// - Khi tạo database cho PO mới, codes sẽ được load từ file GTIN.json
+    /// - Khi gửi lên API vẫn theo PO, nhưng API sẽ lưu theo GTIN
+    /// </summary>
     public class ProductionOrder
     {
         #region Private Fields & Constants
@@ -325,22 +343,23 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string jsonPath = poMesJsonCodesPath + "/" + orderNo + ".json";
+                    // Lấy GTIN từ orderNo
+                    string gtin = GetGTIN(orderNo);
+                    if (string.IsNullOrEmpty(gtin))
+                    {
+                        return new TResult(false, $"Không tìm thấy GTIN cho orderNo: {orderNo}", 0);
+                    }
+
+                    // Đường dẫn file codes theo GTIN (API mới lưu theo GTIN)
+                    string jsonPath = poMesJsonCodesPath + "/" + gtin + ".json";
 
                     if (!File.Exists(jsonPath))
                     {
-                        return new TResult(false, $"Không tìm thấy file codes: {orderNo}.json", 0);
+                        return new TResult(false, $"Không tìm thấy file codes: {gtin}.json", 0);
                     }
 
                     string jsonText = File.ReadAllText(jsonPath);
                     var root = JObject.Parse(jsonText);
-
-                    // (Tuỳ chọn) kiểm tra orderNo trong file có khớp tham số
-                    var jsonOrderNo = (string)root["orderNo"];
-                    if (!string.Equals(jsonOrderNo, orderNo, StringComparison.OrdinalIgnoreCase))
-                    {
-                        // Nếu muốn nghiêm ngặt thì return false ở đây
-                    }
 
                     var blocks = root["blocks"] as JObject;
                     if (blocks == null || !blocks.HasValues)
@@ -356,7 +375,7 @@ namespace MASAN_SERIALIZATION.Production
                         .Sum(arr => arr.Count);
 
                     return (count > 0)
-                        ? new TResult(true, "Lấy số lượng mã CZ thành công.", count)
+                        ? new TResult(true, $"Lấy số lượng mã CZ thành công cho GTIN {gtin}.", count)
                         : new TResult(false, "Không có mã CZ nào trong file codes.", 0);
                 }
                 catch (Exception ex)
@@ -368,10 +387,18 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string jsonPath = Path.Combine(poMesJsonCodesPath, orderNo + ".json");
+                    // Lấy GTIN từ orderNo
+                    string gtin = GetGTIN(orderNo);
+                    if (string.IsNullOrEmpty(gtin))
+                    {
+                        return new TResult(false, $"Không tìm thấy GTIN cho orderNo: {orderNo}");
+                    }
+
+                    // Đường dẫn file codes theo GTIN
+                    string jsonPath = Path.Combine(poMesJsonCodesPath, gtin + ".json");
                     if (!File.Exists(jsonPath))
                     {
-                        return new TResult(false, "File mã CZ không tồn tại.");
+                        return new TResult(false, $"File mã CZ không tồn tại cho GTIN: {gtin}");
                     }
 
                     string jsonText = File.ReadAllText(jsonPath);
@@ -421,7 +448,7 @@ namespace MASAN_SERIALIZATION.Production
                     }
 
                     return (total > 0)
-                        ? new TResult(true, "Lấy danh sách mã CZ thành công.", total, table)
+                        ? new TResult(true, $"Lấy danh sách mã CZ thành công cho GTIN {gtin}.", total, table)
                         : new TResult(false, "Không có mã CZ nào trong file codes.");
                 }
                 catch (Exception ex)
@@ -565,6 +592,78 @@ namespace MASAN_SERIALIZATION.Production
                 catch (Exception ex)
                 {
                     return new TResult(false, $"Lỗi P05401 khi lấy thông tin mã CZ: {ex.Message}");
+                }
+            }
+
+            /// <summary>
+            /// Kiểm tra xem code đã được activate ở PO khác cùng GTIN chưa
+            /// </summary>
+            public TResult CheckCodeActivatedInOtherPO(string Code, string CurrentOrderNo)
+            {
+                try
+                {
+                    // Lấy GTIN của PO hiện tại
+                    string gtin = GetGTIN(CurrentOrderNo);
+                    if (string.IsNullOrEmpty(gtin))
+                    {
+                        return new TResult(false, "Không tìm thấy GTIN cho orderNo hiện tại.");
+                    }
+
+                    // Lấy đường dẫn base (yyyy-MM/GTIN/)
+                    string basePath = GetOrderBasePath(CurrentOrderNo);
+                    if (!Directory.Exists(basePath))
+                    {
+                        return new TResult(false, "Thư mục base không tồn tại.");
+                    }
+
+                    // Lấy tất cả các file .db trong thư mục (trừ file hiện tại)
+                    var allDbFiles = Directory.GetFiles(basePath, "*.db")
+                        .Where(f => !f.Contains("Record_") && !f.Contains("carton_") &&
+                                   !f.Contains("Send_AWS_") && !f.Contains("Recive_AWS_"))
+                        .Where(f => !Path.GetFileName(f).Equals($"{CurrentOrderNo}.db", StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+
+                    // Kiểm tra từng database xem code đã được activate chưa
+                    foreach (var dbFile in allDbFiles)
+                    {
+                        try
+                        {
+                            using (var conn = new SQLiteConnection($"Data Source={dbFile};Version=3;"))
+                            {
+                                conn.Open();
+                                string query = "SELECT * FROM UniqueCodes WHERE Code = @Code AND Status != 0";
+                                var command = new SQLiteCommand(query, conn);
+                                command.Parameters.AddWithValue("@Code", Code);
+                                var adapter = new SQLiteDataAdapter(command);
+                                var table = new DataTable();
+                                adapter.Fill(table);
+
+                                if (table.Rows.Count > 0)
+                                {
+                                    // Tìm thấy code đã được activate ở PO khác
+                                    string otherPO = Path.GetFileNameWithoutExtension(dbFile);
+                                    string activateDate = table.Rows[0]["ActivateDate"].ToString();
+                                    string activateUser = table.Rows[0]["ActivateUser"].ToString();
+
+                                    return new TResult(false,
+                                        $"Mã đã được sử dụng ở PO: {otherPO} | Thời gian: {activateDate} | User: {activateUser} | GTIN: {gtin}",
+                                        0, table);
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // Bỏ qua lỗi với database cụ thể, tiếp tục kiểm tra các database khác
+                            continue;
+                        }
+                    }
+
+                    // Không tìm thấy code được activate ở PO nào khác
+                    return new TResult(true, "Mã chưa được sử dụng ở PO nào khác.");
+                }
+                catch (Exception ex)
+                {
+                    return new TResult(false, $"Lỗi PH05402 khi kiểm tra code ở các PO khác: {ex.Message}");
                 }
             }
 
@@ -873,7 +972,12 @@ namespace MASAN_SERIALIZATION.Production
             }
 
             //lấy mã code với điều kiện status !=0, cartonCode != 0 và send_status = 'Pending'
-
+            /// <summary>
+            /// Lấy danh sách codes cần gửi lên AWS
+            /// LƯU Ý: Method này chỉ lấy codes từ database của PO hiện tại.
+            /// Với cơ chế GTIN mới, các PO cùng GTIN dùng chung bộ mã nhưng có database riêng.
+            /// Cross-PO duplicate đã được kiểm tra ở CameraMain_Process, nên mã không thể activate lại ở PO khác.
+            /// </summary>
             public TResult Get_Codes_Send(string orderNo)
             {
                 try
@@ -887,7 +991,7 @@ namespace MASAN_SERIALIZATION.Production
                     {
                         conn.Open();
                         string query = "SELECT * FROM UniqueCodes WHERE Status != 0 AND Send_Status != 'Sent' AND cartonCode != 'pending' AND cartonCode != '0' ";
-                       
+
                         var command = new SQLiteCommand(query, conn);
                         var adapter = new SQLiteDataAdapter(command);
                         var table = new DataTable();
@@ -1185,6 +1289,7 @@ namespace MASAN_SERIALIZATION.Production
 
             /// <summary>
             /// Kiểm tra và bổ sung mã thiếu vào dictionary từ MES
+            /// Lưu ý: Codes được lưu theo GTIN, nên các PO có cùng GTIN sẽ dùng chung bộ mã
             /// </summary>
             public TResult Check_And_Add_Missing_Codes_To_Dictionary(string orderNo, GetfromMES getfromMES)
             {
@@ -1196,7 +1301,7 @@ namespace MASAN_SERIALIZATION.Production
                         return new TResult(false, "Database dictionary chưa tồn tại.");
                     }
 
-                    // Lấy số lượng mã từ MES
+                    // Lấy số lượng mã từ MES (theo GTIN)
                     var mesCountResult = getfromMES.Get_Unique_Code_MES_Count(orderNo);
                     if (!mesCountResult.issuccess)
                     {
@@ -1215,10 +1320,11 @@ namespace MASAN_SERIALIZATION.Production
                     // Nếu đủ số lượng thì không cần làm gì
                     if (dictCount >= mesCount)
                     {
-                        return new TResult(true, $"Dictionary đã đủ số lượng mã ({dictCount}/{mesCount}).", dictCount);
+                        string gtin = GetGTIN(orderNo);
+                        return new TResult(true, $"Dictionary đã đủ số lượng mã ({dictCount}/{mesCount}) cho GTIN {gtin}.", dictCount);
                     }
 
-                    // Nếu thiếu, lấy danh sách mã từ MES
+                    // Nếu thiếu, lấy danh sách mã từ MES (theo GTIN)
                     var mesCodesResult = getfromMES.Get_Unique_Codes_MES(orderNo);
                     if (!mesCodesResult.issuccess)
                     {
@@ -1261,7 +1367,8 @@ namespace MASAN_SERIALIZATION.Production
                         }
                     }
 
-                    return new TResult(true, $"Đã bổ sung {addedCount} mã thiếu vào dictionary. Tổng: {dictCount + addedCount}/{mesCount}", addedCount);
+                    string gtinInfo = GetGTIN(orderNo);
+                    return new TResult(true, $"Đã bổ sung {addedCount} mã thiếu vào dictionary cho GTIN {gtinInfo}. Tổng: {dictCount + addedCount}/{mesCount}", addedCount);
                 }
                 catch (Exception ex)
                 {
@@ -1559,6 +1666,15 @@ namespace MASAN_SERIALIZATION.Production
         }
 
         /// <summary>
+        /// Lấy GTIN từ orderNo
+        /// </summary>
+        private static string GetGTIN(string orderNo)
+        {
+            var (_, gtin) = GetPOInfo(orderNo);
+            return gtin;
+        }
+
+        /// <summary>
         /// Lấy đường dẫn base cho database theo cấu trúc yyyy-MM/GTIN/
         /// </summary>
         public static string GetOrderBasePath(string orderNo)
@@ -1669,7 +1785,8 @@ namespace MASAN_SERIALIZATION.Production
                     }
 
                     //insert từ bảng CZ nhận từ MES vào bảng CZ run này
-
+                    // CHÚ Ý: Lấy codes theo GTIN thay vì orderNo
+                    // Các PO có cùng GTIN sẽ dùng chung 1 bộ mã
 
                     var getczCodes = getfromMES.Get_Unique_Codes_MES(orderNo);
                     if (!getczCodes.issuccess)

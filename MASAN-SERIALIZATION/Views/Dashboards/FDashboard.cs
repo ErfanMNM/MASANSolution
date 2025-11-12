@@ -253,6 +253,30 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 if (_produtionCodeData.Main_Camera_Status == "0")
                 {
+                    // ✅ KIỂM TRA CROSS-PO: Kiểm tra xem mã đã được activate ở PO khác cùng GTIN chưa
+                    var crossPOCheck = Globals.ProductionData.getDataPO.CheckCodeActivatedInOtherPO(_data, Globals.ProductionData.orderNo);
+
+                    if (!crossPOCheck.issuccess)
+                    {
+                        // Mã đã được dùng ở PO khác cùng GTIN → Reject
+                        Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
+                        Send_Result_Content_CMain(e_Production_Status.Duplicate, _data);
+                        Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, true, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
+
+                        // Log chi tiết
+                        DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Warning,
+                            $"[CROSS-PO DUPLICATE] {crossPOCheck.message}", _data);
+
+                        this.InvokeIfRequired(() =>
+                        {
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: ❌ TRÙNG CROSS-PO: {crossPOCheck.message}");
+                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                        });
+
+                        return;
+                    }
+
+                    // Mã OK - chưa dùng ở đâu cả → Tiếp tục activate
                     if (Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "1"))
                     {
                         _produtionCodeData.Main_Camera_Status = "1";
@@ -281,6 +305,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 }
                 else
                 {
+                    // Duplicate - đã dùng trong cùng PO này rồi
                     Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
                     Send_Result_Content_CMain(e_Production_Status.Duplicate, _data);
                     Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, true, _produtionCodeData.Activate_Datetime, _produtionCodeData.Production_Datetime);
