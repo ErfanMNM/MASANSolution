@@ -127,6 +127,15 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS Bận, không xử lý mã: {data}");
                             ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                         });
+                        //gửi xuống PLC loại sản phẩm
+                        if (AppConfigs.Current.PLC_Duo_Mode)
+                        {
+                            Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
+                        }
+                        else
+                        {
+                            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                        }
 
                         //gửi loại sản phẩm
                         // Timeout detected - hủy thêm vào thùng
@@ -140,7 +149,18 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         {
                             subpr.RunWorkerAsync(data);
                         }
-                            
+                         else
+                        {
+                            if (AppConfigs.Current.PLC_Duo_Mode)
+                            {
+                                Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
+                            }
+                            else
+                            {
+                                Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                            }
+
+                        }
                     }
                     break;
 
