@@ -34,18 +34,18 @@ namespace MASAN_SERIALIZATION.Production
         #region Private Fields & Constants
         private static string poAPIServerPath;
         private static string poAPIServerFileName;
-        private static string POLog_dbPath = @"C:\MasanSerialization\Databases\POLog.db";
-        public static string dataPath = $"C:/MasanSerialization/PODatabases";
+        private static string POLog_dbPath = @"C:\MasanSerialization_v2\Databases\POLog.db";
+        public static string dataPath = $"C:/MasanSerialization_v2/PODatabases";
 
-        private static string poMesJsonCodesPath = @"C:\MasanSerialization\Server_Service\codes_json";
-        private static string poMesJsonPODataPath = @"C:/MasanSerialization/Server_Service/data";
+        private static string poMesJsonCodesPath = @"C:\MasanSerialization_v2\Server_Service\codes_json";
+        private static string poMesJsonPODataPath = @"C:/MasanSerialization_v2/Server_Service/data";
         public static string orderNO { get; set; } = string.Empty;
         #endregion
 
         #region Constructor
         public ProductionOrder()
         {
-            poAPIServerPath = @"C:\MasanSerialization\Server_Service\";
+            poAPIServerPath = @"C:\MasanSerialization_v2\Server_Service\";
             poAPIServerFileName = "po1.db";
             Create_POLogDatabases();
         }
@@ -351,7 +351,7 @@ namespace MASAN_SERIALIZATION.Production
                     }
 
                     // Đường dẫn file codes theo GTIN (API mới lưu theo GTIN)
-                    string jsonPath = poMesJsonCodesPath + "/" + gtin + ".json";
+                    string jsonPath = poMesJsonCodesPath + "/GTIN_" + gtin + ".json";
 
                     if (!File.Exists(jsonPath))
                     {
@@ -395,7 +395,7 @@ namespace MASAN_SERIALIZATION.Production
                     }
 
                     // Đường dẫn file codes theo GTIN
-                    string jsonPath = Path.Combine(poMesJsonCodesPath, gtin + ".json");
+                    string jsonPath = Path.Combine(poMesJsonCodesPath, "GTIN_"+gtin + ".json");
                     if (!File.Exists(jsonPath))
                     {
                         return new TResult(false, $"File mã CZ không tồn tại cho GTIN: {gtin}");
@@ -1724,12 +1724,12 @@ namespace MASAN_SERIALIZATION.Production
                     return (false, $"PH001: Không tìm thấy file JSON PO: {jsonPath}");
                 }
 
-                // Bước 2: Kiểm tra file codes JSON tồn tại
-                string codesJsonPath = Path.Combine(poMesJsonCodesPath, orderNo + ".json");
-                if (!File.Exists(codesJsonPath))
-                {
-                    return (false, $"PH002: Không tìm thấy file codes JSON: {codesJsonPath}");
-                }
+                //// Bước 2: Kiểm tra file codes JSON tồn tại
+                //string codesJsonPath = Path.Combine(poMesJsonCodesPath, orderNo + ".json");
+                //if (!File.Exists(codesJsonPath))
+                //{
+                //    return (false, $"PH002: Không tìm thấy file codes JSON: {codesJsonPath}");
+                //}
 
                 // Bước 3: Lấy đường dẫn base (có thể tạo thư mục)
                 string basePath = GetOrderBasePath(orderNo);

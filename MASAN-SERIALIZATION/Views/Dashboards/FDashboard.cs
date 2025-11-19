@@ -33,6 +33,14 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private static LogHelper<e_Dash_LogType> DashboardPageLog;
         private static bool offThread = false;
         private Thread threadQueue;
+
+        // Simulator fields
+        private System.Windows.Forms.Timer simulatorTimer;
+        private Queue<string> simulatorCodes_CameraMain = new Queue<string>();
+        private Queue<string> simulatorCodes_CameraSub = new Queue<string>();
+        private bool isSimulatorRunning = false;
+        private int simulatorInterval = 500; // milliseconds
+        private int simulatorMode = 0; // 0 = Both, 1 = Camera Main only, 2 = Camera Sub only
         #endregion
 
         #region Constructor
@@ -2541,5 +2549,272 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
             CameraSub_Process(code);
         }
+
+        #region Code Simulator - Giả lập gửi mã từ DB để test
+
+        /// <summary>
+        /// Lấy danh sách mã từ database để test
+        /// </summary>
+        public void LoadCodesFromDatabase(int count = 100)
+        {
+            try
+            {
+                simulatorCodes_CameraMain.Clear();
+                simulatorCodes_CameraSub.Clear();
+
+                // Lấy mã từ DB
+                var result = Globals.ProductionData.getDataPO.Get_Codes(Globals.ProductionData.orderNo);
+
+                if (result.issucess && result.Codes != null)
+                {
+                    int loadedCount = 0;
+                    foreach (DataRow row in result.Codes.Rows)
+                    {
+                        if (loadedCount >= count) break;
+
+                        string code = row["Code"].ToString();
+                        simulatorCodes_CameraMain.Enqueue(code);
+                        simulatorCodes_CameraSub.Enqueue(code);
+                        loadedCount++;
+                    }
+
+                    this.InvokeIfRequired(() =>
+                    {
+                        ipConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: ✅ Đã tải {loadedCount} mã từ database");
+                        ipConsole.SelectedIndex = 0;
+                    });
+                }
+                else
+                {
+                    this.InvokeIfRequired(() =>
+                    {
+                        this.ShowErrorDialog($"Không thể lấy mã từ DB: {result.message}");
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    this.ShowErrorDialog($"Lỗi khi tải mã: {ex.Message}");
+                });
+            }
+        }
+
+        /// <summary>
+        /// Khởi tạo timer giả lập
+        /// </summary>
+        private void InitializeSimulator()
+        {
+            simulatorTimer = new System.Windows.Forms.Timer();
+            simulatorTimer.Tick += SimulatorTimer_Tick;
+            simulatorTimer.Interval = simulatorInterval;
+        }
+
+        /// <summary>
+        /// Sự kiện timer - gửi mã theo chu kỳ
+        /// </summary>
+        private void SimulatorTimer_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                // Gửi mã cho Camera Main
+                if (simulatorMode == 0 || simulatorMode == 1)
+                {
+                    if (simulatorCodes_CameraMain.Count > 0)
+                    {
+                        string code = simulatorCodes_CameraMain.Dequeue();
+                        Task.Run(() => CameraMain_Process(code));
+
+                        this.InvokeIfRequired(() =>
+                        {
+                            ipConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: 🔵 SIM CMain: {code}");
+                            ipConsole.SelectedIndex = 0;
+                        });
+                    }
+                }
+
+                // Gửi mã cho Camera Sub
+                if (simulatorMode == 0 || simulatorMode == 2)
+                {
+                    if (simulatorCodes_CameraSub.Count > 0)
+                    {
+                        string code = simulatorCodes_CameraSub.Dequeue();
+
+                        if (subpr.IsBusy)
+                        {
+                            this.InvokeIfRequired(() =>
+                            {
+                                ipConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: ⚠️ SIM CSub bận, skip: {code}");
+                                ipConsole.SelectedIndex = 0;
+                            });
+                        }
+                        else
+                        {
+                            if (Globals.Production_State == e_Production_State.Running ||
+                                Globals.Production_State == e_Production_State.Waiting_Stop ||
+                                Globals.Production_State == e_Production_State.Check_After_Completed)
+                            {
+                                subpr.RunWorkerAsync(code);
+
+                                this.InvokeIfRequired(() =>
+                                {
+                                    ipConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: 🟢 SIM CSub: {code}");
+                                    ipConsole.SelectedIndex = 0;
+                                });
+                            }
+                            else
+                            {
+                                this.InvokeIfRequired(() =>
+                                {
+                                    ipConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: ⚠️ SIM CSub chưa running, skip: {code}");
+                                    ipConsole.SelectedIndex = 0;
+                                });
+                            }
+                        }
+                    }
+                }
+
+                // Dừng simulator nếu hết mã
+                if ((simulatorMode == 0 && simulatorCodes_CameraMain.Count == 0 && simulatorCodes_CameraSub.Count == 0) ||
+                    (simulatorMode == 1 && simulatorCodes_CameraMain.Count == 0) ||
+                    (simulatorMode == 2 && simulatorCodes_CameraSub.Count == 0))
+                {
+                    StopSimulator();
+                    this.InvokeIfRequired(() =>
+                    {
+                        ipConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: ✅ Simulator đã gửi hết mã");
+                        ipConsole.SelectedIndex = 0;
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error,
+                    "Lỗi trong SimulatorTimer_Tick", ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Bắt đầu giả lập gửi mã
+        /// </summary>
+        /// <param name="mode">0=Both, 1=Camera Main only, 2=Camera Sub only</param>
+        /// <param name="intervalMs">Thời gian giữa các lần gửi (ms)</param>
+        public void StartSimulator(int mode = 0, int intervalMs = 500)
+        {
+            if (isSimulatorRunning)
+            {
+                this.ShowWarningDialog("Simulator đang chạy rồi!");
+                return;
+            }
+
+            if (simulatorTimer == null)
+            {
+                InitializeSimulator();
+            }
+
+            simulatorMode = mode;
+            simulatorInterval = intervalMs;
+            simulatorTimer.Interval = intervalMs;
+
+            // Load mã nếu chưa có
+            if ((mode == 0 || mode == 1) && simulatorCodes_CameraMain.Count == 0)
+            {
+                LoadCodesFromDatabase(100);
+            }
+            if ((mode == 0 || mode == 2) && simulatorCodes_CameraSub.Count == 0)
+            {
+                LoadCodesFromDatabase(100);
+            }
+
+            isSimulatorRunning = true;
+            simulatorTimer.Start();
+
+            string modeText = mode == 0 ? "Both Cameras" : mode == 1 ? "Camera Main Only" : "Camera Sub Only";
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: ▶️ Bắt đầu Simulator [{modeText}] - Interval: {intervalMs}ms");
+                ipConsole.SelectedIndex = 0;
+            });
+        }
+
+        /// <summary>
+        /// Dừng giả lập
+        /// </summary>
+        public void StopSimulator()
+        {
+            if (!isSimulatorRunning)
+            {
+                this.ShowWarningDialog("Simulator chưa chạy!");
+                return;
+            }
+
+            if (simulatorTimer != null)
+            {
+                simulatorTimer.Stop();
+            }
+
+            isSimulatorRunning = false;
+
+            this.InvokeIfRequired(() =>
+            {
+                ipConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: ⏹️ Dừng Simulator");
+                ipConsole.SelectedIndex = 0;
+            });
+        }
+
+        /// <summary>
+        /// Gửi một mã test ngay lập tức
+        /// </summary>
+        public void SendTestCode(string code, bool toCameraMain = true)
+        {
+            try
+            {
+                if (toCameraMain)
+                {
+                    Task.Run(() => CameraMain_Process(code));
+                    this.InvokeIfRequired(() =>
+                    {
+                        ipConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: 📤 Test CMain: {code}");
+                        ipConsole.SelectedIndex = 0;
+                    });
+                }
+                else
+                {
+                    if (subpr.IsBusy)
+                    {
+                        this.ShowWarningDialog("Camera Sub đang bận, không thể gửi!");
+                        return;
+                    }
+
+                    subpr.RunWorkerAsync(code);
+                    this.InvokeIfRequired(() =>
+                    {
+                        ipConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: 📤 Test CSub: {code}");
+                        ipConsole.SelectedIndex = 0;
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ShowErrorDialog($"Lỗi khi gửi test code: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Lấy thông tin trạng thái simulator
+        /// </summary>
+        public string GetSimulatorStatus()
+        {
+            string status = $"Simulator Status:\n";
+            status += $"- Running: {isSimulatorRunning}\n";
+            status += $"- Mode: {(simulatorMode == 0 ? "Both" : simulatorMode == 1 ? "CMain Only" : "CSub Only")}\n";
+            status += $"- Interval: {simulatorInterval}ms\n";
+            status += $"- Queue CMain: {simulatorCodes_CameraMain.Count} codes\n";
+            status += $"- Queue CSub: {simulatorCodes_CameraSub.Count} codes\n";
+            return status;
+        }
+
+        #endregion
     }
 }

@@ -72,6 +72,10 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DATALOGIC_SCAN">
       <HintPath>..\QR-MASAN-01\DATALOGIC_SCAN.dll</HintPath>
