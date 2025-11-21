@@ -139,10 +139,15 @@ namespace MASAN_SERIALIZATION.Views.AWS
                         //cập nhật trạng thái kết nối
                         opNotiboardAndSend.Items.Add($"{DateTime.Now:HH:mm:ss}: Kết nối thành công với AWS IoT Core.");
                     });
+                    string topicSub = "CZ/" + AppConfigs.Current.clientId + "/response";
+                    //if (AppConfigs.Current.AWS_Dev_Mode)
+                    //{
+                    //    topicSub = "CZ/dataDev";
+                    //}
 
                     string[] topicsToSub = new[]
                                       {
-                                            "CZ/"+AppConfigs.Current.clientId+"/response"
+                                            topicSub,
                                         };
 
                     awsClient.SubscribeMultiple(topicsToSub);
@@ -299,7 +304,13 @@ namespace MASAN_SERIALIZATION.Views.AWS
                     thing_name = "MIPWP501"
                 };
                 string json = JsonConvert.SerializeObject(payload);
-                var rs = awsClient.Publish_V2("CZ/data", json);
+                string topicPub = "CZ/data";
+
+                if (AppConfigs.Current.AWS_Dev_Mode)
+                {
+                    topicPub = "CZ/dataDev";
+                }
+                var rs = awsClient.Publish_V2(topicPub, json);
 
                 if (rs.Issuccess)
                 {
