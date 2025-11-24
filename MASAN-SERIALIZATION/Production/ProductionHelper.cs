@@ -667,6 +667,87 @@ namespace MASAN_SERIALIZATION.Production
                 }
             }
 
+            /// <summary>
+            /// Lấy tất cả các mã đã được activate từ các PO khác cùng GTIN
+            /// Dùng để lọc mã khi tạo DB mới
+            /// </summary>
+            public (bool success, string message, HashSet<string> activatedCodes) GetAllActivatedCodesFromOtherPOs(string currentOrderNo)
+            {
+                var activatedCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                try
+                {
+                    // Lấy GTIN của PO hiện tại
+                    string gtin = GetGTIN(currentOrderNo);
+                    if (string.IsNullOrEmpty(gtin))
+                    {
+                        return (false, $"Không tìm thấy GTIN cho orderNo: {currentOrderNo}", activatedCodes);
+                    }
+
+                    // Lấy đường dẫn base (yyyy-MM/GTIN/)
+                    string basePath = GetOrderBasePath(currentOrderNo);
+                    if (!Directory.Exists(basePath))
+                    {
+                        // Nếu thư mục chưa tồn tại, nghĩa là đây là PO đầu tiên của GTIN này
+                        return (true, "Thư mục GTIN chưa tồn tại, đây là PO đầu tiên.", activatedCodes);
+                    }
+
+                    // Lấy tất cả các file .db trong thư mục (trừ file hiện tại và các file phụ)
+                    var allDbFiles = Directory.GetFiles(basePath, "*.db")
+                        .Where(f => !f.Contains("Record_") && !f.Contains("carton_") &&
+                                   !f.Contains("Send_AWS_") && !f.Contains("Recive_AWS_"))
+                        .Where(f => !Path.GetFileName(f).Equals($"{currentOrderNo}.db", StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+
+                    if (allDbFiles.Count == 0)
+                    {
+                        return (true, "Không có PO nào khác cùng GTIN.", activatedCodes);
+                    }
+
+                    // Đọc tất cả các mã đã được activate (Status != 0) từ các PO khác
+                    foreach (var dbFile in allDbFiles)
+                    {
+                        try
+                        {
+                            using (var conn = new SQLiteConnection($"Data Source={dbFile};Version=3;"))
+                            {
+                                conn.Open();
+                                string query = "SELECT Code FROM UniqueCodes WHERE Status != 0";
+                                var command = new SQLiteCommand(query, conn);
+
+                                using (var reader = command.ExecuteReader())
+                                {
+                                    while (reader.Read())
+                                    {
+                                        string code = reader["Code"].ToString();
+                                        if (!string.IsNullOrEmpty(code))
+                                        {
+                                            activatedCodes.Add(code);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            // Log lỗi nhưng tiếp tục với các database khác
+                            Console.WriteLine($"Lỗi khi đọc database {dbFile}: {ex.Message}");
+                            continue;
+                        }
+                    }
+
+                    string message = activatedCodes.Count > 0
+                        ? $"Đã tìm thấy {activatedCodes.Count} mã đã được Active từ {allDbFiles.Count} PO khác cùng GTIN {gtin}"
+                        : $"Không có mã nào đã được Active từ {allDbFiles.Count} PO khác cùng GTIN {gtin}";
+
+                    return (true, message, activatedCodes);
+                }
+                catch (Exception ex)
+                {
+                    return (false, $"Lỗi PH05403 khi lấy danh sách mã đã Active: {ex.Message}", activatedCodes);
+                }
+            }
+
             public TResult getCodeInfoWithCartonCode(string OrderNo, string cartonCode)
             {
                 try
@@ -1788,6 +1869,16 @@ namespace MASAN_SERIALIZATION.Production
                     // CHÚ Ý: Lấy codes theo GTIN thay vì orderNo
                     // Các PO có cùng GTIN sẽ dùng chung 1 bộ mã
 
+                    // Bước 6.1: Lấy danh sách mã đã được Active từ các PO khác cùng GTIN
+                    var getActivatedCodes = getDataPO.GetAllActivatedCodesFromOtherPOs(orderNo);
+                    if (!getActivatedCodes.success)
+                    {
+                        // Nếu có lỗi khi lấy danh sách mã đã Active, return lỗi
+                        return (false, $"PH005: {getActivatedCodes.message}");
+                    }
+                    var activatedCodes = getActivatedCodes.activatedCodes;
+
+                    // Bước 6.2: Lấy tất cả mã từ MES (theo GTIN)
                     var getczCodes = getfromMES.Get_Unique_Codes_MES(orderNo);
                     if (!getczCodes.issuccess)
                     {
@@ -1795,19 +1886,59 @@ namespace MASAN_SERIALIZATION.Production
                     }
                     DataTable czCodes = getczCodes.data;
 
-                    if (czCodes.Rows.Count > 0)
+                    // Bước 6.3: Lọc ra các mã chưa được Active
+                    List<string> availableCodes = new List<string>();
+                    foreach (DataRow row in czCodes.Rows)
+                    {
+                        string code = row["Code"].ToString();
+                        if (!activatedCodes.Contains(code))
+                        {
+                            availableCodes.Add(code);
+                        }
+                    }
+
+                    // Bước 6.4: Kiểm tra số lượng mã còn lại có đủ không
+                    int requiredQty = orderQty.ToInt32();
+                    if (availableCodes.Count < requiredQty)
+                    {
+                        return (false,
+                            $"PH006: Không đủ mã! Cần: {requiredQty} | Còn lại: {availableCodes.Count} | " +
+                            $"Đã dùng từ PO khác: {activatedCodes.Count} | Tổng: {czCodes.Rows.Count}\n" +
+                            $"Thông tin: {getActivatedCodes.message}");
+                    }
+
+                    // Bước 6.5: Insert các mã còn lại vào database
+                    if (availableCodes.Count > 0)
                     {
                         using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                         {
                             conn.Open();
-                            foreach (DataRow row in czCodes.Rows)
+
+                            // Sử dụng transaction để tăng tốc độ insert
+                            using (var transaction = conn.BeginTransaction())
                             {
                                 string insertQuery = "INSERT INTO UniqueCodes (Code) VALUES (@Code)";
-                                var command = new SQLiteCommand(insertQuery, conn);
-                                command.Parameters.AddWithValue("@Code", row["Code"]);
-                                command.ExecuteNonQuery();
+                                var command = new SQLiteCommand(insertQuery, conn, transaction);
+
+                                foreach (string code in availableCodes)
+                                {
+                                    command.Parameters.Clear();
+                                    command.Parameters.AddWithValue("@Code", code);
+                                    command.ExecuteNonQuery();
+                                }
+
+                                transaction.Commit();
                             }
                         }
+
+                        // Log thông tin
+                        Console.WriteLine($"=== Thống kê tạo DB cho PO {orderNo} ===");
+                        Console.WriteLine($"Tổng mã từ MES (GTIN): {czCodes.Rows.Count}");
+                        Console.WriteLine($"Đã Active từ PO khác: {activatedCodes.Count}");
+                        Console.WriteLine($"Còn lại khả dụng: {availableCodes.Count}");
+                        Console.WriteLine($"Yêu cầu orderQty: {requiredQty}");
+                        Console.WriteLine($"Trạng thái: ✓ ĐỦ MÃ");
+                        Console.WriteLine($"{getActivatedCodes.message}");
                     }
                 }
 

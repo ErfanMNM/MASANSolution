@@ -1894,8 +1894,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 }
                 // OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Conveyor_ENA_DM"), 0);
             }
-
-            //Đẩy dữ liệu vào dictionary
             this.InvokeIfRequired(() =>
             {
                 if(oporderQty.Text != Globals.ProductionData.orderQty.ToString())
