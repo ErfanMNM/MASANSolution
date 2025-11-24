@@ -250,6 +250,7 @@ function saveUniqueCodesToFile(orderNo, blockNo, uniqueCodes) {
  *     summary: Tạo hoặc cập nhật PO. Lưu uniqueCode theo GTIN (1 GTIN có thể có nhiều orderNo).
  *              uniqueCode là optional nếu GTIN đã có mã. Mã trùng sẽ tự động bỏ qua.
  *              Trả về số lượng mã mới, trùng và tổng số mã hiện có.
+ *              ĐIỀU KIỆN: orderQty > 24, số mã >= orderQty, tổng orderQty các PO cùng GTIN <= tổng số mã.
  *     requestBody:
  *       required: true
  *       content:
@@ -273,14 +274,14 @@ function saveUniqueCodesToFile(orderNo, blockNo, uniqueCodes) {
  *               - uom
  *             properties:
  *               orderNo: { type: string, example: "PO_001" }
- *               uniqueCode: { type: array, items: { type: string }, example: ["CODE001","CODE002"], description: "Optional nếu GTIN đã có mã" }
+ *               uniqueCode: { type: array, items: { type: string }, example: ["CODE001","CODE002"], description: "Optional nếu GTIN đã có mã. Số lượng phải >= orderQty." }
  *               blockNo: { type: string, example: "BLOCK_001" }
  *               site: { type: string, example: "SITE_X" }
  *               factory: { type: string, example: "FACTORY_Y" }
  *               productionLine: { type: string, example: "LINE_1" }
  *               productionDate: { type: string, example: "2025-07-02" }
  *               shift: { type: string, example: "A" }
- *               orderQty: { type: number, example: 1000 }
+ *               orderQty: { type: number, example: 1000, description: "Phải > 24" }
  *               lotNumber: { type: string, example: "LOT_123" }
  *               productCode: { type: string, example: "PROD_XYZ" }
  *               productName: { type: string, example: "Sản phẩm A" }
@@ -290,7 +291,7 @@ function saveUniqueCodesToFile(orderNo, blockNo, uniqueCodes) {
  *     responses:
  *       500: { description: Lỗi máy chủ hoặc DB }
  *       200: { description: Thành công }
- *       400: { description: Thiếu dữ liệu }
+ *       400: { description: Thiếu dữ liệu hoặc vi phạm điều kiện validation }
  */
 app.post('/api/orders', async (req, res) => {
     try {
@@ -343,6 +344,45 @@ app.post('/api/orders', async (req, res) => {
                     });
                 }
             }
+        }
+
+        // Validate orderQty must be > 24
+        const orderQtyNum = parseInt(orderQty);
+        if (isNaN(orderQtyNum) || orderQtyNum <= 24) {
+            return res.status(400).json({
+                message: `Trường 'orderQty' phải lớn hơn 24. Giá trị hiện tại: ${orderQty}`,
+                at: new Date().toISOString()
+            });
+        }
+
+        // Validate uniqueCode count must be >= orderQty if provided
+        if (uniqueCode && Array.isArray(uniqueCode)) {
+            if (uniqueCode.length < orderQtyNum) {
+                return res.status(400).json({
+                    message: `Số lượng mã (${uniqueCode.length}) phải >= orderQty (${orderQtyNum}).`,
+                    at: new Date().toISOString()
+                });
+            }
+        }
+
+        // Validate total orderQty for GTIN does not exceed available codes
+        const totalExistingCodes = await fileManager.getCodesCount(GTIN);
+        const newCodesCount = (uniqueCode && Array.isArray(uniqueCode)) ? uniqueCode.length : 0;
+        const totalAvailableCodes = totalExistingCodes + newCodesCount;
+
+        // Get total orderQty already used by other POs with same GTIN (exclude current orderNo if updating)
+        const totalUsedOrderQty = await fileManager.getTotalOrderQtyByGTIN(GTIN, orderNo);
+        const totalOrderQtyNeeded = totalUsedOrderQty + orderQtyNum;
+
+        if (totalOrderQtyNeeded > totalAvailableCodes) {
+            return res.status(400).json({
+                message: `Không đủ mã cho GTIN '${GTIN}'. ` +
+                         `Tổng số mã khả dụng: ${totalAvailableCodes}, ` +
+                         `đã sử dụng: ${totalUsedOrderQty}, ` +
+                         `cần thêm: ${orderQtyNum}, ` +
+                         `còn lại: ${totalAvailableCodes - totalUsedOrderQty}.`,
+                at: new Date().toISOString()
+            });
         }
 
         // Add to queue for processing

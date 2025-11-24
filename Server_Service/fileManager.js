@@ -298,14 +298,44 @@ class FileManager {
         return fs.existsSync(filePath);
     }
 
+    // Get all POs by GTIN
+    async getPOsByGTIN(gtin, excludeOrderNo = null) {
+        const files = fs.readdirSync(this.dataDir)
+            .filter(file => file.startsWith('PO_') && file.endsWith('.json'));
+
+        const results = [];
+        for (const file of files) {
+            const filePath = path.join(this.dataDir, file);
+            try {
+                const data = await this.readFileWithRetry(filePath);
+                if (data && data.GTIN === gtin && data.orderNo !== excludeOrderNo) {
+                    results.push(data);
+                }
+            } catch (error) {
+                console.error(`Error reading PO file ${filePath}:`, error);
+            }
+        }
+
+        return results;
+    }
+
+    // Get total orderQty for a GTIN (excluding specific orderNo if provided)
+    async getTotalOrderQtyByGTIN(gtin, excludeOrderNo = null) {
+        const pos = await this.getPOsByGTIN(gtin, excludeOrderNo);
+        return pos.reduce((total, po) => {
+            const qty = parseInt(po.orderQty) || 0;
+            return total + qty;
+        }, 0);
+    }
+
     // Get storage stats
     async getStorageStats() {
         const poFiles = fs.readdirSync(this.dataDir)
             .filter(file => file.startsWith('PO_') && file.endsWith('.json'));
-            
+
         const codeFiles = fs.readdirSync(this.codesDir)
             .filter(file => file.endsWith('.json'));
-            
+
         const logFiles = fs.readdirSync(this.dataDir)
             .filter(file => file.startsWith('logs_') && file.endsWith('.json'));
 
@@ -325,7 +355,7 @@ class FileManager {
         return {
             totalFiles,
             poFiles: poFiles.length,
-            codeFiles: codeFiles.length, 
+            codeFiles: codeFiles.length,
             logFiles: logFiles.length,
             totalSizeBytes: totalSize,
             totalSizeMB: Math.round(totalSize / (1024 * 1024) * 100) / 100

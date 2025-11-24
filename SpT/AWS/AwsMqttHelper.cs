@@ -291,10 +291,11 @@ public class AwsIotClientHelper : IDisposable
 
     public class AWSSendPayload 
     {
-       public string  message_id { get; set; }
+        public string  message_id { get; set; }
         public string orderNo { get; set; }
         public string uniqueCode { get; set; }
         public string cartonCode { get; set; }
+        public string gtin { get; set; }
         public int status { get; set; }
         public string activate_datetime { get; set; }
         public string production_date { get; set; }

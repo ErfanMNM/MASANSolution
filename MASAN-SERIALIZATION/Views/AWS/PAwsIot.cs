@@ -291,18 +291,20 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 string activateDate = SendCodes.Rows[i]["ActivateDate"].ToString();
                 string productionDate = SendCodes.Rows[i]["ProductionDate"].ToString();
                 string cartonCode = SendCodes.Rows[i]["cartonCode"].ToString();
+                string gtin = SendCodes.Rows[i]["GTIN"].ToString();
                 //tạo dữ liệu gửi
                 AWSSendPayload payload = new AWSSendPayload
                 {
-                    message_id = $"{ID}-{orderNO}-{DateTime.Now.ToString("o")}",
+                    message_id = $"{ID}-{orderNO}-{DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffK")}",
                     orderNo = orderNO,
                     uniqueCode = code,
+                    gtin = gtin,
                     cartonCode = cartonCode,
                     status = Status.ToInt32(),
                     activate_datetime = activateDate,
                     production_date = productionDate,
                     thing_name = "MIPWP501"
-                };
+                };  
                 string json = JsonConvert.SerializeObject(payload);
                 string topicPub = "CZ/data";
 
