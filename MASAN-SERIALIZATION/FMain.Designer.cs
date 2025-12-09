@@ -84,7 +84,7 @@
             this.uiPanel1.RectColor = System.Drawing.Color.DodgerBlue;
             this.uiPanel1.Size = new System.Drawing.Size(183, 39);
             this.uiPanel1.TabIndex = 7;
-            this.uiPanel1.Text = "MASAN 12";
+            this.uiPanel1.Text = "MASAN 9125";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opClock
@@ -336,7 +336,6 @@
             // LogoImg
             // 
             this.LogoImg.BackColor = System.Drawing.Color.Transparent;
-            //this.LogoImg.BackgroundImage = global::MASAN_SERIALIZATION.Properties.Resources.LogoTanTien;
             this.LogoImg.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.LogoImg.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.LogoImg.Location = new System.Drawing.Point(4, 5);
