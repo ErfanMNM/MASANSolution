@@ -1432,7 +1432,8 @@ namespace MASAN_SERIALIZATION.Production
                         {
                             foreach (DataRow row in mesCodesResult.data.Rows)
                             {
-                                string code = row["code"].ToString();
+                                // Dữ liệu từ MES trả về cột "Code" (chữ hoa). Dùng đúng tên cột để tránh chèn rỗng.
+                                string code = row["Code"].ToString();
 
                                 // Chỉ thêm nếu chưa tồn tại
                                 if (!existingCodes.Contains(code))

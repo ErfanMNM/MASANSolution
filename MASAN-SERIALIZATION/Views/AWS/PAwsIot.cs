@@ -9,6 +9,7 @@ using SpT.Logs;
 using Sunny.UI;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SQLite;
@@ -290,8 +291,9 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 string Status = SendCodes.Rows[i]["Status"].ToString();
                 string activateDate = SendCodes.Rows[i]["ActivateDate"].ToString();
                 string productionDate = SendCodes.Rows[i]["ProductionDate"].ToString();
+                string gtin = Globals.ProductionData.gtin;
                 string cartonCode = SendCodes.Rows[i]["cartonCode"].ToString();
-                string gtin = SendCodes.Rows[i]["GTIN"].ToString();
+                
                 //tạo dữ liệu gửi
                 AWSSendPayload payload = new AWSSendPayload
                 {
@@ -304,7 +306,21 @@ namespace MASAN_SERIALIZATION.Views.AWS
                     activate_datetime = activateDate,
                     production_date = productionDate,
                     thing_name = "MIPWP501"
-                };  
+                };
+
+                var dict = new OrderedDictionary
+                            {
+                                { "message_id", $"{ID}-{orderNO}-{DateTime.Now:yyyy-MM-ddTHH:mm:ss.fffK}" },
+                                { "orderNo", orderNO },
+                                { "uniqueCode", code },
+                                { "gtin", gtin },
+                                { "cartonCode", cartonCode },
+                                { "status", Status.ToInt32() },
+                                { "activate_datetime", activateDate },
+                                { "production_date", productionDate },
+                                { "thing_name", "MIPWP501" }
+                            };
+
                 string json = JsonConvert.SerializeObject(payload);
                 string topicPub = "CZ/data";
 
@@ -388,7 +404,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
             //    bgw_send = new BackgroundWorker();
             //    bgw_send.WorkerSupportsCancellation = true;
             //    bgw_send.DoWork += Bgw_send_DoWork;
-                
+
             //}
         }
 
@@ -421,64 +437,75 @@ namespace MASAN_SERIALIZATION.Views.AWS
         {
             while (!bgw_process.CancellationPending)
             {
-                TResult getCodeSend = Globals.ProductionData.getDataPO.Get_Codes_Send(Globals.ProductionData.orderNo);
-
-                if (getCodeSend.issuccess)
+                try
                 {
-                    dtSends = getCodeSend.data;
+                    TResult getCodeSend = Globals.ProductionData.getDataPO.Get_Codes_Send(Globals.ProductionData.orderNo);
+
+                    if (getCodeSend.issuccess)
+                    {
+                        dtSends = getCodeSend.data;
+                    }
+
+                    TResult getCodeResend = Globals.ProductionData.getDataPO.Get_Codes_Send_Failed(Globals.ProductionData.orderNo);
+                    if (getCodeResend.issuccess)
+                    {
+                        dtResend = getCodeResend.data;
+                    }
+
+                    TResult getCodeTimeOut = Globals.ProductionData.getDataPO.Get_Codes_Sent_Timeout(Globals.ProductionData.orderNo);
+
+                    if (getCodeTimeOut.issuccess)
+                    {
+                        dtTimeout = getCodeTimeOut.data;
+                    }
+
+                    this.InvokeIfRequired(() =>
+                    {
+                        //cập nhật giao diện
+                        opNotiboardAndSend.Items.Insert(0, $"🔄 [{DateTime.Now}] Đã kiểm tra dữ liệu gửi AWS.");
+                        if (opNotiboardAndSend.Items.Count > 50)
+                        {
+                            // Giới hạn số lượng mục hiển thị trong opNotiboardAndSend
+                            opNotiboardAndSend.Items.RemoveAt(opNotiboardAndSend.Items.Count - 1);
+                        }
+
+                        if (opRecive.Items.Count > 50)
+                        {
+                            // Giới hạn số lượng mục hiển thị trong opNotiboardAndSend
+                            opNotiboardAndSend.Items.RemoveAt(opNotiboardAndSend.Items.Count - 1);
+                        }
+
+                    });
+
+                    if (Globals.AWS_IoT_Status != e_awsIot_status.Disconnected && Globals.AWS_IoT_Status != e_awsIot_status.Connecting)
+                    {
+                        //nếu có dữ liệu gửi thì gửi
+                        if (dtSends != null)
+                        {
+                            AWS_Send_Datatable(dtSends);
+                            dtSends = null; // Xóa dữ liệu resend sau khi gửi thành công
+                        }
+
+                        if (dtResend != null)
+                        {
+                            AWS_Send_Datatable(dtResend);
+                            dtResend = null; // Xóa dữ liệu resend sau khi gửi thành công
+                        }
+
+                        if (dtTimeout != null)
+                        {
+                            AWS_Send_Datatable(dtTimeout);
+                            dtTimeout = null;
+                        }
+                    }
                 }
-
-                TResult getCodeResend = Globals.ProductionData.getDataPO.Get_Codes_Send_Failed(Globals.ProductionData.orderNo);
-                if (getCodeResend.issuccess)
+                catch (Exception ex)
                 {
-                    dtResend = getCodeResend.data;
-                }
-
-                TResult getCodeTimeOut = Globals.ProductionData.getDataPO.Get_Codes_Sent_Timeout(Globals.ProductionData.orderNo);
-
-                if (getCodeTimeOut.issuccess)
-                {
-                    dtTimeout = getCodeTimeOut.data;
-                }
-
-                this.InvokeIfRequired(() =>
-                {
-                    //cập nhật giao diện
-                   // opNotiboardAndSend.Items.Insert(0, $"🔄 [{DateTime.Now}] Đã kiểm tra dữ liệu gửi AWS.");
-                    if (opNotiboardAndSend.Items.Count > 50)
+                    AWSIoTLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, $"❌ [{DateTime.Now}] Lỗi xử lý AWS: {ex.Message}");
+                    this.InvokeIfRequired(() =>
                     {
-                        // Giới hạn số lượng mục hiển thị trong opNotiboardAndSend
-                        opNotiboardAndSend.Items.RemoveAt(opNotiboardAndSend.Items.Count - 1);
-                    }
-
-                    if (opRecive.Items.Count > 50)
-                    {
-                        // Giới hạn số lượng mục hiển thị trong opNotiboardAndSend
-                        opNotiboardAndSend.Items.RemoveAt(opNotiboardAndSend.Items.Count - 1);
-                    }
-
-                });
-
-                if (Globals.AWS_IoT_Status != e_awsIot_status.Disconnected && Globals.AWS_IoT_Status != e_awsIot_status.Connecting )
-                {
-                    //nếu có dữ liệu gửi thì gửi
-                    if (dtSends != null)
-                    {
-                        AWS_Send_Datatable(dtSends);
-                        dtSends = null; // Xóa dữ liệu resend sau khi gửi thành công
-                    }
-
-                    if (dtResend != null)
-                    {
-                        AWS_Send_Datatable(dtResend);
-                        dtResend = null; // Xóa dữ liệu resend sau khi gửi thành công
-                    }
-
-                    if(dtTimeout != null)
-                    {
-                        AWS_Send_Datatable(dtTimeout);
-                        dtTimeout = null;
-                    }
+                        opNotiboardAndSend.Items.Insert(0, $"❌ [{DateTime.Now}] Lỗi xử lý AWS: {ex.Message}");
+                    });
                 }
 
                 Thread.Sleep(10000); // Giữ cho vòng lặp chạy liên tục
@@ -568,11 +595,6 @@ namespace MASAN_SERIALIZATION.Views.AWS
         private void opRecive_DoubleClick(object sender, EventArgs e)
         {
             this.ShowInfoDialog("Thông báo", opRecive.SelectedItem.ToString());
-        }
-
-        private void uiTitlePanel7_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void uiSymbolButton1_Click(object sender, EventArgs e)

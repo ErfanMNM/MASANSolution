@@ -58,15 +58,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 tcpClient1.Connect();
             }
-            _ScanConection01.SERIALPORT = serialPort1;
-            _ScanConection01.EVENT += _ScanConection01_EVENT;
-            _ScanConection01.LOAD();
-            _ScanConection01.CONNECT(AppConfigs.Current.HandScanCOM01);
-
-            _ScanConection02.SERIALPORT = serialPort2;
-            _ScanConection02.EVENT += _ScanConection02_EVENT;
-            _ScanConection02.LOAD();
-            _ScanConection02.CONNECT(AppConfigs.Current.HandScanCOM02);
 
             _bw_update_ui.WorkerSupportsCancellation = true;
             _bw_update_ui.DoWork += bw_update_ui;
@@ -472,7 +463,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
             //thêm thùng mới vào csdl
             ProductionCartonData cartonData1 = new ProductionCartonData();
-            cartonData1.cartonID = Globals_Database.Dictionary_ProductionCarton_Data.Count + 1;
+            // chọn ID mới theo max ID hiện có để tránh lệch khi đã tạo/xóa trước đó
+            cartonData1.cartonID = Globals_Database.Dictionary_ProductionCarton_Data.Keys.DefaultIfEmpty(0).Max() + 1;
             cartonData1.cartonCode = "0";
             cartonData1.Activate_Datetime = "0";
             cartonData1.Activate_User = "0";

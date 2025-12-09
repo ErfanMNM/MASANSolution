@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
@@ -289,17 +290,34 @@ public class AwsIotClientHelper : IDisposable
         public string error_message { get; set; }
     }
 
-    public class AWSSendPayload 
+    public class AWSSendPayload
     {
-        public string  message_id { get; set; }
-        public string orderNo { get; set; }
-        public string uniqueCode { get; set; }
-        public string cartonCode { get; set; }
-        public string gtin { get; set; }
-        public int status { get; set; }
-        public string activate_datetime { get; set; }
-        public string production_date { get; set; }
-        public string thing_name { get; set; }
+        [JsonProperty(Order = 1)]
+        public string message_id { get; set; }
 
+        [JsonProperty(Order = 2)]
+        public string orderNo { get; set; }
+
+        [JsonProperty(Order = 3)]
+        public string uniqueCode { get; set; }
+
+        
+
+        [JsonProperty(Order = 5)]
+        public string cartonCode { get; set; }
+
+        [JsonProperty(Order = 6)]
+        public int status { get; set; }
+
+        [JsonProperty(Order = 7)]
+        public string activate_datetime { get; set; }
+
+        [JsonProperty(Order = 8)]
+        public string production_date { get; set; }
+        [JsonProperty(Order = 4)]
+        public string gtin { get; set; }
+
+        [JsonProperty(Order = 9)]
+        public string thing_name { get; set; }
     }
 }
