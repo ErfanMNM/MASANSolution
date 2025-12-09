@@ -34,23 +34,23 @@
             this.uiTitlePanel4 = new Sunny.UI.UITitlePanel();
             this.webView23 = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.uiTitlePanel2 = new Sunny.UI.UITitlePanel();
+            this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
+            this.webView22 = new Microsoft.Web.WebView2.WinForms.WebView2();
+            this.webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.uiTitlePanel1 = new Sunny.UI.UITitlePanel();
             this.opMEMFlow = new System.Windows.Forms.FlowLayoutPanel();
-            this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
-            this.webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
-            this.webView22 = new Microsoft.Web.WebView2.WinForms.WebView2();
             this.uiTabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTitlePanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.webView23)).BeginInit();
             this.uiTitlePanel2.SuspendLayout();
+            this.uiTableLayoutPanel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.webView22)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
             this.tabPage2.SuspendLayout();
             this.uiTitlePanel1.SuspendLayout();
-            this.uiTableLayoutPanel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.webView22)).BeginInit();
             this.SuspendLayout();
             // 
             // uiTabControl1
@@ -138,42 +138,6 @@
             this.uiTitlePanel2.Text = "Biểu đồ sản lượng";
             this.uiTitlePanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.uiTitlePanel1);
-            this.tabPage2.Location = new System.Drawing.Point(0, 40);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(200, 60);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Thông số";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // uiTitlePanel1
-            // 
-            this.uiTitlePanel1.Controls.Add(this.opMEMFlow);
-            this.uiTitlePanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTitlePanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiTitlePanel1.Location = new System.Drawing.Point(0, 0);
-            this.uiTitlePanel1.Margin = new System.Windows.Forms.Padding(2);
-            this.uiTitlePanel1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiTitlePanel1.Name = "uiTitlePanel1";
-            this.uiTitlePanel1.Padding = new System.Windows.Forms.Padding(1, 35, 1, 1);
-            this.uiTitlePanel1.ShowText = false;
-            this.uiTitlePanel1.Size = new System.Drawing.Size(200, 60);
-            this.uiTitlePanel1.TabIndex = 2;
-            this.uiTitlePanel1.Text = "Thông tin dữ liệu MEM";
-            this.uiTitlePanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opMEMFlow
-            // 
-            this.opMEMFlow.AutoScroll = true;
-            this.opMEMFlow.AutoSize = true;
-            this.opMEMFlow.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opMEMFlow.Location = new System.Drawing.Point(1, 35);
-            this.opMEMFlow.Name = "opMEMFlow";
-            this.opMEMFlow.Size = new System.Drawing.Size(198, 24);
-            this.opMEMFlow.TabIndex = 0;
-            // 
             // uiTableLayoutPanel2
             // 
             this.uiTableLayoutPanel2.ColumnCount = 2;
@@ -190,6 +154,18 @@
             this.uiTableLayoutPanel2.TabIndex = 0;
             this.uiTableLayoutPanel2.TagString = null;
             // 
+            // webView22
+            // 
+            this.webView22.AllowExternalDrop = true;
+            this.webView22.CreationProperties = null;
+            this.webView22.DefaultBackgroundColor = System.Drawing.Color.White;
+            this.webView22.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webView22.Location = new System.Drawing.Point(565, 3);
+            this.webView22.Name = "webView22";
+            this.webView22.Size = new System.Drawing.Size(266, 271);
+            this.webView22.TabIndex = 3;
+            this.webView22.ZoomFactor = 1D;
+            // 
             // webView21
             // 
             this.webView21.AllowExternalDrop = true;
@@ -202,17 +178,41 @@
             this.webView21.TabIndex = 2;
             this.webView21.ZoomFactor = 1D;
             // 
-            // webView22
+            // tabPage2
             // 
-            this.webView22.AllowExternalDrop = true;
-            this.webView22.CreationProperties = null;
-            this.webView22.DefaultBackgroundColor = System.Drawing.Color.White;
-            this.webView22.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webView22.Location = new System.Drawing.Point(565, 3);
-            this.webView22.Name = "webView22";
-            this.webView22.Size = new System.Drawing.Size(266, 271);
-            this.webView22.TabIndex = 3;
-            this.webView22.ZoomFactor = 1D;
+            this.tabPage2.Controls.Add(this.uiTitlePanel1);
+            this.tabPage2.Location = new System.Drawing.Point(0, 40);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Size = new System.Drawing.Size(840, 634);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Thông số";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // uiTitlePanel1
+            // 
+            this.uiTitlePanel1.Controls.Add(this.opMEMFlow);
+            this.uiTitlePanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTitlePanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTitlePanel1.Location = new System.Drawing.Point(0, 0);
+            this.uiTitlePanel1.Margin = new System.Windows.Forms.Padding(2);
+            this.uiTitlePanel1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiTitlePanel1.Name = "uiTitlePanel1";
+            this.uiTitlePanel1.Padding = new System.Windows.Forms.Padding(1, 35, 1, 1);
+            this.uiTitlePanel1.ShowText = false;
+            this.uiTitlePanel1.Size = new System.Drawing.Size(840, 634);
+            this.uiTitlePanel1.TabIndex = 2;
+            this.uiTitlePanel1.Text = "Thông tin dữ liệu MEM";
+            this.uiTitlePanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // opMEMFlow
+            // 
+            this.opMEMFlow.AutoScroll = true;
+            this.opMEMFlow.AutoSize = true;
+            this.opMEMFlow.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opMEMFlow.Location = new System.Drawing.Point(1, 35);
+            this.opMEMFlow.Name = "opMEMFlow";
+            this.opMEMFlow.Size = new System.Drawing.Size(838, 598);
+            this.opMEMFlow.TabIndex = 0;
             // 
             // PStatictis
             // 
@@ -230,12 +230,12 @@
             this.uiTitlePanel4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.webView23)).EndInit();
             this.uiTitlePanel2.ResumeLayout(false);
+            this.uiTableLayoutPanel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.webView22)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.webView21)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.uiTitlePanel1.ResumeLayout(false);
             this.uiTitlePanel1.PerformLayout();
-            this.uiTableLayoutPanel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.webView21)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.webView22)).EndInit();
             this.ResumeLayout(false);
 
         }

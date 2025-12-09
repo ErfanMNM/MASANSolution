@@ -1,23 +1,18 @@
 ﻿using MASAN_SERIALIZATION.Production;
 using MASAN_SERIALIZATION.Utils;
 using Newtonsoft.Json;
-using SpT.DataSCADA;
 using SpT.Static;
 using Sunny.UI;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SQLite;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using static MASAN_SERIALIZATION.Production.ProductionOrder;
 
 namespace MASAN_SERIALIZATION.Views.SCADA
@@ -962,8 +957,8 @@ namespace MASAN_SERIALIZATION.Views.SCADA
                 var startHour = endHour.AddHours(-3);
 
             var labels = Enumerable.Range(0, 6)
-.Select(i => startHour.AddHours(i).ToString("H:00")) // cộng 7 giờ khi hiển thị
-.ToArray();
+                        .Select(i => startHour.AddHours(i).ToString("H:00")) // cộng 7 giờ khi hiển thị
+                        .ToArray();
 
                 int[] tong = new int[4];
                 int[] tot = new int[4];
