@@ -321,7 +321,8 @@ namespace MASAN_SERIALIZATION.Views.AWS
                                 { "thing_name", "MIPWP501" }
                             };
 
-                string json = JsonConvert.SerializeObject(payload);
+
+                string json = JsonConvert.SerializeObject(dict);
                 string topicPub = "CZ/data";
 
                 if (AppConfigs.Current.AWS_Dev_Mode)
