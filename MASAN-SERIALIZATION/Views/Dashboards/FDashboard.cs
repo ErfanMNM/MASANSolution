@@ -1918,6 +1918,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         Globals.Production_State = e_Production_State.Pushing_to_Dic;
                         try
                         {
+                            // Clear tất cả dictionaries trước khi load PO mới
+                            Globals_Database.Dictionary_ProductionCode_Data.Clear();
+                            Globals_Database.Dictionary_ProductionCode_CameraSub_Data.Clear();
+                            Globals_Database.Dictionary_ProductionCarton_Data.Clear();
+                            
                             //lấy mã chai
                             var getCodes = Globals.ProductionData.getDataPO.Get_Codes(Globals.ProductionData.orderNo);
                             if (getCodes.issucess)
@@ -2005,6 +2010,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                         try
                         {
+                            // Clear Dictionary_ProductionCarton_Data trước khi load PO mới
+                            Globals_Database.Dictionary_ProductionCarton_Data.Clear();
+                            
                             TResult getCartons = new TResult(false, "Lỗi");
                             try
                             {
@@ -2110,6 +2118,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     {
                         //chuyển trạng thái sang 
                         Globals.Production_State = e_Production_State.Pushing_to_Dic;
+
+                        // Clear tất cả dictionaries trước khi load PO mới (tiếp tục PO)
+                        Globals_Database.Dictionary_ProductionCode_Data.Clear();
+                        Globals_Database.Dictionary_ProductionCode_CameraSub_Data.Clear();
+                        Globals_Database.Dictionary_ProductionCarton_Data.Clear();
 
                         var getCodes = Globals.ProductionData.getDataPO.Get_Codes(Globals.ProductionData.orderNo);
                         if (getCodes.issucess)
