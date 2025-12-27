@@ -1018,7 +1018,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 opTotal.Value = Globals.CameraMain_PLC_Counter.total; // Tổng số sản phẩm đã sản xuất
                 opPass.Value = Globals.CameraMain_PLC_Counter.total_pass; // Số sản phẩm đã kích hoạt
                 opFail.Value = Globals.CameraMain_PLC_Counter.total_failed; // Số sản phẩm đã loại bỏ
-                opReadFail.Value = Globals.CameraMain_PLC_Counter.camera_read_fail; // Số sản phẩm đã loại bỏ do không đọc được từ camera
+                opReadFail.Value = Globals.CameraMain_PLC_Counter.timeout; // Số sản phẩm đã loại bỏ do không đọc được từ camera
 
                 //opCaseCount.Text = Globals.ProductionData.counter.totalCartonCount.ToString(); // Số lượng thùng đã đóng gói
                 opCaseCount.Text = Globals.ProductionData.counter.cartonID.ToString();
@@ -1119,7 +1119,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 {
                     this.InvokeIfRequired(() =>
                     {
-                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS POLLING - Bắt đầu monitor PLC cho mã {productCode} (Duo: {AppConfigs.Current.PLC_Duo_Mode})");
+                       // ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS POLLING - Bắt đầu monitor PLC cho mã {productCode} (Duo: {AppConfigs.Current.PLC_Duo_Mode})");
                         ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                     });
                 }
