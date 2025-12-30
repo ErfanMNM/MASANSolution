@@ -84,7 +84,7 @@
             this.uiPanel1.RectColor = System.Drawing.Color.DodgerBlue;
             this.uiPanel1.Size = new System.Drawing.Size(183, 39);
             this.uiPanel1.TabIndex = 7;
-            this.uiPanel1.Text = "MASAN 5.12.19";
+            this.uiPanel1.Text = "MASAN TO v3";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opClock
