@@ -1052,6 +1052,47 @@ namespace MASAN_SERIALIZATION.Production
                 }
             }
 
+            /// <summary>
+            /// Kiểm tra mã có tồn tại trong old_database.db không
+            /// Trả về: (exists, cartonCode, message)
+            /// - exists: true nếu mã tồn tại, false nếu không
+            /// - cartonCode: giá trị cartonCode của mã trong old_database (nếu tồn tại)
+            /// </summary>
+            public (bool exists, string cartonCode, string message) Check_Code_In_Old_Database(string code)
+            {
+                try
+                {
+                    string oldDbPath = @"C:\MasanSerialization_v2\Databases\old_database.db";
+                    if (!File.Exists(oldDbPath))
+                    {
+                        return (false, null, "File old_database.db không tồn tại.");
+                    }
+
+                    using (var conn = new SQLiteConnection($"Data Source={oldDbPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = "SELECT cartonCode FROM UniqueCodes WHERE Code = @Code";
+                        var command = new SQLiteCommand(query, conn);
+                        command.Parameters.AddWithValue("@Code", code);
+                        
+                        var result = command.ExecuteScalar();
+                        if (result != null)
+                        {
+                            string cartonCode = result.ToString();
+                            return (true, cartonCode, "Mã tồn tại trong old_database.");
+                        }
+                        else
+                        {
+                            return (false, null, "Mã không tồn tại trong old_database.");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return (false, null, $"Lỗi PH_OLD_DB khi kiểm tra mã trong old_database: {ex.Message}");
+                }
+            }
+
             //lấy mã code với điều kiện status !=0, cartonCode != 0 và send_status = 'Pending'
             /// <summary>
             /// Lấy danh sách codes cần gửi lên AWS

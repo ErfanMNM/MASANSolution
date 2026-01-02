@@ -60,6 +60,9 @@ namespace MASAN_SERIALIZATION.Configs
 
         public bool AWS_Dev_Mode { get; set; } // Bật/Tắt chế độ phát triển AWS
 
+        public bool Check_Db_Old_Active { get; set; } // Bật/Tắt kiểm tra mã trùng với database cũ
+        public bool Check_Db_Old_Bypass { get; set; } // Bypass tính năng kiểm tra mã trùng với database cũ (nếu = True thì bỏ qua kiểm tra hoàn toàn)
+
 
 
 
@@ -106,6 +109,8 @@ namespace MASAN_SERIALIZATION.Configs
             CameraSub_Polling_Interval_Ms = 10; // Mặc định polling mỗi 10ms
             CameraSub_Timeout_Log_Enabled = true; // Mặc định bật log chi tiết
             TestMode = false; // Mặc định không bật chế độ kiểm tra (Test Mode)
+            Check_Db_Old_Active = false; // Mặc định tắt kiểm tra mã trùng với database cũ
+            Check_Db_Old_Bypass = false; // Mặc định không bypass tính năng kiểm tra mã trùng
         }
     }
 }
