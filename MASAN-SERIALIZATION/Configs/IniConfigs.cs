@@ -18,6 +18,13 @@ namespace MASAN_SERIALIZATION.Configs
         public string Camera_Sub_IP { get; set; } // Địa chỉ IP của camera phụ
         public int Camera_Main_Port { get; set; } // Cổng kết nối của camera chính
         public int Camera_Sub_Port { get; set; } // Cổng kết nối của camera phụ
+
+        /// <summary>
+        /// Bật/Tắt chế độ đá sản phẩm khi phát hiện mã trùng tại camera chính.
+        /// - true  : hành vi cũ, camera main sẽ gửi tín hiệu reject (đá) khi trùng.
+        /// - false : chỉ cảnh báo trên màn hình, KHÔNG gửi reject, cho sản phẩm đi thẳng (camera sub sẽ xử lý đá).
+        /// </summary>
+        public bool CameraMain_DuplicateReject_Enabled { get; set; }
         public string HandScanCOM01 { get; set; } // Tên đăng nhập của camera chính
         public string HandScanCOM02 { get; set; } // Tên đăng nhập của camera phụ
         public string HandScanCOMMain { get; set; } // Tên đăng nhập của camera phụ thứ ba (nếu có, có thể để trống nếu không sử dụng)
@@ -80,6 +87,9 @@ namespace MASAN_SERIALIZATION.Configs
             HandScanCOM02 = "COM3"; // Tên đăng nhập mặc định của camera phụ
             HandScanCOMMain = "COM4"; // Tên đăng nhập mặc định của camera phụ thứ ba (nếu có, có thể để trống nếu không sử dụng)
             AWS_ENA = true; // Mặc định tắt tính năng AWS
+
+            // Mặc định vẫn bật cơ chế đá khi trùng tại camera chính để giữ nguyên hành vi cũ
+            CameraMain_DuplicateReject_Enabled = true;
             rootCAPath = @"C:\MIPWP501\AmazonRootCA1.pem"; // Default path for root CA certificate
             pfxPath = @"C:\MIPWP501\client-certificate.pfx"; // Default path for client certificate
             host = "a22qv9bgjnbsae-ats.iot.ap-southeast-1.amazonaws.com"; // Default host address

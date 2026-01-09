@@ -266,25 +266,43 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                     if (!crossPOCheck.issuccess)
                     {
-                        // Mã đã được dùng ở PO khác cùng GTIN → Reject
-                        Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
-                        Send_Result_Content_CMain(e_Production_Status.Duplicate, _data);
-                        Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, true, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
-
-                        // Log chi tiết
-                        DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Warning,
-                            $"[CROSS-PO DUPLICATE] {crossPOCheck.message}", _data);
-
-                        this.InvokeIfRequired(() =>
+                        if (AppConfigs.Current.CameraMain_DuplicateReject_Enabled)
                         {
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: ❌ TRÙNG CROSS-PO: {crossPOCheck.message}");
-                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                        });
+                            // Mã đã được dùng ở PO khác cùng GTIN → Reject (hành vi cũ)
+                            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
+                            Send_Result_Content_CMain(e_Production_Status.Duplicate, _data);
+                            Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, true, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
 
-                        return;
+                            // Log chi tiết
+                            DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Warning,
+                                $"[CROSS-PO DUPLICATE] {crossPOCheck.message}", _data);
+
+                            this.InvokeIfRequired(() =>
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: ❌ TRÙNG CROSS-PO: {crossPOCheck.message}");
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                            });
+
+                            return;
+                        }
+                        else
+                        {
+                            // BỎ ĐÁ TRÙNG TẠI CAMERA MAIN:
+                            // - Vẫn log/cảnh báo trên màn hình.
+                            // - KHÔNG gửi reject PLC, cho sản phẩm đi thẳng để camera sub xử lý.
+                            DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Warning,
+                                $"[CROSS-PO DUPLICATE - BYPASS MAIN REJECT] {crossPOCheck.message}", _data);
+
+                            this.InvokeIfRequired(() =>
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: ⚠ TRÙNG CROSS-PO (BỎ ĐÁ MAIN, CHO QUA CS): {crossPOCheck.message}");
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                            });
+                            // Không return -> tiếp tục xử lý như mã hợp lệ
+                        }
                     }
 
-                    // Mã OK - chưa dùng ở đâu cả → Tiếp tục activate
+                    // Mã OK - chưa dùng ở đâu cả (hoặc trùng nhưng đã cho bypass) → Tiếp tục activate
                     if (Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "1"))
                     {
                         _produtionCodeData.Main_Camera_Status = "1";
@@ -314,11 +332,37 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 else
                 {
                     // Duplicate - đã dùng trong cùng PO này rồi
-                    Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
-                    Send_Result_Content_CMain(e_Production_Status.Duplicate, _data);
-                    Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, true, _produtionCodeData.Activate_Datetime, _produtionCodeData.Production_Datetime);
-                    Enqueue_Product_To_SQLite(_data, _produtionCodeData, true);
-                    return;
+                    if (AppConfigs.Current.CameraMain_DuplicateReject_Enabled)
+                    {
+                        // Hành vi cũ: gửi reject tới PLC, không cho qua
+                        Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
+                        Send_Result_Content_CMain(e_Production_Status.Duplicate, _data);
+                        Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, true, _produtionCodeData.Activate_Datetime, _produtionCodeData.Production_Datetime);
+                        Enqueue_Product_To_SQLite(_data, _produtionCodeData, true);
+                        return;
+                    }
+                    else
+                    {
+                        // Chế độ bỏ kiểm trùng tại camera main:
+                        // - Vẫn hiển thị thông tin trùng trên màn hình.
+                        // - KHÔNG gửi tín hiệu reject (0) cho PLC.
+                        // - Có thể vẫn ghi log/record duplicate để truy vết, nhưng cho sản phẩm qua để camera sub xử lý.
+
+                        this.InvokeIfRequired(() =>
+                        {
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: ⚠ MÃ TRÙNG TRONG CÙNG PO (BỎ ĐÁ MAIN, CHO QUA CS): {_data}");
+                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                        });
+
+                        Send_Result_Content_CMain(e_Production_Status.Duplicate, _data);
+                        Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, false, _produtionCodeData.Activate_Datetime, _produtionCodeData.Production_Datetime);
+                        Enqueue_Product_To_SQLite(_data, _produtionCodeData, true);
+
+                        // Có thể chủ động gửi tín hiệu "1" để đảm bảo không bị đá tại vị trí camera main.
+                        Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "1");
+
+                        return;
+                    }
                 }
             }
             else
