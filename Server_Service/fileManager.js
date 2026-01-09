@@ -160,9 +160,16 @@ class FileManager {
             };
         }
 
-        // Get existing codes in this block to check duplicates
-        const existingCodes = new Set(existingData.blocks[blockNo].codes.map(c => c.code));
-        const newCodes = processedCodes.filter(c => !existingCodes.has(c.code));
+        // Get ALL existing codes in GTIN (across all blocks) to check duplicates
+        const allExistingCodes = new Set();
+        for (const block of Object.values(existingData.blocks)) {
+            for (const codeEntry of block.codes) {
+                allExistingCodes.add(codeEntry.code);
+            }
+        }
+        
+        // Filter out codes that already exist in ANY block of this GTIN
+        const newCodes = processedCodes.filter(c => !allExistingCodes.has(c.code));
         
         // Add new codes
         existingData.blocks[blockNo].codes.push(...newCodes);
