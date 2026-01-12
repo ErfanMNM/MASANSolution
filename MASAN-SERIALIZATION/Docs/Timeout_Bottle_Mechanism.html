@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cơ Chế Loại Bỏ Chai Bị Timeout - MASAN Serialization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #fff;
+        }
+
+        h1 {
+            color: #1a5f7a;
+            border-bottom: 3px solid #1a5f7a;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        h2 {
+            color: #2d6a4f;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-left: 4px solid #2d6a4f;
+            font-size: 20px;
+        }
+
+        h3 {
+            color: #444;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #1a5f7a;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            color: #c7254e;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        pre code {
+            background: none;
+            color: #f8f8f2;
+            padding: 0;
+        }
+
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .toc h2 {
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0 0 15px 0;
+            color: #1a5f7a;
+        }
+
+        .toc ol {
+            margin-left: 20px;
+        }
+
+        .toc li {
+            margin: 5px 0;
+        }
+
+        .toc a {
+            color: #1a5f7a;
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        .highlight-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            border: 1px solid #dc3545;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .flowchart {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .flowchart pre {
+            background: #f5f5f5;
+            color: #333;
+            text-align: left;
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+
+        @media print {
+            body {
+                padding: 20px;
+            }
+
+            h2 {
+                page-break-after: avoid;
+            }
+
+            pre,
+            table {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔧 Cơ Chế Loại Bỏ Chai Bị Timeout</h1>
+
+    <div class="toc">
+        <h2>📑 Mục Lục</h2>
+        <ol>
+            <li><a href="#overview">Tổng Quan</a></li>
+            <li><a href="#flow">Luồng Xử Lý Camera Sub</a></li>
+            <li><a href="#function">Hàm CheckCameraSubTimeout</a></li>
+            <li><a href="#config">Cấu Hình Timeout</a></li>
+            <li><a href="#database">Lưu Trữ Database</a></li>
+            <li><a href="#query">Cách Query Dữ Liệu Timeout</a></li>
+            <li><a href="#diagram">Sơ Đồ Flow</a></li>
+        </ol>
+    </div>
+
+    <h2 id="overview">1. Tổng Quan</h2>
+
+    <p>Hệ thống có cơ chế phát hiện và loại bỏ chai bị timeout tại <strong>Camera Sub</strong> (Camera phụ) dựa trên
+        việc <strong>polling đếm số pass từ PLC</strong>.</p>
+
+    <h3>Nguyên lý hoạt động:</h3>
+    <ul>
+        <li>Sau khi gửi lệnh pass/reject đến PLC, hệ thống sẽ liên tục đọc counter từ PLC</li>
+        <li>Nếu pass count <strong>tăng</strong> → PLC đã xử lý thành công</li>
+        <li>Nếu pass count <strong>không tăng</strong> trong thời gian timeout → Chai bị timeout, loại bỏ</li>
+    </ul>
+
+    <h3>File source code chính:</h3>
+    <table>
+        <tr>
+            <th>File</th>
+            <th>Mô tả</th>
+        </tr>
+        <tr>
+            <td><code>Views/Dashboards/FDashboard.cs</code></td>
+            <td>Chứa logic xử lý timeout</td>
+        </tr>
+        <tr>
+            <td><code>Production/ProductionHelper.cs</code></td>
+            <td>Chứa logic lưu database</td>
+        </tr>
+    </table>
+
+    <h2 id="flow">2. Luồng Xử Lý Camera Sub</h2>
+
+    <h3>2.1 Quy trình xử lý CameraSub_Process() (dòng 376-668)</h3>
+
+    <div class="flowchart">
+        <pre>
+Camera Sub nhận mã
+       ↓
+Kiểm tra mã trong Dictionary
+       ↓
+Kiểm tra Main_Camera_Status == "1" (đã kích hoạt từ Camera Main)
+       ↓
+Kiểm tra duplicate trong CameraSub Dictionary
+       ↓
+Kiểm tra thùng hiện tại có mã không
+       ↓
+Gửi lệnh đến PLC (Send_To_PLC)
+       ↓
+[Thành công] → CheckCameraSubTimeout() → [Timeout?]
+       ↓                                       ↓
+   [Không Timeout]                      [Có Timeout]
+       ↓                                       ↓
+   Thêm vào thùng                     Loại bỏ, ghi record Error
+        </pre>
+    </div>
+
+    <h3>2.2 Xử lý khi BackgroundWorker bận (dòng 131-152)</h3>
+
+    <p>Khi <code>subpr.IsBusy</code> (BackgroundWorker đang xử lý mã khác):</p>
+    <ul>
+        <li>Gửi reject xuống PLC: <code>Send_To_PLC("PLC_Reject_DM_C1", "0")</code></li>
+        <li>Đánh dấu Error: <code>Send_Result_Content_CSub(e_Production_Status.Error, data)</code></li>
+        <li>Ghi record: <code>Enqueue_Product_To_Record(data, e_Production_Status.Error, false, ...)</code></li>
+    </ul>
+
+    <h2 id="function">3. Hàm CheckCameraSubTimeout</h2>
+
+    <h3>3.1 Vị trí: Dòng 1133-1278 trong FDashboard.cs</h3>
+
+    <h3>3.2 Signature:</h3>
+    <pre><code>public bool CheckCameraSubTimeout(string productCode, int expectedPassCountIncrease = 1)</code></pre>
+
+    <h3>3.3 Tham số:</h3>
+    <table>
+        <tr>
+            <th>Tham số</th>
+            <th>Mô tả</th>
+        </tr>
+        <tr>
+            <td><code>productCode</code></td>
+            <td>Mã chai đang xử lý</td>
+        </tr>
+        <tr>
+            <td><code>expectedPassCountIncrease</code></td>
+            <td>Số lượng pass count mong muốn tăng (mặc định = 1)</td>
+        </tr>
+    </table>
+
+    <h3>3.4 Giá trị trả về:</h3>
+    <table>
+        <tr>
+            <th>Giá trị</th>
+            <th>Ý nghĩa</th>
+        </tr>
+        <tr>
+            <td><code>true</code></td>
+            <td style="background:#f8d7da;">Chai bị timeout - cần loại bỏ</td>
+        </tr>
+        <tr>
+            <td><code>false</code></td>
+            <td style="background:#d4edda;">Chai xử lý thành công - thêm vào thùng</td>
+        </tr>
+    </table>
+
+    <h3>3.5 Logic hoạt động:</h3>
+    <pre><code>// Bước 1: Kiểm tra config có bật timeout không
+if (!AppConfigs.Current.CameraSub_Timeout_Enabled)
+    return false; // Không timeout - tính năng bị tắt
+
+// Bước 2: Lưu snapshot counter trước khi gửi
+int passCountBefore = Globals.CameraSub_PLC_Counter.total_pass;
+
+// Bước 3: Tính số lần poll
+int maxPolls = timeoutMs / pollingIntervalMs;
+
+// Bước 4: Xác định địa chỉ PLC (hỗ trợ Duo Mode)
+string plcAddress = AppConfigs.Current.PLC_Duo_Mode 
+    ? PLCAddress.Get("PLC2_Total_Count_DM_C1") 
+    : PLCAddress.Get("PLC_Total_Count_DM_C1");
+
+// Bước 5: Polling loop
+while (pollCount < maxPolls)
+{
+    // Đọc counter từ PLC
+    OperateResult<int[]> readCheck = PLC.ReadInt32(plcAddress, 5);
+    
+    if (readCheck.IsSuccess)
+    {
+        int passCountCurrent = readCheck.Content[2];    // Pass count
+        int timeoutCountCurrent = readCheck.Content[3]; // Timeout count
+        
+        // Kiểm tra pass count đã tăng chưa
+        if (passCountCurrent >= passCountBefore + expectedPassCountIncrease)
+        {
+            return false; // SUCCESS - không timeout
+        }
+        
+        // Kiểm tra PLC có báo timeout không
+        if (timeoutCountCurrent > Globals.CameraSub_PLC_Counter.timeout)
+        {
+            return true; // TIMEOUT - PLC báo
+        }
+    }
+    
+    Thread.Sleep(pollingIntervalMs);
+}
+
+// Hết thời gian polling → TIMEOUT
+return true;</code></pre>
+
+    <h3>3.6 Địa chỉ PLC được đọc:</h3>
+    <table>
+        <tr>
+            <th>Index</th>
+            <th>Nội dung</th>
+        </tr>
+        <tr>
+            <td><code>Content[0]</code></td>
+            <td>Total count - Tổng số sản phẩm</td>
+        </tr>
+        <tr>
+            <td><code>Content[1]</code></td>
+            <td>Camera read fail - Số sản phẩm không đọc được</td>
+        </tr>
+        <tr>
+            <td><code>Content[2]</code></td>
+            <td><strong>Pass count - Số sản phẩm pass</strong></td>
+        </tr>
+        <tr>
+            <td><code>Content[3]</code></td>
+            <td><strong>Timeout count - Số sản phẩm timeout</strong></td>
+        </tr>
+        <tr>
+            <td><code>Content[4]</code></td>
+            <td>Failed count - Số sản phẩm thất bại</td>
+        </tr>
+    </table>
+
+    <h2 id="config">4. Cấu Hình Timeout</h2>
+
+    <p>Các config trong <code>AppConfigs</code>:</p>
+
+    <table>
+        <tr>
+            <th>Config</th>
+            <th>Kiểu</th>
+            <th>Mô tả</th>
+        </tr>
+        <tr>
+            <td><code>CameraSub_Timeout_Enabled</code></td>
+            <td>bool</td>
+            <td>Bật/tắt tính năng timeout</td>
+        </tr>
+        <tr>
+            <td><code>CameraSub_Timeout_Ms</code></td>
+            <td>int</td>
+            <td>Thời gian timeout (ms)</td>
+        </tr>
+        <tr>
+            <td><code>CameraSub_Polling_Interval_Ms</code></td>
+            <td>int</td>
+            <td>Khoảng thời gian giữa các lần poll (ms)</td>
+        </tr>
+        <tr>
+            <td><code>CameraSub_Timeout_Log_Enabled</code></td>
+            <td>bool</td>
+            <td>Bật/tắt log chi tiết timeout</td>
+        </tr>
+        <tr>
+            <td><code>PLC_Duo_Mode</code></td>
+            <td>bool</td>
+            <td>Chế độ 2 PLC</td>
+        </tr>
+    </table>
+
+    <h3>Ví dụ cấu hình:</h3>
+    <pre><code>{
+    "CameraSub_Timeout_Enabled": true,
+    "CameraSub_Timeout_Ms": 500,
+    "CameraSub_Polling_Interval_Ms": 10,
+    "CameraSub_Timeout_Log_Enabled": true,
+    "PLC_Duo_Mode": false
+}</code></pre>
+
+    <div class="highlight-box">
+        <strong>📊 Tính toán:</strong><br>
+        Số lần poll tối đa = 500ms / 10ms = <strong>50 lần</strong><br>
+        Nếu sau 50 lần poll mà pass count không tăng → <strong>Timeout</strong>
+    </div>
+
+    <h2 id="database">5. Lưu Trữ Database</h2>
+
+    <h3>5.1 File Database:</h3>
+    <pre><code>Record_CameraSub_{orderNo}.db</code></pre>
+
+    <p><strong>Đường dẫn đầy đủ:</strong></p>
+    <pre><code>C:\MasanSerialization\Databases\{yyyy-MM}\{GTIN}\Record_CameraSub_{orderNo}.db</code></pre>
+
+    <h3>5.2 Bảng: Records_CameraSub</h3>
+
+    <table>
+        <tr>
+            <th>Cột</th>
+            <th>Kiểu</th>
+            <th>Mô tả</th>
+            <th>Giá trị khi Timeout</th>
+        </tr>
+        <tr>
+            <td><code>ID</code></td>
+            <td>INTEGER</td>
+            <td>ID tự tăng</td>
+            <td>Auto</td>
+        </tr>
+        <tr>
+            <td><code>Code</code></td>
+            <td>TEXT</td>
+            <td>Mã chai</td>
+            <td>Mã chai bị timeout</td>
+        </tr>
+        <tr>
+            <td><code>cartonID</code></td>
+            <td>INTEGER</td>
+            <td>ID thùng</td>
+            <td style="background:#f8d7da;"><strong>0</strong></td>
+        </tr>
+        <tr>
+            <td><code>Status</code></td>
+            <td>TEXT</td>
+            <td>Trạng thái</td>
+            <td style="background:#f8d7da;"><strong>"Error"</strong></td>
+        </tr>
+        <tr>
+            <td><code>PLC_Status</code></td>
+            <td>TEXT</td>
+            <td>Trạng thái PLC</td>
+            <td style="background:#f8d7da;"><strong>"False"</strong></td>
+        </tr>
+        <tr>
+            <td><code>ActivateDate</code></td>
+            <td>TEXT</td>
+            <td>Thời gian xử lý</td>
+            <td>Timestamp</td>
+        </tr>
+        <tr>
+            <td><code>ActivateUser</code></td>
+            <td>TEXT</td>
+            <td>User đang chạy</td>
+            <td>Username</td>
+        </tr>
+        <tr>
+            <td><code>ProductionDate</code></td>
+            <td>TEXT</td>
+            <td>Ngày sản xuất</td>
+            <td>Production date</td>
+        </tr>
+    </table>
+
+    <h3>5.3 Hàm lưu database:</h3>
+    <p><strong>File:</strong> <code>Production/ProductionHelper.cs</code> - Dòng 1710-1730</p>
+    <pre><code>public void Insert_Record_Camera_Sub(ProductionCodeData_Record record, string orderNo)
+{
+    string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_CameraSub_{orderNo}.db";
+    
+    string query = @"INSERT INTO Records_CameraSub 
+        (Code, cartonID, Status, PLC_Status, ActivateDate, ActivateUser, ProductionDate) 
+        VALUES (@Code, @cartonID, @Status, @PLC_Status, @ActivateDate, @ActivateUser, @ProductionDate)";
+    
+    // Execute insert...
+}</code></pre>
+
+    <h2 id="query">6. Cách Query Dữ Liệu Timeout</h2>
+
+    <h3>6.1 Query tất cả chai Timeout:</h3>
+    <pre><code>SELECT * FROM Records_CameraSub 
+WHERE Status = 'Error'</code></pre>
+
+    <h3>6.2 Query chai Timeout với điều kiện chi tiết:</h3>
+    <pre><code>SELECT * FROM Records_CameraSub 
+WHERE Status = 'Error' 
+  AND PLC_Status = 'False' 
+  AND cartonID = 0</code></pre>
+
+    <h3>6.3 Đếm số chai Timeout theo ngày:</h3>
+    <pre><code>SELECT DATE(ActivateDate) as Date, COUNT(*) as TimeoutCount
+FROM Records_CameraSub 
+WHERE Status = 'Error'
+GROUP BY DATE(ActivateDate)
+ORDER BY Date DESC</code></pre>
+
+    <h3>6.4 Query chi tiết với thời gian:</h3>
+    <pre><code>SELECT 
+    Code,
+    ActivateDate,
+    ActivateUser,
+    ProductionDate
+FROM Records_CameraSub 
+WHERE Status = 'Error'
+  AND ActivateDate BETWEEN '2026-01-01' AND '2026-01-31'
+ORDER BY ActivateDate DESC</code></pre>
+
+    <h2 id="diagram">7. Sơ Đồ Flow</h2>
+
+    <div class="flowchart">
+        <pre style="font-size: 12px;">
+┌─────────────────────────────────────────────────────────────────────┐
+│                      CAMERA SUB TIMEOUT FLOW                        │
+└─────────────────────────────────────────────────────────────────────┘
+
+    ┌──────────────────────┐
+    │  Camera Sub nhận mã  │
+    └──────────┬───────────┘
+               ▼
+    ┌──────────────────────┐     Không
+    │ Mã có trong          ├────────────────┐
+    │ Dictionary?          │                │
+    └──────────┬───────────┘                ▼
+               │ Có                  ┌─────────────┐
+               ▼                     │   REJECT    │
+    ┌──────────────────────┐         │  NotFound   │
+    │ Main_Camera_Status   │         └─────────────┘
+    │ == "1" ?             │
+    └──────────┬───────────┘
+               │ Có
+               ▼
+    ┌──────────────────────┐     Có
+    │ Đã scan bởi          ├────────────────┐
+    │ CameraSub?           │                │
+    └──────────┬───────────┘                ▼
+               │ Không               ┌─────────────┐
+               ▼                     │   REJECT    │
+    ┌──────────────────────┐         │  Duplicate  │
+    │ Gửi lệnh đến PLC     │         └─────────────┘
+    └──────────┬───────────┘
+               │
+               ▼
+    ┌──────────────────────┐     Thất bại
+    │ Gửi PLC thành công?  ├────────────────┐
+    └──────────┬───────────┘                │
+               │ Thành công                 ▼
+               ▼                     ┌─────────────┐
+    ┌──────────────────────┐         │    ERROR    │
+    │ CheckCameraSubTimeout│         │  PLC Fail   │
+    │ (Polling PLC Counter)│         └─────────────┘
+    └──────────┬───────────┘
+               │
+          ┌────┴────┐
+          ▼         ▼
+    ┌──────────┐  ┌──────────────────────────────┐
+    │ TIMEOUT  │  │        KHÔNG TIMEOUT         │
+    │          │  │                              │
+    │ ❌ Error  │  │ ✅ Pass - Thêm vào thùng     │
+    │ cartonID │  │ cartonID = X                 │
+    │ = 0      │  │                              │
+    └────┬─────┘  └──────────────┬───────────────┘
+         │                       │
+         ▼                       ▼
+    ┌────────────────────────────────────────┐
+    │         LƯU VÀO DATABASE               │
+    │    Records_CameraSub_{orderNo}.db      │
+    └────────────────────────────────────────┘
+        </pre>
+    </div>
+
+    <h2>Phụ Lục</h2>
+
+    <h3>A. Các trạng thái sản phẩm (e_Production_Status):</h3>
+    <table>
+        <tr>
+            <th>Enum</th>
+            <th>Mô tả</th>
+        </tr>
+        <tr>
+            <td><code>Pass</code></td>
+            <td style="background:#d4edda;">Sản phẩm OK</td>
+        </tr>
+        <tr>
+            <td><code>Error</code></td>
+            <td style="background:#f8d7da;">Lỗi (bao gồm timeout)</td>
+        </tr>
+        <tr>
+            <td><code>Duplicate</code></td>
+            <td style="background:#fff3cd;">Mã trùng</td>
+        </tr>
+        <tr>
+            <td><code>NotFound</code></td>
+            <td style="background:#f8d7da;">Không tìm thấy mã</td>
+        </tr>
+        <tr>
+            <td><code>ReadFail</code></td>
+            <td style="background:#f8d7da;">Camera không đọc được mã</td>
+        </tr>
+    </table>
+
+    <h3>B. Địa chỉ PLC liên quan:</h3>
+    <table>
+        <tr>
+            <th>Địa chỉ Config</th>
+            <th>Mô tả</th>
+        </tr>
+        <tr>
+            <td><code>PLC_Reject_DM_C1</code></td>
+            <td>Địa chỉ reject Camera Sub (PLC 1)</td>
+        </tr>
+        <tr>
+            <td><code>PLC2_Reject_DM_C1</code></td>
+            <td>Địa chỉ reject Camera Sub (PLC 2)</td>
+        </tr>
+        <tr>
+            <td><code>PLC_Total_Count_DM_C1</code></td>
+            <td>Địa chỉ counter Camera Sub (PLC 1)</td>
+        </tr>
+        <tr>
+            <td><code>PLC2_Total_Count_DM_C1</code></td>
+            <td>Địa chỉ counter Camera Sub (PLC 2)</td>
+        </tr>
+    </table>
+
+    <h3>C. Giá trị gửi PLC:</h3>
+    <table>
+        <tr>
+            <th>Giá trị</th>
+            <th>Ý nghĩa</th>
+        </tr>
+        <tr>
+            <td><code>0</code></td>
+            <td style="background:#f8d7da;">Reject - Loại bỏ chai</td>
+        </tr>
+        <tr>
+            <td><code>1</code></td>
+            <td style="background:#d4edda;">Pass - Phân làn lẻ</td>
+        </tr>
+        <tr>
+            <td><code>2</code></td>
+            <td style="background:#d4edda;">Pass - Phân làn chẵn</td>
+        </tr>
+    </table>
+
+    <div class="footer">
+        <p><strong>Phiên bản:</strong> 1.0 | <strong>Ngày tạo:</strong> 2026-01-11</p>
+        <p><strong>File nguồn:</strong> FDashboard.cs, ProductionHelper.cs</p>
+        <p>MASAN Serialization System</p>
+    </div>
+</body>
+
+</html>
