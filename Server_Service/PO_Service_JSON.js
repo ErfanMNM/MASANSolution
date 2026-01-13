@@ -21,7 +21,7 @@ const swaggerOptions = {
         openapi: '3.0.0',
         info: {
             title: 'PO Management API (JSON Version)',
-            version: '2.0.0',
+            version: '2.0.2',
             description: 'API nhận thông tin PO - JSON File Storage version'
         },
         servers: [{ url: `http://localhost:${PORT}` }]
@@ -397,14 +397,14 @@ app.post('/api/orders', async (req, res) => {
         }
 
         // Validate uniqueCode count must be >= orderQty if provided
-        if (uniqueCode && Array.isArray(uniqueCode)) {
-            if (uniqueCode.length < orderQtyNum) {
-                return res.status(400).json({
-                    message: `Số lượng mã (${uniqueCode.length}) phải >= orderQty (${orderQtyNum}).`,
-                    at: new Date().toISOString()
-                });
-            }
-        }
+        //if (uniqueCode && Array.isArray(uniqueCode)) {
+        //    if (uniqueCode.length < orderQtyNum) {
+        //        return res.status(400).json({
+        //            message: `Số lượng mã (${uniqueCode.length}) phải >= orderQty (${orderQtyNum}).`,
+        //            at: new Date().toISOString()
+        //        });
+        //    }
+        //}
 
         // Validate total orderQty for GTIN does not exceed available codes
         const totalExistingCodes = await fileManager.getCodesCount(GTIN);
@@ -415,16 +415,16 @@ app.post('/api/orders', async (req, res) => {
         const totalUsedOrderQty = await fileManager.getTotalOrderQtyByGTIN(GTIN, orderNo);
         const totalOrderQtyNeeded = totalUsedOrderQty + orderQtyNum;
 
-        if (totalOrderQtyNeeded > totalAvailableCodes) {
-            return res.status(400).json({
-                message: `Không đủ mã cho GTIN '${GTIN}'. ` +
-                    `Tổng số mã khả dụng: ${totalAvailableCodes}, ` +
-                    `đã sử dụng: ${totalUsedOrderQty}, ` +
-                    `cần thêm: ${orderQtyNum}, ` +
-                    `còn lại: ${totalAvailableCodes - totalUsedOrderQty}.`,
-                at: new Date().toISOString()
-            });
-        }
+        //if (totalOrderQtyNeeded > totalAvailableCodes) {
+        //    return res.status(400).json({
+        //        message: `Không đủ mã cho GTIN '${GTIN}'. ` +
+        //            `Tổng số mã khả dụng: ${totalAvailableCodes}, ` +
+        //            `đã sử dụng: ${totalUsedOrderQty}, ` +
+        //            `cần thêm: ${orderQtyNum}, ` +
+        //            `còn lại: ${totalAvailableCodes - totalUsedOrderQty}.`,
+        //        at: new Date().toISOString()
+        //    });
+        //}
 
         // Add to queue for processing
         const result = await requestQueue.addRequest(async () => {

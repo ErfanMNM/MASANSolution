@@ -1959,7 +1959,7 @@ namespace MASAN_SERIALIZATION.Production
                             // Sử dụng transaction để tăng tốc độ insert
                             using (var transaction = conn.BeginTransaction())
                             {
-                                string insertQuery = "INSERT INTO UniqueCodes (Code) VALUES (@Code)";
+                                string insertQuery = "INSERT OR IGNORE INTO UniqueCodes (Code) VALUES (@Code)";
                                 var command = new SQLiteCommand(insertQuery, conn, transaction);
 
                                 foreach (string code in availableCodes)
