@@ -425,6 +425,16 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 _processCounter = 0;
             }
 
+            // Hiển thị cảnh báo từ Globals.Canhbao nếu có
+            if (!string.IsNullOrEmpty(Globals.Canhbao) && Globals.Canhbao.Contains("mã trùng với dữ liệu cũ"))
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    UpdateStatusMessage(Globals.Canhbao, Color.Orange);
+                });
+                // Không xóa cảnh báo để người dùng có thể xem lại
+            }
+
             CheckOrderStatus();
         }
 

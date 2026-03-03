@@ -21,7 +21,7 @@ const swaggerOptions = {
         openapi: '3.0.0',
         info: {
             title: 'PO Management API (JSON Version)',
-            version: '2.0.0',
+            version: '2.0.2',
             description: 'API nhận thông tin PO - JSON File Storage version'
         },
         servers: [{ url: `http://localhost:${PORT}` }]
@@ -72,9 +72,9 @@ class RequestQueue {
 
             this.queue.push(request);
             this.stats.queued++;
-            
+
             console.log(`📝 Request ${request.id} added to queue. Queue length: ${this.queue.length}`);
-            
+
             // Start processing if not already running
             this.processQueue();
         });
@@ -90,23 +90,23 @@ class RequestQueue {
 
         while (this.queue.length > 0) {
             const request = this.queue.shift();
-            
+
             try {
                 clearTimeout(request.timeout);
                 console.log(`⚡ Processing request ${request.id}`);
-                
+
                 const result = await request.handler();
                 request.resolve(result);
                 this.stats.processed++;
-                
+
                 console.log(`✅ Request ${request.id} completed successfully`);
-                
+
             } catch (error) {
                 console.log(`❌ Request ${request.id} failed:`, error.message);
                 request.reject(error);
                 this.stats.errors++;
             }
-            
+
             // Small delay between requests để tránh overwhelm
             await new Promise(resolve => setTimeout(resolve, 10));
         }
@@ -132,10 +132,10 @@ function logError(error, context = '') {
     try {
         const timestamp = new Date().toISOString();
         const logMessage = `[${timestamp}] ERROR: ${context ? context + ' - ' : ''}${error.message || error}\n${error.stack || ''}\n${'='.repeat(80)}\n`;
-        
+
         const logFileName = `error_${new Date().toISOString().split('T')[0]}.txt`;
         const logPath = path.join('./logs', logFileName);
-        
+
         fs.appendFileSync(logPath, logMessage);
         console.error(`[${timestamp}] ERROR logged:`, error.message);
     } catch (logErr) {
@@ -147,10 +147,10 @@ function saveRequestToFile(requestData, responseData = null) {
     try {
         const timestamp = new Date().toISOString();
         const date = timestamp.split('T')[0];
-        
+
         const fileName = `requests_${date}.txt`;
         const filePath = path.join('./requests', fileName);
-        
+
         const requestInfo = {
             timestamp,
             method: 'POST',
@@ -174,11 +174,11 @@ function saveRequestToFile(requestData, responseData = null) {
                 customerOrderNo: requestData.customerOrderNo,
                 uom: requestData.uom,
                 uniqueCodeCount: Array.isArray(requestData.uniqueCode) ? requestData.uniqueCode.length : 0,
-                sampleCodes: Array.isArray(requestData.uniqueCode) ? 
+                sampleCodes: Array.isArray(requestData.uniqueCode) ?
                     requestData.uniqueCode.slice(0, 3).map(code => code.replace(/\x1D/g, '<GS>')) : []
             }
         };
-        
+
         if (responseData) {
             requestInfo.response = {
                 httpStatus: responseData.httpStatus,
@@ -189,16 +189,16 @@ function saveRequestToFile(requestData, responseData = null) {
                 receiveQty: responseData.receiveQty
             };
         }
-        
+
         const logEntry = `[${timestamp}] POST /api/orders - ${requestData.orderNo}/${requestData.blockNo}
 ${JSON.stringify(requestInfo, null, 2)}
 ${'='.repeat(100)}
 
 `;
-        
+
         fs.appendFileSync(filePath, logEntry);
         console.log(`📝 Request logged to ${fileName}`);
-        
+
     } catch (error) {
         logError(error, 'Save request to file error');
     }
@@ -209,12 +209,12 @@ function saveUniqueCodesToFile(orderNo, blockNo, uniqueCodes) {
         const timestamp = new Date().toISOString();
         const date = timestamp.split('T')[0];
         const time = timestamp.split('T')[1].split('.')[0].replace(/:/g, '-');
-        
+
         const safeOrderNo = orderNo.replace(/[^a-zA-Z0-9_\-]/g, '_');
         const safeBlockNo = blockNo.replace(/[^a-zA-Z0-9_\-]/g, '_');
         const fileName = `codes_${safeOrderNo}_${safeBlockNo}_${date}_${time}.txt`;
         const filePath = path.join('./requests', fileName);
-        
+
         const header = `# UniqueCodes Backup
 # OrderNo: ${orderNo}
 # BlockNo: ${blockNo}
@@ -223,18 +223,18 @@ function saveUniqueCodesToFile(orderNo, blockNo, uniqueCodes) {
 # Format: Each line is one uniqueCode
 
 `;
-        
-        const processedCodes = uniqueCodes.map(code => 
+
+        const processedCodes = uniqueCodes.map(code =>
             code.replace(/\x1D/g, '<GS>')
         ).join('\n');
-        
+
         const content = header + processedCodes + '\n';
-        
+
         fs.writeFileSync(filePath, content, 'utf8');
         console.log(`📦 Codes backed up to ${fileName}`);
-        
+
         return fileName;
-        
+
     } catch (error) {
         logError(error, `Save uniqueCodes to file error for ${orderNo}/${blockNo}`);
         return null;
@@ -247,10 +247,14 @@ function saveUniqueCodesToFile(orderNo, blockNo, uniqueCodes) {
  * @swagger
  * /api/orders:
  *   post:
- *     summary: Tạo hoặc cập nhật PO. Lưu uniqueCode theo GTIN (1 GTIN có thể có nhiều orderNo).
- *              uniqueCode là optional nếu GTIN đã có mã. Mã trùng sẽ tự động bỏ qua.
- *              Trả về số lượng mã mới, trùng và tổng số mã hiện có.
- *              ĐIỀU KIỆN: orderQty > 24, số mã >= orderQty, tổng orderQty các PO cùng GTIN <= tổng số mã.
+ *     summary: Tạo hoặc cập nhật PO
+ *     description: |
+ *       Lưu uniqueCode theo GTIN (1 GTIN có thể có nhiều orderNo).
+ *       uniqueCode là optional nếu GTIN đã có mã. Mã trùng sẽ tự động bỏ qua.
+ *       Trả về số lượng mã mới, trùng và tổng số mã hiện có.
+ *       **ĐIỀU KIỆN**: orderQty > 24, số mã >= orderQty, tổng orderQty các PO cùng GTIN <= tổng số mã.
+ *     tags:
+ *       - Orders
  *     requestBody:
  *       required: true
  *       content:
@@ -273,25 +277,62 @@ function saveUniqueCodesToFile(orderNo, blockNo, uniqueCodes) {
  *               - customerOrderNo
  *               - uom
  *             properties:
- *               orderNo: { type: string, example: "PO_001" }
- *               uniqueCode: { type: array, items: { type: string }, example: ["CODE001","CODE002"], description: "Optional nếu GTIN đã có mã. Số lượng phải >= orderQty." }
- *               blockNo: { type: string, example: "BLOCK_001" }
- *               site: { type: string, example: "SITE_X" }
- *               factory: { type: string, example: "FACTORY_Y" }
- *               productionLine: { type: string, example: "LINE_1" }
- *               productionDate: { type: string, example: "2025-07-02" }
- *               shift: { type: string, example: "A" }
- *               orderQty: { type: number, example: 1000, description: "Phải > 24" }
- *               lotNumber: { type: string, example: "LOT_123" }
- *               productCode: { type: string, example: "PROD_XYZ" }
- *               productName: { type: string, example: "Sản phẩm A" }
- *               GTIN: { type: string, example: "8931234567890" }
- *               customerOrderNo: { type: string, example: "CUST_PO_999" }
- *               uom: { type: string, example: "PCS" }
+ *               orderNo:
+ *                 type: string
+ *                 example: "PO0001"
+ *               uniqueCode:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: "Optional nếu GTIN đã có mã. Số lượng phải >= orderQty."
+ *                 example: ["CODE0001", "CODE0002", "CODE0003", "CODE0004", "CODE0005", "CODE0006", "CODE0007", "CODE0008", "CODE0009", "CODE0010"]
+ *               blockNo:
+ *                 type: string
+ *                 example: "BLOCK_001"
+ *               site:
+ *                 type: string
+ *                 example: "SITE_MASAN"
+ *               factory:
+ *                 type: string
+ *                 example: "FACTORY_01"
+ *               productionLine:
+ *                 type: string
+ *                 example: "LINE_1"
+ *               productionDate:
+ *                 type: string
+ *                 example: "2026-01-11"
+ *               shift:
+ *                 type: string
+ *                 example: "A"
+ *               orderQty:
+ *                 type: number
+ *                 description: "Phải > 24"
+ *                 example: 25
+ *               lotNumber:
+ *                 type: string
+ *                 example: "LOT_2026_001"
+ *               productCode:
+ *                 type: string
+ *                 example: "PROD_XYZ"
+ *               productName:
+ *                 type: string
+ *                 example: "Sản phẩm A"
+ *               GTIN:
+ *                 type: string
+ *                 example: "GT0001"
+ *               customerOrderNo:
+ *                 type: string
+ *                 example: "CUST_PO_001"
+ *               uom:
+ *                 type: string
+ *                 example: "PCS"
  *     responses:
- *       500: { description: Lỗi máy chủ hoặc DB }
- *       200: { description: Thành công }
- *       400: { description: Thiếu dữ liệu hoặc vi phạm điều kiện validation }
+ *       200:
+ *         description: Thành công
+ *       400:
+ *         description: Thiếu dữ liệu hoặc vi phạm điều kiện validation
+ *       500:
+ *         description: Lỗi máy chủ hoặc DB
  */
 app.post('/api/orders', async (req, res) => {
     try {
@@ -356,14 +397,14 @@ app.post('/api/orders', async (req, res) => {
         }
 
         // Validate uniqueCode count must be >= orderQty if provided
-        if (uniqueCode && Array.isArray(uniqueCode)) {
-            if (uniqueCode.length < orderQtyNum) {
-                return res.status(400).json({
-                    message: `Số lượng mã (${uniqueCode.length}) phải >= orderQty (${orderQtyNum}).`,
-                    at: new Date().toISOString()
-                });
-            }
-        }
+        //if (uniqueCode && Array.isArray(uniqueCode)) {
+        //    if (uniqueCode.length < orderQtyNum) {
+        //        return res.status(400).json({
+        //            message: `Số lượng mã (${uniqueCode.length}) phải >= orderQty (${orderQtyNum}).`,
+        //            at: new Date().toISOString()
+        //        });
+        //    }
+        //}
 
         // Validate total orderQty for GTIN does not exceed available codes
         const totalExistingCodes = await fileManager.getCodesCount(GTIN);
@@ -374,16 +415,16 @@ app.post('/api/orders', async (req, res) => {
         const totalUsedOrderQty = await fileManager.getTotalOrderQtyByGTIN(GTIN, orderNo);
         const totalOrderQtyNeeded = totalUsedOrderQty + orderQtyNum;
 
-        if (totalOrderQtyNeeded > totalAvailableCodes) {
-            return res.status(400).json({
-                message: `Không đủ mã cho GTIN '${GTIN}'. ` +
-                         `Tổng số mã khả dụng: ${totalAvailableCodes}, ` +
-                         `đã sử dụng: ${totalUsedOrderQty}, ` +
-                         `cần thêm: ${orderQtyNum}, ` +
-                         `còn lại: ${totalAvailableCodes - totalUsedOrderQty}.`,
-                at: new Date().toISOString()
-            });
-        }
+        //if (totalOrderQtyNeeded > totalAvailableCodes) {
+        //    return res.status(400).json({
+        //        message: `Không đủ mã cho GTIN '${GTIN}'. ` +
+        //            `Tổng số mã khả dụng: ${totalAvailableCodes}, ` +
+        //            `đã sử dụng: ${totalUsedOrderQty}, ` +
+        //            `cần thêm: ${orderQtyNum}, ` +
+        //            `còn lại: ${totalAvailableCodes - totalUsedOrderQty}.`,
+        //        at: new Date().toISOString()
+        //    });
+        //}
 
         // Add to queue for processing
         const result = await requestQueue.addRequest(async () => {
@@ -413,7 +454,7 @@ async function processOrderRequest(requestData) {
     } = requestData;
 
     const now = new Date().toISOString();
-    
+
     try {
         // Log request
         saveRequestToFile(requestData);
@@ -468,7 +509,7 @@ async function processOrderRequest(requestData) {
                 blockCount: existingCodesCount
             };
         }
-        
+
         // Final result
         const result = {
             orderNo, site, factory, productionLine,
@@ -496,7 +537,7 @@ async function processOrderRequest(requestData) {
 
         // Log response
         saveRequestToFile(requestData, result);
-        
+
         return result;
 
     } catch (error) {
@@ -522,9 +563,9 @@ app.get('/api/orders', async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 100;
         const orders = await fileManager.getAllPOInfo(limit);
-        
-        res.json({ 
-            count: orders.length, 
+
+        res.json({
+            count: orders.length,
             data: orders,
             storage: 'JSON',
             message: 'Data loaded from JSON files'
@@ -554,15 +595,15 @@ app.get('/api/orders/logs', async (req, res) => {
     try {
         const { orderNo, limit } = req.query;
         const filters = {};
-        
+
         if (orderNo) {
             filters.orderNo = orderNo;
         }
-        
+
         const logs = await fileManager.getPOLogs(filters, parseInt(limit) || 100);
-        
-        res.json({ 
-            count: logs.length, 
+
+        res.json({
+            count: logs.length,
             data: logs,
             storage: 'JSON'
         });
@@ -683,7 +724,7 @@ app.get('/api/queue/stats', (req, res) => {
     try {
         const stats = requestQueue.getStats();
         const storageStats = fileManager.getStorageStats();
-        
+
         res.json({
             queue: stats,
             storage: storageStats,

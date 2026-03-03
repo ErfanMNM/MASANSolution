@@ -266,25 +266,43 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                     if (!crossPOCheck.issuccess)
                     {
-                        // Mã đã được dùng ở PO khác cùng GTIN → Reject
-                        Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
-                        Send_Result_Content_CMain(e_Production_Status.Duplicate, _data);
-                        Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, true, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
-
-                        // Log chi tiết
-                        DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Warning,
-                            $"[CROSS-PO DUPLICATE] {crossPOCheck.message}", _data);
-
-                        this.InvokeIfRequired(() =>
+                        if (AppConfigs.Current.CameraMain_DuplicateReject_Enabled)
                         {
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: ❌ TRÙNG CROSS-PO: {crossPOCheck.message}");
-                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                        });
+                            // Mã đã được dùng ở PO khác cùng GTIN → Reject (hành vi cũ)
+                            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
+                            Send_Result_Content_CMain(e_Production_Status.Duplicate, _data);
+                            Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, true, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
 
-                        return;
+                            // Log chi tiết
+                            DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Warning,
+                                $"[CROSS-PO DUPLICATE] {crossPOCheck.message}", _data);
+
+                            this.InvokeIfRequired(() =>
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: ❌ TRÙNG CROSS-PO: {crossPOCheck.message}");
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                            });
+
+                            return;
+                        }
+                        else
+                        {
+                            // BỎ ĐÁ TRÙNG TẠI CAMERA MAIN:
+                            // - Vẫn log/cảnh báo trên màn hình.
+                            // - KHÔNG gửi reject PLC, cho sản phẩm đi thẳng để camera sub xử lý.
+                            DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Warning,
+                                $"[CROSS-PO DUPLICATE - BYPASS MAIN REJECT] {crossPOCheck.message}", _data);
+
+                            this.InvokeIfRequired(() =>
+                            {
+                                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: ⚠ TRÙNG CROSS-PO (BỎ ĐÁ MAIN, CHO QUA CS): {crossPOCheck.message}");
+                                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                            });
+                            // Không return -> tiếp tục xử lý như mã hợp lệ
+                        }
                     }
 
-                    // Mã OK - chưa dùng ở đâu cả → Tiếp tục activate
+                    // Mã OK - chưa dùng ở đâu cả (hoặc trùng nhưng đã cho bypass) → Tiếp tục activate
                     if (Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "1"))
                     {
                         _produtionCodeData.Main_Camera_Status = "1";
@@ -314,11 +332,37 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 else
                 {
                     // Duplicate - đã dùng trong cùng PO này rồi
-                    Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
-                    Send_Result_Content_CMain(e_Production_Status.Duplicate, _data);
-                    Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, true, _produtionCodeData.Activate_Datetime, _produtionCodeData.Production_Datetime);
-                    Enqueue_Product_To_SQLite(_data, _produtionCodeData, true);
-                    return;
+                    if (AppConfigs.Current.CameraMain_DuplicateReject_Enabled)
+                    {
+                        // Hành vi cũ: gửi reject tới PLC, không cho qua
+                        Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
+                        Send_Result_Content_CMain(e_Production_Status.Duplicate, _data);
+                        Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, true, _produtionCodeData.Activate_Datetime, _produtionCodeData.Production_Datetime);
+                        Enqueue_Product_To_SQLite(_data, _produtionCodeData, true);
+                        return;
+                    }
+                    else
+                    {
+                        // Chế độ bỏ kiểm trùng tại camera main:
+                        // - Vẫn hiển thị thông tin trùng trên màn hình.
+                        // - KHÔNG gửi tín hiệu reject (0) cho PLC.
+                        // - Có thể vẫn ghi log/record duplicate để truy vết, nhưng cho sản phẩm qua để camera sub xử lý.
+
+                        this.InvokeIfRequired(() =>
+                        {
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: ⚠ MÃ TRÙNG TRONG CÙNG PO (BỎ ĐÁ MAIN, CHO QUA CS): {_data}");
+                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                        });
+
+                        Send_Result_Content_CMain(e_Production_Status.Duplicate, _data);
+                        Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, false, _produtionCodeData.Activate_Datetime, _produtionCodeData.Production_Datetime);
+                        Enqueue_Product_To_SQLite(_data, _produtionCodeData, true);
+
+                        // Có thể chủ động gửi tín hiệu "1" để đảm bảo không bị đá tại vị trí camera main.
+                        Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "1");
+
+                        return;
+                    }
                 }
             }
             else
@@ -1935,6 +1979,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                     return;
                                 }
                                 //lấy dữ liệu thành công
+                                bool hasDuplicateWithCarton = false;
+                                bool hasDuplicateWithoutCarton = false;
+                                List<string> duplicateCodesWithCarton = new List<string>();
+                                List<string> duplicateCodesWithoutCarton = new List<string>();
+
                                 foreach (DataRow codeRow in getCodes.Codes.Rows)
                                 {
                                     string code = codeRow["Code"].ToString();
@@ -1945,6 +1994,28 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                     string subCameraDatetime = codeRow["SubCamera_ActivateDate"].ToString();
                                     string activateDatetime = codeRow["ActivateDate"].ToString();
                                     string productionDate = codeRow["ProductionDate"].ToString();
+
+                                    // Kiểm tra mã trùng với old_database (chỉ kiểm tra nếu không bypass)
+                                    if (!AppConfigs.Current.Check_Db_Old_Bypass)
+                                    {
+                                        var checkResult = Globals.ProductionData.getDataPO.Check_Code_In_Old_Database(code);
+                                        if (checkResult.exists)
+                                        {
+                                            // Kiểm tra cartonCode trong old_database
+                                            if (checkResult.cartonCode != null && checkResult.cartonCode != "0" && checkResult.cartonCode != "pending")
+                                            {
+                                                // Mã trùng và có cartonCode != 0
+                                                hasDuplicateWithCarton = true;
+                                                duplicateCodesWithCarton.Add(code);
+                                            }
+                                            else
+                                            {
+                                                // Mã trùng nhưng cartonCode = 0 hoặc null
+                                                hasDuplicateWithoutCarton = true;
+                                                duplicateCodesWithoutCarton.Add(code);
+                                            }
+                                        }
+                                    }
 
                                     if (!Globals_Database.Dictionary_ProductionCode_Data.ContainsKey(code))
                                     {
@@ -1980,6 +2051,57 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                             Activate_Datetime = activateDatetime,
                                             Production_Datetime = productionDate,
                                         });
+                                    }
+                                }
+
+                                // Xử lý kết quả kiểm tra mã trùng (chỉ xử lý nếu không bypass)
+                                if (!AppConfigs.Current.Check_Db_Old_Bypass && (hasDuplicateWithCarton || hasDuplicateWithoutCarton))
+                                {
+                                    if (AppConfigs.Current.Check_Db_Old_Active)
+                                    {
+                                        // Nếu Check_Db_Old_Active = True
+                                        if (hasDuplicateWithCarton)
+                                        {
+                                            // Có mã trùng với cartonCode != 0 -> cảnh báo lỗi và về Ready
+                                            string errorMsg = $"Phát hiện mã trùng với dữ liệu cũ. Các mã: {string.Join(", ", duplicateCodesWithCarton.Take(10))}" + 
+                                                           (duplicateCodesWithCarton.Count > 10 ? $" và {duplicateCodesWithCarton.Count - 10} mã khác" : "");
+                                            DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error, 
+                                                $"Phát hiện mã trùng với old_database (có cartonCode): {errorMsg}");
+                                            this.InvokeIfRequired(() =>
+                                            {
+                                                this.ShowErrorDialog($"Phát hiện mã trùng với dữ liệu cũ: {errorMsg}");
+                                            });
+                                            Globals.Production_State = e_Production_State.Ready;
+                                            return;
+                                        }
+                                        else if (hasDuplicateWithoutCarton)
+                                        {
+                                            // Chỉ có mã trùng với cartonCode = 0 -> chỉ cảnh báo, vẫn cho chạy
+                                            string warningMsg = $"Cảnh báo: Phát hiện {duplicateCodesWithoutCarton.Count} mã trùng với dữ liệu cũ (cartonCode = 0). " +
+                                                               $"Các mã: {string.Join(", ", duplicateCodesWithoutCarton.Take(5))}" +
+                                                               (duplicateCodesWithoutCarton.Count > 5 ? $" và {duplicateCodesWithoutCarton.Count - 5} mã khác" : "");
+                                            DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Warning, warningMsg);
+                                            this.InvokeIfRequired(() =>
+                                            {
+                                                this.ShowWarningDialog(warningMsg);
+                                            });
+                                            // Tiếp tục chạy bình thường
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // Nếu Check_Db_Old_Active = False -> về Ready hết
+                                        string errorMsg = $"Phát hiện mã trùng với dữ liệu cũ. " +
+                                                         (hasDuplicateWithCarton ? $"Có {duplicateCodesWithCarton.Count} mã có cartonCode != 0. " : "") +
+                                                         (hasDuplicateWithoutCarton ? $"Có {duplicateCodesWithoutCarton.Count} mã có cartonCode = 0." : "");
+                                        DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error, 
+                                            $"Phát hiện mã trùng với old_database: {errorMsg}");
+                                        this.InvokeIfRequired(() =>
+                                        {
+                                            this.ShowErrorDialog($"Phát hiện mã trùng với dữ liệu cũ: {errorMsg}");
+                                        });
+                                        Globals.Production_State = e_Production_State.Ready;
+                                        return;
                                     }
                                 }
                             }
@@ -2128,6 +2250,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         if (getCodes.issucess)
                         {
                             //lấy dữ liệu thành công
+                            bool hasDuplicateWithCarton = false;
+                            bool hasDuplicateWithoutCarton = false;
+                            List<string> duplicateCodesWithCarton = new List<string>();
+                            List<string> duplicateCodesWithoutCarton = new List<string>();
+
                             foreach (DataRow codeRow in getCodes.Codes.Rows)
                             {
                                 string code = codeRow["Code"].ToString();
@@ -2138,6 +2265,28 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                 string subCameraDatetime = codeRow["SubCamera_ActivateDate"].ToString();
                                 string activateDatetime = codeRow["ActivateDate"].ToString();
                                 string productionDate = codeRow["ProductionDate"].ToString();
+
+                                // Kiểm tra mã trùng với old_database (chỉ kiểm tra nếu không bypass)
+                                if (!AppConfigs.Current.Check_Db_Old_Bypass)
+                                {
+                                    var checkResult = Globals.ProductionData.getDataPO.Check_Code_In_Old_Database(code);
+                                    if (checkResult.exists)
+                                    {
+                                        // Kiểm tra cartonCode trong old_database
+                                        if (checkResult.cartonCode != null && checkResult.cartonCode != "0" && checkResult.cartonCode != "pending")
+                                        {
+                                            // Mã trùng và có cartonCode != 0
+                                            hasDuplicateWithCarton = true;
+                                            duplicateCodesWithCarton.Add(code);
+                                        }
+                                        else
+                                        {
+                                            // Mã trùng nhưng cartonCode = 0 hoặc null
+                                            hasDuplicateWithoutCarton = true;
+                                            duplicateCodesWithoutCarton.Add(code);
+                                        }
+                                    }
+                                }
 
                                 if (!Globals_Database.Dictionary_ProductionCode_Data.ContainsKey(code))
                                 {
@@ -2173,6 +2322,58 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                         Activate_Datetime = activateDatetime,
                                         Production_Datetime = productionDate,
                                     });
+                                }
+                            }
+
+                            // Xử lý kết quả kiểm tra mã trùng (chỉ xử lý nếu không bypass)
+                            if (!AppConfigs.Current.Check_Db_Old_Bypass && (hasDuplicateWithCarton || hasDuplicateWithoutCarton))
+                            {
+                                if (AppConfigs.Current.Check_Db_Old_Active)
+                                {
+                                    // Nếu Check_Db_Old_Active = True
+                                    if (hasDuplicateWithCarton)
+                                    {
+                                        // Có mã trùng với cartonCode != 0 -> cảnh báo lỗi và về Ready
+                                        string errorMsg = $"Phát hiện mã trùng với dữ liệu cũ. Các mã: {string.Join(", ", duplicateCodesWithCarton.Take(10))}" + 
+                                                       (duplicateCodesWithCarton.Count > 10 ? $" và {duplicateCodesWithCarton.Count - 10} mã khác" : "");
+                                        DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error, 
+                                            $"Phát hiện mã trùng với old_database (có cartonCode): {errorMsg}");
+                                        this.InvokeIfRequired(() =>
+                                        {
+                                            this.ShowErrorDialog($"Phát hiện mã trùng với dữ liệu cũ: {errorMsg}");
+                                        });
+                                        Globals.Production_State = e_Production_State.Ready;
+                                        return;
+                                    }
+                                    else if (hasDuplicateWithoutCarton)
+                                    {
+                                        // Chỉ có mã trùng với cartonCode = 0 -> chỉ cảnh báo, vẫn cho chạy
+                                        string warningMsg = $"Cảnh báo: Phát hiện {duplicateCodesWithoutCarton.Count} mã trùng với dữ liệu cũ (cartonCode = 0). " +
+                                                           $"Các mã: {string.Join(", ", duplicateCodesWithoutCarton.Take(5))}" +
+                                                           (duplicateCodesWithoutCarton.Count > 5 ? $" và {duplicateCodesWithoutCarton.Count - 5} mã khác" : "");
+                                        DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Warning, warningMsg);
+                                        Globals.Canhbao = warningMsg; // Lưu cảnh báo để hiển thị trên opTer
+                                        this.InvokeIfRequired(() =>
+                                        {
+                                            this.ShowWarningDialog(warningMsg);
+                                        });
+                                        // Tiếp tục chạy bình thường
+                                    }
+                                }
+                                else
+                                {
+                                    // Nếu Check_Db_Old_Active = False -> về Ready hết
+                                    string errorMsg = $"Phát hiện mã trùng với dữ liệu cũ. " +
+                                                     (hasDuplicateWithCarton ? $"Có {duplicateCodesWithCarton.Count} mã có cartonCode != 0. " : "") +
+                                                     (hasDuplicateWithoutCarton ? $"Có {duplicateCodesWithoutCarton.Count} mã có cartonCode = 0." : "");
+                                    DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error, 
+                                        $"Phát hiện mã trùng với old_database: {errorMsg}");
+                                    this.InvokeIfRequired(() =>
+                                    {
+                                        this.ShowErrorDialog($"Phát hiện mã trùng với dữ liệu cũ: {errorMsg}");
+                                    });
+                                    Globals.Production_State = e_Production_State.Ready;
+                                    return;
                                 }
                             }
                         }

@@ -62,6 +62,12 @@ namespace MASAN_SERIALIZATION.Views.Settings
         public static PLC_Parameter PLC_Parameter_On_PC_CS { get; set; } = new PLC_Parameter();
         public static PLC_Parameter PLC_Parameter_On_PLC_CS { get; set; } = new PLC_Parameter();
 
+        // PLC2 Duo Mode - Lane1 và Lane2 parameters
+        public static PLC2_Parameter PLC2_Parameter_On_PC_Lane1 { get; set; } = new PLC2_Parameter();
+        public static PLC2_Parameter PLC2_Parameter_On_PC_Lane2 { get; set; } = new PLC2_Parameter();
+        public static PLC2_Parameter PLC2_Parameter_On_PLC_Lane1 { get; set; } = new PLC2_Parameter();
+        public static PLC2_Parameter PLC2_Parameter_On_PLC_Lane2 { get; set; } = new PLC2_Parameter();
+
         public void INIT()
         {
             isLoading = true;
@@ -77,6 +83,30 @@ namespace MASAN_SERIALIZATION.Views.Settings
             }
 
             omronPLC_Hsl1.InitPLC();
+
+            // Khởi tạo PLC2 khi ở chế độ Duo Mode
+            if (AppConfigs.Current.PLC_Duo_Mode)
+            {
+                try
+                {
+                    omronPLC_Hsl2.PLC_IP = PLCAddress.Get("PLC2_IP");
+                    omronPLC_Hsl2.PLC_PORT = int.Parse(PLCAddress.Get("PLC2_PORT").ToString());
+
+                    if (AppConfigs.Current.PLC_Test_Mode)
+                    {
+                        omronPLC_Hsl2.PLC_IP = "127.0.0.1";
+                        omronPLC_Hsl2.PLC_PORT = 9601;
+                    }
+
+                    omronPLC_Hsl2.InitPLC();
+                    Console.WriteLine($"PLC2 khởi tạo thành công: {omronPLC_Hsl2.PLC_IP}:{omronPLC_Hsl2.PLC_PORT}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Lỗi khởi tạo PLC2: {ex.Message}");
+                }
+            }
+
             bgwUpdate.RunWorkerAsync();
             UpdateCBB();
 
@@ -359,6 +389,13 @@ namespace MASAN_SERIALIZATION.Views.Settings
             public string RejectStreng { get; set; } = "0";
         }
 
+        // PLC2 Parameter class - chỉ có DelayCamera và DelayReject
+        public class PLC2_Parameter
+        {
+            public string DelayCamera { get; set; } = "1000";
+            public string DelayReject { get; set; } = "2000";
+        }
+
         private void PLCSetting_Initialize(object sender, EventArgs e)
         {
             isOpen = true;
@@ -542,29 +579,29 @@ namespace MASAN_SERIALIZATION.Views.Settings
 
         public void Check_Recipe_CS(string recipeName, PLC_Parameter configs)
         {
-            string[] files = Directory.GetFiles("PLC_RECIPEs", "*.rplc");
+            string[] files = Directory.GetFiles("PLC_RECIPEs_CS", "*.rplc");
             if (files.Length == 0)
             {
                 string json = JsonConvert.SerializeObject(defaultConfig_CS, Formatting.Indented);
-                File.WriteAllText($"PLC_RECIPEs/{SelectRecipeName_CS}", json);
-                AddLogRecipe(SelectRecipeName_CS, $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}", "CREATE", "Operator");
-                AddLogRecipe(SelectRecipeName_CS, $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}", "SELECT", "Operator");
+                File.WriteAllText($"PLC_RECIPEs_CS/{SelectRecipeName_CS}.rplc", json);
+                AddLogRecipe_CS(SelectRecipeName_CS, $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}", "CREATE", "Operator");
+                AddLogRecipe_CS(SelectRecipeName_CS, $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}", "SELECT", "Operator");
                 PLC_Parameter_On_PC_CS = defaultConfig_CS;
             }
             else
             {
-                bool fileExists = files.Any(file => Path.GetFileName(file).Equals(SelectRecipeName_CS, StringComparison.OrdinalIgnoreCase));
+                bool fileExists = files.Any(file => Path.GetFileName(file).Equals($"{SelectRecipeName_CS}.rplc", StringComparison.OrdinalIgnoreCase));
                 if (!fileExists)
                 {
                     string json = JsonConvert.SerializeObject(defaultConfig_CS, Formatting.Indented);
-                    File.WriteAllText($"PLC_RECIPEs/{SelectRecipeName_CS}", json);
-                    AddLogRecipe(SelectRecipeName_CS, $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}", "CREATE", "Operator");
-                    AddLogRecipe(SelectRecipeName_CS, $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}", "SELECT", "Operator");
+                    File.WriteAllText($"PLC_RECIPEs_CS/{SelectRecipeName_CS}.rplc", json);
+                    AddLogRecipe_CS(SelectRecipeName_CS, $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}", "CREATE", "Operator");
+                    AddLogRecipe_CS(SelectRecipeName_CS, $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}", "SELECT", "Operator");
                     PLC_Parameter_On_PC_CS = defaultConfig_CS;
                 }
                 else
                 {
-                    string jsonContent = File.ReadAllText($"PLC_RECIPEs/{SelectRecipeName_CS}");
+                    string jsonContent = File.ReadAllText($"PLC_RECIPEs_CS/{SelectRecipeName_CS}.rplc");
                     PLC_Parameter_On_PC_CS = JsonConvert.DeserializeObject<PLC_Parameter>(jsonContent);
                 }
             }
@@ -578,18 +615,64 @@ namespace MASAN_SERIALIZATION.Views.Settings
 
         public void GetParameterFromPLC_CS()
         {
-            OperateResult<int[]> read = omronPLC_Hsl1.plc.ReadInt32(PLCAddress.Get("PLC_Delay_Camera_DM_C1"), 3);
-            if (read.IsSuccess)
+            if (AppConfigs.Current.PLC_Duo_Mode)
             {
-                PLC_Parameter_On_PLC_CS.DelayCamera = read.Content[0].ToString();
-                PLC_Parameter_On_PLC_CS.DelayReject = read.Content[1].ToString();
-                PLC_Parameter_On_PLC_CS.RejectStreng = read.Content[2].ToString();
+                // Đọc từ PLC2 - Lane1
+                try
+                {
+                    OperateResult<int[]> readLane1 = omronPLC_Hsl2.plc.ReadInt32(PLCAddress.Get("PLC2_Delay_Lane1_DM_C1"), 2);
+                    if (readLane1.IsSuccess)
+                    {
+                        PLC2_Parameter_On_PLC_Lane1.DelayCamera = readLane1.Content[0].ToString();
+                        PLC2_Parameter_On_PLC_Lane1.DelayReject = readLane1.Content[1].ToString();
+                    }
+                    else
+                    {
+                        PLC2_Parameter_On_PLC_Lane1.DelayCamera = "-1";
+                        PLC2_Parameter_On_PLC_Lane1.DelayReject = "-1";
+                    }
+
+                    // Đọc từ PLC2 - Lane2
+                    OperateResult<int[]> readLane2 = omronPLC_Hsl2.plc.ReadInt32(PLCAddress.Get("PLC2_Delay_Lane2_DM_C1"), 2);
+                    if (readLane2.IsSuccess)
+                    {
+                        PLC2_Parameter_On_PLC_Lane2.DelayCamera = readLane2.Content[0].ToString();
+                        PLC2_Parameter_On_PLC_Lane2.DelayReject = readLane2.Content[1].ToString();
+                    }
+                    else
+                    {
+                        PLC2_Parameter_On_PLC_Lane2.DelayCamera = "-1";
+                        PLC2_Parameter_On_PLC_Lane2.DelayReject = "-1";
+                    }
+
+                    // Cập nhật giá trị hiển thị (sử dụng Lane1 làm mặc định)
+                    PLC_Parameter_On_PLC_CS.DelayCamera = PLC2_Parameter_On_PLC_Lane1.DelayCamera;
+                    PLC_Parameter_On_PLC_CS.DelayReject = PLC2_Parameter_On_PLC_Lane1.DelayReject;
+                    PLC_Parameter_On_PLC_CS.RejectStreng = "N/A"; // Không sử dụng RejectStreng trong Duo Mode
+                }
+                catch (Exception ex)
+                {
+                    PLC_Parameter_On_PLC_CS.DelayCamera = "ERR";
+                    PLC_Parameter_On_PLC_CS.DelayReject = "ERR";
+                    PLC_Parameter_On_PLC_CS.RejectStreng = ex.Message;
+                }
             }
             else
             {
-                PLC_Parameter_On_PLC_CS.DelayCamera = "-1";
-                PLC_Parameter_On_PLC_CS.DelayReject = "-1";
-                PLC_Parameter_On_PLC_CS.RejectStreng = "-1";
+                // Chế độ Single PLC - đọc từ PLC1
+                OperateResult<int[]> read = omronPLC_Hsl1.plc.ReadInt32(PLCAddress.Get("PLC_Delay_Camera_DM_C1"), 3);
+                if (read.IsSuccess)
+                {
+                    PLC_Parameter_On_PLC_CS.DelayCamera = read.Content[0].ToString();
+                    PLC_Parameter_On_PLC_CS.DelayReject = read.Content[1].ToString();
+                    PLC_Parameter_On_PLC_CS.RejectStreng = read.Content[2].ToString();
+                }
+                else
+                {
+                    PLC_Parameter_On_PLC_CS.DelayCamera = "-1";
+                    PLC_Parameter_On_PLC_CS.DelayReject = "-1";
+                    PLC_Parameter_On_PLC_CS.RejectStreng = "-1";
+                }
             }
         }
 
@@ -628,25 +711,57 @@ namespace MASAN_SERIALIZATION.Views.Settings
         {
             if(AppConfigs.Current.PLC_Duo_Mode)
             {
-                //try
-                //{
-                //    string delayCamera = ipDelayTriger_CS.Text;
-                //    string delayReject = ipDelayReject_CS.Text;
-                //    string rejectStreng = ipRejectStreng_CS.Text;
-                //    PLC_Parameter_On_PC_CS.DelayCamera = delayCamera;
-                //    PLC_Parameter_On_PC_CS.DelayReject = delayReject;
-                //    PLC_Parameter_On_PC_CS.RejectStreng = rejectStreng;
-                //    string json = JsonConvert.SerializeObject(PLC_Parameter_On_PC_CS, Formatting.Indented);
-                //    Write_Recipe_To_File_CS(json);
-                //    OperateResult operateResult = omronPLC_Hsl2.plc.Write(PLCAddress.Get("PLC_Delay_Camera_DM_C1"), new int[] { int.Parse(delayCamera), int.Parse(delayReject), int.Parse(rejectStreng) });
-                //    e.Result = operateResult;
-                //}
-                //catch (Exception ex)
-                //{
-                //    e.Result = ex;
-                //}
-
-                this.ShowErrorDialog("Tính năng đang bị lỗi tạm thời!");
+                try
+                {
+                    // Lấy giá trị từ UI cho Lane1 và Lane2
+                    string delayCamera_Lane1 = ipDelayTriger_CS.Text;
+                    string delayReject_Lane1 = ipDelayReject_CS.Text;
+                    
+                    // Cập nhật parameters trên PC
+                    PLC2_Parameter_On_PC_Lane1.DelayCamera = delayCamera_Lane1;
+                    PLC2_Parameter_On_PC_Lane1.DelayReject = delayReject_Lane1;
+                    
+                    // Sử dụng cùng giá trị cho Lane2 (có thể thêm UI riêng nếu cần)
+                    PLC2_Parameter_On_PC_Lane2.DelayCamera = delayCamera_Lane1;
+                    PLC2_Parameter_On_PC_Lane2.DelayReject = delayReject_Lane1;
+                    
+                    // Lưu vào file
+                    var plc2Config = new {
+                        Lane1 = PLC2_Parameter_On_PC_Lane1,
+                        Lane2 = PLC2_Parameter_On_PC_Lane2
+                    };
+                    string json = JsonConvert.SerializeObject(plc2Config, Formatting.Indented);
+                    Write_Recipe_To_File_CS(json);
+                    
+                    // Ghi vào PLC2 - Lane1 (2 giá trị: DelayCamera, DelayReject)
+                    OperateResult operateResult1 = omronPLC_Hsl2.plc.Write(
+                        PLCAddress.Get("PLC2_Delay_Lane1_DM_C1"), 
+                        new int[] { int.Parse(delayCamera_Lane1), int.Parse(delayReject_Lane1) }
+                    );
+                    
+                    // Ghi vào PLC2 - Lane2 (2 giá trị: DelayCamera, DelayReject)
+                    OperateResult operateResult2 = omronPLC_Hsl2.plc.Write(
+                        PLCAddress.Get("PLC2_Delay_Lane2_DM_C1"), 
+                        new int[] { int.Parse(delayCamera_Lane1), int.Parse(delayReject_Lane1) }
+                    );
+                    
+                    // Kiểm tra kết quả
+                    if (operateResult1.IsSuccess && operateResult2.IsSuccess)
+                    {
+                        e.Result = operateResult1; // Trả về success
+                    }
+                    else
+                    {
+                        string errorMsg = "";
+                        if (!operateResult1.IsSuccess) errorMsg += $"Lane1: {operateResult1.Message}; ";
+                        if (!operateResult2.IsSuccess) errorMsg += $"Lane2: {operateResult2.Message}";
+                        e.Result = new Exception(errorMsg);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    e.Result = ex;
+                }
             }
             else
             {
