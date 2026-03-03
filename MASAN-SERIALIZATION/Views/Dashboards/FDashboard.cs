@@ -1117,7 +1117,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 this.InvokeIfRequired( () =>
                 {
-                    opFailC2.Value = readCount.Content[4] + readCount.Content[1];
+                    // Hiển thị tổng số sản phẩm lỗi của Camera Sub (fail + read fail)
+                    opFailC2.Value = readCameraSub.Content[4] + readCameraSub.Content[1];
                 } );
             }
             else
@@ -1995,6 +1996,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                     string activateDatetime = codeRow["ActivateDate"].ToString();
                                     string productionDate = codeRow["ProductionDate"].ToString();
 
+                                    // Xác định trạng thái Camera Sub dựa trên SubCamera_ActivateDate
+                                    bool hasSubCameraScanned = !string.IsNullOrEmpty(subCameraDatetime) && subCameraDatetime != "0";
+                                    string subCameraStatus = hasSubCameraScanned ? "1" : "0";
+
                                     // Kiểm tra mã trùng với old_database (chỉ kiểm tra nếu không bypass)
                                     if (!AppConfigs.Current.Check_Db_Old_Bypass)
                                     {
@@ -2027,9 +2032,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                             codeID = codeID.ToInt32(),
                                             cartonCode = cartonCode, //sẽ cập nhật sau khi gửi xuống PLC
                                             Main_Camera_Status = status, //chưa kích hoạt
-                                            Sub_Camera_Status = "0", //chưa kích hoạt từ camera phụ
+                                            Sub_Camera_Status = subCameraStatus, // trạng thái theo dữ liệu SubCamera_ActivateDate
                                             Activate_User = activateUser, //sẽ cập nhật sau khi kích hoạt
-                                            Sub_Camera_Activate_Datetime = subCameraDatetime, //chưa kích hoạt
+                                            Sub_Camera_Activate_Datetime = subCameraDatetime,
                                             Activate_Datetime = activateDatetime, //sẽ cập nhật sau khi kích hoạt
                                             Production_Datetime = productionDate, //ngày sản xuất sửa lại khi kích hoạt
                                         });
@@ -2045,7 +2050,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                             codeID = codeID.ToInt32(),
                                             cartonCode = cartonCode,
                                             Main_Camera_Status = status,
-                                            Sub_Camera_Status = "0", //khởi tạo chưa được scan bởi camera phụ
+                                            Sub_Camera_Status = subCameraStatus, // trạng thái theo dữ liệu SubCamera_ActivateDate
                                             Activate_User = activateUser,
                                             Sub_Camera_Activate_Datetime = subCameraDatetime,
                                             Activate_Datetime = activateDatetime,
@@ -2266,6 +2271,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                 string activateDatetime = codeRow["ActivateDate"].ToString();
                                 string productionDate = codeRow["ProductionDate"].ToString();
 
+                                // Xác định trạng thái Camera Sub dựa trên SubCamera_ActivateDate
+                                bool hasSubCameraScanned = !string.IsNullOrEmpty(subCameraDatetime) && subCameraDatetime != "0";
+                                string subCameraStatus = hasSubCameraScanned ? "1" : "0";
+
                                 // Kiểm tra mã trùng với old_database (chỉ kiểm tra nếu không bypass)
                                 if (!AppConfigs.Current.Check_Db_Old_Bypass)
                                 {
@@ -2298,9 +2307,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                         codeID = codeID.ToInt32(),
                                         cartonCode = cartonCode, //sẽ cập nhật sau khi gửi xuống PLC
                                         Main_Camera_Status = status, //chưa kích hoạt
-                                        Sub_Camera_Status = "0", //chưa kích hoạt từ camera phụ
+                                        Sub_Camera_Status = subCameraStatus, // trạng thái theo dữ liệu SubCamera_ActivateDate
                                         Activate_User = activateUser, //sẽ cập nhật sau khi kích hoạt
-                                        Sub_Camera_Activate_Datetime = subCameraDatetime, //chưa kích hoạt
+                                        Sub_Camera_Activate_Datetime = subCameraDatetime,
                                         Activate_Datetime = activateDatetime, //sẽ cập nhật sau khi kích hoạt
                                         Production_Datetime = productionDate, //ngày sản xuất sửa lại khi kích hoạt
                                     });
@@ -2316,7 +2325,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                         codeID = codeID.ToInt32(),
                                         cartonCode = cartonCode,
                                         Main_Camera_Status = status,
-                                        Sub_Camera_Status = "0", //khởi tạo chưa được scan bởi camera phụ
+                                        Sub_Camera_Status = subCameraStatus, // trạng thái theo dữ liệu SubCamera_ActivateDate
                                         Activate_User = activateUser,
                                         Sub_Camera_Activate_Datetime = subCameraDatetime,
                                         Activate_Datetime = activateDatetime,

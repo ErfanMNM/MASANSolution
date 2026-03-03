@@ -1322,6 +1322,42 @@ namespace MASAN_SERIALIZATION.Production
                 }
             }
 
+            /// <summary>
+            /// Kiểm tra lịch sử mã chai trong Records_CameraSub: 
+            /// - Trả về danh sách cartonID (distinct) mà mã này đã được đóng thùng với Status = 'Pass'.
+            /// - Dùng để phát hiện trường hợp một mã nằm trong >1 thùng (mã bị trùng thùng).
+            /// </summary>
+            public TResult Check_Code_CartonHistory_In_Records_CameraSub(string orderNo, string code)
+            {
+                try
+                {
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_CameraSub_{orderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return new TResult(false, "Cơ sở dữ liệu Record_CameraSub không tồn tại.");
+                    }
+
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = "SELECT DISTINCT cartonID FROM Records_CameraSub WHERE Code = @Code AND cartonID <> 0 AND Status = 'Pass'";
+                        using (var command = new SQLiteCommand(query, conn))
+                        {
+                            command.Parameters.AddWithValue("@Code", code);
+                            var adapter = new SQLiteDataAdapter(command);
+                            var table = new DataTable();
+                            adapter.Fill(table);
+
+                            return new TResult(true, "Lấy lịch sử cartonID thành công.", table.Rows.Count, table);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new TResult(false, $"Lỗi PH12 khi kiểm tra lịch sử cartonID trong Records_CameraSub: {ex.Message}");
+                }
+            }
+
             public bool Is_PO_Deleted(string orderNo)
             {
                 using (var conn = new SQLiteConnection($"Data Source={POLog_dbPath};Version=3;"))
@@ -2174,6 +2210,7 @@ namespace MASAN_SERIALIZATION.Production
         Error,
         DuSanPham,
         ThieuSanPham,
+        MaBiTrung,
         Pushing_to_Dic,
         Checking_Queue,
         Pause,

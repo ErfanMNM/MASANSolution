@@ -293,7 +293,34 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 string productionDate = SendCodes.Rows[i]["ProductionDate"].ToString();
                 string gtin = Globals.ProductionData.gtin;
                 string cartonCode = SendCodes.Rows[i]["cartonCode"].ToString();
-                
+
+                // ===== CƠ CHẾ CHECK ĐẶC BIỆT TRƯỚC KHI GỬI AWS =====
+                // Kiểm tra lịch sử mã chai trong Records_CameraSub xem đã từng nằm trong nhiều thùng chưa.
+                // Nếu một mã xuất hiện với Status = 'Pass' ở >1 cartonID => kích hoạt chế độ MaBiTrung và bỏ qua gửi AWS cho mã đó.
+                var cartonHistoryResult = Globals.ProductionData.getDataPO.Check_Code_CartonHistory_In_Records_CameraSub(orderNO, code);
+                if (cartonHistoryResult.issuccess && cartonHistoryResult.count > 1)
+                {
+                    // Mã đã nằm trong nhiều thùng khác nhau -> nghi ngờ lỗi công nhân/thao tác => không gửi AWS, kích hoạt trạng thái đặc biệt.
+                    Globals.Production_State = e_Production_State.MaBiTrung;
+
+                    // Ghi log chi tiết lên UI AWS
+                    var cartonIds = string.Join(", ",
+                        cartonHistoryResult.data.Rows
+                            .Cast<DataRow>()
+                            .Select(r => r["cartonID"].ToString())
+                            .Distinct());
+
+                    this.InvokeIfRequired(() =>
+                    {
+                        opNotiboardAndSend.Items.Insert(0,
+                            $"⚠ MÃ BỊ TRÙNG THÙNG (MaBiTrung) - BỎ QUA GỬI AWS: Code={code}, CartonIDs={cartonIds}");
+                    });
+
+                    // Bỏ qua mã này, sang bản ghi tiếp theo
+                    continue;
+                }
+                // ===== HẾT PHẦN CHECK ĐẶC BIỆT =====
+
                 //tạo dữ liệu gửi
                 AWSSendPayload payload = new AWSSendPayload
                 {
