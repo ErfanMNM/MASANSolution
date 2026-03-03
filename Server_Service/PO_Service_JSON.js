@@ -10,7 +10,7 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const sanitizeBodyMiddleware = require('./Mid/sanitizeBodyMiddleware');
 
 const app = express();
-const PORT = 49212; // Port khác để test song song
+const PORT = 49212; 
 
 app.use(cors());
 app.use(sanitizeBodyMiddleware);
