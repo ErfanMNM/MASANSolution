@@ -885,7 +885,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
             catch (Exception ex)
             {
-                //this.ShowErrorNotifier("Lỗi D002 khi khởi tạo task: " + ex.Message);
+                this.ShowErrorNotifier("Lỗi D002 khi khởi tạo task: " + ex.Message);
             }
         }
         #endregion
@@ -2432,15 +2432,15 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     break;
                 case e_Production_State.Waiting_Stop:
 
-                    bool isCartonReady4 = false;
-                    bool isCartonReady5 = false;
+                    //bool isCartonReady4 = false;
+                    //bool isCartonReady5 = false;
 
                     //kiểm tra thùng đang xếp xếp hết chưa
                     if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonData5))
                     {
                        if(cartonData5.Activate_Datetime != "0")
                         {
-                            isCartonReady4 = true;
+                            //isCartonReady4 = true;
                         }
                     }
 
@@ -2449,7 +2449,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     {
                         if (cartonDatat.Activate_Datetime != "0")
                         {
-                            isCartonReady5 = true;
+                            //isCartonReady5 = true;
                         }
                     }
 
