@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using static MASAN_SERIALIZATION.Utils.ExtensionMethods;
-using static SPMS1.OmronPLC_Hsl;
+using static SpT.OmronPLC_Hsl;
 
 namespace MASAN_SERIALIZATION.Views.Dashboards
 {
@@ -48,8 +48,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         {
             InitializeComponent();
             DashboardPageLog = new LogHelper<e_Dash_LogType>(Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "MASAN-SERIALIZATION", "Logs", "Pages", "PDAlog.ptl"));
+            // Expose PLC instances to Globals for use by Helpers
+            Globals.PLC_Instance = OMRON_PLC;
+            Globals.PLC_Instance_02 = OMRON_PLC_02;
         }
         #endregion
 
@@ -885,7 +888,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
             catch (Exception ex)
             {
-                //this.ShowErrorNotifier("Lỗi D002 khi khởi tạo task: " + ex.Message);
+                this.ShowErrorNotifier("Lỗi D002 khi khởi tạo task: " + ex.Message);
             }
         }
         #endregion
@@ -1840,6 +1843,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 Globals.Production_State = e_Production_State.Running;
             }
+
             if (state01 == 1)
             {
                 if(AppConfigs.Current.PLC_Duo_Mode)
@@ -2431,15 +2435,15 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     break;
                 case e_Production_State.Waiting_Stop:
 
-                    bool isCartonReady4 = false;
-                    bool isCartonReady5 = false;
+                    //bool isCartonReady4 = false;
+                    //bool isCartonReady5 = false;
 
                     //kiểm tra thùng đang xếp xếp hết chưa
                     if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonData5))
                     {
                        if(cartonData5.Activate_Datetime != "0")
                         {
-                            isCartonReady4 = true;
+                            //isCartonReady4 = true;
                         }
                     }
 
@@ -2448,7 +2452,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     {
                         if (cartonDatat.Activate_Datetime != "0")
                         {
-                            isCartonReady5 = true;
+                            //isCartonReady5 = true;
                         }
                     }
 

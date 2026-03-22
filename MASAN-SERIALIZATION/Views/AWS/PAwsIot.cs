@@ -4,7 +4,6 @@ using MASAN_SERIALIZATION.Production;
 using MASAN_SERIALIZATION.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SPMS1;
 using SpT.Logs;
 using Sunny.UI;
 using System;
@@ -217,10 +216,10 @@ namespace MASAN_SERIALIZATION.Views.AWS
         private void btnConnect_Click(object sender, EventArgs e)
         {
             return;
-            Connect_AWS();
-            bgw_send = new BackgroundWorker();
-            bgw_send.WorkerSupportsCancellation = true;
-            bgw_send.DoWork += Bgw_send_DoWork;
+            //Connect_AWS();
+            //bgw_send = new BackgroundWorker();
+            //bgw_send.WorkerSupportsCancellation = true;
+            //bgw_send.DoWork += Bgw_send_DoWork;
         }
 
         private void Bgw_send_DoWork(object sender, DoWorkEventArgs e)
@@ -275,10 +274,10 @@ namespace MASAN_SERIALIZATION.Views.AWS
         {
             return;
             // run task hàm AWS_Send_Datatable
-            if(!bgw_send.IsBusy)
-            {
-                bgw_send.RunWorkerAsync();
-            }
+            //if(!bgw_send.IsBusy)
+            //{
+              // bgw_send.RunWorkerAsync();
+            //}
         }
 
         private void AWS_Send_Datatable(DataTable SendCodes)
