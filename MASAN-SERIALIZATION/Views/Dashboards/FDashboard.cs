@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using static MASAN_SERIALIZATION.Utils.ExtensionMethods;
-using static SPMS1.OmronPLC_Hsl;
+using static SpT.OmronPLC_Hsl;
 
 namespace MASAN_SERIALIZATION.Views.Dashboards
 {
@@ -48,8 +48,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         {
             InitializeComponent();
             DashboardPageLog = new LogHelper<e_Dash_LogType>(Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "MASAN-SERIALIZATION", "Logs", "Pages", "PDAlog.ptl"));
+            // Expose PLC instances to Globals for use by Helpers
+            Globals.PLC_Instance = OMRON_PLC;
+            Globals.PLC_Instance_02 = OMRON_PLC_02;
         }
         #endregion
 

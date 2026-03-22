@@ -1,6 +1,7 @@
 using MASAN_SERIALIZATION.Configs;
 using MASAN_SERIALIZATION.Dialogs;
 using MASAN_SERIALIZATION.Enums;
+using MASAN_SERIALIZATION.Helpers;
 using MASAN_SERIALIZATION.Production;
 using MASAN_SERIALIZATION.Utils;
 using SpT.Logs;
@@ -10,6 +11,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -207,6 +209,12 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     }
                     break;
                 case e_Production_State.Check_After_Completed:
+                    break;
+                case e_Production_State.ThieuSanPham:
+                    HandleThieuSanPhamState();
+                    break;
+                case e_Production_State.KiemTraThieu:
+                    HandleKiemTraThieuState();
                     break;
                 // Other states can be handled as needed
                 default:
@@ -585,6 +593,154 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             else
             {
                 Globals.Production_State = e_Production_State.Ready;
+            }
+        }
+
+        /// <summary>
+        /// Handle ThieuSanPham state: enable btnResetPO, blink warning text, write alarm to PLC
+        /// </summary>
+        private void HandleThieuSanPhamState()
+        {
+            this.InvokeIfRequired(() =>
+            {
+                btnResetPO.Enabled = true;
+            });
+
+            // Start warning: blinking text on opTer + PLC alarm
+            ThieuSanPhamHelper.TriggerThieuSanPhamWarning(opTer);
+        }
+
+        /// <summary>
+        /// Handle KiemTraThieu state: process shortage check logic
+        /// TH1: Current carton has 0 products AND previous carton has < 24 -> Reset carton, close app
+        /// TH2: Everything else -> Show warning dialog, user contacts supplier
+        /// </summary>
+        private void HandleKiemTraThieuState()
+        {
+            // Disable btnResetPO to prevent re-clicking
+            this.InvokeIfRequired(() =>
+            {
+                btnResetPO.Enabled = false;
+            });
+
+            try
+            {
+                string orderNo = Globals.ProductionData.orderNo;
+
+                // 1. Get the current carton (the one with cartonCode != 0 that has the largest ID)
+                var maxCartonResult = Globals.ProductionData.getDataPO.Get_Max_Carton_ID(orderNo);
+                if (!maxCartonResult.issucess || maxCartonResult.MaxCartonID <= 0)
+                {
+                    this.InvokeIfRequired(() =>
+                    {
+                        this.ShowErrorDialog("Lỗi PP_TS01: Không tìm thấy thùng hiện tại.");
+                    });
+                    Globals.Production_State = e_Production_State.ThieuSanPham;
+                    return;
+                }
+
+                int currentCartonID = maxCartonResult.MaxCartonID;
+
+                // 2. Get current carton info
+                var currentCartonResult = Globals.ProductionData.getDataPO.Get_Carton_Info_By_ID(orderNo, currentCartonID);
+                if (!currentCartonResult.issucess || currentCartonResult.Carton == null)
+                {
+                    this.InvokeIfRequired(() =>
+                    {
+                        this.ShowErrorDialog("Lỗi PP_TS02: Không lấy được thông tin thùng hiện tại.");
+                    });
+                    Globals.Production_State = e_Production_State.ThieuSanPham;
+                    return;
+                }
+
+                string currentCartonCode = currentCartonResult.Carton["cartonCode"].ToString();
+
+                // 3. Check how many products are in the current carton
+                var currentProductsResult = Globals.ProductionData.getDataPO.Get_Product_Carton_Records(orderNo, currentCartonID);
+                int currentProductCount = currentProductsResult.issucess && currentProductsResult.Records != null
+                    ? currentProductsResult.Records.Rows.Count : 0;
+
+                // 4. Check if there is a previous carton
+                if (currentCartonID <= 1)
+                {
+                    // No previous carton exists, this is the first carton
+                    this.InvokeIfRequired(() =>
+                    {
+                        this.ShowErrorDialog(
+                            "Lỗi PP_TS03: Thùng đầu tiên thiếu sản phẩm. Vui lòng liên hệ nhà cung cấp để kiểm tra.");
+                    });
+                    Globals.Production_State = e_Production_State.ThieuSanPham;
+                    return;
+                }
+
+                int previousCartonID = currentCartonID - 1;
+
+                // 5. Check how many products are in the previous carton
+                var previousProductsResult = Globals.ProductionData.getDataPO.Get_Product_Carton_Records(orderNo, previousCartonID);
+                int previousProductCount = previousProductsResult.issucess && previousProductsResult.Records != null
+                    ? previousProductsResult.Records.Rows.Count : 0;
+
+                // 6. TH1: Current carton has 0 products AND previous carton has < cartonPack (24)
+                if (currentProductCount == 0 && previousProductCount < AppConfigs.Current.cartonPack)
+                {
+                    // Reset current carton: set cartonCode and Start_Datetime to 0
+                    bool resetOk = Globals.ProductionData.setDB.Reset_Carton_To_Unassigned(orderNo, currentCartonID);
+                    if (!resetOk)
+                    {
+                        this.InvokeIfRequired(() =>
+                        {
+                            this.ShowErrorDialog("Lỗi PP_TS04: Không thể reset thùng hiện tại. Vui lòng liên hệ nhà cung cấp.");
+                        });
+                        Globals.Production_State = e_Production_State.ThieuSanPham;
+                        return;
+                    }
+
+                    // Clear PLC alarm before closing
+                    ThieuSanPhamHelper.StopThieuSanPhamWarning();
+                    ThieuSanPhamHelper.ClearPLCAlarm();
+
+                    // Log the action
+                    _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Warning,
+                        $"TH1 - Reset thùng {currentCartonID} về trạng thái chưa đóng. Thùng trước đó ({previousCartonID}) có {previousProductCount} sản phẩm.");
+
+                    // Close the application
+                    this.InvokeIfRequired(() =>
+                    {
+                        UpdateStatusMessage("Đã reset thùng. Đóng phần mềm...", Color.Orange);
+                    });
+
+                    Task.Delay(1500).Wait();
+                    Application.Exit();
+                    return;
+                }
+
+                // 7. TH2: Everything else
+                this.InvokeIfRequired(() =>
+                {
+                    this.ShowErrorDialog(
+                        $"Lỗi PP_TS05: Phát hiện thiếu sản phẩm nghiêm trọng!\n\n" +
+                        $"Thùng hiện tại (ID: {currentCartonID}, Mã: {currentCartonCode}): {currentProductCount} sản phẩm\n" +
+                        $"Thùng trước đó (ID: {previousCartonID}): {previousProductCount} sản phẩm / {AppConfigs.Current.cartonPack} (quy định)\n\n" +
+                        $"Vui lòng DỪNG SẢN XUẤT và liên hệ nhà cung cấp để kiểm tra!" +
+                        $"THIẾU SẢN PHẨM NGHIÊM TRỌNG");
+                });
+
+                _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
+                    $"TH2 - Thiếu sản phẩm nghiêm trọng. Thùng hiện tại (ID:{currentCartonID}): {currentProductCount} sp. Thùng trước (ID:{previousCartonID}): {previousProductCount}/{AppConfigs.Current.cartonPack} sp.");
+
+                Globals.Production_State = e_Production_State.ThieuSanPham;
+            }
+            catch (Exception ex)
+            {
+                _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
+                    $"Lỗi PP_TS06 khi xử lý KiemTraThieu: {ex.Message}");
+
+                this.InvokeIfRequired(() =>
+                {
+                    this.ShowErrorDialog($"Lỗi PP_TS06: {ex.Message}");
+                });
+
+                Globals.Production_State = e_Production_State.ThieuSanPham;
             }
         }
 
@@ -1390,7 +1546,17 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void btnClosePO_Click(object sender, EventArgs e)
         {
-            
+            // Only allow click when in ThieuSanPham state
+            if (Globals.Production_State != e_Production_State.ThieuSanPham)
+            {
+                return;
+            }
+
+            Globals.Log.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.UserAction,
+                $"Người dùng nhấn btnResetPO ở trạng thái ThieuSanPham");
+
+            // Transition to KiemTraThieu state
+            Globals.Production_State = e_Production_State.KiemTraThieu;
         }
 
         private void btnReport_Click(object sender, EventArgs e)

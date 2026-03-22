@@ -1268,6 +1268,36 @@ namespace MASAN_SERIALIZATION.Production
                 }
             }
 
+            /// <summary>
+            /// Lấy thông tin thùng theo ID
+            /// </summary>
+            public (bool issucess, DataRow Carton, string message) Get_Carton_Info_By_ID(string orderNo, int cartonID)
+            {
+                try
+                {
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/carton_{orderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return (false, null, "Cơ sở dữ liệu ghi không tồn tại.");
+                    }
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = "SELECT * FROM Carton WHERE ID = @cartonID";
+                        var command = new SQLiteCommand(query, conn);
+                        command.Parameters.AddWithValue("@cartonID", cartonID);
+                        var adapter = new SQLiteDataAdapter(command);
+                        var table = new DataTable();
+                        adapter.Fill(table);
+                        return (table.Rows.Count > 0) ? (true, table.Rows[0], "Lấy thông tin thùng thành công.") : (false, null, "Không tìm thấy thùng với ID: " + cartonID);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return (false, null, $"Lỗi PH_TS01 khi lấy thông tin thùng: {ex.Message}");
+                }
+            }
+
             //lấy số lượng chai trong thùng theo id thùng
             public (bool issucess, int Count, string message) Get_Product_Carton_Count(string orderNo, int cartonID)
             {
@@ -1743,6 +1773,33 @@ namespace MASAN_SERIALIZATION.Production
 
             }
 
+            /// <summary>
+            /// Reset thùng về trạng thái chưa đóng: set cartonCode = 0, Start_Datetime = 0
+            /// </summary>
+            public bool Reset_Carton_To_Unassigned(string orderNo, int cartonID)
+            {
+                try
+                {
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/carton_{orderNo}.db";
+                    using (SQLiteConnection connection = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        connection.Open();
+                        string query = "UPDATE Carton SET cartonCode = 0, Start_Datetime = 0 WHERE ID = @ID";
+                        using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@ID", cartonID);
+                            int rowsAffected = command.ExecuteNonQuery();
+                            return rowsAffected > 0;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Lỗi P_TS08 khi reset thùng: {ex.Message}");
+                    return false;
+                }
+            }
+
             public void Insert_Record_Camera_Sub(ProductionCodeData_Record productionCodeData_Record, string orderNo)
             {
                 string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_CameraSub_{orderNo}.db";
@@ -2210,6 +2267,7 @@ namespace MASAN_SERIALIZATION.Production
         Error,
         DuSanPham,
         ThieuSanPham,
+        KiemTraThieu,
         MaBiTrung,
         Pushing_to_Dic,
         Checking_Queue,

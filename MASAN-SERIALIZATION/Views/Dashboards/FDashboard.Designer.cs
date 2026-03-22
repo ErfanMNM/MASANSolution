@@ -97,9 +97,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opsadfsdf = new Sunny.UI.UIPanel();
             this.Camera_Main = new SpT.Communications.TCP.TCPClient(this.components);
             this.Camera_Sub = new SpT.Communications.TCP.TCPClient(this.components);
-            this.OMRON_PLC = new SPMS1.OmronPLC_Hsl(this.components);
+            this.OMRON_PLC = new SpT.OmronPLC_Hsl(this.components);
             this.WK_Update_UI = new System.ComponentModel.BackgroundWorker();
-            this.OMRON_PLC_02 = new SPMS1.OmronPLC_Hsl(this.components);
+            this.OMRON_PLC_02 = new SpT.OmronPLC_Hsl(this.components);
             this.subpr = new System.ComponentModel.BackgroundWorker();
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTitlePanel5.SuspendLayout();
@@ -1141,10 +1141,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.OMRON_PLC.PLC_IP = "127.0.0.1";
             this.OMRON_PLC.PLC_PORT = 9600;
             this.OMRON_PLC.PLC_Ready_DM = "D16";
-            this.OMRON_PLC.PLC_STATUS = SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect;
+            this.OMRON_PLC.PLC_STATUS = SpT.OmronPLC_Hsl.PLCStatus.Disconnect;
             this.OMRON_PLC.Ready = 0;
             this.OMRON_PLC.Time_Update = 1500;
-            this.OMRON_PLC.PLCStatus_OnChange += new System.EventHandler<SPMS1.OmronPLC_Hsl.PLCStatusEventArgs>(this.OMRON_PLC_PLCStatus_OnChange);
+            this.OMRON_PLC.PLCStatus_OnChange += new System.EventHandler<SpT.OmronPLC_Hsl.PLCStatusEventArgs>(this.OMRON_PLC_PLCStatus_OnChange);
             // 
             // WK_Update_UI
             // 
@@ -1155,10 +1155,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.OMRON_PLC_02.PLC_IP = "192.168.169.2";
             this.OMRON_PLC_02.PLC_PORT = 9600;
             this.OMRON_PLC_02.PLC_Ready_DM = "D16";
-            this.OMRON_PLC_02.PLC_STATUS = SPMS1.OmronPLC_Hsl.PLCStatus.Disconnect;
+            this.OMRON_PLC_02.PLC_STATUS = SpT.OmronPLC_Hsl.PLCStatus.Disconnect;
             this.OMRON_PLC_02.Ready = 0;
             this.OMRON_PLC_02.Time_Update = 1500;
-            this.OMRON_PLC_02.PLCStatus_OnChange += new System.EventHandler<SPMS1.OmronPLC_Hsl.PLCStatusEventArgs>(this.OMRON_PLC_2_PLCStatus_OnChange);
+            this.OMRON_PLC_02.PLCStatus_OnChange += new System.EventHandler<SpT.OmronPLC_Hsl.PLCStatusEventArgs>(this.OMRON_PLC_2_PLCStatus_OnChange);
             // 
             // subpr
             // 
@@ -1253,7 +1253,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private Sunny.UI.UIListBox opHisCS;
         private SpT.Communications.TCP.TCPClient Camera_Main;
         private SpT.Communications.TCP.TCPClient Camera_Sub;
-        private SPMS1.OmronPLC_Hsl OMRON_PLC;
+        private SpT.OmronPLC_Hsl OMRON_PLC;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel1;
         private Sunny.UI.UIPanel opErrCount;
         private Sunny.UI.UIPanel opsadfsdf;
@@ -1273,7 +1273,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private Sunny.UI.UIPanel opC1_State;
         private Sunny.UI.UISymbolButton btnClearNoti;
         private Sunny.UI.UISymbolButton btnClearPLC;
-        private SPMS1.OmronPLC_Hsl OMRON_PLC_02;
+        private SpT.OmronPLC_Hsl OMRON_PLC_02;
         private System.ComponentModel.BackgroundWorker subpr;
     }
 }

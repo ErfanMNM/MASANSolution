@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static AwsIotClientHelper;
+using HslCommunication;
+using SpT;
 
 namespace MASAN_SERIALIZATION
 {
@@ -50,6 +52,12 @@ namespace MASAN_SERIALIZATION
 
         public static bool PLC_Connected_02 { get; set; } = false;
         public static PLCCounter CameraMain_PLC_Counter { get; set; } = new PLCCounter(); // Biến toàn cục để lưu trữ thông tin đếm sản phẩm từ camera chính
+
+        // Static references to PLC instances (initialized from FDashboard)
+        public static OmronPLC_Hsl PLC_Instance { get; set; }
+        public static OmronPLC_Hsl PLC_Instance_02 { get; set; }
+        public static HslCommunication.Core.IReadWriteNet PLC { get { return PLC_Instance?.plc; } }
+        public static HslCommunication.Core.IReadWriteNet PLC_02 { get { return PLC_Instance_02?.plc; } }
 
         public static PLCCounter CameraSub_PLC_Counter { get; set; } = new PLCCounter(); // Biến toàn cục để lưu trữ thông tin đếm sản phẩm từ camera phụ
 
