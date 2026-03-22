@@ -65,7 +65,7 @@
             this.uiTableLayoutPanel4 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel5 = new Sunny.UI.UITableLayoutPanel();
             this.btnRUN = new Sunny.UI.UISymbolButton();
-            this.btnClosePO = new Sunny.UI.UISymbolButton();
+            this.btnResetPO = new Sunny.UI.UISymbolButton();
             this.btnProductionDate = new Sunny.UI.UISymbolButton();
             this.btnPO = new Sunny.UI.UISymbolButton();
             this.uiGroupBox1 = new Sunny.UI.UIGroupBox();
@@ -82,13 +82,13 @@
             this.opPassCount = new Sunny.UI.UIPanel();
             this.opFailCount = new Sunny.UI.UIPanel();
             this.opAWSFullOKCount = new Sunny.UI.UIPanel();
+            this.uiTableLayoutPanel7 = new Sunny.UI.UITableLayoutPanel();
+            this.opTer = new Sunny.UI.UIRichTextBox();
+            this.btnReport = new Sunny.UI.UISymbolButton();
             this.uiTableLayoutPanel6 = new Sunny.UI.UITableLayoutPanel();
             this.opCZRunCount = new Sunny.UI.UIPanel();
             this.uiPanel3 = new Sunny.UI.UIPanel();
             this.opProductName = new Sunny.UI.UIPanel();
-            this.uiTableLayoutPanel7 = new Sunny.UI.UITableLayoutPanel();
-            this.opTer = new Sunny.UI.UIRichTextBox();
-            this.btnReport = new Sunny.UI.UISymbolButton();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel2.SuspendLayout();
@@ -99,8 +99,8 @@
             this.uiTableLayoutPanel5.SuspendLayout();
             this.uiGroupBox1.SuspendLayout();
             this.uiTableLayoutPanel8.SuspendLayout();
-            this.uiTableLayoutPanel6.SuspendLayout();
             this.uiTableLayoutPanel7.SuspendLayout();
+            this.uiTableLayoutPanel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // uiTitlePanel1
@@ -754,7 +754,7 @@
             this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.uiTableLayoutPanel5.Controls.Add(this.btnRUN, 0, 0);
-            this.uiTableLayoutPanel5.Controls.Add(this.btnClosePO, 3, 0);
+            this.uiTableLayoutPanel5.Controls.Add(this.btnResetPO, 3, 0);
             this.uiTableLayoutPanel5.Controls.Add(this.btnProductionDate, 2, 0);
             this.uiTableLayoutPanel5.Controls.Add(this.btnPO, 1, 0);
             this.uiTableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -786,24 +786,24 @@
             this.btnRUN.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnRUN.Click += new System.EventHandler(this.btnRUN_Click);
             // 
-            // btnClosePO
+            // btnResetPO
             // 
-            this.btnClosePO.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnClosePO.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnClosePO.Enabled = false;
-            this.btnClosePO.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(188)))), ((int)(((byte)(156)))));
-            this.btnClosePO.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.btnClosePO.Location = new System.Drawing.Point(705, 2);
-            this.btnClosePO.Margin = new System.Windows.Forms.Padding(2);
-            this.btnClosePO.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btnClosePO.Name = "btnClosePO";
-            this.btnClosePO.Radius = 8;
-            this.btnClosePO.Size = new System.Drawing.Size(121, 43);
-            this.btnClosePO.Symbol = 561534;
-            this.btnClosePO.TabIndex = 0;
-            this.btnClosePO.Text = "Xóa PO";
-            this.btnClosePO.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnClosePO.Click += new System.EventHandler(this.btnClosePO_Click);
+            this.btnResetPO.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnResetPO.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnResetPO.Enabled = false;
+            this.btnResetPO.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(188)))), ((int)(((byte)(156)))));
+            this.btnResetPO.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.btnResetPO.Location = new System.Drawing.Point(705, 2);
+            this.btnResetPO.Margin = new System.Windows.Forms.Padding(2);
+            this.btnResetPO.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnResetPO.Name = "btnResetPO";
+            this.btnResetPO.Radius = 8;
+            this.btnResetPO.Size = new System.Drawing.Size(121, 43);
+            this.btnResetPO.Symbol = 561534;
+            this.btnResetPO.TabIndex = 0;
+            this.btnResetPO.Text = "RESET LỖI";
+            this.btnResetPO.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnResetPO.Click += new System.EventHandler(this.btnClosePO_Click);
             // 
             // btnProductionDate
             // 
@@ -1082,6 +1082,52 @@
             this.opAWSFullOKCount.Text = "-";
             this.opAWSFullOKCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // uiTableLayoutPanel7
+            // 
+            this.uiTableLayoutPanel7.ColumnCount = 2;
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 84.38257F));
+            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15.61743F));
+            this.uiTableLayoutPanel7.Controls.Add(this.opTer, 0, 0);
+            this.uiTableLayoutPanel7.Controls.Add(this.btnReport, 1, 0);
+            this.uiTableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel7.Location = new System.Drawing.Point(3, 147);
+            this.uiTableLayoutPanel7.Name = "uiTableLayoutPanel7";
+            this.uiTableLayoutPanel7.RowCount = 1;
+            this.uiTableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel7.Size = new System.Drawing.Size(826, 56);
+            this.uiTableLayoutPanel7.TabIndex = 16;
+            this.uiTableLayoutPanel7.TagString = null;
+            // 
+            // opTer
+            // 
+            this.opTer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opTer.FillColor = System.Drawing.Color.White;
+            this.opTer.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.opTer.Location = new System.Drawing.Point(4, 5);
+            this.opTer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.opTer.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opTer.Name = "opTer";
+            this.opTer.Padding = new System.Windows.Forms.Padding(2);
+            this.opTer.ShowText = false;
+            this.opTer.Size = new System.Drawing.Size(689, 46);
+            this.opTer.TabIndex = 16;
+            this.opTer.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btnReport
+            // 
+            this.btnReport.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnReport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnReport.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnReport.Location = new System.Drawing.Point(700, 3);
+            this.btnReport.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnReport.Name = "btnReport";
+            this.btnReport.Size = new System.Drawing.Size(123, 50);
+            this.btnReport.Symbol = 61787;
+            this.btnReport.TabIndex = 3;
+            this.btnReport.Text = "Báo Cáo";
+            this.btnReport.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnReport.Click += new System.EventHandler(this.btnReport_Click);
+            // 
             // uiTableLayoutPanel6
             // 
             this.uiTableLayoutPanel6.ColumnCount = 3;
@@ -1148,52 +1194,6 @@
             this.opProductName.Text = "-";
             this.opProductName.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // uiTableLayoutPanel7
-            // 
-            this.uiTableLayoutPanel7.ColumnCount = 2;
-            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 84.38257F));
-            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15.61743F));
-            this.uiTableLayoutPanel7.Controls.Add(this.opTer, 0, 0);
-            this.uiTableLayoutPanel7.Controls.Add(this.btnReport, 1, 0);
-            this.uiTableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel7.Location = new System.Drawing.Point(3, 147);
-            this.uiTableLayoutPanel7.Name = "uiTableLayoutPanel7";
-            this.uiTableLayoutPanel7.RowCount = 1;
-            this.uiTableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel7.Size = new System.Drawing.Size(826, 56);
-            this.uiTableLayoutPanel7.TabIndex = 16;
-            this.uiTableLayoutPanel7.TagString = null;
-            // 
-            // opTer
-            // 
-            this.opTer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opTer.FillColor = System.Drawing.Color.White;
-            this.opTer.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.opTer.Location = new System.Drawing.Point(4, 5);
-            this.opTer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.opTer.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opTer.Name = "opTer";
-            this.opTer.Padding = new System.Windows.Forms.Padding(2);
-            this.opTer.ShowText = false;
-            this.opTer.Size = new System.Drawing.Size(689, 46);
-            this.opTer.TabIndex = 16;
-            this.opTer.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // btnReport
-            // 
-            this.btnReport.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnReport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnReport.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnReport.Location = new System.Drawing.Point(700, 3);
-            this.btnReport.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btnReport.Name = "btnReport";
-            this.btnReport.Size = new System.Drawing.Size(123, 50);
-            this.btnReport.Symbol = 61787;
-            this.btnReport.TabIndex = 3;
-            this.btnReport.Text = "Báo Cáo";
-            this.btnReport.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnReport.Click += new System.EventHandler(this.btnReport_Click);
-            // 
             // PPOInfo
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1214,8 +1214,8 @@
             this.uiTableLayoutPanel5.ResumeLayout(false);
             this.uiGroupBox1.ResumeLayout(false);
             this.uiTableLayoutPanel8.ResumeLayout(false);
-            this.uiTableLayoutPanel6.ResumeLayout(false);
             this.uiTableLayoutPanel7.ResumeLayout(false);
+            this.uiTableLayoutPanel6.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1255,7 +1255,7 @@
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel4;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel5;
         private Sunny.UI.UISymbolButton btnRUN;
-        private Sunny.UI.UISymbolButton btnClosePO;
+        private Sunny.UI.UISymbolButton btnResetPO;
         private Sunny.UI.UISymbolButton btnProductionDate;
         private Sunny.UI.UISymbolButton btnPO;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel6;

@@ -1840,6 +1840,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 Globals.Production_State = e_Production_State.Running;
             }
+
             if (state01 == 1)
             {
                 if(AppConfigs.Current.PLC_Duo_Mode)

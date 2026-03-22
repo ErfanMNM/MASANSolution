@@ -182,7 +182,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                         {
                             UpdateStatusMessage("Đơn hàng đã hoàn thành, Vui lòng chọn đơn hàng khác.", Color.Red);
                             btnPO.Enabled = true;
-                            btnClosePO.Enabled = false;
+                            btnResetPO.Enabled = false;
                             btnRUN.Enabled = false;
                             btnProductionDate.Enabled = false;
                         }
@@ -234,7 +234,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 this.InvokeIfRequired(() => {
                     btnPO.Enabled = true;
-                    btnClosePO.Enabled = true;
+                    btnResetPO.Enabled = true;
                 });
             }
         }
@@ -460,7 +460,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 {
                     btnProductionDate.Enabled = true;
                     btnPO.Enabled = false;
-                    btnClosePO.Enabled = false;
+                    btnResetPO.Enabled = false;
                 }
             });
         }
@@ -484,7 +484,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 {
                     btnProductionDate.Enabled = false;
                     btnPO.Enabled = true;
-                    btnClosePO.Enabled = false;
+                    btnResetPO.Enabled = false;
                     btnRUN.Enabled = false;
                 }
             });
@@ -1280,7 +1280,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 UpdateStatusMessage($"Đơn hàng {ipOrderNO.SelectedText} đã được lưu thành công.", Color.Green);
                 
                 btnPO.Enabled = true;
-                btnClosePO.Enabled = true;
+                btnResetPO.Enabled = true;
                 btnRUN.Enabled = true;
                 btnPO.Text = "Đổi PO";
             });
@@ -1330,8 +1330,8 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     btnPO.Text = "Lưu PO";
                     btnPO.Symbol = 61639;
 
-                    btnClosePO.Enabled = true;
-                    btnClosePO.Text = "Làm mới danh sách";
+                    btnResetPO.Enabled = true;
+                    //btnClosePO.Text = "Làm mới danh sách";
                     btnRUN.Enabled = false;
                 }
             });
@@ -1348,7 +1348,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
                 btnPO.Enabled = false;
                 btnProductionDate.Enabled = false;
-                btnClosePO.Enabled = false;
+                btnResetPO.Enabled = false;
             });
         }
 
@@ -1362,13 +1362,13 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     btnPO.FillColor = Color.FromArgb(52, 152, 219);
                     btnPO.Text = "Chọn PO";
                     btnPO.Symbol = 61508;
-                    btnClosePO.Enabled = true;
+                    btnResetPO.Enabled = true;
                     btnProductionDate.Enabled = false;
                 }
                 else
                 {
                     btnPO.Enabled = false;
-                    btnClosePO.Enabled = false;
+                    btnResetPO.Enabled = false;
                     btnProductionDate.Enabled = true;
                 }
 
@@ -1390,50 +1390,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void btnClosePO_Click(object sender, EventArgs e)
         {
-            if(Globals.Production_State == e_Production_State.Editing)
-            {
-                Globals.ProductionData.getfromMES.MES_Load_OrderNo_ToComboBox(ipOrderNO);
-                //ghi logs người dùng load lại danh sách PO
-                _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.UserAction, "Người dùng load lại danh sách đơn hàng từ MES");
-                return;
-            }
-            //xóa PO
-            if (Globals.CurrentUser.Role != "Admin")
-            {
-                this.ShowErrorDialog("Lỗi PP403: Bạn không có quyền xóa đơn hàng, Vui lòng liên hệ quản trị viên.");
-                return;
-            }
-
-            if(Globals.ProductionData.orderNo == "PO001")
-            {
-                this.ShowErrorDialog("PO mặc định không thể xóa");
-                return;
-            }
-
-            using (var dialog = new Pom_dialog())
-            {
-                dialog.Key2FA = Globals.CurrentUser.Key2FA;
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    //thực hiện thao tác xóa PO
-
-                    //ghi logs người dùng xác nhận xóa PO
-                    _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.UserAction, $"Người dùng xác nhận xóa đơn hàng {Globals.ProductionData.orderNo} với lý do: {dialog.lydo}");
-
-                    Globals.ProductionData.Delete_PO(Globals.ProductionData.orderNo, Globals.CurrentUser.Username);
-                    //chuyển sang chế độ NOPO
-                    SetEditMode();
-                    Globals.ProductionData.getfromMES.MES_Load_OrderNo_ToComboBox(ipOrderNO);
-                    Globals.Production_State = e_Production_State.NoSelectedPO;
-                    
-                }
-                else
-                {
-                    //nếu không đồng ý thì không làm gì cả
-                    return;
-                }
-            }
-
+            
         }
 
         private void btnReport_Click(object sender, EventArgs e)
