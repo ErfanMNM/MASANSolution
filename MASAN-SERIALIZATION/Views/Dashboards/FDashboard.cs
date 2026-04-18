@@ -23,6 +23,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using ZXing.QrCode.Internal;
 using static MASAN_SERIALIZATION.Utils.ExtensionMethods;
 using static SpT.OmronPLC_Hsl;
 
@@ -601,6 +602,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 bool successSend = false;
                 sw.Stop();
                 currentCameraSubProcessingTime = sw.Elapsed.TotalMilliseconds;
+
+                //ĐỌC ID HIỆN TẠI DƯỚI PLC
+
                 if (AppConfigs.Current.PLC_Duo_Mode)
                 {
                     successSend = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), sendCode);
@@ -610,7 +614,13 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     successSend = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), sendCode);
                 }
 
-                
+
+
+                //Kiểm tra Timeout ngay sau khi gửi PLC, nếu gửi không thành công cũng tính là timeout
+
+                //Mode VIP
+
+                //Đọc
 
                 if (successSend)
                 {
@@ -683,6 +693,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                     return;
                 }
+
+
 
                 //nếu gửi PLC thất bại
                 Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
