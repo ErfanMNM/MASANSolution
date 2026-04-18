@@ -63,6 +63,7 @@ namespace MASAN_SERIALIZATION.Configs
         public int CameraSub_Timeout_Ms { get; set; } // Thời gian timeout cho CameraSub (ms)
         public int CameraSub_Polling_Interval_Ms { get; set; } // Thời gian polling interval cho CameraSub (ms)
         public bool CameraSub_Timeout_Log_Enabled { get; set; } // Bật/Tắt log chi tiết cho timeout checking
+        public bool CameraSub_Timeout_Mode_2 { get; set; } // Bật/Tắt chế độ timeout thứ 2 cho CameraSub (nếu có, có thể để false nếu không sử dụng)
         public bool TestMode { get; set; } // Chế độ kiểm tra (Test Mode)
 
         public bool AWS_Dev_Mode { get; set; } // Bật/Tắt chế độ phát triển AWS
@@ -121,6 +122,7 @@ namespace MASAN_SERIALIZATION.Configs
             TestMode = false; // Mặc định không bật chế độ kiểm tra (Test Mode)
             Check_Db_Old_Active = false; // Mặc định tắt kiểm tra mã trùng với database cũ
             Check_Db_Old_Bypass = false; // Mặc định không bypass tính năng kiểm tra mã trùng
+            CameraMain_DuplicateReject_Enabled = false; // Mặc định tắt cơ chế đá sản phẩm khi phát hiện mã trùng tại camera chính để chuyển sang chỉ cảnh báo trên
         }
     }
 }

@@ -52,7 +52,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel15 = new Sunny.UI.UITableLayoutPanel();
             this.btnClearNoti = new Sunny.UI.UISymbolButton();
             this.uiPanel1 = new Sunny.UI.UIPanel();
-            this.opGTIN = new Sunny.UI.UIPanel();
             this.uiPanel7 = new Sunny.UI.UIPanel();
             this.oporderNO = new Sunny.UI.UIPanel();
             this.uiPanel10 = new Sunny.UI.UIPanel();
@@ -61,6 +60,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiPanel11 = new Sunny.UI.UIPanel();
             this.uiPanel13 = new Sunny.UI.UIPanel();
             this.btnClearPLC = new Sunny.UI.UISymbolButton();
+            this.uiTableLayoutPanel10 = new Sunny.UI.UITableLayoutPanel();
+            this.opMaxProcessingTime = new Sunny.UI.UIPanel();
+            this.opCurrentProcessingTime = new Sunny.UI.UIPanel();
             this.uiTitlePanel3 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel4 = new Sunny.UI.UITableLayoutPanel();
             this.uiTitlePanel6 = new Sunny.UI.UITitlePanel();
@@ -100,9 +102,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.WK_Update_UI = new System.ComponentModel.BackgroundWorker();
             this.OMRON_PLC_02 = new SpT.OmronPLC_Hsl(this.components);
             this.subpr = new System.ComponentModel.BackgroundWorker();
-            this.uiTableLayoutPanel10 = new Sunny.UI.UITableLayoutPanel();
-            this.opCurrentProcessingTime = new Sunny.UI.UIPanel();
-            this.opMaxProcessingTime = new Sunny.UI.UIPanel();
+            this.uiTableLayoutPanel11 = new Sunny.UI.UITableLayoutPanel();
+            this.opPLCMaxProcessingTime = new Sunny.UI.UIPanel();
+            this.opPLCCurrentProcessingTime = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTitlePanel5.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -110,6 +112,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTitlePanel4.SuspendLayout();
             this.uiTableLayoutPanel7.SuspendLayout();
             this.uiTableLayoutPanel15.SuspendLayout();
+            this.uiTableLayoutPanel10.SuspendLayout();
             this.uiTitlePanel3.SuspendLayout();
             this.uiTableLayoutPanel4.SuspendLayout();
             this.uiTitlePanel6.SuspendLayout();
@@ -130,7 +133,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel16.SuspendLayout();
             this.uiTableLayoutPanel37.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
-            this.uiTableLayoutPanel10.SuspendLayout();
+            this.uiTableLayoutPanel11.SuspendLayout();
             this.SuspendLayout();
             // 
             // uiTableLayoutPanel3
@@ -437,9 +440,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel15.ColumnCount = 2;
             this.uiTableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40.28169F));
             this.uiTableLayoutPanel15.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 59.71831F));
+            this.uiTableLayoutPanel15.Controls.Add(this.uiTableLayoutPanel11, 1, 3);
             this.uiTableLayoutPanel15.Controls.Add(this.btnClearNoti, 0, 5);
             this.uiTableLayoutPanel15.Controls.Add(this.uiPanel1, 0, 4);
-            this.uiTableLayoutPanel15.Controls.Add(this.opGTIN, 1, 3);
             this.uiTableLayoutPanel15.Controls.Add(this.uiPanel7, 0, 0);
             this.uiTableLayoutPanel15.Controls.Add(this.oporderNO, 1, 0);
             this.uiTableLayoutPanel15.Controls.Add(this.uiPanel10, 0, 1);
@@ -490,19 +493,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiPanel1.TabIndex = 30;
             this.uiPanel1.Text = "Thời gian xử lý";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opGTIN
-            // 
-            this.opGTIN.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opGTIN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opGTIN.Location = new System.Drawing.Point(144, 158);
-            this.opGTIN.Margin = new System.Windows.Forms.Padding(2);
-            this.opGTIN.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opGTIN.Name = "opGTIN";
-            this.opGTIN.Size = new System.Drawing.Size(209, 48);
-            this.opGTIN.TabIndex = 29;
-            this.opGTIN.Text = "...";
-            this.opGTIN.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiPanel7
             // 
@@ -595,7 +585,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiPanel13.Name = "uiPanel13";
             this.uiPanel13.Size = new System.Drawing.Size(138, 48);
             this.uiPanel13.TabIndex = 5;
-            this.uiPanel13.Text = "GTIN";
+            this.uiPanel13.Text = "PLC phản hồi";
             this.uiPanel13.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnClearPLC
@@ -612,6 +602,49 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.btnClearPLC.Text = "Xóa Lỗi PLC";
             this.btnClearPLC.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnClearPLC.Click += new System.EventHandler(this.btnClearPLC_Click);
+            // 
+            // uiTableLayoutPanel10
+            // 
+            this.uiTableLayoutPanel10.ColumnCount = 2;
+            this.uiTableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel10.Controls.Add(this.opMaxProcessingTime, 1, 0);
+            this.uiTableLayoutPanel10.Controls.Add(this.opCurrentProcessingTime, 0, 0);
+            this.uiTableLayoutPanel10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel10.Location = new System.Drawing.Point(144, 210);
+            this.uiTableLayoutPanel10.Margin = new System.Windows.Forms.Padding(2);
+            this.uiTableLayoutPanel10.Name = "uiTableLayoutPanel10";
+            this.uiTableLayoutPanel10.RowCount = 1;
+            this.uiTableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel10.Size = new System.Drawing.Size(209, 53);
+            this.uiTableLayoutPanel10.TabIndex = 34;
+            this.uiTableLayoutPanel10.TagString = null;
+            // 
+            // opMaxProcessingTime
+            // 
+            this.opMaxProcessingTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opMaxProcessingTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opMaxProcessingTime.Location = new System.Drawing.Point(106, 2);
+            this.opMaxProcessingTime.Margin = new System.Windows.Forms.Padding(2);
+            this.opMaxProcessingTime.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opMaxProcessingTime.Name = "opMaxProcessingTime";
+            this.opMaxProcessingTime.Size = new System.Drawing.Size(101, 49);
+            this.opMaxProcessingTime.TabIndex = 33;
+            this.opMaxProcessingTime.Text = "...";
+            this.opMaxProcessingTime.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // opCurrentProcessingTime
+            // 
+            this.opCurrentProcessingTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opCurrentProcessingTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opCurrentProcessingTime.Location = new System.Drawing.Point(2, 2);
+            this.opCurrentProcessingTime.Margin = new System.Windows.Forms.Padding(2);
+            this.opCurrentProcessingTime.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opCurrentProcessingTime.Name = "opCurrentProcessingTime";
+            this.opCurrentProcessingTime.Size = new System.Drawing.Size(100, 49);
+            this.opCurrentProcessingTime.TabIndex = 32;
+            this.opCurrentProcessingTime.Text = "...";
+            this.opCurrentProcessingTime.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiTitlePanel3
             // 
@@ -1155,48 +1188,48 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             // 
             this.subpr.DoWork += new System.ComponentModel.DoWorkEventHandler(this.subpr_DoWork);
             // 
-            // uiTableLayoutPanel10
+            // uiTableLayoutPanel11
             // 
-            this.uiTableLayoutPanel10.ColumnCount = 2;
-            this.uiTableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel10.Controls.Add(this.opMaxProcessingTime, 1, 0);
-            this.uiTableLayoutPanel10.Controls.Add(this.opCurrentProcessingTime, 0, 0);
-            this.uiTableLayoutPanel10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel10.Location = new System.Drawing.Point(144, 210);
-            this.uiTableLayoutPanel10.Margin = new System.Windows.Forms.Padding(2);
-            this.uiTableLayoutPanel10.Name = "uiTableLayoutPanel10";
-            this.uiTableLayoutPanel10.RowCount = 1;
-            this.uiTableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel10.Size = new System.Drawing.Size(209, 53);
-            this.uiTableLayoutPanel10.TabIndex = 34;
-            this.uiTableLayoutPanel10.TagString = null;
+            this.uiTableLayoutPanel11.ColumnCount = 2;
+            this.uiTableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel11.Controls.Add(this.opPLCMaxProcessingTime, 1, 0);
+            this.uiTableLayoutPanel11.Controls.Add(this.opPLCCurrentProcessingTime, 0, 0);
+            this.uiTableLayoutPanel11.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel11.Location = new System.Drawing.Point(144, 158);
+            this.uiTableLayoutPanel11.Margin = new System.Windows.Forms.Padding(2);
+            this.uiTableLayoutPanel11.Name = "uiTableLayoutPanel11";
+            this.uiTableLayoutPanel11.RowCount = 1;
+            this.uiTableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel11.Size = new System.Drawing.Size(209, 48);
+            this.uiTableLayoutPanel11.TabIndex = 35;
+            this.uiTableLayoutPanel11.TagString = null;
             // 
-            // opCurrentProcessingTime
+            // opPLCMaxProcessingTime
             // 
-            this.opCurrentProcessingTime.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opCurrentProcessingTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opCurrentProcessingTime.Location = new System.Drawing.Point(2, 2);
-            this.opCurrentProcessingTime.Margin = new System.Windows.Forms.Padding(2);
-            this.opCurrentProcessingTime.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opCurrentProcessingTime.Name = "opCurrentProcessingTime";
-            this.opCurrentProcessingTime.Size = new System.Drawing.Size(100, 49);
-            this.opCurrentProcessingTime.TabIndex = 32;
-            this.opCurrentProcessingTime.Text = "...";
-            this.opCurrentProcessingTime.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.opPLCMaxProcessingTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opPLCMaxProcessingTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opPLCMaxProcessingTime.Location = new System.Drawing.Point(106, 2);
+            this.opPLCMaxProcessingTime.Margin = new System.Windows.Forms.Padding(2);
+            this.opPLCMaxProcessingTime.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opPLCMaxProcessingTime.Name = "opPLCMaxProcessingTime";
+            this.opPLCMaxProcessingTime.Size = new System.Drawing.Size(101, 44);
+            this.opPLCMaxProcessingTime.TabIndex = 33;
+            this.opPLCMaxProcessingTime.Text = "...";
+            this.opPLCMaxProcessingTime.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // opMaxProcessingTime
+            // opPLCCurrentProcessingTime
             // 
-            this.opMaxProcessingTime.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opMaxProcessingTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opMaxProcessingTime.Location = new System.Drawing.Point(106, 2);
-            this.opMaxProcessingTime.Margin = new System.Windows.Forms.Padding(2);
-            this.opMaxProcessingTime.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opMaxProcessingTime.Name = "opMaxProcessingTime";
-            this.opMaxProcessingTime.Size = new System.Drawing.Size(101, 49);
-            this.opMaxProcessingTime.TabIndex = 33;
-            this.opMaxProcessingTime.Text = "...";
-            this.opMaxProcessingTime.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.opPLCCurrentProcessingTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opPLCCurrentProcessingTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opPLCCurrentProcessingTime.Location = new System.Drawing.Point(2, 2);
+            this.opPLCCurrentProcessingTime.Margin = new System.Windows.Forms.Padding(2);
+            this.opPLCCurrentProcessingTime.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opPLCCurrentProcessingTime.Name = "opPLCCurrentProcessingTime";
+            this.opPLCCurrentProcessingTime.Size = new System.Drawing.Size(100, 44);
+            this.opPLCCurrentProcessingTime.TabIndex = 32;
+            this.opPLCCurrentProcessingTime.Text = "...";
+            this.opPLCCurrentProcessingTime.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // FDashboard
             // 
@@ -1213,6 +1246,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTitlePanel4.ResumeLayout(false);
             this.uiTableLayoutPanel7.ResumeLayout(false);
             this.uiTableLayoutPanel15.ResumeLayout(false);
+            this.uiTableLayoutPanel10.ResumeLayout(false);
             this.uiTitlePanel3.ResumeLayout(false);
             this.uiTableLayoutPanel4.ResumeLayout(false);
             this.uiTitlePanel6.ResumeLayout(false);
@@ -1233,7 +1267,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel16.ResumeLayout(false);
             this.uiTableLayoutPanel37.ResumeLayout(false);
             this.uiTableLayoutPanel1.ResumeLayout(false);
-            this.uiTableLayoutPanel10.ResumeLayout(false);
+            this.uiTableLayoutPanel11.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1260,7 +1294,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel7;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel15;
         private Sunny.UI.UIPanel uiPanel1;
-        private Sunny.UI.UIPanel opGTIN;
         private Sunny.UI.UIPanel uiPanel7;
         private Sunny.UI.UIPanel oporderNO;
         private Sunny.UI.UIPanel uiPanel10;
@@ -1312,5 +1345,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel10;
         private Sunny.UI.UIPanel opMaxProcessingTime;
         private Sunny.UI.UIPanel opCurrentProcessingTime;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel11;
+        private Sunny.UI.UIPanel opPLCMaxProcessingTime;
+        private Sunny.UI.UIPanel opPLCCurrentProcessingTime;
     }
 }
