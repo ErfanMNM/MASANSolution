@@ -28,6 +28,32 @@ namespace MASAN_SERIALIZATION.Helpers
 
     public static class CameraSubPlcSyncV2Helper
     {
+        // Overload hỗ trợ các call-site dùng ushort cho length (phổ biến với API PLC)
+        public static CameraSubSyncV2Result WaitAndResolve(
+            Func<string, ushort, OperateResult<int[]>> readInt32,
+            string currentIdAddress,
+            string currentStatusAddress,
+            string historyIdStartAddress,
+            string historyStatusStartAddress,
+            int timeoutMs,
+            int pollingIntervalMs,
+            Func<int, bool> isPassStatus,
+            Func<int, bool> isTimeoutStatus)
+        {
+            Func<string, int, OperateResult<int[]>> adapter = (address, length) => readInt32(address, (ushort)length);
+
+            return WaitAndResolve(
+                adapter,
+                currentIdAddress,
+                currentStatusAddress,
+                historyIdStartAddress,
+                historyStatusStartAddress,
+                timeoutMs,
+                pollingIntervalMs,
+                isPassStatus,
+                isTimeoutStatus);
+        }
+
         public static CameraSubSyncV2Result WaitAndResolve(
             Func<string, int, OperateResult<int[]>> readInt32,
             string currentIdAddress,
