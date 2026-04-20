@@ -2,6 +2,7 @@ using HslCommunication;
 using HslCommunication.Profinet.Inovance;
 using MASAN_SERIALIZATION.Configs;
 using MASAN_SERIALIZATION.Enums;
+using MASAN_SERIALIZATION.Helpers;
 using MASAN_SERIALIZATION.Production;
 using MASAN_SERIALIZATION.Utils;
 using SpT.Auth;
@@ -624,22 +625,60 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 if (successSend)
                 {
-                    // Kiểm tra timeout sau khi gửi PLC thành công
-                    bool isTimeout = CheckCameraSubTimeout(_data);
-
-                    if (isTimeout)
+                    // Timeout check: cho phép tắt hẳn, hoặc chọn V1/V2 bằng config
+                    if (AppConfigs.Current.CameraSub_Timeout_Enabled)
                     {
-                        // Timeout detected - hủy thêm vào thùng
-                        Send_Result_Content_CSub(e_Production_Status.Error, _data);
-                        Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
-
-                        this.InvokeIfRequired(() =>
+                        if (AppConfigs.Current.CameraSub_Timeout_Mode_2)
                         {
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS TIMEOUT - Mã {_data} bị PLC timeout, hủy thêm vào thùng");
-                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-                        });
+                            // V2: đồng bộ theo ID/Status PLC
+                            CameraSubSyncV2Result resultV2 = CheckCameraSubTimeoutV2(_data);
 
-                        return; // Dừng xử lý
+                            if (resultV2.Result == e_CameraSubSyncV2_Result.Timeout || resultV2.Result == e_CameraSubSyncV2_Result.NoResponse)
+                            {
+                                Send_Result_Content_CSub(e_Production_Status.Timeout, _data);
+                                Enqueue_Product_To_Record(_data, e_Production_Status.Timeout, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
+
+                                this.InvokeIfRequired(() =>
+                                {
+                                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS TIMEOUT V2 - Mã {_data}. {resultV2.Message}");
+                                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                                });
+
+                                return;
+                            }
+
+                            if (resultV2.Result == e_CameraSubSyncV2_Result.SyncError || resultV2.Result == e_CameraSubSyncV2_Result.ReadError)
+                            {
+                                Send_Result_Content_CSub(e_Production_Status.Error, _data);
+                                Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
+
+                                this.InvokeIfRequired(() =>
+                                {
+                                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS V2 SYNC ERROR - Mã {_data}. {resultV2.Message}");
+                                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                                });
+
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            // V1: giữ nguyên cơ chế timeout cũ
+                            bool isTimeout = CheckCameraSubTimeout(_data);
+                            if (isTimeout)
+                            {
+                                Send_Result_Content_CSub(e_Production_Status.Timeout, _data);
+                                Enqueue_Product_To_Record(_data, e_Production_Status.Timeout, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
+
+                                this.InvokeIfRequired(() =>
+                                {
+                                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS TIMEOUT V1 - Mã {_data} bị PLC timeout, hủy thêm vào thùng");
+                                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                                });
+
+                                return; // Dừng xử lý
+                            }
+                        }
                     }
 
                     // Không timeout - tiếp tục xử lý bình thường
@@ -755,6 +794,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 case e_Production_Status.ReadFail:
                     Globals.ProductionData.counter.readfailCount++;
                     break;
+                case e_Production_Status.Timeout:
+                    Globals.ProductionData.counter.errorCount++;
+                    break;
             }
         }
         private void Send_Result_Content_CSub(e_Production_Status status, string data)
@@ -784,6 +826,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     break;
                 case e_Production_Status.ReadFail:
                     Globals.productionData_Cs.counter.readfailCount++;
+                    break;
+                case e_Production_Status.Timeout:
+                    Globals.productionData_Cs.counter.errorCount++;
                     break;
             }
         }
@@ -1191,6 +1236,62 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.PlcError,
                     $"Lỗi DA01069 khi đọc dữ liệu đếm CameraSub từ PLC{(AppConfigs.Current.PLC_Duo_Mode ? "2" : "")} [{plcAddress}]",
                     readCameraSub.Message);
+            }
+        }
+
+        public CameraSubSyncV2Result CheckCameraSubTimeoutV2(string productCode)
+        {
+            try
+            {
+                int pollingIntervalMs = AppConfigs.Current.CameraSub_Polling_Interval_Ms;
+                int timeoutMs = AppConfigs.Current.CameraSub_Timeout_Ms;
+
+                Func<string, ushort, OperateResult<int[]>> readInt32 = (address, length) =>
+                {
+                    if (AppConfigs.Current.PLC_Duo_Mode)
+                    {
+                        return OMRON_PLC_02.plc.ReadInt32(address, length);
+                    }
+
+                    return OMRON_PLC.plc.ReadInt32(address, length);
+                };
+
+                string currentIdAddress = PLCAddress.Get("PLC_CurrentID_DM_C2");
+                string currentStatusAddress = PLCAddress.Get("PLC_CurrentStatus_DM_C2");
+                string historyIdAddress = PLCAddress.Get("PLC_IDHistory_Start_DM_C2");
+                string historyStatusAddress = PLCAddress.Get("PLC_StatusHistory_Start_DM_C2");
+
+                CameraSubSyncV2Result result = CameraSubPlcSyncV2Helper.WaitAndResolve(
+                    readInt32,
+                    currentIdAddress,
+                    currentStatusAddress,
+                    historyIdAddress,
+                    historyStatusAddress,
+                    timeoutMs,
+                    pollingIntervalMs,
+                    status => status == 1, // PLC status PASS
+                    status => status == 2  // PLC status TIMEOUT
+                );
+
+                if (AppConfigs.Current.CameraSub_Timeout_Log_Enabled)
+                {
+                    this.InvokeIfRequired(() =>
+                    {
+                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS V2 - Code={productCode}, {result.Message}");
+                        ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                    });
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error, "Lỗi CS V2 timeout sync", ExceptionToJson(ex));
+                return new CameraSubSyncV2Result
+                {
+                    Result = e_CameraSubSyncV2_Result.ReadError,
+                    Message = ex.Message
+                };
             }
         }
 
@@ -2198,6 +2299,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             break;
                         case e_Production_Status.ReadFail:
                             opResultPassFailC2.FillColor = Color.Orange; // Màu cam cho sản phẩm không đọc được
+                            break;
+                        case e_Production_Status.Timeout:
+                            opResultPassFailC2.FillColor = Color.DarkOrange;
+                            opResultPassFailC2.Text = "Timeout";
                             break;
                     }
                 }
