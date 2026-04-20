@@ -1443,7 +1443,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
         }
 
-        
         private void ProcessRunningState()
         {
 
