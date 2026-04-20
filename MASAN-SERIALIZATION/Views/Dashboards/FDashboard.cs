@@ -1246,7 +1246,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 int pollingIntervalMs = AppConfigs.Current.CameraSub_Polling_Interval_Ms;
                 int timeoutMs = AppConfigs.Current.CameraSub_Timeout_Ms;
 
-                Func<string, int, OperateResult<int[]>> readInt32 = (address, length) =>
+                Func<string, ushort, OperateResult<int[]>> readInt32 = (address, length) =>
                 {
                     if (AppConfigs.Current.PLC_Duo_Mode)
                     {
