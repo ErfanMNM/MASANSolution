@@ -2283,7 +2283,8 @@ namespace MASAN_SERIALIZATION.Production
         Duplicate = -3,
         ReadFail = -2,
         NotFound = -4,
-        Error = -5
+        Error = -5,
+        Timeout = -6
     }
 
     public enum e_AWS_Send_Status
