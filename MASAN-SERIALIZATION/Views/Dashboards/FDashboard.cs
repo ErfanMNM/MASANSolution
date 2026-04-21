@@ -611,12 +611,17 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         readCurrentIdBeforeSend.Content == null || readCurrentStatusBeforeSend.Content == null ||
                         readCurrentIdBeforeSend.Content.Length == 0 || readCurrentStatusBeforeSend.Content.Length == 0)
                     {
+                        // Luôn gửi quyết định reject trước khi thoát để tránh giữ trạng thái PLC cũ
+                        bool rejectSentBeforeAbort = AppConfigs.Current.PLC_Duo_Mode
+                            ? Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0")
+                            : Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+
                         Send_Result_Content_CSub(e_Production_Status.Error, _data);
                         Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
 
                         this.InvokeIfRequired(() =>
                         {
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS V2 READ BEFORE SEND ERROR - Mã {_data}. IDMsg={readCurrentIdBeforeSend.Message}, StatusMsg={readCurrentStatusBeforeSend.Message}");
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS V2 READ BEFORE SEND ERROR - Mã {_data}. RejectSent={rejectSentBeforeAbort}. IDMsg={readCurrentIdBeforeSend.Message}, StatusMsg={readCurrentStatusBeforeSend.Message}");
                             ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                         });
 
