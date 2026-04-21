@@ -1123,9 +1123,10 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             TResult notfountCount = GetRecordCountByStatus(e_Production_Status.NotFound);
             TResult readfailCount = GetRecordCountByStatus(e_Production_Status.ReadFail);
             TResult duplicateCount = GetRecordCountByStatus(e_Production_Status.Duplicate);
+            TResult timeoutCount = GetRecordCountByStatus(e_Production_Status.Timeout);
 
             int totalfailCount = failCountResult.count +
-                notfountCount.count + readfailCount.count + duplicateCount.count;
+                notfountCount.count + readfailCount.count + duplicateCount.count + timeoutCount.count;
 
             TResult awsFullOKResult = GetAWSRecordCount(e_AWS_Send_Status.Sent, e_AWS_Recive_Status.Pending, "!=");
             TResult awsNotSentResult = GetAWSRecordCount(e_AWS_Send_Status.Pending, e_AWS_Recive_Status.Pending, "=", "AND Status != 0 AND cartonCode != 'pending' AND cartonCode != '0' ");
@@ -1235,6 +1236,9 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     Globals.ProductionData.counter.duplicateCount++;
                     break;
                 case var s when s == e_Production_Status.Error.ToString():
+                    Globals.ProductionData.counter.errorCount++;
+                    break;
+                case var s when s == e_Production_Status.Timeout.ToString():
                     Globals.ProductionData.counter.errorCount++;
                     break;
             }
