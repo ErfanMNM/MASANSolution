@@ -38,6 +38,12 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.lblCurrentStatusValue = new System.Windows.Forms.Label();
+            this.lblCurrentIdValue = new System.Windows.Forms.Label();
+            this.lblBufferValue = new System.Windows.Forms.Label();
+            this.lblCurrentStatusTitle = new System.Windows.Forms.Label();
+            this.lblCurrentIdTitle = new System.Windows.Forms.Label();
+            this.lblBufferTitle = new System.Windows.Forms.Label();
             this.btnReloadPLC = new Sunny.UI.UISymbolButton();
             this.uiDataGridView1 = new Sunny.UI.UIDataGridView();
             this.WK_Update = new System.ComponentModel.BackgroundWorker();
@@ -89,6 +95,12 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.lblCurrentStatusValue);
+            this.tabPage4.Controls.Add(this.lblCurrentIdValue);
+            this.tabPage4.Controls.Add(this.lblBufferValue);
+            this.tabPage4.Controls.Add(this.lblCurrentStatusTitle);
+            this.tabPage4.Controls.Add(this.lblCurrentIdTitle);
+            this.tabPage4.Controls.Add(this.lblBufferTitle);
             this.tabPage4.Controls.Add(this.btnReloadPLC);
             this.tabPage4.Controls.Add(this.uiDataGridView1);
             this.tabPage4.Location = new System.Drawing.Point(0, 50);
@@ -98,14 +110,71 @@
             this.tabPage4.Text = "PLC DM";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
+            // lblCurrentStatusValue
+            // 
+            this.lblCurrentStatusValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.lblCurrentStatusValue.Location = new System.Drawing.Point(336, 596);
+            this.lblCurrentStatusValue.Name = "lblCurrentStatusValue";
+            this.lblCurrentStatusValue.Size = new System.Drawing.Size(220, 23);
+            this.lblCurrentStatusValue.TabIndex = 7;
+            this.lblCurrentStatusValue.Text = "-";
+            // 
+            // lblCurrentIdValue
+            // 
+            this.lblCurrentIdValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.lblCurrentIdValue.Location = new System.Drawing.Point(89, 596);
+            this.lblCurrentIdValue.Name = "lblCurrentIdValue";
+            this.lblCurrentIdValue.Size = new System.Drawing.Size(92, 23);
+            this.lblCurrentIdValue.TabIndex = 6;
+            this.lblCurrentIdValue.Text = "0";
+            // 
+            // lblBufferValue
+            // 
+            this.lblBufferValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.lblBufferValue.Location = new System.Drawing.Point(89, 576);
+            this.lblBufferValue.Name = "lblBufferValue";
+            this.lblBufferValue.Size = new System.Drawing.Size(653, 20);
+            this.lblBufferValue.TabIndex = 5;
+            this.lblBufferValue.Text = "-";
+            // 
+            // lblCurrentStatusTitle
+            // 
+            this.lblCurrentStatusTitle.AutoSize = true;
+            this.lblCurrentStatusTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
+            this.lblCurrentStatusTitle.Location = new System.Drawing.Point(225, 599);
+            this.lblCurrentStatusTitle.Name = "lblCurrentStatusTitle";
+            this.lblCurrentStatusTitle.Size = new System.Drawing.Size(105, 15);
+            this.lblCurrentStatusTitle.TabIndex = 4;
+            this.lblCurrentStatusTitle.Text = "Status hiện tại:";
+            // 
+            // lblCurrentIdTitle
+            // 
+            this.lblCurrentIdTitle.AutoSize = true;
+            this.lblCurrentIdTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
+            this.lblCurrentIdTitle.Location = new System.Drawing.Point(8, 599);
+            this.lblCurrentIdTitle.Name = "lblCurrentIdTitle";
+            this.lblCurrentIdTitle.Size = new System.Drawing.Size(75, 15);
+            this.lblCurrentIdTitle.TabIndex = 3;
+            this.lblCurrentIdTitle.Text = "ID hiện tại:";
+            // 
+            // lblBufferTitle
+            // 
+            this.lblBufferTitle.AutoSize = true;
+            this.lblBufferTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
+            this.lblBufferTitle.Location = new System.Drawing.Point(8, 578);
+            this.lblBufferTitle.Name = "lblBufferTitle";
+            this.lblBufferTitle.Size = new System.Drawing.Size(49, 15);
+            this.lblBufferTitle.TabIndex = 2;
+            this.lblBufferTitle.Text = "Buffer:";
+            // 
             // btnReloadPLC
             // 
             this.btnReloadPLC.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnReloadPLC.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnReloadPLC.Location = new System.Drawing.Point(3, 582);
+            this.btnReloadPLC.Location = new System.Drawing.Point(748, 582);
             this.btnReloadPLC.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnReloadPLC.Name = "btnReloadPLC";
-            this.btnReloadPLC.Size = new System.Drawing.Size(111, 35);
+            this.btnReloadPLC.Size = new System.Drawing.Size(89, 35);
             this.btnReloadPLC.TabIndex = 1;
             this.btnReloadPLC.Text = "Cập nhật";
             this.btnReloadPLC.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -204,5 +273,11 @@
         private Sunny.UI.UIDataGridView uiDataGridView1;
         private Sunny.UI.UISymbolButton btnReloadPLC;
         private SPMS1.OmronPLC_Hsl omronPLC_Hsl1;
+        private System.Windows.Forms.Label lblCurrentStatusValue;
+        private System.Windows.Forms.Label lblCurrentIdValue;
+        private System.Windows.Forms.Label lblBufferValue;
+        private System.Windows.Forms.Label lblCurrentStatusTitle;
+        private System.Windows.Forms.Label lblCurrentIdTitle;
+        private System.Windows.Forms.Label lblBufferTitle;
     }
 }

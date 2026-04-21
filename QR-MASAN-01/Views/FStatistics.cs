@@ -113,9 +113,45 @@ namespace QR_MASAN_01.Views
                         object value = prop.GetValue(Globalvariable.GCounter);
                         uc.LabelValue = value?.ToString() ?? "";
                     }
+
+                    lblCurrentIdValue.Text = GV.ID.ToString();
+                    lblCurrentStatusValue.Text = GetCurrentPLCStatus();
+                    lblBufferValue.Text = GetPLCBufferSummary();
                 });
 
                 Thread.Sleep(1000); // Cập nhật mỗi giây
+            }
+        }
+
+        private string GetCurrentPLCStatus()
+        {
+            if (PLC_Comfirm.PLC_Total_Status_Dictionary.TryGetValue(PLC_Comfirm.Curent_Total, out string status))
+            {
+                return status;
+            }
+
+            return "-";
+        }
+
+        private string GetPLCBufferSummary()
+        {
+            try
+            {
+                if (PLC_Comfirm.PLC_Total_Status_Dictionary.Count == 0)
+                {
+                    return "Trống";
+                }
+
+                return string.Join(" | ",
+                    PLC_Comfirm.PLC_Total_Status_Dictionary.ToList()
+                    .OrderByDescending(x => x.Key)
+                    .Take(10)
+                    .OrderBy(x => x.Key)
+                    .Select(x => $"{x.Key}:{x.Value}"));
+            }
+            catch
+            {
+                return "Đang cập nhật...";
             }
         }
 

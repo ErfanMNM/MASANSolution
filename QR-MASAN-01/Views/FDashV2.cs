@@ -28,6 +28,7 @@ namespace QR_MASAN_01
     public partial class FDashboard : UIPage
     {
         public AwsIotClientHelper awsClient;
+        private bool _startupPlcResetDone = false;
         public FDashboard()
         {
             InitializeComponent();
@@ -52,6 +53,8 @@ namespace QR_MASAN_01
                 PLC.PLC_Ready_DM = PLCAddress.Get("PLC_Ready_DM");
                 
                 PLC.InitPLC();
+                ResetPlcBufferAndId("Khởi động phần mềm");
+                _startupPlcResetDone = true;
 
                 Camera.Connect();
                 Camera_c.Connect();
@@ -1789,6 +1792,42 @@ namespace QR_MASAN_01
             //không cần đợi trả về làm gì
         }
 
+        private void ResetPlcBufferAndId(string reason)
+        {
+            try
+            {
+                // reset dữ liệu phía phần mềm
+                GV.ID = 0;
+                PLC_Comfirm.Curent_Total = 0;
+                PLC_Comfirm.Last_Total = 0;
+                PLC_Comfirm.Curent_Pass = 0;
+                PLC_Comfirm.Last_Pass = 0;
+                PLC_Comfirm.Curent_Fail = 0;
+                PLC_Comfirm.Last_Fail = 0;
+                PLC_Comfirm.Curent_Timeout = 0;
+                PLC_Comfirm.Last_Timeout = 0;
+                PLC_Comfirm.Curent_Status = 0;
+                PLC_Comfirm.PLC_Total_Status_Dictionary.Clear();
+
+                // reset buffer cục bộ cho line C2
+                GV.C2_CodeData_Dictionary.Clear();
+                GV.C2_Save_Result_To_SQLite_Queue.Clear();
+                GV.C2_Update_Content_To_SQLite_Queue.Clear();
+                GV.AWS_Response_Queue.Clear();
+
+                // gửi lệnh reset xuống PLC
+                OperateResult resetCounterC2 = PLC.plc.Write(PLCAddress.Get("PLC_Reset_Counter_DM_C2"), 1);
+                OperateResult resetCounterC1 = PLC.plc.Write(PLCAddress.Get("RESET_COUNT_DM_SS1"), 1);
+                OperateResult resetStart = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+
+                LogUpdate($"Reset PLC ({reason}) => C2:{resetCounterC2.IsSuccess}, C1:{resetCounterC1.IsSuccess}, START:{resetStart.IsSuccess}");
+            }
+            catch (Exception ex)
+            {
+                LogUpdate($"Lỗi reset PLC ({reason}): {ex.Message}");
+            }
+        }
+
         //xử lý trạng thái phần mềm theo PO
         private void WK_PO_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -1805,10 +1844,7 @@ namespace QR_MASAN_01
                         OperateResult writeStartvc = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
                         break;
                     case e_Production_Status.PLC_NEW_PO:
-                        //xóa số đếm PLC
-                        OperateResult writeClear = PLC.plc.Write(PLCAddress.Get("PLC_Reset_Counter_DM_C2"), 1);
-                        //xóa số đếm PLC 
-                        OperateResult writeClear1 = PLC.plc.Write(PLCAddress.Get("RESET_COUNT_DM_SS1"), 1);
+                        ResetPlcBufferAndId("PO mới");
 
                         OperateResult writeOrderQty = PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), GV.Selected_PO.orderQty.ToInt32());
                         //chuyển sang Ready
@@ -1832,6 +1868,11 @@ namespace QR_MASAN_01
                         break;
                     case e_Production_Status.STARTUP:
                         OperateResult writeStartsss= PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
+                        if (!_startupPlcResetDone)
+                        {
+                            ResetPlcBufferAndId("Startup state");
+                            _startupPlcResetDone = true;
+                        }
                         break;
                     case e_Production_Status.LOAD:
                         OperateResult writeStartss = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 0);
@@ -1857,6 +1898,7 @@ namespace QR_MASAN_01
                         GV.Production_Status = e_Production_Status.READY;
                         break;
                     case e_Production_Status.PLC_CON_PO:
+                        ResetPlcBufferAndId("Đổi PO");
                         //gửi số lượng order xuống
                         OperateResult writeOrderQtyu = PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), GV.Selected_PO.orderQty.ToInt32());
                         OperateResult writeStart3 = PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 1);//gửi lệnh bắt đầu
