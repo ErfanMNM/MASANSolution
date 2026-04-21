@@ -587,6 +587,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     cache_CartonID = Globals.ProductionData.counter.cartonID;
                     cache_CartonCount = Globals.ProductionData.counter.carton_Packing_Count;
                 }
+                //Phải đọc ID cũ chỗ này nè
 
                 //phân làn
                 string sendCode = "0";
@@ -604,8 +605,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 sw.Stop();
                 currentCameraSubProcessingTime = sw.Elapsed.TotalMilliseconds;
 
-                //ĐỌC ID HIỆN TẠI DƯỚI PLC
-
                 if (AppConfigs.Current.PLC_Duo_Mode)
                 {
                     successSend = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), sendCode);
@@ -614,14 +613,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 {
                     successSend = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), sendCode);
                 }
-
-
-
-                //Kiểm tra Timeout ngay sau khi gửi PLC, nếu gửi không thành công cũng tính là timeout
-
-                //Mode VIP
-
-                //Đọc
 
                 if (successSend)
                 {
