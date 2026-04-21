@@ -587,7 +587,45 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     cache_CartonID = Globals.ProductionData.counter.cartonID;
                     cache_CartonCount = Globals.ProductionData.counter.carton_Packing_Count;
                 }
-                //Phải đọc ID cũ chỗ này nè
+                // Snapshot ID/Status hiện tại của CameraSub PLC trước khi gửi phân làn
+                int cameraSubPreviousId = 0;
+                int cameraSubPreviousStatus = 0;
+                if (AppConfigs.Current.CameraSub_Timeout_Enabled && AppConfigs.Current.CameraSub_Timeout_Mode_2)
+                {
+                    Func<string, ushort, OperateResult<int[]>> readInt32BeforeSend = (address, length) =>
+                    {
+                        if (AppConfigs.Current.PLC_Duo_Mode)
+                        {
+                            return OMRON_PLC_02.plc.ReadInt32(address, length);
+                        }
+
+                        return OMRON_PLC.plc.ReadInt32(address, length);
+                    };
+
+                    string currentIdAddressBeforeSend = PLCAddress.Get("PLC_CurrentID_DM_C2");
+                    string currentStatusAddressBeforeSend = PLCAddress.Get("PLC_CurrentStatus_DM_C2");
+                    OperateResult<int[]> readCurrentIdBeforeSend = readInt32BeforeSend(currentIdAddressBeforeSend, 1);
+                    OperateResult<int[]> readCurrentStatusBeforeSend = readInt32BeforeSend(currentStatusAddressBeforeSend, 1);
+
+                    if (!readCurrentIdBeforeSend.IsSuccess || !readCurrentStatusBeforeSend.IsSuccess ||
+                        readCurrentIdBeforeSend.Content == null || readCurrentStatusBeforeSend.Content == null ||
+                        readCurrentIdBeforeSend.Content.Length == 0 || readCurrentStatusBeforeSend.Content.Length == 0)
+                    {
+                        Send_Result_Content_CSub(e_Production_Status.Error, _data);
+                        Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
+
+                        this.InvokeIfRequired(() =>
+                        {
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS V2 READ BEFORE SEND ERROR - Mã {_data}. IDMsg={readCurrentIdBeforeSend.Message}, StatusMsg={readCurrentStatusBeforeSend.Message}");
+                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                        });
+
+                        return;
+                    }
+
+                    cameraSubPreviousId = readCurrentIdBeforeSend.Content[0];
+                    cameraSubPreviousStatus = readCurrentStatusBeforeSend.Content[0];
+                }
 
                 //phân làn
                 string sendCode = "0";
@@ -622,7 +660,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         if (AppConfigs.Current.CameraSub_Timeout_Mode_2)
                         {
                             // V2: đồng bộ theo ID/Status PLC
-                            CameraSubSyncV2Result resultV2 = CheckCameraSubTimeoutV2(_data);
+                            CameraSubSyncV2Result resultV2 = CheckCameraSubTimeoutV2(_data, cameraSubPreviousId, cameraSubPreviousStatus);
 
                             if (resultV2.Result == e_CameraSubSyncV2_Result.Timeout || resultV2.Result == e_CameraSubSyncV2_Result.NoResponse)
                             {
@@ -1230,7 +1268,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
         }
 
-        public CameraSubSyncV2Result CheckCameraSubTimeoutV2(string productCode)
+        public CameraSubSyncV2Result CheckCameraSubTimeoutV2(string productCode, int? previousIdSnapshot = null, int? previousStatusSnapshot = null)
         {
             try
             {
@@ -1261,7 +1299,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     timeoutMs,
                     pollingIntervalMs,
                     status => status == 1, // PLC status PASS
-                    status => status == 2  // PLC status TIMEOUT
+                    status => status == 2,  // PLC status TIMEOUT
+                    previousIdSnapshot,
+                    previousStatusSnapshot
                 );
 
                 if (AppConfigs.Current.CameraSub_Timeout_Log_Enabled)

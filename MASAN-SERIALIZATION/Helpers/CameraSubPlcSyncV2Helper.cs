@@ -18,6 +18,7 @@ namespace MASAN_SERIALIZATION.Helpers
     {
         public e_CameraSubSyncV2_Result Result { get; set; }
         public int PreviousId { get; set; }
+        public int PreviousStatus { get; set; }
         public int ExpectedId { get; set; }
         public int CurrentId { get; set; }
         public int PlcStatus { get; set; }
@@ -38,7 +39,9 @@ namespace MASAN_SERIALIZATION.Helpers
             int timeoutMs,
             int pollingIntervalMs,
             Func<int, bool> isPassStatus,
-            Func<int, bool> isTimeoutStatus)
+            Func<int, bool> isTimeoutStatus,
+            int? previousIdSnapshot = null,
+            int? previousStatusSnapshot = null)
         {
             Func<string, int, OperateResult<int[]>> adapter = (address, length) => readInt32(address, (ushort)length);
 
@@ -51,7 +54,9 @@ namespace MASAN_SERIALIZATION.Helpers
                 timeoutMs,
                 pollingIntervalMs,
                 isPassStatus,
-                isTimeoutStatus);
+                isTimeoutStatus,
+                previousIdSnapshot,
+                previousStatusSnapshot);
         }
 
         public static CameraSubSyncV2Result WaitAndResolve(
@@ -63,22 +68,39 @@ namespace MASAN_SERIALIZATION.Helpers
             int timeoutMs,
             int pollingIntervalMs,
             Func<int, bool> isPassStatus,
-            Func<int, bool> isTimeoutStatus)
+            Func<int, bool> isTimeoutStatus,
+            int? previousIdSnapshot = null,
+            int? previousStatusSnapshot = null)
         {
             var startTime = DateTime.Now;
             int maxPolls = Math.Max(1, timeoutMs / Math.Max(1, pollingIntervalMs));
 
-            OperateResult<int[]> readBefore = readInt32(currentIdAddress, 1);
-            if (!readBefore.IsSuccess || readBefore.Content == null || readBefore.Content.Length == 0)
+            int previousId;
+            int previousStatus;
+            if (previousIdSnapshot.HasValue && previousStatusSnapshot.HasValue)
             {
-                return new CameraSubSyncV2Result
+                previousId = previousIdSnapshot.Value;
+                previousStatus = previousStatusSnapshot.Value;
+            }
+            else
+            {
+                OperateResult<int[]> readBeforeId = readInt32(currentIdAddress, 1);
+                OperateResult<int[]> readBeforeStatus = readInt32(currentStatusAddress, 1);
+                if (!readBeforeId.IsSuccess || !readBeforeStatus.IsSuccess ||
+                    readBeforeId.Content == null || readBeforeStatus.Content == null ||
+                    readBeforeId.Content.Length == 0 || readBeforeStatus.Content.Length == 0)
                 {
-                    Result = e_CameraSubSyncV2_Result.ReadError,
-                    Message = $"Không đọc được ID trước khi gửi lane: {readBefore.Message}"
-                };
+                    return new CameraSubSyncV2Result
+                    {
+                        Result = e_CameraSubSyncV2_Result.ReadError,
+                        Message = $"Không đọc được ID/Status trước khi gửi lane: IDMsg={readBeforeId.Message}, StatusMsg={readBeforeStatus.Message}"
+                    };
+                }
+
+                previousId = readBeforeId.Content[0];
+                previousStatus = readBeforeStatus.Content[0];
             }
 
-            int previousId = readBefore.Content[0];
             int expectedId = previousId + 1;
             int pollCount = 0;
 
@@ -103,7 +125,7 @@ namespace MASAN_SERIALIZATION.Helpers
 
                     if (currentId == expectedId)
                     {
-                        return BuildResult(previousId, expectedId, currentId, currentStatus, pollCount, startTime, isPassStatus, isTimeoutStatus);
+                        return BuildResult(previousId, previousStatus, expectedId, currentId, currentStatus, pollCount, startTime, isPassStatus, isTimeoutStatus);
                     }
 
                     if (currentId > expectedId)
@@ -119,6 +141,7 @@ namespace MASAN_SERIALIZATION.Helpers
                             {
                                 Result = e_CameraSubSyncV2_Result.ReadError,
                                 PreviousId = previousId,
+                                PreviousStatus = previousStatus,
                                 ExpectedId = expectedId,
                                 CurrentId = currentId,
                                 PollCount = pollCount,
@@ -139,6 +162,7 @@ namespace MASAN_SERIALIZATION.Helpers
                             {
                                 Result = e_CameraSubSyncV2_Result.SyncError,
                                 PreviousId = previousId,
+                                PreviousStatus = previousStatus,
                                 ExpectedId = expectedId,
                                 CurrentId = currentId,
                                 PlcStatus = currentStatus,
@@ -148,7 +172,7 @@ namespace MASAN_SERIALIZATION.Helpers
                             };
                         }
 
-                        return BuildResult(previousId, expectedId, expectedId, matchedStatus, pollCount, startTime, isPassStatus, isTimeoutStatus);
+                        return BuildResult(previousId, previousStatus, expectedId, expectedId, matchedStatus, pollCount, startTime, isPassStatus, isTimeoutStatus);
                     }
                 }
 
@@ -159,6 +183,7 @@ namespace MASAN_SERIALIZATION.Helpers
             {
                 Result = e_CameraSubSyncV2_Result.NoResponse,
                 PreviousId = previousId,
+                PreviousStatus = previousStatus,
                 ExpectedId = expectedId,
                 PollCount = pollCount,
                 ElapsedMs = (DateTime.Now - startTime).TotalMilliseconds,
@@ -168,6 +193,7 @@ namespace MASAN_SERIALIZATION.Helpers
 
         private static CameraSubSyncV2Result BuildResult(
             int previousId,
+            int previousStatus,
             int expectedId,
             int currentId,
             int plcStatus,
@@ -195,12 +221,13 @@ namespace MASAN_SERIALIZATION.Helpers
             {
                 Result = result,
                 PreviousId = previousId,
+                PreviousStatus = previousStatus,
                 ExpectedId = expectedId,
                 CurrentId = currentId,
                 PlcStatus = plcStatus,
                 PollCount = pollCount,
                 ElapsedMs = (DateTime.Now - startTime).TotalMilliseconds,
-                Message = $"Resolve theo ID: Prev={previousId}, Expected={expectedId}, Current={currentId}, Status={plcStatus}, Result={result}"
+                Message = $"Resolve theo ID: Prev={previousId}, PrevStatus={previousStatus}, Expected={expectedId}, Current={currentId}, Status={plcStatus}, Result={result}"
             };
         }
     }
