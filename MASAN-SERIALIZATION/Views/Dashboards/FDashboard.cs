@@ -550,6 +550,26 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     cache_CartonCount = Globals.ProductionData.counter.carton_Packing_Count;
                 }
 
+                //Đọc ID hiện tại dưới PLC
+
+                OperateResult<int[]> readID_Status = OMRON_PLC_02.plc.ReadInt32(PLCAddress.Get("PLC_CurrentID_DM_C2"), 2);
+                if(readID_Status.IsSuccess)
+                {
+                    Globals.CurrentPLCID = readID_Status.Content[0];
+                    Globals.currentPLCStatus = readID_Status.Content[1];
+                }
+                else
+                {
+                    Globals.currentPLCStatus = -2; //đọc PLC lỗi
+                    Globals.CurrentPLCID = -2; //đọc PLC lỗi
+
+                    this.InvokeIfRequired(() =>
+                    {
+                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: LỖI ĐỌC PLC {readID_Status.ErrorCode.ToString()}");
+                        ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                    });
+                }
+
                 //phân làn
                 string sendCode = "0";
                 if (cache_CartonID % 2 == 0)
@@ -574,9 +594,68 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 if (successSend)
                 {
-                    // Kiểm tra timeout sau khi gửi PLC thành công
-                    bool isTimeout = CheckCameraSubTimeout(_data);
+                    bool isTimeout = false;
 
+                    if(AppConfigs.Current.CameraSub_Timeout_Enabled)
+                    {
+                        while (true)
+                        {
+                            // Đọc lại status từ PLC xem status đã được cập nhật chưa
+                            OperateResult<int[]> readID_Check = OMRON_PLC_02.plc.ReadInt32(PLCAddress.Get("PLC_CurrentID_DM_C2"), 2); 
+                            int currentID_Check = -1;
+                            int currentStatus_Check = -1;
+
+                            if (readID_Check.IsSuccess)
+                            {
+                                currentID_Check = readID_Check.Content[0];
+                                currentStatus_Check = readID_Check.Content[1];
+                                Globals.currentPLCStatus = currentStatus_Check; //cập nhật status PLC mới nhất
+                            }
+                            else
+                            {
+                                this.InvokeIfRequired(() =>
+                                {
+                                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: LỖI NÈ {readID_Check.ErrorCode.ToString()}");
+                                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                                });
+                                isTimeout = true; //đặt timeout nếu đọc PLC lỗi
+
+                            }
+                            
+
+                            if (currentID_Check != Globals.CurrentPLCID)
+                            {
+                                //này là quá thời gian lần 2 nè, có thêm chai mới vào rồi.
+                                //Globals.Production_State = e_Production_State.Error;
+                                break;
+                            }
+
+                            else
+                            {
+                                if (currentStatus_Check != 5) // PLC đã nhận được mã thùng và cập nhật status thành công
+                                {
+                                    if (currentStatus_Check == 3)
+                                    {
+                                        isTimeout = true; // PLC báo lỗi timeout
+                                        this.InvokeIfRequired(() =>
+                                        {
+                                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: PLC báo timeout cho mã {_data}");
+                                            ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                                        });
+                                    }
+
+                                    Globals.currentPLCStatus = -1; //đặt lại status để tiếp tục loop kiểm tra
+                                    break;
+                                }
+                                else
+                                {
+                                    //trạng thái chưa được cập nhật, tiếp tục loop để kiểm tra
+                                    Thread.Sleep(1); // Sleep 10ms trước khi kiểm tra lại
+                                }
+                            }
+                        }
+                    }
+                    
                     if (isTimeout)
                     {
                         // Timeout detected - hủy thêm vào thùng

@@ -15,6 +15,9 @@ namespace MASAN_SERIALIZATION
 {
     public static class Globals
     {
+
+        public static int CurrentPLCID { get; set; } = 1; // Biến toàn cục để lưu trữ phiên bản hiện tại của ứng dụng
+        public static int currentPLCStatus { get; set; } = 5; // Biến toàn cục để lưu trữ phiên bản hiện tại của ứng dụng
         // Biến toàn cục để lưu trữ thông tin người dùng hiện tại
         public static UserData CurrentUser { get; set; } = new UserData();
 
