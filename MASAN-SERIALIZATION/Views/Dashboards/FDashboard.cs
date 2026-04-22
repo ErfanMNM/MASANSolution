@@ -32,6 +32,52 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 {
     public partial class FDashboard : UIPage
     {
+        private bool IsTestModeEnabled =>
+            AppConfigs.Current.TestMode &&
+            string.Equals(Globals.ProductionData.orderNo, "PO Test", StringComparison.OrdinalIgnoreCase);
+
+        private ProductionCodeData GetOrCreateTestModeCodeData(string code)
+        {
+            if (Globals_Database.Dictionary_ProductionCode_Data.TryGetValue(code, out ProductionCodeData existing))
+            {
+                return existing;
+            }
+
+            ProductionCodeData virtualCodeData = new ProductionCodeData
+            {
+                orderNo = Globals.ProductionData.orderNo,
+                Code = code,
+                codeID = 0,
+                cartonCode = "pending",
+                Activate_User = Globals.CurrentUser.Username,
+                Main_Camera_Status = "1",
+                Sub_Camera_Status = "0",
+                Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"),
+                Sub_Camera_Activate_Datetime = "0",
+                Production_Datetime = Globals.ProductionData.productionDate
+            };
+
+            Globals_Database.Dictionary_ProductionCode_Data[code] = virtualCodeData;
+            if (!Globals_Database.Dictionary_ProductionCode_CameraSub_Data.ContainsKey(code))
+            {
+                Globals_Database.Dictionary_ProductionCode_CameraSub_Data[code] = new ProductionCodeData
+                {
+                    orderNo = virtualCodeData.orderNo,
+                    Code = virtualCodeData.Code,
+                    codeID = virtualCodeData.codeID,
+                    cartonCode = virtualCodeData.cartonCode,
+                    Activate_User = virtualCodeData.Activate_User,
+                    Main_Camera_Status = virtualCodeData.Main_Camera_Status,
+                    Sub_Camera_Status = "0",
+                    Activate_Datetime = virtualCodeData.Activate_Datetime,
+                    Sub_Camera_Activate_Datetime = "0",
+                    Production_Datetime = virtualCodeData.Production_Datetime
+                };
+            }
+
+            return virtualCodeData;
+        }
+
         #region Private Fields
         private static LogHelper<e_Dash_LogType> DashboardPageLog;
         private static bool offThread = false;
@@ -268,6 +314,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
 
             _data = _data.Replace("<GS>", "\u001D").Replace("<RS>", "\u001E").Replace("<US>", "\u001F");
+            if (IsTestModeEnabled && !Globals_Database.Dictionary_ProductionCode_Data.ContainsKey(_data))
+            {
+                GetOrCreateTestModeCodeData(_data);
+            }
 
             if (Globals_Database.Dictionary_ProductionCode_Data.TryGetValue(_data, out ProductionCodeData _produtionCodeData))
             {
@@ -379,6 +429,22 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
             else
             {
+                if (IsTestModeEnabled)
+                {
+                    ProductionCodeData testCodeData = GetOrCreateTestModeCodeData(_data);
+                    testCodeData.Main_Camera_Status = "1";
+                    testCodeData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
+                    testCodeData.Production_Datetime = Globals.ProductionData.productionDate;
+                    testCodeData.cartonCode = "pending";
+                    testCodeData.Activate_User = Globals.CurrentUser.Username;
+
+                    Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "1");
+                    Send_Result_Content_CMain(e_Production_Status.Pass, _data);
+                    Enqueue_Product_To_Record(_data, e_Production_Status.Pass, true, testCodeData.Activate_Datetime, testCodeData.Production_Datetime);
+                    Enqueue_Product_To_SQLite(_data, testCodeData);
+                    return;
+                }
+
                 Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
                 Send_Result_Content_CMain(e_Production_Status.NotFound, _data);
                 Enqueue_Product_To_Record(_data, e_Production_Status.NotFound, true, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
@@ -463,6 +529,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
 
             _data = _data.Replace("<GS>", "\u001D").Replace("<RS>", "\u001E").Replace("<US>", "\u001F");
+            if (IsTestModeEnabled && !Globals_Database.Dictionary_ProductionCode_Data.ContainsKey(_data))
+            {
+                GetOrCreateTestModeCodeData(_data);
+            }
 
             //kiểm tra mã có tồn tại hay không trong Dictionary chính (CameraMain)
             if (Globals_Database.Dictionary_ProductionCode_Data.TryGetValue(_data, out ProductionCodeData _produtionCodeData))
@@ -820,7 +890,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 case e_Production_Status.Pass:
                     Globals.ProductionData.counter.passCount++;
 
-                    if (Globals.ProductionData.counter.passCount == Globals.ProductionData.orderQty.ToInt32())
+                    if (!IsTestModeEnabled && Globals.ProductionData.counter.passCount == Globals.ProductionData.orderQty.ToInt32())
                     {
                         Globals.Production_State = e_Production_State.Waiting_Stop;
                     }
@@ -1976,8 +2046,27 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                             if (getCartons.count == 0)
                             {
+                                if (IsTestModeEnabled)
+                                {
+                                    // Chỉ ở PO Test: tự tạo carton mặc định để không bị treo ở Pushing_to_Dic.
+                                    var defaultCarton = new ProductionCartonData
+                                    {
+                                        cartonID = 1,
+                                        cartonCode = "0",
+                                        Start_Datetime = "0",
+                                        Activate_Datetime = "0",
+                                        Activate_User = "System",
+                                        Production_Datetime = "0",
+                                        orderNo = Globals.ProductionData.orderNo
+                                    };
 
-                                return;
+                                    Globals_Database.Dictionary_ProductionCarton_Data[defaultCarton.cartonID] = defaultCarton;
+                                    Globals.ProductionData.setDB.Insert_Carton(defaultCarton, Globals.ProductionData.orderNo);
+                                }
+                                else
+                                {
+                                    return;
+                                }
                             }
 
                             try
@@ -2276,7 +2365,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         }
                     }
 
-                    if (Globals.ProductionData.counter.cartonID > Globals.ProductionData.orderQty.ToInt32() / AppConfigs.Current.cartonPack)
+                    if (!IsTestModeEnabled && Globals.ProductionData.counter.cartonID > Globals.ProductionData.orderQty.ToInt32() / AppConfigs.Current.cartonPack)
                     {
                         //nếu thùng đang xếp đã chốt mã và thùng cũ đã chốt mã thì chuyển sang Completed
                         Globals.Production_State = e_Production_State.Check_After_Completed;

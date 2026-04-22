@@ -39,6 +39,7 @@ namespace MASAN_SERIALIZATION.Production
 
         private static string poMesJsonCodesPath = @"C:\MasanSerialization_v2\Server_Service\codes_json";
         private static string poMesJsonPODataPath = @"C:/MasanSerialization_v2/Server_Service/data";
+        private const int MinPrecreatedCartonSlots = 100; // Chỉ áp dụng cho PO Test.
         public static string orderNO { get; set; } = string.Empty;
         #endregion
 
@@ -454,6 +455,88 @@ namespace MASAN_SERIALIZATION.Production
                 catch (Exception ex)
                 {
                     return new TResult(false, $"Lỗi P04 khi lấy danh sách mã CZ: {ex.Message}");
+                }
+            }
+
+            public (bool issucess, string message) Ensure_TestMode_PO(string orderNo, int orderQty = 1)
+            {
+                try
+                {
+                    if (string.IsNullOrWhiteSpace(orderNo))
+                    {
+                        return (false, "OrderNo TestMode không hợp lệ.");
+                    }
+
+                    if (!Directory.Exists(poMesJsonPODataPath))
+                    {
+                        Directory.CreateDirectory(poMesJsonPODataPath);
+                    }
+
+                    if (!Directory.Exists(poMesJsonCodesPath))
+                    {
+                        Directory.CreateDirectory(poMesJsonCodesPath);
+                    }
+
+                    string poFilePath = Path.Combine(poMesJsonPODataPath, orderNo + ".json");
+                    string testGtin = "TESTMODE";
+                    int safeOrderQty = orderQty > 0 ? orderQty : 1;
+
+                    if (!File.Exists(poFilePath))
+                    {
+                        var poPayload = new
+                        {
+                            orderNo = orderNo,
+                            orderQty = safeOrderQty,
+                            customerOrderNo = "TESTMODE",
+                            productionLine = "TEST",
+                            productName = "TEST MODE PRODUCT",
+                            productCode = "TESTMODE",
+                            lotNumber = "TESTMODE",
+                            gtin = testGtin,
+                            shift = "TEST",
+                            factory = "TEST",
+                            site = "TEST",
+                            uom = "PCS",
+                            productionDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                        };
+
+                        File.WriteAllText(poFilePath, JsonConvert.SerializeObject(poPayload, Formatting.Indented));
+                    }
+
+                    string codeFilePath = Path.Combine(poMesJsonCodesPath, $"GTIN_{testGtin}.json");
+                    if (!File.Exists(codeFilePath))
+                    {
+                        var codePayload = new
+                        {
+                            blocks = new Dictionary<string, object>
+                            {
+                                {
+                                    "0",
+                                    new
+                                    {
+                                        createdAt = DateTime.UtcNow.ToString("o"),
+                                        codes = new[]
+                                        {
+                                            new
+                                            {
+                                                code = "TEST-CODE-0001",
+                                                createdAt = DateTime.UtcNow.ToString("o"),
+                                                blockNo = 0
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        };
+
+                        File.WriteAllText(codeFilePath, JsonConvert.SerializeObject(codePayload, Formatting.Indented));
+                    }
+
+                    return (true, "Đã đảm bảo dữ liệu PO TestMode.");
+                }
+                catch (Exception ex)
+                {
+                    return (false, $"Lỗi Ensure_TestMode_PO: {ex.Message}");
                 }
             }
             public (bool issucess, string message) MES_Load_OrderNo_ToComboBox(UIComboBox comboBox)
@@ -2158,8 +2241,14 @@ namespace MASAN_SERIALIZATION.Production
                         createCmd.ExecuteNonQuery();
                     }
 
-                    // Tạo số thùng = orderQty / 24
-                    int orderCartonQty = orderQty.ToInt32() / AppConfigs.Current.cartonPack;
+                    bool isTestPO = string.Equals(orderNo, "PO Test", StringComparison.OrdinalIgnoreCase);
+
+                    // PO Test: tạo trước 100 ô carton cố định.
+                    // PO thường: giữ logic theo orderQty/cartonPack (tối thiểu 1).
+                    // Luồng vận hành sẽ cập nhật lại thông tin carton khi người dùng quét mã thùng.
+                    int orderCartonQty = isTestPO
+                        ? MinPrecreatedCartonSlots
+                        : Math.Max(1, orderQty.ToInt32() / AppConfigs.Current.cartonPack);
 
                     using (var tran = conn.BeginTransaction())
                     using (var insertCmd = new SQLiteCommand(@"
@@ -2177,6 +2266,36 @@ namespace MASAN_SERIALIZATION.Production
 
 
             }
+
+                // Chỉ với PO Test mới đảm bảo đủ MinPrecreatedCartonSlots ô carton trên DB đã tồn tại.
+                if (string.Equals(orderNo, "PO Test", StringComparison.OrdinalIgnoreCase))
+                {
+                    using (var conn = new SQLiteConnection($"Data Source={CartonPath};Version=3;"))
+                    {
+                        conn.Open();
+                        int currentCartonCount = 0;
+                        using (var countCmd = new SQLiteCommand("SELECT COUNT(*) FROM Carton;", conn))
+                        {
+                            currentCartonCount = Convert.ToInt32(countCmd.ExecuteScalar());
+                        }
+
+                        int needMore = MinPrecreatedCartonSlots - currentCartonCount;
+                        if (needMore > 0)
+                        {
+                            using (var tran = conn.BeginTransaction())
+                            using (var insertCmd = new SQLiteCommand(@"
+                                INSERT INTO Carton (cartonCode, Start_Datetime, Activate_Datetime, ActivateUser, ProductionDate)
+                                VALUES ('0', '0', '0', 'System', '0');", conn, tran))
+                            {
+                                for (int i = 0; i < needMore; i++)
+                                {
+                                    insertCmd.ExecuteNonQuery();
+                                }
+                                tran.Commit();
+                            }
+                        }
+                    }
+                }
 
             //kiểm tra xem bảng ghi history tất cả các result của PO đã tồn tại hay chưa, nếu chưa thì tạo mới nếu chưa thì tạo mới
             string recordAWS = Path.Combine(basePath, $"Send_AWS_Record_{orderNo}.db");
