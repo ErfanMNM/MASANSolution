@@ -80,7 +80,19 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void TryAutoSwitchToTestPO()
         {
-            if (!IsTestModeEnabled || ipOrderNO.Items.Count == 0)
+            if (!IsTestModeEnabled)
+            {
+                return;
+            }
+
+            var ensureResult = Globals.ProductionData.getfromMES.Ensure_TestMode_PO(TestModePOName, 1);
+            if (!ensureResult.issucess)
+            {
+                _pageLogger?.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
+                    "Không thể tạo PO Test tự động", ensureResult.message);
+            }
+
+            if (ipOrderNO.Items.Count == 0)
             {
                 return;
             }
@@ -94,6 +106,30 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     {
                         ipOrderNO.SelectedIndex = i;
                         Globals.ProductionData.orderNo = orderNo;
+                        return;
+                    }
+                }
+            }
+
+            if (ipOrderNO.DataSource is DataTable dt)
+            {
+                bool existed = dt.AsEnumerable().Any(r =>
+                    string.Equals(r["orderNo"]?.ToString(), TestModePOName, StringComparison.OrdinalIgnoreCase));
+
+                if (!existed)
+                {
+                    DataRow newRow = dt.NewRow();
+                    newRow["orderNo"] = TestModePOName;
+                    dt.Rows.Add(newRow);
+                }
+
+                for (int i = 0; i < ipOrderNO.Items.Count; i++)
+                {
+                    if (ipOrderNO.Items[i] is DataRowView drv &&
+                        string.Equals(drv["orderNo"]?.ToString(), TestModePOName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        ipOrderNO.SelectedIndex = i;
+                        Globals.ProductionData.orderNo = TestModePOName;
                         return;
                     }
                 }
@@ -844,6 +880,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             }
 
             Globals.ProductionData.getfromMES.MES_Load_OrderNo_ToComboBox(ipOrderNO);
+            TryAutoSwitchToTestPO();
 
             if (ipOrderNO.Items.Count == 0)
             {
