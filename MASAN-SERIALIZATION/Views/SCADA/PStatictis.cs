@@ -1,4 +1,5 @@
-﻿using MASAN_SERIALIZATION.Production;
+﻿using MASAN_SERIALIZATION.Configs;
+using MASAN_SERIALIZATION.Production;
 using MASAN_SERIALIZATION.Utils;
 using Newtonsoft.Json;
 using SpT.Static;
@@ -37,6 +38,10 @@ namespace MASAN_SERIALIZATION.Views.SCADA
             {"Activate Carton Queue Count", "✅ Hàng đợi kích hoạt thùng"},
             {"AWS Receive Queue Count", "☁️ Hàng đợi nhận AWS"},
             {"AWS Send Queue Count", "☁️ Hàng đợi gửi AWS"},
+            {"PLC Timeout V2 Current ID", "🆔 PLC Timeout V2 - ID hiện tại"},
+            {"PLC Timeout V2 Current Status", "📊 PLC Timeout V2 - Trạng thái hiện tại"},
+            {"PLC Timeout V2 Log ID", "📜 PLC Timeout V2 - Log ID"},
+            {"PLC Timeout V2 Log Status", "📜 PLC Timeout V2 - Log trạng thái"},
             
             // CurrentUser
             {"CurrentUser.UserName", "👤 Tên người dùng"},
@@ -230,6 +235,23 @@ namespace MASAN_SERIALIZATION.Views.SCADA
             var awsSendQueueUc = new panelS() { LabelName = GetFriendlyName("AWS Send Queue Count") };
             opMEMFlow.Controls.Add(awsSendQueueUc);
             extraBindings["AWS Send Queue Count"] = awsSendQueueUc;
+
+            // PLC Timeout V2 debug values
+            var plcTimeoutV2CurrentIdUc = new panelS() { LabelName = GetFriendlyName("PLC Timeout V2 Current ID") };
+            opMEMFlow.Controls.Add(plcTimeoutV2CurrentIdUc);
+            extraBindings["PLC Timeout V2 Current ID"] = plcTimeoutV2CurrentIdUc;
+
+            var plcTimeoutV2CurrentStatusUc = new panelS() { LabelName = GetFriendlyName("PLC Timeout V2 Current Status") };
+            opMEMFlow.Controls.Add(plcTimeoutV2CurrentStatusUc);
+            extraBindings["PLC Timeout V2 Current Status"] = plcTimeoutV2CurrentStatusUc;
+
+            var plcTimeoutV2LogIdUc = new panelS() { LabelName = GetFriendlyName("PLC Timeout V2 Log ID") };
+            opMEMFlow.Controls.Add(plcTimeoutV2LogIdUc);
+            extraBindings["PLC Timeout V2 Log ID"] = plcTimeoutV2LogIdUc;
+
+            var plcTimeoutV2LogStatusUc = new panelS() { LabelName = GetFriendlyName("PLC Timeout V2 Log Status") };
+            opMEMFlow.Controls.Add(plcTimeoutV2LogStatusUc);
+            extraBindings["PLC Timeout V2 Log Status"] = plcTimeoutV2LogStatusUc;
 
             // Globals class properties
             Type globalsType = typeof(Globals);
@@ -664,6 +686,8 @@ namespace MASAN_SERIALIZATION.Views.SCADA
 
         private void Update_ExtraProp()
         {
+            var plcTimeoutV2Snapshot = ReadPlcTimeoutV2Snapshot();
+
             foreach (var kv in extraBindings)
             {
                 var key = kv.Key;
@@ -700,6 +724,18 @@ namespace MASAN_SERIALIZATION.Views.SCADA
                             break;
                         case "AWS Send Queue Count":
                             uc.LabelValue = Globals_Database.aWS_Send_Datas?.Count.ToString() ?? "0";
+                            break;
+                        case "PLC Timeout V2 Current ID":
+                            uc.LabelValue = plcTimeoutV2Snapshot.CurrentId;
+                            break;
+                        case "PLC Timeout V2 Current Status":
+                            uc.LabelValue = plcTimeoutV2Snapshot.CurrentStatus;
+                            break;
+                        case "PLC Timeout V2 Log ID":
+                            uc.LabelValue = plcTimeoutV2Snapshot.LogId;
+                            break;
+                        case "PLC Timeout V2 Log Status":
+                            uc.LabelValue = plcTimeoutV2Snapshot.LogStatus;
                             break;
                     }
 
@@ -826,6 +862,50 @@ namespace MASAN_SERIALIZATION.Views.SCADA
                 {
                     uc.LabelValue = $"Error: {ex.Message}";
                 }
+            }
+        }
+
+        private (string CurrentId, string CurrentStatus, string LogId, string LogStatus) ReadPlcTimeoutV2Snapshot()
+        {
+            try
+            {
+                var plc = AppConfigs.Current.PLC_Duo_Mode ? Globals.PLC_02 : Globals.PLC;
+                if (plc == null)
+                {
+                    return ("N/A", "N/A", "N/A", "N/A");
+                }
+
+                string currentIdAddress = PLCAddress.Get("PLC_CurrentID_DM_C2");
+                string currentStatusAddress = PLCAddress.Get("PLC_CurrentStatus_DM_C2");
+                string historyIdAddress = PLCAddress.Get("PLC_IDHistory_Start_DM_C2");
+                string historyStatusAddress = PLCAddress.Get("PLC_StatusHistory_Start_DM_C2");
+
+                var currentIdResult = plc.ReadInt32(currentIdAddress, 1);
+                var currentStatusResult = plc.ReadInt32(currentStatusAddress, 1);
+                var historyIdResult = plc.ReadInt32(historyIdAddress, 5);
+                var historyStatusResult = plc.ReadInt32(historyStatusAddress, 5);
+
+                string currentId = currentIdResult.IsSuccess && currentIdResult.Content != null && currentIdResult.Content.Length > 0
+                    ? currentIdResult.Content[0].ToString()
+                    : $"Err: {currentIdResult.Message}";
+
+                string currentStatus = currentStatusResult.IsSuccess && currentStatusResult.Content != null && currentStatusResult.Content.Length > 0
+                    ? currentStatusResult.Content[0].ToString()
+                    : $"Err: {currentStatusResult.Message}";
+
+                string logId = historyIdResult.IsSuccess && historyIdResult.Content != null && historyIdResult.Content.Length > 0
+                    ? string.Join(", ", historyIdResult.Content.Take(5))
+                    : $"Err: {historyIdResult.Message}";
+
+                string logStatus = historyStatusResult.IsSuccess && historyStatusResult.Content != null && historyStatusResult.Content.Length > 0
+                    ? string.Join(", ", historyStatusResult.Content.Take(5))
+                    : $"Err: {historyStatusResult.Message}";
+
+                return (currentId, currentStatus, logId, logStatus);
+            }
+            catch (Exception ex)
+            {
+                return ($"Err: {ex.Message}", $"Err: {ex.Message}", $"Err: {ex.Message}", $"Err: {ex.Message}");
             }
         }
 

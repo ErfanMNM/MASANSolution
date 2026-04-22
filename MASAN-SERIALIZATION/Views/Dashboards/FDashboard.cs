@@ -1298,8 +1298,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     historyStatusAddress,
                     timeoutMs,
                     pollingIntervalMs,
-                    status => status == 1, // PLC status PASS
-                    status => status == 2,  // PLC status TIMEOUT
+                    status => status == 1 || status == 2, // PLC status PASS (lane 2 = 1, lane 1 = 2)
+                    status => status == 3,  // PLC status TIMEOUT
                     previousIdSnapshot,
                     previousStatusSnapshot
                 );
