@@ -50,6 +50,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTitlePanel4 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel7 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel15 = new Sunny.UI.UITableLayoutPanel();
+            this.uiTableLayoutPanel11 = new Sunny.UI.UITableLayoutPanel();
+            this.opPLCMaxProcessingTime = new Sunny.UI.UIPanel();
+            this.opPLCCurrentProcessingTime = new Sunny.UI.UIPanel();
             this.btnClearNoti = new Sunny.UI.UISymbolButton();
             this.opCaseCount = new Sunny.UI.UIPanel();
             this.uiPanel1 = new Sunny.UI.UIPanel();
@@ -108,6 +111,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTitlePanel4.SuspendLayout();
             this.uiTableLayoutPanel7.SuspendLayout();
             this.uiTableLayoutPanel15.SuspendLayout();
+            this.uiTableLayoutPanel11.SuspendLayout();
+            this.uiTableLayoutPanel10.SuspendLayout();
             this.uiTitlePanel3.SuspendLayout();
             this.uiTableLayoutPanel4.SuspendLayout();
             this.uiTitlePanel6.SuspendLayout();
@@ -460,6 +465,49 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel15.Size = new System.Drawing.Size(355, 318);
             this.uiTableLayoutPanel15.TabIndex = 8;
             this.uiTableLayoutPanel15.TagString = null;
+            // 
+            // uiTableLayoutPanel11
+            // 
+            this.uiTableLayoutPanel11.ColumnCount = 2;
+            this.uiTableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel11.Controls.Add(this.opPLCMaxProcessingTime, 1, 0);
+            this.uiTableLayoutPanel11.Controls.Add(this.opPLCCurrentProcessingTime, 0, 0);
+            this.uiTableLayoutPanel11.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel11.Location = new System.Drawing.Point(144, 158);
+            this.uiTableLayoutPanel11.Margin = new System.Windows.Forms.Padding(2);
+            this.uiTableLayoutPanel11.Name = "uiTableLayoutPanel11";
+            this.uiTableLayoutPanel11.RowCount = 1;
+            this.uiTableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel11.Size = new System.Drawing.Size(209, 48);
+            this.uiTableLayoutPanel11.TabIndex = 35;
+            this.uiTableLayoutPanel11.TagString = null;
+            // 
+            // opPLCMaxProcessingTime
+            // 
+            this.opPLCMaxProcessingTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opPLCMaxProcessingTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opPLCMaxProcessingTime.Location = new System.Drawing.Point(106, 2);
+            this.opPLCMaxProcessingTime.Margin = new System.Windows.Forms.Padding(2);
+            this.opPLCMaxProcessingTime.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opPLCMaxProcessingTime.Name = "opPLCMaxProcessingTime";
+            this.opPLCMaxProcessingTime.Size = new System.Drawing.Size(101, 44);
+            this.opPLCMaxProcessingTime.TabIndex = 33;
+            this.opPLCMaxProcessingTime.Text = "...";
+            this.opPLCMaxProcessingTime.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // opPLCCurrentProcessingTime
+            // 
+            this.opPLCCurrentProcessingTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opPLCCurrentProcessingTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opPLCCurrentProcessingTime.Location = new System.Drawing.Point(2, 2);
+            this.opPLCCurrentProcessingTime.Margin = new System.Windows.Forms.Padding(2);
+            this.opPLCCurrentProcessingTime.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opPLCCurrentProcessingTime.Name = "opPLCCurrentProcessingTime";
+            this.opPLCCurrentProcessingTime.Size = new System.Drawing.Size(100, 44);
+            this.opPLCCurrentProcessingTime.TabIndex = 32;
+            this.opPLCCurrentProcessingTime.Text = "...";
+            this.opPLCCurrentProcessingTime.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnClearNoti
             // 
@@ -966,7 +1014,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.tabPage3.Controls.Add(this.opHisCS);
             this.tabPage3.Location = new System.Drawing.Point(0, 40);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(200, 60);
+            this.tabPage3.Size = new System.Drawing.Size(459, 405);
             this.tabPage3.TabIndex = 4;
             this.tabPage3.Text = "Lịch sử phân làn";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -983,7 +1031,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opHisCS.Name = "opHisCS";
             this.opHisCS.Padding = new System.Windows.Forms.Padding(2);
             this.opHisCS.ShowText = false;
-            this.opHisCS.Size = new System.Drawing.Size(200, 60);
+            this.opHisCS.Size = new System.Drawing.Size(459, 405);
             this.opHisCS.TabIndex = 1;
             this.opHisCS.Text = "uiListBox1";
             // 
@@ -1179,6 +1227,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTitlePanel4.ResumeLayout(false);
             this.uiTableLayoutPanel7.ResumeLayout(false);
             this.uiTableLayoutPanel15.ResumeLayout(false);
+            this.uiTableLayoutPanel10.ResumeLayout(false);
             this.uiTitlePanel3.ResumeLayout(false);
             this.uiTableLayoutPanel4.ResumeLayout(false);
             this.uiTitlePanel6.ResumeLayout(false);

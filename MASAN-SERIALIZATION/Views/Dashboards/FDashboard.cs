@@ -705,6 +705,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     break;
             }
         }
+
+        int k = 1;
         private void Send_Result_Content_CSub(e_Production_Status status, string data)
         {
             if (status != e_Production_Status.Pass)
@@ -713,7 +715,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
 
             CameraSub_HMI.Camera_Status = status;
-            CameraSub_HMI.ID = Globals.productionData_Cs.counter.totalCount;
+            CameraSub_HMI.ID = k++;
             CameraSub_HMI.Camera_Content = data;
 
             switch (status)
