@@ -62,6 +62,8 @@ namespace MASAN_SERIALIZATION.Configs
         public bool CameraSub_Timeout_Enabled { get; set; } // Bật/Tắt tính năng kiểm tra timeout cho CameraSub
         public int CameraSub_Timeout_Ms { get; set; } // Thời gian timeout cho CameraSub (ms)
         public int CameraSub_Polling_Interval_Ms { get; set; } // Thời gian polling interval cho CameraSub (ms)
+        public int CameraSub_V2_Polling_Exit_Ms { get; set; } // Thời gian thoát polling cho CameraSub V2 (ms)
+        public int CameraSub_V2_Polling_Delay_Ms { get; set; } // Thời gian delay giữa các lần polling cho CameraSub V2 (ms)
         public bool CameraSub_Timeout_Log_Enabled { get; set; } // Bật/Tắt log chi tiết cho timeout checking
         public bool CameraSub_Timeout_Mode_2 { get; set; } // Bật/Tắt chế độ timeout thứ 2 cho CameraSub (nếu có, có thể để false nếu không sử dụng)
         public bool TestMode { get; set; } // Chế độ kiểm tra (Test Mode)
@@ -118,6 +120,8 @@ namespace MASAN_SERIALIZATION.Configs
             CameraSub_Timeout_Enabled = true; // Mặc định bật tính năng timeout checking
             CameraSub_Timeout_Ms = 500; // Mặc định timeout 500ms
             CameraSub_Polling_Interval_Ms = 10; // Mặc định polling mỗi 10ms
+            CameraSub_V2_Polling_Exit_Ms = 500; // Mặc định thoát polling V2 sau 500ms
+            CameraSub_V2_Polling_Delay_Ms = 10; // Mặc định delay polling V2 mỗi 10ms
             CameraSub_Timeout_Log_Enabled = true; // Mặc định bật log chi tiết
             TestMode = false; // Mặc định không bật chế độ kiểm tra (Test Mode)
             Check_Db_Old_Active = false; // Mặc định tắt kiểm tra mã trùng với database cũ

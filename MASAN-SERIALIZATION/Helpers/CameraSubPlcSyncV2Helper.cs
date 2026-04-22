@@ -1,6 +1,5 @@
 ﻿using HslCommunication;
 using System;
-using System.Collections.Generic;
 
 namespace MASAN_SERIALIZATION.Helpers
 {
@@ -101,7 +100,11 @@ namespace MASAN_SERIALIZATION.Helpers
                 previousStatus = readBeforeStatus.Content[0];
             }
 
-            int expectedId = previousId + 1;
+            // Theo nguyên lý mới của PLC:
+            // - CurrentID đang là ID của chai hiện tại đang xử lý (không phải chai trước đó)
+            // - Status ban đầu = 5, sau khi PC gửi lane thì PLC mới đổi status kết quả
+            // => V2 cần theo dõi status thay đổi trên chính ID snapshot hiện tại.
+            int expectedId = previousId;
             int pollCount = 0;
 
             while (pollCount < maxPolls)
@@ -117,7 +120,7 @@ namespace MASAN_SERIALIZATION.Helpers
                     int currentId = readCurrentId.Content[0];
                     int currentStatus = readCurrentStatus.Content[0];
 
-                    if (currentId == previousId)
+                    if (currentId == expectedId && currentStatus == previousStatus)
                     {
                         System.Threading.Thread.Sleep(pollingIntervalMs);
                         continue;
@@ -130,49 +133,18 @@ namespace MASAN_SERIALIZATION.Helpers
 
                     if (currentId > expectedId)
                     {
-                        OperateResult<int[]> historyIds = readInt32(historyIdStartAddress, 5);
-                        OperateResult<int[]> historyStatuses = readInt32(historyStatusStartAddress, 5);
-
-                        if (!historyIds.IsSuccess || !historyStatuses.IsSuccess ||
-                            historyIds.Content == null || historyStatuses.Content == null ||
-                            historyIds.Content.Length < 5 || historyStatuses.Content.Length < 5)
+                        return new CameraSubSyncV2Result
                         {
-                            return new CameraSubSyncV2Result
-                            {
-                                Result = e_CameraSubSyncV2_Result.ReadError,
-                                PreviousId = previousId,
-                                PreviousStatus = previousStatus,
-                                ExpectedId = expectedId,
-                                CurrentId = currentId,
-                                PollCount = pollCount,
-                                ElapsedMs = (DateTime.Now - startTime).TotalMilliseconds,
-                                Message = $"Không đọc được vùng history ID/Status. IDMsg={historyIds.Message}, StatusMsg={historyStatuses.Message}"
-                            };
-                        }
-
-                        var idToStatus = new Dictionary<int, int>();
-                        for (int i = 0; i < 5; i++)
-                        {
-                            idToStatus[historyIds.Content[i]] = historyStatuses.Content[i];
-                        }
-
-                        if (!idToStatus.TryGetValue(expectedId, out int matchedStatus))
-                        {
-                            return new CameraSubSyncV2Result
-                            {
-                                Result = e_CameraSubSyncV2_Result.SyncError,
-                                PreviousId = previousId,
-                                PreviousStatus = previousStatus,
-                                ExpectedId = expectedId,
-                                CurrentId = currentId,
-                                PlcStatus = currentStatus,
-                                PollCount = pollCount,
-                                ElapsedMs = (DateTime.Now - startTime).TotalMilliseconds,
-                                Message = $"ID nhảy từ {previousId} lên {currentId} nhưng không tìm thấy expected ID {expectedId} trong history D10..D14"
-                            };
-                        }
-
-                        return BuildResult(previousId, previousStatus, expectedId, expectedId, matchedStatus, pollCount, startTime, isPassStatus, isTimeoutStatus);
+                            Result = e_CameraSubSyncV2_Result.NoResponse,
+                            PreviousId = previousId,
+                            PreviousStatus = previousStatus,
+                            ExpectedId = expectedId,
+                            CurrentId = currentId,
+                            PlcStatus = currentStatus,
+                            PollCount = pollCount,
+                            ElapsedMs = (DateTime.Now - startTime).TotalMilliseconds,
+                            Message = $"ID đã chuyển sang chai khác ({currentId}) trước khi status của ID {expectedId} đổi từ {previousStatus}"
+                        };
                     }
                 }
 
@@ -187,7 +159,7 @@ namespace MASAN_SERIALIZATION.Helpers
                 ExpectedId = expectedId,
                 PollCount = pollCount,
                 ElapsedMs = (DateTime.Now - startTime).TotalMilliseconds,
-                Message = $"Hết timeout {timeoutMs}ms nhưng ID chưa tăng từ {previousId}"
+                Message = $"Hết timeout {timeoutMs}ms nhưng status của ID {expectedId} chưa đổi từ {previousStatus}"
             };
         }
 
