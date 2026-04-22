@@ -662,7 +662,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             // V2: đồng bộ theo ID/Status PLC
                             CameraSubSyncV2Result resultV2 = CheckCameraSubTimeoutV2(_data, cameraSubPreviousId, cameraSubPreviousStatus);
 
-                            if (resultV2.Result == e_CameraSubSyncV2_Result.Timeout || resultV2.Result == e_CameraSubSyncV2_Result.NoResponse)
+                            if (resultV2.Result == e_CameraSubSyncV2_Result.Timeout)
                             {
                                 Send_Result_Content_CSub(e_Production_Status.Timeout, _data);
                                 Enqueue_Product_To_Record(_data, e_Production_Status.Timeout, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
@@ -670,6 +670,20 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                 this.InvokeIfRequired(() =>
                                 {
                                     ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS TIMEOUT V2 - Mã {_data}. {resultV2.Message}");
+                                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                                });
+
+                                return;
+                            }
+
+                            if (resultV2.Result == e_CameraSubSyncV2_Result.NoResponse)
+                            {
+                                Send_Result_Content_CSub(e_Production_Status.Error, _data);
+                                Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
+
+                                this.InvokeIfRequired(() =>
+                                {
+                                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS V2 POLLING EXIT -> APP ERROR - Mã {_data}. {resultV2.Message}");
                                     ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                                 });
 
@@ -1272,8 +1286,12 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         {
             try
             {
-                int pollingIntervalMs = AppConfigs.Current.CameraSub_Polling_Interval_Ms;
-                int timeoutMs = AppConfigs.Current.CameraSub_Timeout_Ms;
+                int pollingIntervalMs = AppConfigs.Current.CameraSub_V2_Polling_Delay_Ms > 0
+                    ? AppConfigs.Current.CameraSub_V2_Polling_Delay_Ms
+                    : AppConfigs.Current.CameraSub_Polling_Interval_Ms;
+                int timeoutMs = AppConfigs.Current.CameraSub_V2_Polling_Exit_Ms > 0
+                    ? AppConfigs.Current.CameraSub_V2_Polling_Exit_Ms
+                    : AppConfigs.Current.CameraSub_Timeout_Ms;
 
                 Func<string, ushort, OperateResult<int[]>> readInt32 = (address, length) =>
                 {
