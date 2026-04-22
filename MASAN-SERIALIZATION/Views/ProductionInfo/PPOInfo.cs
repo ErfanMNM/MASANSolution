@@ -20,6 +20,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 {
     public partial class PPOInfo : UIPage
     {
+        private const string TestModePOName = "PO Test";
         #region Private Fields
 
         private LogHelper<e_LogType> _pageLogger;
@@ -70,6 +71,68 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 string errorResponse = $"{{\"error\":\"{loadResult.message}\"}}";
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
                     "Tạo thất bại danh sách đơn hàng từ MES", errorResponse);
+            }
+
+            TryAutoSwitchToTestPO();
+        }
+
+        private bool IsTestModeEnabled => AppConfigs.Current.TestMode;
+
+        private void TryAutoSwitchToTestPO()
+        {
+            if (!IsTestModeEnabled)
+            {
+                return;
+            }
+
+            var ensureResult = Globals.ProductionData.getfromMES.Ensure_TestMode_PO(TestModePOName, 1);
+            if (!ensureResult.issucess)
+            {
+                _pageLogger?.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
+                    "Không thể tạo PO Test tự động", ensureResult.message);
+            }
+
+            if (ipOrderNO.Items.Count == 0)
+            {
+                return;
+            }
+
+            for (int i = 0; i < ipOrderNO.Items.Count; i++)
+            {
+                if (ipOrderNO.Items[i] is DataRowView drv)
+                {
+                    string orderNo = drv["orderNo"]?.ToString() ?? string.Empty;
+                    if (string.Equals(orderNo, TestModePOName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        ipOrderNO.SelectedIndex = i;
+                        Globals.ProductionData.orderNo = orderNo;
+                        return;
+                    }
+                }
+            }
+
+            if (ipOrderNO.DataSource is DataTable dt)
+            {
+                bool existed = dt.AsEnumerable().Any(r =>
+                    string.Equals(r["orderNo"]?.ToString(), TestModePOName, StringComparison.OrdinalIgnoreCase));
+
+                if (!existed)
+                {
+                    DataRow newRow = dt.NewRow();
+                    newRow["orderNo"] = TestModePOName;
+                    dt.Rows.Add(newRow);
+                }
+
+                for (int i = 0; i < ipOrderNO.Items.Count; i++)
+                {
+                    if (ipOrderNO.Items[i] is DataRowView drv &&
+                        string.Equals(drv["orderNo"]?.ToString(), TestModePOName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        ipOrderNO.SelectedIndex = i;
+                        Globals.ProductionData.orderNo = TestModePOName;
+                        return;
+                    }
+                }
             }
         }
 
@@ -249,6 +312,14 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void HandleStartState()
         {
+            if (IsTestModeEnabled)
+            {
+                Globals.Production_State = e_Production_State.Loading;
+                Globals.ProductionData.orderNo = TestModePOName;
+                TryAutoSwitchToTestPO();
+                return;
+            }
+
             TResult lastPOResult = Globals.ProductionData.getDataPO.GetLastPO();
 
             if (lastPOResult.issuccess)
@@ -413,6 +484,13 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     return true;
                 }
             }
+
+            if (IsTestModeEnabled && string.Equals(Globals.ProductionData.orderNo, TestModePOName, StringComparison.OrdinalIgnoreCase))
+            {
+                this.InvokeIfRequired(() => ipOrderNO.Text = TestModePOName);
+                return true;
+            }
+
             return false;
         }
 
@@ -475,6 +553,11 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private bool IsOrderCompleted()
         {
+            if (IsTestModeEnabled)
+            {
+                return false;
+            }
+
             return Globals.ProductionData.counter.passCount >= Globals.ProductionData.orderQty.ToInt32() && Globals.ProductionData.counter.passCount > 0;
         }
 
@@ -545,6 +628,11 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private bool ValidateOrderForSaving()
         {
+            if (IsTestModeEnabled)
+            {
+                return true;
+            }
+
             if (Globals.ProductionData.getDataPO.Is_PO_Deleted(ipOrderNO.SelectedText))
             {
                 this.ShowErrorDialog("Lỗi PP02: Đơn hàng đã bị xóa, Vui lòng chọn đơn hàng khác.");
@@ -792,6 +880,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             }
 
             Globals.ProductionData.getfromMES.MES_Load_OrderNo_ToComboBox(ipOrderNO);
+            TryAutoSwitchToTestPO();
 
             if (ipOrderNO.Items.Count == 0)
             {
@@ -1009,6 +1098,28 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
             if (!orderInfoResult.issuccess)
             {
+                if (IsTestModeEnabled)
+                {
+                    this.InvokeIfRequired(() =>
+                    {
+                        opCZCodeCount.Text = "0";
+                        opProductionLine.Text = "TEST";
+                        opOrderQty.Text = "1";
+                        opCustomerOrderNO.Text = "PO_TEST";
+                        opProductName.Text = "TEST MODE";
+                        opProductCode.Text = "TEST";
+                        opLotNumber.Text = "TEST";
+                        opGTIN.Text = "TEST";
+                        opShift.Text = "TEST";
+                        opFactory.Text = "TEST";
+                        opSite.Text = "TEST";
+                        opUOM.Text = "PCS";
+                    });
+                    LoadCountersAsync();
+                    IsRender = false;
+                    return;
+                }
+
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                     $"Lấy thông tin đơn hàng thất bại: {orderInfoResult.message}");
                 this.ShowErrorDialog($"Lỗi PP06: {orderInfoResult.message}");

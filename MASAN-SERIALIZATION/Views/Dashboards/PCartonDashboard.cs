@@ -21,6 +21,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 {
     public partial class PCartonDashboard : UIPage
     {
+        private bool IsTestModeEnabled => AppConfigs.Current.TestMode;
+
         Connection _ScanConection01 = new Connection();
         Connection _ScanConection02 = new Connection();
 
@@ -249,7 +251,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     else
                     {
                         //kiểm tra mã đã từng tồn tại chưa
-                        if (Globals_Database.Dictionary_ProductionCarton_Data.Values.Any(x => x.cartonCode == s.Trim()))
+                        if (!IsTestModeEnabled && Globals_Database.Dictionary_ProductionCarton_Data.Values.Any(x => x.cartonCode == s.Trim()))
                         {
                             this.InvokeIfRequired(() =>
                             {
@@ -285,7 +287,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     else
                     {
                         //kiểm tra mã đã từng tồn tại chưa
-                        if (Globals_Database.Dictionary_ProductionCarton_Data.Values.Any(x => x.cartonCode == s.Trim()))
+                        if (!IsTestModeEnabled && Globals_Database.Dictionary_ProductionCarton_Data.Values.Any(x => x.cartonCode == s.Trim()))
                         {
                             this.InvokeIfRequired(() =>
                             {
@@ -329,7 +331,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     else
                     {
                         //kiểm tra mã đã từng tồn tại chưa
-                        if (Globals_Database.Dictionary_ProductionCarton_Data.Values.Any(x => x.cartonCode == s.Trim()))
+                        if (!IsTestModeEnabled && Globals_Database.Dictionary_ProductionCarton_Data.Values.Any(x => x.cartonCode == s.Trim()))
                         {
                             this.InvokeIfRequired(() =>
                             {
@@ -363,7 +365,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     else
                     {
                         //kiểm tra mã đã từng tồn tại chưa
-                        if (Globals_Database.Dictionary_ProductionCarton_Data.Values.Any(x => x.cartonCode == s.Trim()))
+                        if (!IsTestModeEnabled && Globals_Database.Dictionary_ProductionCarton_Data.Values.Any(x => x.cartonCode == s.Trim()))
                         {
                             this.InvokeIfRequired(() =>
                             {

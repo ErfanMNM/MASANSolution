@@ -456,6 +456,88 @@ namespace MASAN_SERIALIZATION.Production
                     return new TResult(false, $"Lỗi P04 khi lấy danh sách mã CZ: {ex.Message}");
                 }
             }
+
+            public (bool issucess, string message) Ensure_TestMode_PO(string orderNo, int orderQty = 1)
+            {
+                try
+                {
+                    if (string.IsNullOrWhiteSpace(orderNo))
+                    {
+                        return (false, "OrderNo TestMode không hợp lệ.");
+                    }
+
+                    if (!Directory.Exists(poMesJsonPODataPath))
+                    {
+                        Directory.CreateDirectory(poMesJsonPODataPath);
+                    }
+
+                    if (!Directory.Exists(poMesJsonCodesPath))
+                    {
+                        Directory.CreateDirectory(poMesJsonCodesPath);
+                    }
+
+                    string poFilePath = Path.Combine(poMesJsonPODataPath, orderNo + ".json");
+                    string testGtin = "TESTMODE";
+                    int safeOrderQty = orderQty > 0 ? orderQty : 1;
+
+                    if (!File.Exists(poFilePath))
+                    {
+                        var poPayload = new
+                        {
+                            orderNo = orderNo,
+                            orderQty = safeOrderQty,
+                            customerOrderNo = "TESTMODE",
+                            productionLine = "TEST",
+                            productName = "TEST MODE PRODUCT",
+                            productCode = "TESTMODE",
+                            lotNumber = "TESTMODE",
+                            gtin = testGtin,
+                            shift = "TEST",
+                            factory = "TEST",
+                            site = "TEST",
+                            uom = "PCS",
+                            productionDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                        };
+
+                        File.WriteAllText(poFilePath, JsonConvert.SerializeObject(poPayload, Formatting.Indented));
+                    }
+
+                    string codeFilePath = Path.Combine(poMesJsonCodesPath, $"GTIN_{testGtin}.json");
+                    if (!File.Exists(codeFilePath))
+                    {
+                        var codePayload = new
+                        {
+                            blocks = new Dictionary<string, object>
+                            {
+                                {
+                                    "0",
+                                    new
+                                    {
+                                        createdAt = DateTime.UtcNow.ToString("o"),
+                                        codes = new[]
+                                        {
+                                            new
+                                            {
+                                                code = "TEST-CODE-0001",
+                                                createdAt = DateTime.UtcNow.ToString("o"),
+                                                blockNo = 0
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        };
+
+                        File.WriteAllText(codeFilePath, JsonConvert.SerializeObject(codePayload, Formatting.Indented));
+                    }
+
+                    return (true, "Đã đảm bảo dữ liệu PO TestMode.");
+                }
+                catch (Exception ex)
+                {
+                    return (false, $"Lỗi Ensure_TestMode_PO: {ex.Message}");
+                }
+            }
             public (bool issucess, string message) MES_Load_OrderNo_ToComboBox(UIComboBox comboBox)
             {
                 try
