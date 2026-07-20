@@ -19,6 +19,8 @@ namespace MASAN_SERIALIZATION.Configs
         public int Camera_Main_Port { get; set; } // Cổng kết nối của camera chính
         public int Camera_Sub_Port { get; set; } // Cổng kết nối của camera phụ
 
+        public bool OneCamera_Enabled { get; set; } // chế độ chỉ sử dụng một camera (camera chính) để quét mã sản phẩm, bỏ qua camera phụ. Nếu bật chế độ này, camera phụ sẽ không được sử dụng và tất cả các sản phẩm sẽ được quét bằng camera chính.
+
         /// <summary>
         /// Bật/Tắt chế độ đá sản phẩm khi phát hiện mã trùng tại camera chính.
         /// - true  : hành vi cũ, camera main sẽ gửi tín hiệu reject (đá) khi trùng.
@@ -90,6 +92,7 @@ namespace MASAN_SERIALIZATION.Configs
             HandScanCOM02 = "COM3"; // Tên đăng nhập mặc định của camera phụ
             HandScanCOMMain = "COM4"; // Tên đăng nhập mặc định của camera phụ thứ ba (nếu có, có thể để trống nếu không sử dụng)
             AWS_ENA = true; // Mặc định tắt tính năng AWS
+            OneCamera_Enabled = false; // Mặc định tắt chế độ chỉ sử dụng một camera
 
             // Mặc định vẫn bật cơ chế đá khi trùng tại camera chính để giữ nguyên hành vi cũ
             CameraMain_DuplicateReject_Enabled = true;
