@@ -75,7 +75,7 @@ namespace MASAN_SERIALIZATION
 
     public static class Globals_Database
     {
-        public static Dictionary<string, ProductionCodeData> Dictionary_ProductionCode_Data { get; set; } = new Dictionary<string, ProductionCodeData>(); // Lưu trữ dữ liệu mã sản xuất
+        //public static Dictionary<string, ProductionCodeData> Dictionary_ProductionCode_Data { get; set; } = new Dictionary<string, ProductionCodeData>(); // Lưu trữ dữ liệu mã sản xuất
 
         public static Dictionary<string, ProductionCodeData> Dictionary_ProductionCode_CameraSub_Data { get; set; } = new Dictionary<string, ProductionCodeData>();
 
