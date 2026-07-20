@@ -28,33 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            MainTabBody = new Sunny.UI.UITabControl();
+            TabBody = new Sunny.UI.UITabControl();
             tabPage1 = new TabPage();
             tabPage2 = new TabPage();
             MainNavMenu = new Sunny.UI.UINavMenu();
             uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
-            MainTabBody.SuspendLayout();
+            TabBody.SuspendLayout();
             uiTableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
-            // MainTabBody
+            // TabBody
             // 
-            MainTabBody.Controls.Add(tabPage1);
-            MainTabBody.Controls.Add(tabPage2);
-            MainTabBody.Dock = DockStyle.Fill;
-            MainTabBody.DrawMode = TabDrawMode.OwnerDrawFixed;
-            MainTabBody.Font = new Font("Microsoft Sans Serif", 12F);
-            MainTabBody.ItemSize = new Size(0, 1);
-            MainTabBody.Location = new Point(160, 3);
-            MainTabBody.MainPage = "";
-            MainTabBody.Name = "MainTabBody";
-            MainTabBody.SelectedIndex = 0;
-            MainTabBody.Size = new Size(893, 573);
-            MainTabBody.SizeMode = TabSizeMode.Fixed;
-            MainTabBody.TabIndex = 0;
-            MainTabBody.TabUnSelectedForeColor = Color.FromArgb(240, 240, 240);
-            MainTabBody.TabVisible = false;
-            MainTabBody.TipsFont = new Font("Microsoft Sans Serif", 9F);
+            TabBody.Controls.Add(tabPage1);
+            TabBody.Controls.Add(tabPage2);
+            TabBody.Dock = DockStyle.Fill;
+            TabBody.DrawMode = TabDrawMode.OwnerDrawFixed;
+            TabBody.Font = new Font("Microsoft Sans Serif", 12F);
+            TabBody.ItemSize = new Size(0, 1);
+            TabBody.Location = new Point(160, 3);
+            TabBody.MainPage = "";
+            TabBody.Name = "TabBody";
+            TabBody.SelectedIndex = 0;
+            TabBody.Size = new Size(893, 573);
+            TabBody.SizeMode = TabSizeMode.Fixed;
+            TabBody.TabIndex = 0;
+            TabBody.TabUnSelectedForeColor = Color.FromArgb(240, 240, 240);
+            TabBody.TabVisible = false;
+            TabBody.TipsFont = new Font("Microsoft Sans Serif", 9F);
             // 
             // tabPage1
             // 
@@ -98,7 +98,7 @@
             uiTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 14.867424F));
             uiTableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 85.132576F));
             uiTableLayoutPanel1.Controls.Add(MainNavMenu, 0, 0);
-            uiTableLayoutPanel1.Controls.Add(MainTabBody, 1, 0);
+            uiTableLayoutPanel1.Controls.Add(TabBody, 1, 0);
             uiTableLayoutPanel1.Dock = DockStyle.Fill;
             uiTableLayoutPanel1.Location = new Point(0, 35);
             uiTableLayoutPanel1.Name = "uiTableLayoutPanel1";
@@ -116,14 +116,14 @@
             Name = "MainForm";
             Text = "Form1";
             ZoomScaleRect = new Rectangle(15, 15, 800, 450);
-            MainTabBody.ResumeLayout(false);
+            TabBody.ResumeLayout(false);
             uiTableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
 
-        private Sunny.UI.UITabControl MainTabBody;
+        private Sunny.UI.UITabControl TabBody;
         private TabPage tabPage1;
         private TabPage tabPage2;
         private Sunny.UI.UINavMenu MainNavMenu;

@@ -143,6 +143,168 @@ namespace CProject.Module
         }
 
         //Thêm mã vào pool 3 mode 0: nhập file, 1: gửi 1 cái, 2: gửi DataTable
+        public DataPoolAddCodesResult AddCodes(
+            string poolName,
+            int mode,
+            string? filePath,
+            string? singleCode,
+            DataTable? dataTable,
+            string createID,
+            string createdBy)
+        {
+            var result = new DataPoolAddCodesResult();
+
+            if (string.IsNullOrWhiteSpace(poolName))
+            {
+                result.Message = "Tên Pool không được trống.";
+                return result;
+            }
+
+            if (mode < 0 || mode > 2)
+            {
+                result.Message = "Mode không hợp lệ. Chỉ chấp nhận 0 (file), 1 (1 code), hoặc 2 (DataTable).";
+                return result;
+            }
+
+            var poolPathResult = GetPoolPath(poolName);
+            if (!poolPathResult.Success)
+            {
+                result.Message = poolPathResult.Message;
+                return result;
+            }
+
+            string poolPath = poolPathResult.Data;
+            if (!File.Exists(poolPath))
+            {
+                result.Message = "Pool không tồn tại.";
+                return result;
+            }
+
+            List<string> codesToAdd = new();
+
+            switch (mode)
+            {
+                case 0: // File CSV
+                    if (string.IsNullOrWhiteSpace(filePath))
+                    {
+                        result.Message = "Đường dẫn file không được trống khi mode = 0.";
+                        return result;
+                    }
+                    if (!File.Exists(filePath))
+                    {
+                        result.Message = $"File không tồn tại: {filePath}";
+                        return result;
+                    }
+                    try
+                    {
+                        var lines = File.ReadAllLines(filePath);
+                        foreach (var line in lines)
+                        {
+                            var trimmed = line.Trim();
+                            if (!string.IsNullOrEmpty(trimmed))
+                            {
+                                codesToAdd.Add(trimmed);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        result.Message = $"Lỗi khi đọc file: {ex.Message}";
+                        return result;
+                    }
+                    break;
+
+                case 1: // 1 code
+                    if (string.IsNullOrWhiteSpace(singleCode))
+                    {
+                        result.Message = "Code không được trống khi mode = 1.";
+                        return result;
+                    }
+                    codesToAdd.Add(singleCode.Trim());
+                    break;
+
+                case 2: // DataTable
+                    if (dataTable == null || dataTable.Rows.Count == 0)
+                    {
+                        result.Message = "DataTable không hợp lệ hoặc không có dữ liệu khi mode = 2.";
+                        return result;
+                    }
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        var code = row[0]?.ToString()?.Trim();
+                        if (!string.IsNullOrEmpty(code))
+                        {
+                            codesToAdd.Add(code);
+                        }
+                    }
+                    break;
+            }
+
+            if (codesToAdd.Count == 0)
+            {
+                result.Message = "Không có code nào để thêm.";
+                return result;
+            }
+
+            result.TotalCount = codesToAdd.Count;
+            string createDatetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            using var con = new SqliteConnection($"Data Source={poolPath}");
+            con.Open();
+            using var transaction = con.BeginTransaction();
+
+            try
+            {
+                foreach (var code in codesToAdd)
+                {
+                    if (string.IsNullOrWhiteSpace(code)) continue;
+
+                    try
+                    {
+                        using var checkCmd = new SqliteCommand(
+                            "SELECT COUNT(*) FROM Codes WHERE PoolCode = @code", con, transaction);
+                        checkCmd.Parameters.AddWithValue("@code", code);
+                        int count = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+                        if (count > 0)
+                        {
+                            result.DuplicateCount++;
+                            continue;
+                        }
+
+                        using var insertCmd = new SqliteCommand(@"
+                            INSERT INTO Codes (PoolCode, Status, PoolCodeCreateID, PoolCodeCreatedBy, PoolCodeCreateDatetime)
+                            VALUES (@code, 0, @createID, @createdBy, @createDatetime)", con, transaction);
+                        insertCmd.Parameters.AddWithValue("@code", code);
+                        insertCmd.Parameters.AddWithValue("@createID", createID);
+                        insertCmd.Parameters.AddWithValue("@createdBy", createdBy);
+                        insertCmd.Parameters.AddWithValue("@createDatetime", createDatetime);
+                        insertCmd.ExecuteNonQuery();
+                        result.AddedCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        result.ErrorCount++;
+                        if (result.Errors.Count < 10)
+                        {
+                            result.Errors.Add($"Code '{code}': {ex.Message}");
+                        }
+                    }
+                }
+
+                transaction.Commit();
+                result.Success = true;
+                result.Message = $"Hoàn tất. Thêm mới: {result.AddedCount}, Trùng: {result.DuplicateCount}, Lỗi: {result.ErrorCount}";
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                result.Success = false;
+                result.Message = $"Lỗi transaction: {ex.Message}";
+            }
+
+            return result;
+        }
 
         //Cập nhật trạng thái mã trong pool : Status = 0: chưa sử dụng, 1: đã sử dụng, -1: lỗi : Cập nhật theo PoolCode hoặc theo ID, nếu PoolCode và ID đều có thì ưu tiên PoolCode, nếu không có thì báo lỗi.
 
@@ -157,6 +319,25 @@ namespace CProject.Module
         //Lấy toàn bộ code trong pool theo trạng thái. (trả về DataTable)
 
         //Lấy danh sách Pool trong thư mục databasePath, có phân trang lấy 100 Records 1 lần, nếu muốn lấy tiếp thì truyền pageIndex = 2, pageIndex = 3, ... Nếu không có dữ liệu thì trả về rỗng.
+    }
+
+    public class DataPoolAddCodesResult
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public int TotalCount { get; set; }
+        public int AddedCount { get; set; }
+        public int DuplicateCount { get; set; }
+        public int ErrorCount { get; set; }
+        public List<string> Errors { get; set; } = new();
+
+        public DataPoolAddCodesResult() { }
+
+        public DataPoolAddCodesResult(bool success, string message)
+        {
+            Success = success;
+            Message = message;
+        }
     }
 
     public class DataPoolResultString

@@ -5,7 +5,7 @@ namespace CProject
 {
     public partial class MainForm : UIForm
     {
-        private FDashboard _fdashboard = new FDashboard();
+        public FDashboard _fdashboard = new FDashboard();
         public MainForm()
         {
             InitializeComponent();
@@ -14,13 +14,14 @@ namespace CProject
 
         private void InitUI()
         {
-            InitUI(MainTabBody);
+            InitUI(TabBody);
         }
 
         private void InitUI(UITabControl mainTabBody)
         {
-            mainTabBody = MainTabBody;
-            MainNavMenu.TabControl = MainTabBody;
+            MainTabControl = mainTabBody;
+            MainNavMenu.TabControl = mainTabBody;
+
             MainNavMenu.CreateNode(AddPage(_fdashboard, 1001));
             MainNavMenu.SelectPage(1001);
         }
