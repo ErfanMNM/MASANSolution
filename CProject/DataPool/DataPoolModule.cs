@@ -115,11 +115,11 @@ namespace CProject.Module
                 PoolCode TEXT NOT NULL UNIQUE,
                 Status INTEGER NOT NULL DEFAULT 0,
                 PoolCodeUsedBatchID TEXT NOT NULL DEFAULT '',
-                PoolCodeUsedDatetime TEXT NOT NULL,
-                PoolCodeNote TEXT NOT NULL,
-                PoolCodeCreateID TEXT NOT NULL,
-                PoolCodeCreatedBy TEXT NOT NULL,
-                PoolCodeCreateDatetime TEXT NOT NULL
+                PoolCodeUsedDatetime TEXT NOT NULL DEFAULT '',
+                PoolCodeNote TEXT NOT NULL DEFAULT '',
+                PoolCodeCreateID TEXT NOT NULL DEFAULT '',
+                PoolCodeCreatedBy TEXT NOT NULL DEFAULT '',
+                PoolCodeCreateDatetime TEXT NOT NULL DEFAULT ''
             );
 
             -- Indexes
@@ -314,19 +314,619 @@ namespace CProject.Module
             return result;
         }
 
-        //Cập nhật trạng thái mã trong pool : Status = 0: chưa sử dụng, 1: đã sử dụng, -1: lỗi : Cập nhật theo PoolCode hoặc theo ID, nếu PoolCode và ID đều có thì ưu tiên PoolCode, nếu không có thì báo lỗi.
+        //A1. Cập nhật trạng thái mã trong pool : Status = 0: chưa sử dụng, 1: đã sử dụng, -1: lỗi : Cập nhật theo PoolCode hoặc theo ID, nếu PoolCode và ID đều có thì ưu tiên PoolCode, nếu không có thì báo lỗi.
+        public DataPoolResult UpdateCodeStatus(string poolName, string? poolCode, double? id, int newStatus)
+        {
+            if (string.IsNullOrWhiteSpace(poolName))
+            {
+                return new DataPoolResult(false, "Tên Pool không được trống.");
+            }
+            if (newStatus != 0 && newStatus != 1 && newStatus != -1)
+            {
+                return new DataPoolResult(false, "Status không hợp lệ. Chỉ chấp nhận: 0 (chưa dùng), 1 (đã dùng), -1 (lỗi).");
+            }
+            if (string.IsNullOrWhiteSpace(poolCode) && !id.HasValue)
+            {
+                return new DataPoolResult(false, "Phải cung cấp PoolCode hoặc ID.");
+            }
 
-        //Lấy thông tin pool theo tên pool (trả về thông tin pool và Count số lượng mã code trong pool, số lượng mã code đã sử dụng, số lượng mã code chưa sử dụng, số lượng mã code lỗi).
+            var poolPathResult = GetPoolPath(poolName);
+            if (!poolPathResult.Success)
+            {
+                return new DataPoolResult(false, poolPathResult.Message);
+            }
+            string poolPath = poolPathResult.Data;
+            if (!File.Exists(poolPath))
+            {
+                return new DataPoolResult(false, "Pool không tồn tại.");
+            }
 
-        //Lấy mã code trong pool theo PoolCode hoặc ID, nếu PoolCode và ID đều có thì ưu tiên PoolCode, nếu không có thì báo lỗi.
+            using var con = new SqliteConnection($"Data Source={poolPath}");
+            con.Open();
 
-        //Lấy danh sách mã code trong theo số lượng, trạng thái, ngày tạo, ngày sử dụng, batchID, người tạo, người sử dụng. Có phân trang lấy 100 Records 1 lần, nếu muốn lấy tiếp thì truyền pageIndex = 2, pageIndex = 3, ... Nếu không có dữ liệu thì trả về rỗng.
+            string sql;
+            SqliteCommand cmd;
 
-        //Lấy số đếm mã code : Tổng số, số lượng đã dùng.
+            if (!string.IsNullOrWhiteSpace(poolCode))
+            {
+                sql = @"UPDATE Codes SET Status = @status";
+                if (newStatus == 1)
+                {
+                    sql += @", PoolCodeUsedBatchID = @batchID, PoolCodeUsedDatetime = @usedDatetime";
+                }
+                else if (newStatus == 0)
+                {
+                    sql += @", PoolCodeUsedBatchID = '', PoolCodeUsedDatetime = ''";
+                }
+                sql += @" WHERE PoolCode = @code";
+                cmd = new SqliteCommand(sql, con);
+                cmd.Parameters.AddWithValue("@code", poolCode);
+                cmd.Parameters.AddWithValue("@status", newStatus);
+                if (newStatus == 1)
+                {
+                    cmd.Parameters.AddWithValue("@batchID", $"BATCH_{DateTime.Now:yyyyMMddHHmmss}");
+                    cmd.Parameters.AddWithValue("@usedDatetime", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                }
+            }
+            else
+            {
+                sql = @"UPDATE Codes SET Status = @status";
+                if (newStatus == 1)
+                {
+                    sql += @", PoolCodeUsedBatchID = @batchID, PoolCodeUsedDatetime = @usedDatetime";
+                }
+                else if (newStatus == 0)
+                {
+                    sql += @", PoolCodeUsedBatchID = '', PoolCodeUsedDatetime = ''";
+                }
+                sql += @" WHERE ID = @id";
+                cmd = new SqliteCommand(sql, con);
+                cmd.Parameters.AddWithValue("@id", id!.Value);
+                cmd.Parameters.AddWithValue("@status", newStatus);
+                if (newStatus == 1)
+                {
+                    cmd.Parameters.AddWithValue("@batchID", $"BATCH_{DateTime.Now:yyyyMMddHHmmss}");
+                    cmd.Parameters.AddWithValue("@usedDatetime", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                }
+            }
 
-        //Lấy toàn bộ code trong pool theo trạng thái. (trả về DataTable)
+            int rowsAffected = cmd.ExecuteNonQuery();
+            if (rowsAffected > 0)
+            {
+                string statusName = newStatus == 0 ? "chưa dùng" : (newStatus == 1 ? "đã dùng" : "lỗi");
+                return new DataPoolResult(true, $"Cập nhật thành công sang trạng thái '{statusName}'. {rowsAffected} dòng bị ảnh hưởng.");
+            }
+            return new DataPoolResult(false, "Không tìm thấy mã code phù hợp.");
+        }
 
-        //Lấy danh sách Pool trong thư mục databasePath, có phân trang lấy 100 Records 1 lần, nếu muốn lấy tiếp thì truyền pageIndex = 2, pageIndex = 3, ... Nếu không có dữ liệu thì trả về rỗng.
+        //A2. Lấy thông tin pool theo tên pool (trả về thông tin pool và Count số lượng mã code trong pool, số lượng mã code đã sử dụng, số lượng mã code chưa sử dụng, số lượng mã code lỗi).
+        public DataPoolResult<PoolInfoWithCount> GetPoolInfo(string poolName)
+        {
+            if (string.IsNullOrWhiteSpace(poolName))
+            {
+                return new DataPoolResult<PoolInfoWithCount>(false, "Tên Pool không được trống.", null);
+            }
+
+            var poolPathResult = GetPoolPath(poolName);
+            if (!poolPathResult.Success)
+            {
+                return new DataPoolResult<PoolInfoWithCount>(false, poolPathResult.Message, null);
+            }
+            string poolPath = poolPathResult.Data;
+            if (!File.Exists(poolPath))
+            {
+                return new DataPoolResult<PoolInfoWithCount>(false, "Pool không tồn tại.", null);
+            }
+
+            using var con = new SqliteConnection($"Data Source={poolPath}");
+            con.Open();
+
+            using var poolCmd = new SqliteCommand(@"SELECT ID, PoolName, PoolDescription, PoolCreateID, PoolNote, PoolCreatedBy, PoolCreateDatetime FROM Pool LIMIT 1", con);
+            using var reader = poolCmd.ExecuteReader();
+            if (!reader.Read())
+            {
+                return new DataPoolResult<PoolInfoWithCount>(false, "Không tìm thấy thông tin Pool.", null);
+            }
+
+            var info = new PoolInfoWithCount(
+                id: reader.GetDouble(0),
+                name: reader.GetString(1),
+                description: reader.GetString(2),
+                createID: reader.GetString(3),
+                note: reader.GetString(4),
+                createdBy: reader.GetString(5),
+                createDatetime: reader.GetString(6)
+            );
+            reader.Close();
+
+            using var countCmd = new SqliteCommand(@"
+                SELECT 
+                    COUNT(*) as TotalCount,
+                    SUM(CASE WHEN Status = 0 THEN 1 ELSE 0 END) as UnusedCount,
+                    SUM(CASE WHEN Status = 1 THEN 1 ELSE 0 END) as UsedCount,
+                    SUM(CASE WHEN Status = -1 THEN 1 ELSE 0 END) as ErrorCount
+                FROM Codes", con);
+            using var countReader = countCmd.ExecuteReader();
+            if (countReader.Read())
+            {
+                info.Count = new PoolInfoWithCount.CodeCount(
+                    total: countReader.IsDBNull(0) ? 0 : countReader.GetInt32(0),
+                    unused: countReader.IsDBNull(1) ? 0 : countReader.GetInt32(1),
+                    used: countReader.IsDBNull(2) ? 0 : countReader.GetInt32(2),
+                    error: countReader.IsDBNull(3) ? 0 : countReader.GetInt32(3)
+                );
+            }
+
+            return new DataPoolResult<PoolInfoWithCount>(true, "Success", info);
+        }
+
+        //A3. Lấy mã code trong pool theo PoolCode hoặc ID, nếu PoolCode và ID đều có thì ưu tiên PoolCode, nếu không có thì báo lỗi.
+        public DataPoolResult<DataTable> GetPoolCode(string poolName, string? poolCode, double? id)
+        {
+            if (string.IsNullOrWhiteSpace(poolName))
+            {
+                return new DataPoolResult<DataTable>(false, "Tên Pool không được trống.", null);
+            }
+            if (string.IsNullOrWhiteSpace(poolCode) && !id.HasValue)
+            {
+                return new DataPoolResult<DataTable>(false, "Phải cung cấp PoolCode hoặc ID.", null);
+            }
+
+            var poolPathResult = GetPoolPath(poolName);
+            if (!poolPathResult.Success)
+            {
+                return new DataPoolResult<DataTable>(false, poolPathResult.Message, null);
+            }
+            string poolPath = poolPathResult.Data;
+            if (!File.Exists(poolPath))
+            {
+                return new DataPoolResult<DataTable>(false, "Pool không tồn tại.", null);
+            }
+
+            using var con = new SqliteConnection($"Data Source={poolPath}");
+            con.Open();
+
+            string sql;
+            if (!string.IsNullOrWhiteSpace(poolCode))
+            {
+                sql = @"SELECT ID, PoolCode, Status, PoolCodeUsedBatchID, PoolCodeUsedDatetime, PoolCodeNote, PoolCodeCreateID, PoolCodeCreatedBy, PoolCodeCreateDatetime FROM Codes WHERE PoolCode = @code";
+            }
+            else
+            {
+                sql = @"SELECT ID, PoolCode, Status, PoolCodeUsedBatchID, PoolCodeUsedDatetime, PoolCodeNote, PoolCodeCreateID, PoolCodeCreatedBy, PoolCodeCreateDatetime FROM Codes WHERE ID = @id";
+            }
+
+            using var cmd = new SqliteCommand(sql, con);
+            if (!string.IsNullOrWhiteSpace(poolCode))
+            {
+                cmd.Parameters.AddWithValue("@code", poolCode);
+            }
+            else
+            {
+                cmd.Parameters.AddWithValue("@id", id!.Value);
+            }
+
+            var dt = new DataTable();
+            using var reader = cmd.ExecuteReader();
+            dt.Load(reader);
+
+            if (dt.Rows.Count == 0)
+            {
+                return new DataPoolResult<DataTable>(false, "Không tìm thấy mã code.", dt);
+            }
+            return new DataPoolResult<DataTable>(true, "Success", dt);
+        }
+
+        //A4. Lấy danh sách mã code trong theo số lượng, trạng thái, ngày tạo, ngày sử dụng, batchID, người tạo, người sử dụng. Có phân trang lấy 100 Records 1 lần, nếu muốn lấy tiếp thì truyền pageIndex = 2, pageIndex = 3, ... Nếu không có dữ liệu thì trả về rỗng.
+        public DataPoolResult<PoolCodePageResult> GetPoolCodesPaginated(
+            string poolName,
+            int pageIndex = 1,
+            int pageSize = 100,
+            int? status = null,
+            string? batchID = null,
+            string? createID = null,
+            string? createdBy = null,
+            DateTime? fromCreateDate = null,
+            DateTime? toCreateDate = null,
+            DateTime? fromUsedDate = null,
+            DateTime? toUsedDate = null)
+        {
+            if (string.IsNullOrWhiteSpace(poolName))
+            {
+                return new DataPoolResult<PoolCodePageResult>(false, "Tên Pool không được trống.", null);
+            }
+            if (pageIndex < 1) pageIndex = 1;
+            if (pageSize < 1) pageSize = 100;
+
+            var poolPathResult = GetPoolPath(poolName);
+            if (!poolPathResult.Success)
+            {
+                return new DataPoolResult<PoolCodePageResult>(false, poolPathResult.Message, null);
+            }
+            string poolPath = poolPathResult.Data;
+            if (!File.Exists(poolPath))
+            {
+                return new DataPoolResult<PoolCodePageResult>(false, "Pool không tồn tại.", null);
+            }
+
+            using var con = new SqliteConnection($"Data Source={poolPath}");
+            con.Open();
+
+            var whereClauses = new List<string>();
+            var parameters = new List<SqliteParameter>();
+
+            if (status.HasValue)
+            {
+                whereClauses.Add("Status = @status");
+                parameters.Add(new SqliteParameter("@status", status.Value));
+            }
+            if (!string.IsNullOrWhiteSpace(batchID))
+            {
+                whereClauses.Add("PoolCodeUsedBatchID = @batchID");
+                parameters.Add(new SqliteParameter("@batchID", batchID));
+            }
+            if (!string.IsNullOrWhiteSpace(createID))
+            {
+                whereClauses.Add("PoolCodeCreateID = @createID");
+                parameters.Add(new SqliteParameter("@createID", createID));
+            }
+            if (!string.IsNullOrWhiteSpace(createdBy))
+            {
+                whereClauses.Add("PoolCodeCreatedBy LIKE @createdBy");
+                parameters.Add(new SqliteParameter("@createdBy", $"%{createdBy}%"));
+            }
+            if (fromCreateDate.HasValue)
+            {
+                whereClauses.Add("PoolCodeCreateDatetime >= @fromCreateDate");
+                parameters.Add(new SqliteParameter("@fromCreateDate", fromCreateDate.Value.ToString("yyyy-MM-dd HH:mm:ss")));
+            }
+            if (toCreateDate.HasValue)
+            {
+                whereClauses.Add("PoolCodeCreateDatetime <= @toCreateDate");
+                parameters.Add(new SqliteParameter("@toCreateDate", toCreateDate.Value.ToString("yyyy-MM-dd HH:mm:ss")));
+            }
+            if (fromUsedDate.HasValue)
+            {
+                whereClauses.Add("PoolCodeUsedDatetime >= @fromUsedDate");
+                parameters.Add(new SqliteParameter("@fromUsedDate", fromUsedDate.Value.ToString("yyyy-MM-dd HH:mm:ss")));
+            }
+            if (toUsedDate.HasValue)
+            {
+                whereClauses.Add("PoolCodeUsedDatetime <= @toUsedDate");
+                parameters.Add(new SqliteParameter("@toUsedDate", toUsedDate.Value.ToString("yyyy-MM-dd HH:mm:ss")));
+            }
+
+            string whereClause = whereClauses.Count > 0 ? "WHERE " + string.Join(" AND ", whereClauses) : "";
+
+            using var countCmd = new SqliteCommand($"SELECT COUNT(*) FROM Codes {whereClause}", con);
+            foreach (var p in parameters) countCmd.Parameters.Add(new SqliteParameter(p.ParameterName, p.Value));
+            int totalCount = Convert.ToInt32(countCmd.ExecuteScalar());
+
+            int offset = (pageIndex - 1) * pageSize;
+
+            string sql = $@"SELECT ID, PoolCode, Status, PoolCodeUsedBatchID, PoolCodeUsedDatetime, PoolCodeNote, PoolCodeCreateID, PoolCodeCreatedBy, PoolCodeCreateDatetime 
+                            FROM Codes {whereClause} 
+                            ORDER BY ID 
+                            LIMIT @limit OFFSET @offset";
+
+            using var cmd = new SqliteCommand(sql, con);
+            foreach (var p in parameters) cmd.Parameters.Add(new SqliteParameter(p.ParameterName, p.Value));
+            cmd.Parameters.AddWithValue("@limit", pageSize);
+            cmd.Parameters.AddWithValue("@offset", offset);
+
+            var dt = new DataTable();
+            using var reader = cmd.ExecuteReader();
+            dt.Load(reader);
+
+            return new DataPoolResult<PoolCodePageResult>(true, "Success", new PoolCodePageResult(dt, totalCount, pageIndex, pageSize));
+        }
+
+        //A5. Lấy số đếm mã code : Tổng số, số lượng đã dùng.
+        public DataPoolResult<CodeCount> GetCodeCounts(string poolName)
+        {
+            if (string.IsNullOrWhiteSpace(poolName))
+            {
+                return new DataPoolResult<CodeCount>(false, "Tên Pool không được trống.", null);
+            }
+
+            var poolPathResult = GetPoolPath(poolName);
+            if (!poolPathResult.Success)
+            {
+                return new DataPoolResult<CodeCount>(false, poolPathResult.Message, null);
+            }
+            string poolPath = poolPathResult.Data;
+            if (!File.Exists(poolPath))
+            {
+                return new DataPoolResult<CodeCount>(false, "Pool không tồn tại.", null);
+            }
+
+            using var con = new SqliteConnection($"Data Source={poolPath}");
+            con.Open();
+
+            using var cmd = new SqliteCommand(@"
+                SELECT 
+                    COUNT(*) as TotalCount,
+                    SUM(CASE WHEN Status = 1 THEN 1 ELSE 0 END) as UsedCount
+                FROM Codes", con);
+            using var reader = cmd.ExecuteReader();
+            if (!reader.Read())
+            {
+                return new DataPoolResult<CodeCount>(false, "Không thể đếm mã code.", null);
+            }
+
+            var count = new CodeCount(
+                total: reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
+                used: reader.IsDBNull(1) ? 0 : reader.GetInt32(1)
+            );
+
+            return new DataPoolResult<CodeCount>(true, "Success", count);
+        }
+
+        //A6. Lấy toàn bộ code trong pool theo trạng thái. (trả về DataTable)
+        public DataPoolResult<DataTable> GetCodesByStatus(string poolName, int? status = null)
+        {
+            if (string.IsNullOrWhiteSpace(poolName))
+            {
+                return new DataPoolResult<DataTable>(false, "Tên Pool không được trống.", null);
+            }
+
+            var poolPathResult = GetPoolPath(poolName);
+            if (!poolPathResult.Success)
+            {
+                return new DataPoolResult<DataTable>(false, poolPathResult.Message, null);
+            }
+            string poolPath = poolPathResult.Data;
+            if (!File.Exists(poolPath))
+            {
+                return new DataPoolResult<DataTable>(false, "Pool không tồn tại.", null);
+            }
+
+            using var con = new SqliteConnection($"Data Source={poolPath}");
+            con.Open();
+
+            string sql = @"SELECT ID, PoolCode, Status, PoolCodeUsedBatchID, PoolCodeUsedDatetime, PoolCodeNote, PoolCodeCreateID, PoolCodeCreatedBy, PoolCodeCreateDatetime FROM Codes";
+            if (status.HasValue)
+            {
+                sql += " WHERE Status = @status";
+            }
+            sql += " ORDER BY ID";
+
+            using var cmd = new SqliteCommand(sql, con);
+            if (status.HasValue)
+            {
+                cmd.Parameters.AddWithValue("@status", status.Value);
+            }
+
+            var dt = new DataTable();
+            using var reader = cmd.ExecuteReader();
+            dt.Load(reader);
+
+            if (dt.Rows.Count > 0)
+            {
+                dt.Columns.Add("StatusName", typeof(string));
+                foreach (DataRow row in dt.Rows)
+                {
+                    int st = Convert.ToInt32(row["Status"]);
+                    row["StatusName"] = st == 0 ? "Chưa dùng" : (st == 1 ? "Đã dùng" : "Lỗi");
+                }
+            }
+
+            return new DataPoolResult<DataTable>(true, $"Tìm thấy {dt.Rows.Count} mã code.", dt);
+        }
+
+        //A7. Lấy danh sách Pool trong thư mục databasePath, có phân trang lấy 100 Records 1 lần, nếu muốn lấy tiếp thì truyền pageIndex = 2, pageIndex = 3, ... Nếu không có dữ liệu thì trả về rỗng.
+        public DataPoolResult<PoolListResult> GetPoolsPaginated(int pageIndex = 1, int pageSize = 100)
+        {
+            if (pageIndex < 1) pageIndex = 1;
+            if (pageSize < 1) pageSize = 100;
+
+            if (!Directory.Exists(_databasePath))
+            {
+                return new DataPoolResult<PoolListResult>(true, "Thư mục không tồn tại.", new PoolListResult(new List<PoolInfoBasic>(), 0, pageIndex, pageSize));
+            }
+
+            var files = Directory.GetFiles(_databasePath, "*.db");
+            var poolInfos = new List<PoolInfoBasic>();
+
+            foreach (var file in files)
+            {
+                string fileName = Path.GetFileNameWithoutExtension(file);
+                try
+                {
+                    using var con = new SqliteConnection($"Data Source={file}");
+                    con.Open();
+
+                    using var cmd = new SqliteCommand(@"SELECT ID, PoolName, PoolDescription, PoolCreateID, PoolNote, PoolCreatedBy, PoolCreateDatetime FROM Pool LIMIT 1", con);
+                    using var reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        poolInfos.Add(new PoolInfoBasic(
+                            id: reader.GetDouble(0),
+                            name: reader.GetString(1),
+                            description: reader.GetString(2),
+                            createID: reader.GetString(3),
+                            note: reader.GetString(4),
+                            createdBy: reader.GetString(5),
+                            createDatetime: reader.GetString(6),
+                            filePath: file
+                        ));
+                    }
+                }
+                catch
+                {
+                    // Skip invalid files
+                }
+            }
+
+            int totalCount = poolInfos.Count;
+            if (totalCount == 0)
+            {
+                return new DataPoolResult<PoolListResult>(true, "Không có Pool nào.", new PoolListResult(new List<PoolInfoBasic>(), 0, pageIndex, pageSize));
+            }
+
+            int offset = (pageIndex - 1) * pageSize;
+            var pagedList = poolInfos.OrderBy(p => p.ID).Skip(offset).Take(pageSize).ToList();
+
+            return new DataPoolResult<PoolListResult>(true, "Success", new PoolListResult(pagedList, totalCount, pageIndex, pageSize));
+        }
+    }
+
+    public class DataPoolResult
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; } = string.Empty;
+
+        public DataPoolResult() { }
+        public DataPoolResult(bool success, string message)
+        {
+            Success = success;
+            Message = message;
+        }
+    }
+
+    public class DataPoolResult<T> : DataPoolResult
+    {
+        public T? Data { get; set; }
+
+        public DataPoolResult() { }
+        public DataPoolResult(bool success, string message, T? data) : base(success, message)
+        {
+            Data = data;
+        }
+    }
+
+    public class CodeCount
+    {
+        public int TotalCount { get; set; }
+        public int UsedCount { get; set; }
+
+        public CodeCount() { }
+        public CodeCount(int total, int used)
+        {
+            TotalCount = total;
+            UsedCount = used;
+        }
+    }
+
+    public class PoolInfoWithCount
+    {
+        public double ID { get; set; }
+        public string PoolName { get; set; } = string.Empty;
+        public string PoolDescription { get; set; } = string.Empty;
+        public string PoolCreateID { get; set; } = string.Empty;
+        public string PoolNote { get; set; } = string.Empty;
+        public string PoolCreatedBy { get; set; } = string.Empty;
+        public string PoolCreateDatetime { get; set; } = string.Empty;
+
+        public PoolInfoWithCount(double id, string name, string description, string createID, string note, string createdBy, string createDatetime)
+        {
+            ID = id;
+            PoolName = name;
+            PoolDescription = description;
+            PoolCreateID = createID;
+            PoolNote = note;
+            PoolCreatedBy = createdBy;
+            PoolCreateDatetime = createDatetime;
+        }
+
+        public class CodeCount
+        {
+            public int TotalCount { get; set; }
+            public int UnusedCount { get; set; }
+            public int UsedCount { get; set; }
+            public int ErrorCount { get; set; }
+
+            public CodeCount(int total, int unused, int used, int error)
+            {
+                TotalCount = total;
+                UnusedCount = unused;
+                UsedCount = used;
+                ErrorCount = error;
+            }
+        }
+
+        public CodeCount? Count { get; set; }
+    }
+
+    public class PoolCodePageResult
+    {
+        public DataTable Data { get; set; }
+        public int TotalCount { get; set; }
+        public int PageIndex { get; set; }
+        public int PageSize { get; set; }
+        public int TotalPages => PageSize > 0 ? (int)Math.Ceiling((double)TotalCount / PageSize) : 0;
+        public bool HasNextPage => PageIndex < TotalPages;
+        public bool HasPrevPage => PageIndex > 1;
+
+        public PoolCodePageResult(DataTable data, int totalCount, int pageIndex, int pageSize)
+        {
+            Data = data;
+            TotalCount = totalCount;
+            PageIndex = pageIndex;
+            PageSize = pageSize;
+        }
+    }
+
+    public class PoolCodeListResult
+    {
+        public DataTable Data { get; set; }
+        public int TotalCount { get; set; }
+        public int PageIndex { get; set; }
+        public int PageSize { get; set; }
+        public int TotalPages => PageSize > 0 ? (int)Math.Ceiling((double)TotalCount / PageSize) : 0;
+        public bool HasNextPage => PageIndex < TotalPages;
+        public bool HasPrevPage => PageIndex > 1;
+
+        public PoolCodeListResult(DataTable data, int totalCount, int pageIndex, int pageSize)
+        {
+            Data = data;
+            TotalCount = totalCount;
+            PageIndex = pageIndex;
+            PageSize = pageSize;
+        }
+    }
+
+    public class PoolListResult
+    {
+        public List<PoolInfoBasic> Items { get; set; }
+        public int TotalCount { get; set; }
+        public int PageIndex { get; set; }
+        public int PageSize { get; set; }
+        public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
+        public bool HasNextPage => PageIndex < TotalPages;
+        public bool HasPrevPage => PageIndex > 1;
+
+        public PoolListResult(List<PoolInfoBasic> items, int totalCount, int pageIndex, int pageSize)
+        {
+            Items = items;
+            TotalCount = totalCount;
+            PageIndex = pageIndex;
+            PageSize = pageSize;
+        }
+    }
+
+    public class PoolInfoBasic
+    {
+        public double ID { get; set; }
+        public string PoolName { get; set; } = string.Empty;
+        public string PoolDescription { get; set; } = string.Empty;
+        public string PoolCreateID { get; set; } = string.Empty;
+        public string PoolNote { get; set; } = string.Empty;
+        public string PoolCreatedBy { get; set; } = string.Empty;
+        public string PoolCreateDatetime { get; set; } = string.Empty;
+        public string FilePath { get; set; } = string.Empty;
+
+        public PoolInfoBasic(double id, string name, string description, string createID, string note, string createdBy, string createDatetime, string filePath)
+        {
+            ID = id;
+            PoolName = name;
+            PoolDescription = description;
+            PoolCreateID = createID;
+            PoolNote = note;
+            PoolCreatedBy = createdBy;
+            PoolCreateDatetime = createDatetime;
+            FilePath = filePath;
+        }
     }
 
     public class DataPoolAddCodesResult
