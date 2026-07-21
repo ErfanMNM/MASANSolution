@@ -150,7 +150,8 @@ namespace CProject.Module
             string? singleCode,
             DataTable? dataTable,
             string createID,
-            string createdBy)
+            string createdBy,
+            Action<int, int>? progressCallback = null)
         {
             var result = new DataPoolAddCodesResult();
 
@@ -255,6 +256,7 @@ namespace CProject.Module
 
             try
             {
+                int processed = 0;
                 foreach (var code in codesToAdd)
                 {
                     if (string.IsNullOrWhiteSpace(code)) continue;
@@ -269,6 +271,8 @@ namespace CProject.Module
                         if (count > 0)
                         {
                             result.DuplicateCount++;
+                            processed++;
+                            progressCallback?.Invoke(processed, codesToAdd.Count);
                             continue;
                         }
 
@@ -281,10 +285,14 @@ namespace CProject.Module
                         insertCmd.Parameters.AddWithValue("@createDatetime", createDatetime);
                         insertCmd.ExecuteNonQuery();
                         result.AddedCount++;
+                        processed++;
+                        progressCallback?.Invoke(processed, codesToAdd.Count);
                     }
                     catch (Exception ex)
                     {
                         result.ErrorCount++;
+                        processed++;
+                        progressCallback?.Invoke(processed, codesToAdd.Count);
                         if (result.Errors.Count < 10)
                         {
                             result.Errors.Add($"Code '{code}': {ex.Message}");

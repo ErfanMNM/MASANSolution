@@ -12,6 +12,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,6 +28,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         Connection _ScanConection02 = new Connection();
 
         BackgroundWorker _bw_update_ui = new BackgroundWorker();
+        BackgroundWorker _bw_http_server = new BackgroundWorker();
+
+        private HttpListener _httpListener;
+        private readonly int _httpPort = 9999;
+        private bool _httpServerRunning = false;
 
         //tạo file log 
         private LogHelper<e_LogType> PCLog;
@@ -71,6 +77,14 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             else
             {
                 this.ShowErrorDialog("Vui lòng không thao tác liên tiếp nhiều lần");
+            }
+
+            // Khởi động HTTP Server BackgroundWorker
+            _bw_http_server.WorkerSupportsCancellation = true;
+            _bw_http_server.DoWork += bw_http_server_DoWork;
+            if (!_bw_http_server.IsBusy)
+            {
+                _bw_http_server.RunWorkerAsync();
             }
 
 
@@ -123,6 +137,299 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         }
 
         #endregion
+
+        #region HTTP Server
+
+        // Classes for JSON serialization
+        public class CartonScanRequest
+        {
+            public string machineName { get; set; }
+            public string cartonCode { get; set; }
+            public string scannedAt { get; set; }
+            public string mode { get; set; }
+        }
+
+        public class CartonScanResponse
+        {
+            public bool success { get; set; }
+            public string message { get; set; }
+            public string status { get; set; }
+            public int cartonIndex { get; set; }
+            public string orderNo { get; set; }
+            public int productCount { get; set; }
+            public string activateDate { get; set; }
+        }
+
+        private void bw_http_server_DoWork(object sender, DoWorkEventArgs e)
+        {
+            _httpServerRunning = true;
+            _httpListener = new HttpListener();
+            _httpListener.Prefixes.Add($"http://+:{_httpPort}/");
+
+            try
+            {
+                _httpListener.Start();
+                LogHttpServerStatus("HTTP Server started on port " + _httpPort);
+
+                while (!_bw_http_server.CancellationPending)
+                {
+                    try
+                    {
+                        var context = _httpListener.GetContext();
+                        HandleHttpRequests(context);
+                    }
+                    catch (HttpListenerException) when (_bw_http_server.CancellationPending)
+                    {
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        if (!_bw_http_server.CancellationPending)
+                        {
+                            PCLog.WriteLogAsync("System", e_LogType.Error, "HTTP Request Error: " + ex.Message);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                PCLog.WriteLogAsync("System", e_LogType.Error, "HTTP Server Error: " + ex.Message);
+            }
+            finally
+            {
+                _httpServerRunning = false;
+                if (_httpListener != null && _httpListener.IsListening)
+                {
+                    _httpListener.Stop();
+                    _httpListener.Close();
+                }
+                LogHttpServerStatus("HTTP Server stopped");
+            }
+        }
+
+        private void HandleHttpRequests(HttpListenerContext context)
+        {
+            try
+            {
+                string path = context.Request.Url.AbsolutePath;
+                string method = context.Request.HttpMethod;
+
+                if (path == "/health" && method == "GET")
+                {
+                    HandleHealthCheck(context);
+                }
+                else if (path == "/carton" && method == "POST")
+                {
+                    HandleCartonRequest(context);
+                }
+                else
+                {
+                    SendJsonResponse(context, 404, false, "Not Found", null);
+                }
+            }
+            catch (Exception ex)
+            {
+                PCLog.WriteLogAsync("System", e_LogType.Error, "HandleHttpRequests Error: " + ex.Message);
+                SendJsonResponse(context, 500, false, "Internal Server Error: " + ex.Message, null);
+            }
+        }
+
+        private void HandleHealthCheck(HttpListenerContext context)
+        {
+            var response = new
+            {
+                status = "ok",
+                timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+            };
+            SendJsonResponse(context, 200, true, "OK", response);
+        }
+
+        private void HandleCartonRequest(HttpListenerContext context)
+        {
+            using (var reader = new StreamReader(context.Request.InputStream, context.Request.ContentEncoding))
+            {
+                string jsonBody = reader.ReadToEnd();
+
+                if (string.IsNullOrWhiteSpace(jsonBody))
+                {
+                    SendJsonResponse(context, 400, false, "Request body is empty", null);
+                    return;
+                }
+
+                CartonScanRequest request;
+                try
+                {
+                    request = Newtonsoft.Json.JsonConvert.DeserializeObject<CartonScanRequest>(jsonBody);
+                }
+                catch
+                {
+                    // Fallback: try parsing as pipe-separated format for backward compatibility
+                    string[] parts = jsonBody.Split('|');
+                    if (parts.Length >= 2)
+                    {
+                        request = new CartonScanRequest
+                        {
+                            cartonCode = parts[0].Trim(),
+                            machineName = parts[1].Trim()
+                        };
+                    }
+                    else
+                    {
+                        SendJsonResponse(context, 400, false, "Invalid format. Expected JSON or <Mã thùng>|<Tên máy>", null);
+                        return;
+                    }
+                }
+
+                if (request == null || string.IsNullOrEmpty(request.cartonCode))
+                {
+                    SendJsonResponse(context, 400, false, "Invalid request: cartonCode is required", null);
+                    return;
+                }
+
+                string cartonCode = request.cartonCode.Trim();
+                string machineName = request.machineName ?? "";
+
+                PCLog.WriteLogAsync("HTTP", e_LogType.DataChange, $"Received carton: {cartonCode} from {machineName}");
+
+                // Xử lý carton dựa trên tên máy
+                if (machineName.Contains("Lane01") || machineName.Contains("Line01") || machineName.Contains("SC0"))
+                {
+                    HandScan01_Process(cartonCode);
+                }
+                else if (machineName.Contains("Lane02") || machineName.Contains("Line02") || machineName.Contains("SC1"))
+                {
+                    HandScan02_Process(cartonCode);
+                }
+                else
+                {
+                    // Mặc định xử lý theo carton ID chẵn/lẻ như các method hiện tại
+                    if (Globals.ProductionData.counter.cartonID % 2 == 0)
+                    {
+                        HandScan01_Process(cartonCode);
+                    }
+                    else
+                    {
+                        HandScan02_Process(cartonCode);
+                    }
+                }
+
+                // Lấy thông tin carton sau khi xử lý
+                int currentCartonID = Globals.ProductionData.counter.cartonID;
+                string currentCartonCode = "";
+                string currentStatus = "OK";
+                string currentOrderNo = Globals.ProductionData.orderNo ?? "";
+                int productCount = Globals.ProductionData.counter.carton_Packing_Count;
+                string activateDate = "";
+
+                if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(currentCartonID, out ProductionCartonData cartonData))
+                {
+                    currentCartonCode = cartonData.cartonCode;
+                    activateDate = cartonData.Activate_Datetime ?? "";
+                    if (cartonData.Production_Datetime != "0")
+                    {
+                        currentStatus = "COMPLETED";
+                    }
+                    else if (cartonData.Start_Datetime != "0")
+                    {
+                        currentStatus = "IN_PROGRESS";
+                    }
+                    else
+                    {
+                        currentStatus = "PENDING";
+                    }
+                }
+
+                var response = new CartonScanResponse
+                {
+                    success = true,
+                    message = "Carton scanned successfully",
+                    status = currentStatus,
+                    cartonIndex = currentCartonID,
+                    orderNo = currentOrderNo,
+                    productCount = productCount,
+                    activateDate = activateDate
+                };
+                SendCartonScanResponse(context, 200, response);
+            }
+        }
+
+        private void SendCartonScanResponse(HttpListenerContext context, int statusCode, CartonScanResponse response)
+        {
+            try
+            {
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = statusCode;
+
+                string json = Newtonsoft.Json.JsonConvert.SerializeObject(response);
+                byte[] buffer = Encoding.UTF8.GetBytes(json);
+                context.Response.ContentLength64 = buffer.Length;
+                context.Response.OutputStream.Write(buffer, 0, buffer.Length);
+                context.Response.OutputStream.Close();
+            }
+            catch (Exception ex)
+            {
+                PCLog.WriteLogAsync("System", e_LogType.Error, "SendCartonScanResponse Error: " + ex.Message);
+            }
+        }
+
+        private void SendJsonResponse(HttpListenerContext context, int statusCode, bool success, string message, object data)
+        {
+            try
+            {
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = statusCode;
+
+                var jsonResponse = new
+                {
+                    success = success,
+                    message = message,
+                    data = data
+                };
+
+                string json = Newtonsoft.Json.JsonConvert.SerializeObject(jsonResponse);
+                byte[] buffer = Encoding.UTF8.GetBytes(json);
+                context.Response.ContentLength64 = buffer.Length;
+                context.Response.OutputStream.Write(buffer, 0, buffer.Length);
+                context.Response.OutputStream.Close();
+            }
+            catch (Exception ex)
+            {
+                PCLog.WriteLogAsync("System", e_LogType.Error, "SendJsonResponse Error: " + ex.Message);
+            }
+        }
+
+        private void LogHttpServerStatus(string message)
+        {
+            try
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    opLane01.Items.Insert(0, $"[HTTP] {message}");
+                });
+            }
+            catch { }
+        }
+
+        private void StopHttpServer()
+        {
+            if (_bw_http_server.IsBusy)
+            {
+                _bw_http_server.CancelAsync();
+            }
+            PCLog.WriteLogAsync("System", e_LogType.Info, "HTTP Server stop requested");
+        }
+
+        #endregion
+
+        protected override void Dispose(bool disposing)
+        {
+            StopHttpServer();
+            if (_bw_update_ui.IsBusy)
+            {
+                _bw_update_ui.CancelAsync();
+            }
+            base.Dispose(disposing);
+        }
 
         //scan chẵn
         private void _ScanConection02_EVENT(e_Serial e, string s)
