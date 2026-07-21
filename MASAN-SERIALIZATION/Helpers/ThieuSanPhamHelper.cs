@@ -144,7 +144,7 @@ namespace MASAN_SERIALIZATION.Helpers
             {
                 if (AppConfigs.Current.PLC_Duo_Mode)
                 {
-                    if (Globals.PLC_Connected_02 && Globals.PLC_02 != null)
+                    if (Globals.PLC_Connected_02 && Globals.PLC != null)
                     {
                         Globals.PLC_02.Write(PLCAddress.Get("PLC2_Alarm_DM_C1"), 1);
                     }

@@ -5,16 +5,13 @@ using MASAN_SERIALIZATION.Enums;
 using MASAN_SERIALIZATION.Helpers;
 using MASAN_SERIALIZATION.Production;
 using MASAN_SERIALIZATION.Utils;
-using SpT.Auth;
 using SpT.Communications.TCP;
 using SpT.Logs;
 using Sunny.UI;
-using Sunny.UI.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.SQLite;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -93,8 +90,20 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "MASAN-SERIALIZATION", "Logs", "Pages", "PDAlog.ptl"));
             // Expose PLC instances to Globals for use by Helpers
-            Globals.PLC_Instance = OMRON_PLC;
-            Globals.PLC_Instance_02 = OMRON_PLC_02;
+            try
+            {
+                Globals.PLC_Instance = OMRON_PLC;
+                Globals.PLC_Instance_02 = OMRON_PLC_02;
+            }
+            catch (Exception ex)
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Lỗi khi khởi tạo PLC: {ex.Message}");
+                    ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                });
+            }
+            
         }
         #endregion
 
