@@ -1431,7 +1431,6 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
                 // Clear tất cả dictionaries trước khi load PO mới
                 Globals_Database.Dictionary_ProductionCode_Data.Clear();
-                Globals_Database.Dictionary_ProductionCode_CameraSub_Data.Clear();
                 Globals_Database.Dictionary_ProductionCarton_Data.Clear();
 
                 // QUAN TRỌNG: Kiểm tra và tạo database trước khi load records

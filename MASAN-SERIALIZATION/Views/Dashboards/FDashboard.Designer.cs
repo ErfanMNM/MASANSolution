@@ -50,6 +50,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTitlePanel4 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel7 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel15 = new Sunny.UI.UITableLayoutPanel();
+            this.uiTableLayoutPanel11 = new Sunny.UI.UITableLayoutPanel();
+            this.opPLCMaxProcessingTime = new Sunny.UI.UIPanel();
+            this.opPLCCurrentProcessingTime = new Sunny.UI.UIPanel();
             this.btnClearNoti = new Sunny.UI.UISymbolButton();
             this.uiPanel1 = new Sunny.UI.UIPanel();
             this.uiPanel7 = new Sunny.UI.UIPanel();
@@ -96,15 +99,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
             this.opErrCount = new Sunny.UI.UIPanel();
             this.opsadfsdf = new Sunny.UI.UIPanel();
-            this.Camera_Main = new SpT.Communications.TCP.TCPClient(this.components);
-            this.Camera_Sub = new SpT.Communications.TCP.TCPClient(this.components);
+            this.Camera_HIK = new SpT.Communications.TCP.TCPClient(this.components);
             this.OMRON_PLC = new SpT.OmronPLC_Hsl(this.components);
             this.WK_Update_UI = new System.ComponentModel.BackgroundWorker();
             this.OMRON_PLC_02 = new SpT.OmronPLC_Hsl(this.components);
             this.subpr = new System.ComponentModel.BackgroundWorker();
-            this.uiTableLayoutPanel11 = new Sunny.UI.UITableLayoutPanel();
-            this.opPLCMaxProcessingTime = new Sunny.UI.UIPanel();
-            this.opPLCCurrentProcessingTime = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTitlePanel5.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -112,6 +111,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTitlePanel4.SuspendLayout();
             this.uiTableLayoutPanel7.SuspendLayout();
             this.uiTableLayoutPanel15.SuspendLayout();
+            this.uiTableLayoutPanel11.SuspendLayout();
             this.uiTableLayoutPanel10.SuspendLayout();
             this.uiTitlePanel3.SuspendLayout();
             this.uiTableLayoutPanel4.SuspendLayout();
@@ -133,7 +133,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel16.SuspendLayout();
             this.uiTableLayoutPanel37.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
-            this.uiTableLayoutPanel11.SuspendLayout();
             this.SuspendLayout();
             // 
             // uiTableLayoutPanel3
@@ -466,6 +465,49 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel15.Size = new System.Drawing.Size(355, 318);
             this.uiTableLayoutPanel15.TabIndex = 8;
             this.uiTableLayoutPanel15.TagString = null;
+            // 
+            // uiTableLayoutPanel11
+            // 
+            this.uiTableLayoutPanel11.ColumnCount = 2;
+            this.uiTableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel11.Controls.Add(this.opPLCMaxProcessingTime, 1, 0);
+            this.uiTableLayoutPanel11.Controls.Add(this.opPLCCurrentProcessingTime, 0, 0);
+            this.uiTableLayoutPanel11.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel11.Location = new System.Drawing.Point(144, 158);
+            this.uiTableLayoutPanel11.Margin = new System.Windows.Forms.Padding(2);
+            this.uiTableLayoutPanel11.Name = "uiTableLayoutPanel11";
+            this.uiTableLayoutPanel11.RowCount = 1;
+            this.uiTableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel11.Size = new System.Drawing.Size(209, 48);
+            this.uiTableLayoutPanel11.TabIndex = 35;
+            this.uiTableLayoutPanel11.TagString = null;
+            // 
+            // opPLCMaxProcessingTime
+            // 
+            this.opPLCMaxProcessingTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opPLCMaxProcessingTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opPLCMaxProcessingTime.Location = new System.Drawing.Point(106, 2);
+            this.opPLCMaxProcessingTime.Margin = new System.Windows.Forms.Padding(2);
+            this.opPLCMaxProcessingTime.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opPLCMaxProcessingTime.Name = "opPLCMaxProcessingTime";
+            this.opPLCMaxProcessingTime.Size = new System.Drawing.Size(101, 44);
+            this.opPLCMaxProcessingTime.TabIndex = 33;
+            this.opPLCMaxProcessingTime.Text = "...";
+            this.opPLCMaxProcessingTime.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // opPLCCurrentProcessingTime
+            // 
+            this.opPLCCurrentProcessingTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opPLCCurrentProcessingTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.opPLCCurrentProcessingTime.Location = new System.Drawing.Point(2, 2);
+            this.opPLCCurrentProcessingTime.Margin = new System.Windows.Forms.Padding(2);
+            this.opPLCCurrentProcessingTime.MinimumSize = new System.Drawing.Size(1, 1);
+            this.opPLCCurrentProcessingTime.Name = "opPLCCurrentProcessingTime";
+            this.opPLCCurrentProcessingTime.Size = new System.Drawing.Size(100, 44);
+            this.opPLCCurrentProcessingTime.TabIndex = 32;
+            this.opPLCCurrentProcessingTime.Text = "...";
+            this.opPLCCurrentProcessingTime.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnClearNoti
             // 
@@ -1148,17 +1190,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opsadfsdf.Text = "Cảnh báo";
             this.opsadfsdf.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // Camera_Main
+            // Camera_HIK
             // 
-            this.Camera_Main.IP = null;
-            this.Camera_Main.Port = 0;
-            this.Camera_Main.ClientCallBack += new SpT.Communications.TCP.TCPClient.EventForClient(this.CameraMain_ClientCallBack);
-            // 
-            // Camera_Sub
-            // 
-            this.Camera_Sub.IP = null;
-            this.Camera_Sub.Port = 0;
-            this.Camera_Sub.ClientCallBack += new SpT.Communications.TCP.TCPClient.EventForClient(this.CameraSub_ClientCallBack);
+            this.Camera_HIK.IP = null;
+            this.Camera_HIK.Port = 0;
+            this.Camera_HIK.ClientCallBack += new SpT.Communications.TCP.TCPClient.EventForClient(this.CameraMain_ClientCallBack);
             // 
             // OMRON_PLC
             // 
@@ -1188,49 +1224,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             // 
             this.subpr.DoWork += new System.ComponentModel.DoWorkEventHandler(this.subpr_DoWork);
             // 
-            // uiTableLayoutPanel11
-            // 
-            this.uiTableLayoutPanel11.ColumnCount = 2;
-            this.uiTableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel11.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel11.Controls.Add(this.opPLCMaxProcessingTime, 1, 0);
-            this.uiTableLayoutPanel11.Controls.Add(this.opPLCCurrentProcessingTime, 0, 0);
-            this.uiTableLayoutPanel11.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel11.Location = new System.Drawing.Point(144, 158);
-            this.uiTableLayoutPanel11.Margin = new System.Windows.Forms.Padding(2);
-            this.uiTableLayoutPanel11.Name = "uiTableLayoutPanel11";
-            this.uiTableLayoutPanel11.RowCount = 1;
-            this.uiTableLayoutPanel11.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel11.Size = new System.Drawing.Size(209, 48);
-            this.uiTableLayoutPanel11.TabIndex = 35;
-            this.uiTableLayoutPanel11.TagString = null;
-            // 
-            // opPLCMaxProcessingTime
-            // 
-            this.opPLCMaxProcessingTime.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opPLCMaxProcessingTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opPLCMaxProcessingTime.Location = new System.Drawing.Point(106, 2);
-            this.opPLCMaxProcessingTime.Margin = new System.Windows.Forms.Padding(2);
-            this.opPLCMaxProcessingTime.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opPLCMaxProcessingTime.Name = "opPLCMaxProcessingTime";
-            this.opPLCMaxProcessingTime.Size = new System.Drawing.Size(101, 44);
-            this.opPLCMaxProcessingTime.TabIndex = 33;
-            this.opPLCMaxProcessingTime.Text = "...";
-            this.opPLCMaxProcessingTime.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opPLCCurrentProcessingTime
-            // 
-            this.opPLCCurrentProcessingTime.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opPLCCurrentProcessingTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.opPLCCurrentProcessingTime.Location = new System.Drawing.Point(2, 2);
-            this.opPLCCurrentProcessingTime.Margin = new System.Windows.Forms.Padding(2);
-            this.opPLCCurrentProcessingTime.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opPLCCurrentProcessingTime.Name = "opPLCCurrentProcessingTime";
-            this.opPLCCurrentProcessingTime.Size = new System.Drawing.Size(100, 44);
-            this.opPLCCurrentProcessingTime.TabIndex = 32;
-            this.opPLCCurrentProcessingTime.Text = "...";
-            this.opPLCCurrentProcessingTime.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // FDashboard
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1246,6 +1239,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTitlePanel4.ResumeLayout(false);
             this.uiTableLayoutPanel7.ResumeLayout(false);
             this.uiTableLayoutPanel15.ResumeLayout(false);
+            this.uiTableLayoutPanel11.ResumeLayout(false);
             this.uiTableLayoutPanel10.ResumeLayout(false);
             this.uiTitlePanel3.ResumeLayout(false);
             this.uiTableLayoutPanel4.ResumeLayout(false);
@@ -1267,7 +1261,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel16.ResumeLayout(false);
             this.uiTableLayoutPanel37.ResumeLayout(false);
             this.uiTableLayoutPanel1.ResumeLayout(false);
-            this.uiTableLayoutPanel11.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1318,8 +1311,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private Sunny.UI.UIPanel opResultPassFailC2;
         private System.Windows.Forms.TabPage tabPage3;
         private Sunny.UI.UIListBox opHisCS;
-        private SpT.Communications.TCP.TCPClient Camera_Main;
-        private SpT.Communications.TCP.TCPClient Camera_Sub;
+        private SpT.Communications.TCP.TCPClient Camera_HIK;
         private SpT.OmronPLC_Hsl OMRON_PLC;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel1;
         private Sunny.UI.UIPanel opErrCount;

@@ -1745,7 +1745,6 @@ namespace MASAN_SERIALIZATION.Production
                                        "`ActivateDate` = @activateDate, " +
                                        "`ProductionDate` = @productionDate,  " +
                                        "`ActivateUser` = @UserName,  " +
-                                       "`SubCamera_ActivateDate` = @subCamera_ActivateDate" +
                                        " WHERE `ID` = @RowId ;";
 
                         using (SQLiteCommand command = new SQLiteCommand(query, connection))
@@ -1755,7 +1754,6 @@ namespace MASAN_SERIALIZATION.Production
                             command.Parameters.AddWithValue("@activateDate", productionCodeData.Activate_Datetime);
                             command.Parameters.AddWithValue("@productionDate", productionCodeData.Production_Datetime);
                             command.Parameters.AddWithValue("@UserName", productionCodeData.Activate_User);
-                            command.Parameters.AddWithValue("@subCamera_ActivateDate", productionCodeData.Sub_Camera_Activate_Datetime);
                             int rowsAffected = command.ExecuteNonQuery();
                         }
                     }

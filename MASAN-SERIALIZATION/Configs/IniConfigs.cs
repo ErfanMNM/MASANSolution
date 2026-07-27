@@ -15,18 +15,15 @@ namespace MASAN_SERIALIZATION.Configs
         [ConfigSection("APP")]
         public bool TwoFA_Enabled { get; set; } // Bật/Tắt tính năng xác thực hai yếu tố
         public string Camera_Main_IP { get; set; } // Địa chỉ IP của camera chính
-        public string Camera_Sub_IP { get; set; } // Địa chỉ IP của camera phụ
         public int Camera_Main_Port { get; set; } // Cổng kết nối của camera chính
-        public int Camera_Sub_Port { get; set; } // Cổng kết nối của camera phụ
-
-        public bool OneCamera_Enabled { get; set; } // chế độ chỉ sử dụng một camera (camera chính) để quét mã sản phẩm, bỏ qua camera phụ. Nếu bật chế độ này, camera phụ sẽ không được sử dụng và tất cả các sản phẩm sẽ được quét bằng camera chính.
-
         /// <summary>
         /// Bật/Tắt chế độ đá sản phẩm khi phát hiện mã trùng tại camera chính.
         /// - true  : hành vi cũ, camera main sẽ gửi tín hiệu reject (đá) khi trùng.
         /// - false : chỉ cảnh báo trên màn hình, KHÔNG gửi reject, cho sản phẩm đi thẳng (camera sub sẽ xử lý đá).
         /// </summary>
         public bool CameraMain_DuplicateReject_Enabled { get; set; }
+
+        public bool Check_Duplica_Enabled { get; set; }
         public string HandScanCOM01 { get; set; } // Tên đăng nhập của camera chính
         public string HandScanCOM02 { get; set; } // Tên đăng nhập của camera phụ
         public string HandScanCOMMain { get; set; } // Tên đăng nhập của camera phụ thứ ba (nếu có, có thể để trống nếu không sử dụng)
@@ -85,14 +82,11 @@ namespace MASAN_SERIALIZATION.Configs
             TwoFA_Enabled = false; // Mặc định tắt tính năng xác thực hai yếu tố
             AWS_Dev_Mode = false; // Mặc định tắt chế độ phát triển AWS
             Camera_Main_IP =@"127.0.0.1";// Địa chỉ IP mặc định của camera chính
-            Camera_Sub_IP =@"127.0.0.1";// Địa chỉ IP mặc định của camera phụ
             Camera_Main_Port = 51236; // Cổng kết nối mặc định của camera chính
-            Camera_Sub_Port = 51237; // Cổng kết nối mặc định của camera phụ
             HandScanCOM01 = "COM2"; // Tên đăng nhập mặc định của camera chính
             HandScanCOM02 = "COM3"; // Tên đăng nhập mặc định của camera phụ
             HandScanCOMMain = "COM4"; // Tên đăng nhập mặc định của camera phụ thứ ba (nếu có, có thể để trống nếu không sử dụng)
             AWS_ENA = true; // Mặc định tắt tính năng AWS
-            OneCamera_Enabled = false; // Mặc định tắt chế độ chỉ sử dụng một camera
 
             // Mặc định vẫn bật cơ chế đá khi trùng tại camera chính để giữ nguyên hành vi cũ
             CameraMain_DuplicateReject_Enabled = true;
@@ -118,7 +112,7 @@ namespace MASAN_SERIALIZATION.Configs
             cartonWarning = 5; // Mặc định ngưỡng cảnh báo số lượng sản phẩm trong thùng carton là 5
 
             Time_Delay_Complete = 10000; // Mặc định thời gian delay sau khi hoàn thành một sản phẩm là 500ms
-
+            Check_Duplica_Enabled = false;
             // CameraSub Timeout Settings - Default values
             CameraSub_Timeout_Enabled = true; // Mặc định bật tính năng timeout checking
             CameraSub_Timeout_Ms = 500; // Mặc định timeout 500ms
