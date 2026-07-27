@@ -19,10 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MASAN-SERIALIZATION", "MASAN-SERIALIZATION\MASAN-SERIALIZATION.csproj", "{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CProject", "CProject\CProject.csproj", "{1BB63335-91D8-4CE8-8564-1108D6E8FC95}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GProject", "..\..\Mte_CShap\GProject\GProject.csproj", "{B53731EB-F227-70BA-BE13-18646E771525}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,22 +88,6 @@ Global
 		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Release|x64.ActiveCfg = Release|Any CPU
 		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Release|x64.Build.0 = Release|Any CPU
-		{1BB63335-91D8-4CE8-8564-1108D6E8FC95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1BB63335-91D8-4CE8-8564-1108D6E8FC95}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1BB63335-91D8-4CE8-8564-1108D6E8FC95}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{1BB63335-91D8-4CE8-8564-1108D6E8FC95}.Debug|x64.Build.0 = Debug|Any CPU
-		{1BB63335-91D8-4CE8-8564-1108D6E8FC95}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1BB63335-91D8-4CE8-8564-1108D6E8FC95}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1BB63335-91D8-4CE8-8564-1108D6E8FC95}.Release|x64.ActiveCfg = Release|Any CPU
-		{1BB63335-91D8-4CE8-8564-1108D6E8FC95}.Release|x64.Build.0 = Release|Any CPU
-		{B53731EB-F227-70BA-BE13-18646E771525}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B53731EB-F227-70BA-BE13-18646E771525}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B53731EB-F227-70BA-BE13-18646E771525}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B53731EB-F227-70BA-BE13-18646E771525}.Debug|x64.Build.0 = Debug|Any CPU
-		{B53731EB-F227-70BA-BE13-18646E771525}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B53731EB-F227-70BA-BE13-18646E771525}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B53731EB-F227-70BA-BE13-18646E771525}.Release|x64.ActiveCfg = Release|Any CPU
-		{B53731EB-F227-70BA-BE13-18646E771525}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

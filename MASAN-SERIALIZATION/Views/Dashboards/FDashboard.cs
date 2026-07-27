@@ -49,22 +49,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             };
 
             Globals_Database.Dictionary_ProductionCode_Data[code] = virtualCodeData;
-            if (!Globals_Database.Dictionary_ProductionCode_CameraSub_Data.ContainsKey(code))
-            {
-                Globals_Database.Dictionary_ProductionCode_CameraSub_Data[code] = new ProductionCodeData
-                {
-                    orderNo = virtualCodeData.orderNo,
-                    Code = virtualCodeData.Code,
-                    codeID = virtualCodeData.codeID,
-                    cartonCode = virtualCodeData.cartonCode,
-                    Activate_User = virtualCodeData.Activate_User,
-                    Main_Camera_Status = virtualCodeData.Main_Camera_Status,
-                    Sub_Camera_Status = "0",
-                    Activate_Datetime = virtualCodeData.Activate_Datetime,
-                    Sub_Camera_Activate_Datetime = "0",
-                    Production_Datetime = virtualCodeData.Production_Datetime
-                };
-            }
 
             return virtualCodeData;
         }
@@ -293,6 +277,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         #region Camera Data Processing
         private void CameraMain_Process(string _data)
         {
+            //A1. Camera Nhận dữ liệu, tăng tổng số đếm
             Globals.ProductionData.counter.totalCount++;
             this.InvokeIfRequired(() =>
             {
@@ -300,6 +285,36 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
             });
 
+            //K1 Kiểm tra đảm bảo đang không ở trạng thái khác chen vào
+            if (Globals.Production_State != e_Production_State.Waiting_Stop)
+            {
+                if (Globals.Production_State != e_Production_State.Running)
+                {
+                    this.InvokeIfRequired(() =>
+                    {
+                        ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: Camera: Sản phẩm loại do lỗi dồn");
+                        ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
+                    });
+
+                    bool stp = false;
+                    sw.Stop();
+                    currentCameraSubProcessingTime = sw.Elapsed.TotalMilliseconds;
+                    if (AppConfigs.Current.PLC_Duo_Mode)
+                    {
+                        stp = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
+                    }
+                    else
+                    {
+                        stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                    }
+
+                    Send_Result_Content_CSub(e_Production_Status.Error, _data);
+                    Enqueue_Product_To_Record(_data, e_Production_Status.Error, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
+                    return;
+                }
+            }
+
+            //A2. Kiểm tra code không null hoặc rỗng
             if (_data.IsNullOrEmpty())
             {
                 bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
@@ -308,6 +323,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 return;
             }
 
+
+            //a3 kiểm tra đúng cấu trúc hay không
             if (_data == "FAIL")
             {
                 bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C2"), "0");
@@ -460,6 +477,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private void CameraSub_Process(string _data)
         {
 
+            //A1. camera nhận dữ liệu tăng tổng số đếm
             Globals.productionData_Cs.counter.totalCount++;
 
             if(Globals.Production_State != e_Production_State.Waiting_Stop)
