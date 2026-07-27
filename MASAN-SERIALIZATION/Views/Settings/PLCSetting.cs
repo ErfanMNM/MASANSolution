@@ -402,9 +402,6 @@ namespace MASAN_SERIALIZATION.Views.Settings
             Uri uri = new Uri($"http://{AppConfigs.Current.Camera_Main_IP}/monitor");
             Uri uri1 = new Uri($"https://google.com");
             webView21.Source = uri;
-            Uri uri2 = new Uri($"http://{AppConfigs.Current.Camera_Sub_IP}/monitor");
-            Uri uri21 = new Uri($"https://google.com");
-            webView22.Source = uri2;
         }
         private void PLCSetting_Finalize(object sender, EventArgs e)
         {
