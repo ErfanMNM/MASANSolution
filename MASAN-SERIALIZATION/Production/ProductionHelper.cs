@@ -1909,9 +1909,10 @@ namespace MASAN_SERIALIZATION.Production
         #region Internal Helper Methods
         private static void Create_POLogDatabases()
         {
-            if (!Directory.Exists(@"C:\MasanSerialization\Databases"))
+            var folder = Path.GetDirectoryName(POLog_dbPath);
+            if (!string.IsNullOrEmpty(folder) && !Directory.Exists(folder))
             {
-                Directory.CreateDirectory(@"C:\MasanSerialization\Databases");
+                Directory.CreateDirectory(folder);
             }
 
             if (!File.Exists(POLog_dbPath))

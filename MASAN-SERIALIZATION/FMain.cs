@@ -52,8 +52,10 @@ namespace MASAN_SERIALIZATION
         {
             Thread.Sleep(1000); // Delay to ensure all resources are loaded properly
             InitializeComponent();
-            
-            Globals.Log = new LogHelper<e_LogType>(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MASAN-SERIALIZATION", "Logs", "applog.tl"));
+            string patch = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+
+            Globals.Log = new LogHelper<e_LogType>($@"{patch}/MASAN-SERIALIZATION/Logs/applog.tl");
+
             Globals.Log.WriteLogAsync("System", e_LogType.Info, "Ứng dụng MASAN-SERIALIZATION đã được khởi động");
 
             InitializeUI();
