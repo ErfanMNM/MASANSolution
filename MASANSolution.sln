@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MASAN-SERIALIZATION", "MASAN-SERIALIZATION\MASAN-SERIALIZATION.csproj", "{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SATO_PRINTER", "SATO_PRINTER\SATO_PRINTER.csproj", "{443B62B2-BD85-4C25-9177-5CF3F90F2CE8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,6 +90,14 @@ Global
 		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Release|x64.ActiveCfg = Release|Any CPU
 		{CEF09C70-7D16-4CAD-AC10-5171C99DD89D}.Release|x64.Build.0 = Release|Any CPU
+		{443B62B2-BD85-4C25-9177-5CF3F90F2CE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{443B62B2-BD85-4C25-9177-5CF3F90F2CE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{443B62B2-BD85-4C25-9177-5CF3F90F2CE8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{443B62B2-BD85-4C25-9177-5CF3F90F2CE8}.Debug|x64.Build.0 = Debug|Any CPU
+		{443B62B2-BD85-4C25-9177-5CF3F90F2CE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{443B62B2-BD85-4C25-9177-5CF3F90F2CE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{443B62B2-BD85-4C25-9177-5CF3F90F2CE8}.Release|x64.ActiveCfg = Release|Any CPU
+		{443B62B2-BD85-4C25-9177-5CF3F90F2CE8}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
