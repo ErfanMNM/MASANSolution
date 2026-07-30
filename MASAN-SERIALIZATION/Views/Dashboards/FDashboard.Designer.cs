@@ -68,10 +68,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opCurrentProcessingTime = new Sunny.UI.UIPanel();
             this.uiTitlePanel3 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel4 = new Sunny.UI.UITableLayoutPanel();
-            this.uiTitlePanel6 = new Sunny.UI.UITitlePanel();
-            this.uiTableLayoutPanel8 = new Sunny.UI.UITableLayoutPanel();
-            this.opLedC2 = new Sunny.UI.UILedBulb();
-            this.opC2_State = new Sunny.UI.UIPanel();
             this.uiTitlePanel2 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel6 = new Sunny.UI.UITableLayoutPanel();
             this.opLedC1 = new Sunny.UI.UILedBulb();
@@ -104,6 +100,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.WK_Update_UI = new System.ComponentModel.BackgroundWorker();
             this.OMRON_PLC_02 = new SpT.OmronPLC_Hsl(this.components);
             this.subpr = new System.ComponentModel.BackgroundWorker();
+            this.uiTitlePanel6 = new Sunny.UI.UITitlePanel();
+            this.uiPanel2 = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTitlePanel5.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -115,8 +113,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel10.SuspendLayout();
             this.uiTitlePanel3.SuspendLayout();
             this.uiTableLayoutPanel4.SuspendLayout();
-            this.uiTitlePanel6.SuspendLayout();
-            this.uiTableLayoutPanel8.SuspendLayout();
             this.uiTitlePanel2.SuspendLayout();
             this.uiTableLayoutPanel6.SuspendLayout();
             this.uiTitlePanel7.SuspendLayout();
@@ -133,6 +129,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel16.SuspendLayout();
             this.uiTableLayoutPanel37.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
+            this.uiTitlePanel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // uiTableLayoutPanel3
@@ -724,67 +721,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel4.TabIndex = 14;
             this.uiTableLayoutPanel4.TagString = null;
             // 
-            // uiTitlePanel6
-            // 
-            this.uiTitlePanel6.Controls.Add(this.uiTableLayoutPanel8);
-            this.uiTitlePanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTitlePanel6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiTitlePanel6.Location = new System.Drawing.Point(123, 5);
-            this.uiTitlePanel6.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.uiTitlePanel6.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiTitlePanel6.Name = "uiTitlePanel6";
-            this.uiTitlePanel6.Padding = new System.Windows.Forms.Padding(1, 35, 1, 1);
-            this.uiTitlePanel6.ShowText = false;
-            this.uiTitlePanel6.Size = new System.Drawing.Size(111, 82);
-            this.uiTitlePanel6.TabIndex = 2;
-            this.uiTitlePanel6.Text = "Camera 02";
-            this.uiTitlePanel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            this.uiTitlePanel6.TitleColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            // 
-            // uiTableLayoutPanel8
-            // 
-            this.uiTableLayoutPanel8.ColumnCount = 2;
-            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
-            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
-            this.uiTableLayoutPanel8.Controls.Add(this.opLedC2, 1, 0);
-            this.uiTableLayoutPanel8.Controls.Add(this.opC2_State, 0, 0);
-            this.uiTableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel8.Location = new System.Drawing.Point(1, 35);
-            this.uiTableLayoutPanel8.Name = "uiTableLayoutPanel8";
-            this.uiTableLayoutPanel8.RowCount = 1;
-            this.uiTableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTableLayoutPanel8.Size = new System.Drawing.Size(109, 46);
-            this.uiTableLayoutPanel8.TabIndex = 2;
-            this.uiTableLayoutPanel8.TagString = null;
-            // 
-            // opLedC2
-            // 
-            this.opLedC2.Blink = true;
-            this.opLedC2.Color = System.Drawing.Color.Red;
-            this.opLedC2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opLedC2.Location = new System.Drawing.Point(67, 2);
-            this.opLedC2.Margin = new System.Windows.Forms.Padding(2);
-            this.opLedC2.Name = "opLedC2";
-            this.opLedC2.Size = new System.Drawing.Size(40, 42);
-            this.opLedC2.TabIndex = 0;
-            this.opLedC2.Text = "uiLedBulb2";
-            // 
-            // opC2_State
-            // 
-            this.opC2_State.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opC2_State.FillColor = System.Drawing.Color.MistyRose;
-            this.opC2_State.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opC2_State.Location = new System.Drawing.Point(2, 2);
-            this.opC2_State.Margin = new System.Windows.Forms.Padding(2);
-            this.opC2_State.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opC2_State.Name = "opC2_State";
-            this.opC2_State.RectColor = System.Drawing.Color.Red;
-            this.opC2_State.RectSize = 2;
-            this.opC2_State.Size = new System.Drawing.Size(61, 42);
-            this.opC2_State.TabIndex = 1;
-            this.opC2_State.Text = "Lỗi";
-            this.opC2_State.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // uiTitlePanel2
             // 
             this.uiTitlePanel2.Controls.Add(this.uiTableLayoutPanel6);
@@ -889,7 +825,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opLedPLC.Location = new System.Drawing.Point(68, 2);
             this.opLedPLC.Margin = new System.Windows.Forms.Padding(2);
             this.opLedPLC.Name = "opLedPLC";
-            this.opLedPLC.On = false;
             this.opLedPLC.Size = new System.Drawing.Size(41, 42);
             this.opLedPLC.TabIndex = 0;
             this.opLedPLC.Text = "uiLedBulb3";
@@ -1224,6 +1159,39 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             // 
             this.subpr.DoWork += new System.ComponentModel.DoWorkEventHandler(this.subpr_DoWork);
             // 
+            // uiTitlePanel6
+            // 
+            this.uiTitlePanel6.Controls.Add(this.uiPanel2);
+            this.uiTitlePanel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTitlePanel6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTitlePanel6.Location = new System.Drawing.Point(123, 5);
+            this.uiTitlePanel6.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiTitlePanel6.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiTitlePanel6.Name = "uiTitlePanel6";
+            this.uiTitlePanel6.Padding = new System.Windows.Forms.Padding(1, 35, 1, 1);
+            this.uiTitlePanel6.ShowText = false;
+            this.uiTitlePanel6.Size = new System.Drawing.Size(111, 82);
+            this.uiTitlePanel6.TabIndex = 2;
+            this.uiTitlePanel6.Text = "Máy chủ";
+            this.uiTitlePanel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.uiTitlePanel6.TitleColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            // 
+            // uiPanel2
+            // 
+            this.uiPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel2.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.uiPanel2.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uiPanel2.Location = new System.Drawing.Point(1, 35);
+            this.uiPanel2.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel2.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel2.Name = "uiPanel2";
+            this.uiPanel2.RectColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.uiPanel2.RectSize = 2;
+            this.uiPanel2.Size = new System.Drawing.Size(109, 46);
+            this.uiPanel2.TabIndex = 2;
+            this.uiPanel2.Text = "Kết Nối";
+            this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // FDashboard
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1243,8 +1211,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel10.ResumeLayout(false);
             this.uiTitlePanel3.ResumeLayout(false);
             this.uiTableLayoutPanel4.ResumeLayout(false);
-            this.uiTitlePanel6.ResumeLayout(false);
-            this.uiTableLayoutPanel8.ResumeLayout(false);
             this.uiTitlePanel2.ResumeLayout(false);
             this.uiTableLayoutPanel6.ResumeLayout(false);
             this.uiTitlePanel7.ResumeLayout(false);
@@ -1261,6 +1227,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel16.ResumeLayout(false);
             this.uiTableLayoutPanel37.ResumeLayout(false);
             this.uiTableLayoutPanel1.ResumeLayout(false);
+            this.uiTitlePanel6.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1323,10 +1290,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel9;
         private Sunny.UI.UILedBulb opLedPLC;
         private Sunny.UI.UIPanel opPLC_State;
-        private Sunny.UI.UITitlePanel uiTitlePanel6;
-        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel8;
-        private Sunny.UI.UILedBulb opLedC2;
-        private Sunny.UI.UIPanel opC2_State;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel6;
         private Sunny.UI.UILedBulb opLedC1;
         private Sunny.UI.UIPanel opC1_State;
@@ -1340,5 +1303,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel11;
         private Sunny.UI.UIPanel opPLCMaxProcessingTime;
         private Sunny.UI.UIPanel opPLCCurrentProcessingTime;
+        private Sunny.UI.UITitlePanel uiTitlePanel6;
+        private Sunny.UI.UIPanel uiPanel2;
     }
 }

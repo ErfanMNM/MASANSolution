@@ -41,7 +41,6 @@ namespace MASAN_SERIALIZATION
         public static bool Device_Ready { get; set; } = false; // Biến toàn cục để kiểm tra trạng thái thiết bị
 
         public static e_Camera_State CameraMain_State { get; set; } = e_Camera_State.DISCONNECTED;
-        public static e_Camera_State CameraSub_State { get; set; } = e_Camera_State.DISCONNECTED;
 
         public static bool HandScan01_Connected { get; set; } = false;
         public static bool HandScan02_Connected { get; set; } = false;

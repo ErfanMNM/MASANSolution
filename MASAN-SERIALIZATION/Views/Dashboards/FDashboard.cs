@@ -18,8 +18,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Xml.Linq;
 using static MASAN_SERIALIZATION.Utils.ExtensionMethods;
 using static SpT.OmronPLC_Hsl;
 
@@ -27,7 +25,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 {
     public partial class FDashboard : UIPage
     {
-        private bool IsTestModeEnabled => AppConfigs.Current.TestMode;
+        private bool IsTestModeEnabled => AppConfigs.Current.APP_TEST_MODE2;
 
         private ProductionCodeData GetOrCreateTestModeCodeData(string code)
         {
@@ -279,7 +277,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
 
             //a4 Không đọc được
-            if (rawCode[1].ToString() == "NOREAD")
+            if (arawCode[1].ToString() == "NOREAD")
             {
                 bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
                 Send_Result_Content(e_Production_Status.ReadFail, rawCode);
@@ -288,7 +286,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
 
             //a5 Lỗi
-            if (rawCode[1].ToString() == "REJECT")
+            if (arawCode[1].ToString() == "REJECT")
             {
                 bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
                 Send_Result_Content(e_Production_Status.Error, rawCode);
@@ -297,7 +295,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
 
             //a6 Các lỗi khác
-            if (rawCode[1].ToString() != "OK")
+            if (arawCode[1].ToString() != "OK")
             {
                 bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
                 Send_Result_Content(e_Production_Status.Error, rawCode);
@@ -831,7 +829,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         public void UpdateDeviceState()
         {
             UpdateCameraMainState();
-            UpdateCameraSubState();
             UpdatePLCState();
         }
 
@@ -879,50 +876,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 }
             });
         }
-        public void UpdateCameraSubState()
-        {
-            this.InvokeIfRequired(() =>
-            {
-                switch (Globals.CameraSub_State)
-                {
-                    case e_Camera_State.CONNECTED:
-                        if (opC2_State.Text != "Tốt")
-                        {
-                            opLedC2.Blink = false;
-                            opC2_State.Text = "Tốt";
-                            opC2_State.FillColor = Color.White;
-                            opC2_State.RectColor = Color.Green;
-                            opLedC2.Color = Color.Green;
-                            opLedC2.On = true;
-                        }
-                        break;
-                        
-                    case e_Camera_State.DISCONNECTED:
-                        if (opC2_State.Text != "Lỗi")
-                        {
-                            opLedC2.Blink = true;
-                            opC2_State.Text = "Lỗi";
-                            opC2_State.FillColor = Color.MistyRose;
-                            opC2_State.RectColor = Color.Red;
-                            opLedC2.Color = Color.Red;
-                            opLedC2.On = true;
-                        }
-                        break;
-                        
-                    case e_Camera_State.RECONNECTING:
-                        if (opC2_State.Text != "...")
-                        {
-                            opLedC2.Blink = true;
-                            opC2_State.Text = "...";
-                            opC2_State.FillColor = Color.Yellow;
-                            opC2_State.RectColor = Color.Red;
-                            opLedC2.Color = Color.Yellow;
-                            opLedC2.On = true;
-                        }
-                        break;
-                }
-            });
-        }
+
         public void UpdatePLCState()
         {
             if(AppConfigs.Current.PLC_Duo_Mode)
@@ -2083,6 +2037,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             break;
                         case e_Production_Status.ReadFail:
                             opResultPassFailC2.FillColor = Color.Orange; // Màu cam cho sản phẩm không đọc được
+                            opResultPassFailC2.Text = "Lỗi đọc"; // Cập nhật trạng thái sản phẩm
                             break;
                         case e_Production_Status.Timeout:
                             opResultPassFailC2.FillColor = Color.DarkOrange;

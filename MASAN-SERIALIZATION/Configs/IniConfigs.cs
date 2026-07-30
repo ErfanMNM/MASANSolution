@@ -66,6 +66,7 @@ namespace MASAN_SERIALIZATION.Configs
         public bool CameraSub_Timeout_Log_Enabled { get; set; } // Bật/Tắt log chi tiết cho timeout checking
         public bool CameraSub_Timeout_Mode_2 { get; set; } // Bật/Tắt chế độ timeout thứ 2 cho CameraSub (nếu có, có thể để false nếu không sử dụng)
         public bool TestMode { get; set; } // Chế độ kiểm tra (Test Mode)
+        public bool APP_TEST_MODE2 { get; set; }
 
         public bool AWS_Dev_Mode { get; set; } // Bật/Tắt chế độ phát triển AWS
 
@@ -79,6 +80,7 @@ namespace MASAN_SERIALIZATION.Configs
         {
             // Thiết lập giá trị mặc định cho các thuộc tính
             base.SetDefault();
+            APP_TEST_MODE2 = false;
             TwoFA_Enabled = false; // Mặc định tắt tính năng xác thực hai yếu tố
             AWS_Dev_Mode = false; // Mặc định tắt chế độ phát triển AWS
             Camera_Main_IP =@"127.0.0.1";// Địa chỉ IP mặc định của camera chính

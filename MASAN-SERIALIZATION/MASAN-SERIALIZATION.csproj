@@ -279,6 +279,12 @@
     <Compile Include="Views\Login\PLogin.Designer.cs">
       <DependentUpon>PLogin.cs</DependentUpon>
     </Compile>
+    <Compile Include="Views\Printer\page_SATO.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Printer\page_SATO.Designer.cs">
+      <DependentUpon>page_SATO.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\ProductionInfo\PPOInfo.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -354,6 +360,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Login\PLogin.resx">
       <DependentUpon>PLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Printer\page_SATO.resx">
+      <DependentUpon>page_SATO.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\ProductionInfo\PPOInfo.resx">
       <DependentUpon>PPOInfo.cs</DependentUpon>

@@ -15,6 +15,7 @@ using MASAN_SERIALIZATION.Views.AWS;
 using MASAN_SERIALIZATION.Views.Dashboards;
 using MASAN_SERIALIZATION.Views.Database;
 using MASAN_SERIALIZATION.Views.Login;
+using MASAN_SERIALIZATION.Views.Printer;
 using MASAN_SERIALIZATION.Views.ProductionInfo;
 using MASAN_SERIALIZATION.Views.SCADA;
 using MASAN_SERIALIZATION.Views.Settings;
@@ -41,6 +42,7 @@ namespace MASAN_SERIALIZATION
         //private PCodeSearch _pCodeSearch = new PCodeSearch();
         //private POrderNoViewer _pOrderNoViewer = new POrderNoViewer();
         private DBBrowser _pDBBrowser = new DBBrowser();
+        private page_SATO _pageSATO = new page_SATO();
         #endregion
 
         #region Private Fields - Background Workers
@@ -145,6 +147,7 @@ namespace MASAN_SERIALIZATION
                 //NavMenu.CreateNode(AddPage(_pOrderNoViewer, 1011));
                 NavMenu.CreateNode(AddPage(_pDBBrowser, 1012));
                 NavMenu.CreateNode(AddPage(CheckVIP, 1013));
+                NavMenu.CreateNode(AddPage(_pageSATO, 1014));
                 NavMenu.CreateNode(AddPage(_pLogin, 2001));
 
                 NavMenu.SelectPage(2001);
@@ -369,8 +372,7 @@ namespace MASAN_SERIALIZATION
                 Globals.PLC_Connected_02 = true;
             }
             
-            if (Globals.CameraMain_State != e_Camera_State.CONNECTED || 
-                Globals.CameraSub_State != e_Camera_State.CONNECTED || 
+            if (Globals.CameraMain_State != e_Camera_State.CONNECTED ||
                 Globals.PLC_Connected != true || Globals.PLC_Connected_02 != true)
             {
                 Globals.Device_Ready = false;
