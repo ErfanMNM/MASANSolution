@@ -302,15 +302,39 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 }
                 else
                 {
-                    // Mặc định xử lý theo carton ID chẵn/lẻ như các method hiện tại
-                    if (Globals.ProductionData.counter.cartonID % 2 == 0)
-                    {
-                        HandScan01_Process(cartonCode);
+
+                    //kiểm tra xem thùng đang chạy có code chưa
+
+                    if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out ProductionCartonData cartonDatah1))
+                    { 
+                        //kiểm tra xem chẵn hay lẻ 
+                        if(Globals.ProductionData.counter.cartonID %2==0)
+                        {
+                            //đúng là chẵn (thùng 2)
+                            if (cartonDatah1.cartonCode == "0")
+                            {
+                                HandScan01_Process(cartonCode);
+                            }
+                            else
+                            {
+                                HandScan02_Process(cartonCode);
+                            }
+                        }
+                        else
+                        {
+                            //đúng là lẻ (thùng 1)
+                            if (cartonDatah1.cartonCode == "0")
+                            {
+                                HandScan02_Process(cartonCode);
+                            }
+                            else
+                            {
+                                HandScan01_Process(cartonCode);
+                            }
+                        }
+
                     }
-                    else
-                    {
-                        HandScan02_Process(cartonCode);
-                    }
+
                 }
 
                 // Lấy thông tin carton sau khi xử lý
@@ -536,6 +560,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
         private void btnSend1_Click(object sender, EventArgs e)
         {
+            string test1 = ipTest1.Text.Split('-')[2];
+            int test1Int = Convert.ToInt32(test1);
+            test1Int++;
+            ipTest1.Text = ipTest1.Text.Split('-')[0] + "-" + ipTest1.Text.Split('-')[1] + "-" + test1Int.ToString();
             HandScan01_Process(ipTest1.Text);
         }
 
@@ -701,6 +729,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
         private void btnSend2_Click(object sender, EventArgs e)
         {
+            string test2 = ipTest2.Text.Split('-')[2];
+            int test2Int = Convert.ToInt32(test2);
+            test2Int++;
+            ipTest2.Text = ipTest2.Text.Split('-')[0] + "-" + ipTest2.Text.Split('-')[1] + "-" + test2Int.ToString();
             HandScan02_Process(ipTest2.Text);
         }
 
