@@ -313,11 +313,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             //đúng là chẵn (thùng 2)
                             if (cartonDatah1.cartonCode == "0")
                             {
-                                HandScan01_Process(cartonCode);
+                                HandScan02_Process(cartonCode);
                             }
                             else
                             {
-                                HandScan02_Process(cartonCode);
+                                HandScan01_Process(cartonCode);
                             }
                         }
                         else
@@ -325,11 +325,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             //đúng là lẻ (thùng 1)
                             if (cartonDatah1.cartonCode == "0")
                             {
-                                HandScan02_Process(cartonCode);
+                                HandScan01_Process(cartonCode);
                             }
                             else
                             {
-                                HandScan01_Process(cartonCode);
+                                HandScan02_Process(cartonCode);
                             }
                         }
 
