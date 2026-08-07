@@ -74,6 +74,7 @@
             // 
             // uiPanel1
             // 
+            this.uiPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiPanel1.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
             this.uiPanel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.uiPanel1.ForeColor = System.Drawing.Color.White;
@@ -83,7 +84,7 @@
             this.uiPanel1.Name = "uiPanel1";
             this.uiPanel1.Radius = 0;
             this.uiPanel1.RectColor = System.Drawing.Color.DodgerBlue;
-            this.uiPanel1.Size = new System.Drawing.Size(183, 39);
+            this.uiPanel1.Size = new System.Drawing.Size(183, 55);
             this.uiPanel1.TabIndex = 7;
             this.uiPanel1.Text = "CZ Nước Tương v3f0";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -169,15 +170,15 @@
             this.NavMenu.ShowPlusMinus = false;
             this.NavMenu.ShowRootLines = false;
             this.NavMenu.ShowTips = true;
-            this.NavMenu.Size = new System.Drawing.Size(342, 859);
+            this.NavMenu.Size = new System.Drawing.Size(200, 859);
             this.NavMenu.TabIndex = 0;
             this.NavMenu.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             // 
             // BodyPanel
             // 
             this.BodyPanel.ColumnCount = 2;
-            this.BodyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18F));
-            this.BodyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 82F));
+            this.BodyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
+            this.BodyPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.BodyPanel.Controls.Add(this.navPanel, 0, 0);
             this.BodyPanel.Controls.Add(this.TabBody, 1, 0);
             this.BodyPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -206,13 +207,14 @@
             this.navPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.navPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 48F));
             this.navPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 41F));
-            this.navPanel.Size = new System.Drawing.Size(342, 948);
+            this.navPanel.Size = new System.Drawing.Size(200, 948);
             this.navPanel.TabIndex = 2;
             this.navPanel.TagString = null;
             // 
             // btnAppClose
             // 
             this.btnAppClose.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnAppClose.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnAppClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAppClose.ForeColor = System.Drawing.Color.MistyRose;
             this.btnAppClose.Location = new System.Drawing.Point(2, 909);
@@ -221,7 +223,7 @@
             this.btnAppClose.Name = "btnAppClose";
             this.btnAppClose.Radius = 0;
             this.btnAppClose.RectColor = System.Drawing.Color.Blue;
-            this.btnAppClose.Size = new System.Drawing.Size(180, 37);
+            this.btnAppClose.Size = new System.Drawing.Size(196, 37);
             this.btnAppClose.Symbol = 61457;
             this.btnAppClose.SymbolColor = System.Drawing.Color.MistyRose;
             this.btnAppClose.TabIndex = 0;
@@ -233,6 +235,7 @@
             // btnMini
             // 
             this.btnMini.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnMini.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnMini.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.btnMini.Location = new System.Drawing.Point(2, 861);
             this.btnMini.Margin = new System.Windows.Forms.Padding(2);
@@ -240,7 +243,7 @@
             this.btnMini.Name = "btnMini";
             this.btnMini.Radius = 0;
             this.btnMini.RectColor = System.Drawing.Color.Blue;
-            this.btnMini.Size = new System.Drawing.Size(180, 44);
+            this.btnMini.Size = new System.Drawing.Size(196, 44);
             this.btnMini.Symbol = 61544;
             this.btnMini.TabIndex = 3;
             this.btnMini.Text = "Thu nhỏ";
@@ -254,13 +257,13 @@
             this.TabBody.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             this.TabBody.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.TabBody.ItemSize = new System.Drawing.Size(0, 1);
-            this.TabBody.Location = new System.Drawing.Point(342, 0);
+            this.TabBody.Location = new System.Drawing.Point(200, 0);
             this.TabBody.MainPage = "";
             this.TabBody.Margin = new System.Windows.Forms.Padding(0);
             this.TabBody.MenuStyle = Sunny.UI.UIMenuStyle.Custom;
             this.TabBody.Name = "TabBody";
             this.TabBody.SelectedIndex = 0;
-            this.TabBody.Size = new System.Drawing.Size(1560, 948);
+            this.TabBody.Size = new System.Drawing.Size(1702, 948);
             this.TabBody.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.TabBody.TabBackColor = System.Drawing.Color.PaleTurquoise;
             this.TabBody.TabIndex = 1;

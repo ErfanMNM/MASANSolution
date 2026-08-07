@@ -552,13 +552,13 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     cache_CartonCount++; //tăng số lượng chai trong thùng
                     Globals.ProductionData.counter.carton_Packing_Count = cache_CartonCount; //cập nhật số lượng chai trong thùng
                     _produtionCodeData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"); // Cập nhật thời gian kích hoạt từ camera phụ
-
+                    _produtionCodeData.Camera_Status = "1";
                     // Cập nhật trạng thái CameraSub đã scan thành công
-                    if (Globals_Database.Dictionary_ProductionCode_Data.TryGetValue(code, out ProductionCodeData _produtionCodeDataCS_Update))
-                    {
-                        _produtionCodeDataCS_Update.Camera_Status = "1"; // Đánh dấu đã được scan bởi CameraSub
-                        _produtionCodeDataCS_Update.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
-                    }
+                    //  if (Globals_Database.Dictionary_ProductionCode_Data.TryGetValue(code, out ProductionCodeData _produtionCodeDataCS_Update))
+                    //  {
+                    //    _produtionCodeData_Update.Camera_Status = "1"; // Đánh dấu đã được scan bởi CameraSub
+                    // _produtionCodeDataCS_Update.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
+                    // }
 
                     //active thùng
 
@@ -681,7 +681,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 Activate_User = Globals.CurrentUser.Username,
                 cartonID = cartonID
             };
-                Globals_Database.Insert_Product_To_Record_CS_Queue.Enqueue(_produtionCodeData);
+                Globals_Database.Insert_Product_To_Record_Queue.Enqueue(_produtionCodeData);
         }
 
         private void Enqueue_Product_To_SQLite(string code, ProductionCodeData productionCodeData, bool duplicate = false)
@@ -1975,7 +1975,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     break;
                 case e_Production_State.Check_After_Completed:
 
-                    if (Globals_Database.Insert_Product_To_Record_Queue.Count > 0 || Globals_Database.Update_Product_To_SQLite_Queue.Count > 0 || Globals_Database.Insert_Product_To_Record_CS_Queue.Count > 0 || Globals_Database.Update_Product_To_Record_Carton_Queue.Count > 0 || Globals_Database.aWS_Recive_Datas.Count > 0 || Globals_Database.Activate_Carton.Count > 0 || Globals_Database.aWS_Send_Datas.Count > 0)
+                    if (Globals_Database.Insert_Product_To_Record_Queue.Count > 0 || Globals_Database.Update_Product_To_SQLite_Queue.Count > 0 || Globals_Database.Update_Product_To_Record_Carton_Queue.Count > 0 || Globals_Database.aWS_Recive_Datas.Count > 0 || Globals_Database.Activate_Carton.Count > 0 || Globals_Database.aWS_Send_Datas.Count > 0)
                     {
                         this.InvokeIfRequired(() =>
                         {
@@ -2144,12 +2144,12 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
 
                     //Xử lý camera phụ và phân thùng
-                    if (Globals_Database.Insert_Product_To_Record_CS_Queue.Count > 0)
-                    {
-                        // Lấy dữ liệu từ hàng đợi
-                        ProductionCodeData_Record recordItemCS = Globals_Database.Insert_Product_To_Record_CS_Queue.Dequeue();
-                        Globals.ProductionData.setDB.Insert_Record_Camera_Sub(recordItemCS, Globals.ProductionData.orderNo);
-                    }
+                    //if (Globals_Database.Insert_Product_To_Record_CS_Queue.Count > 0)
+                    //{
+                    //    // Lấy dữ liệu từ hàng đợi
+                    //    ProductionCodeData_Record recordItemCS = Globals_Database.Insert_Product_To_Record_CS_Queue.Dequeue();
+                    //    Globals.ProductionData.setDB.Insert_Record_Camera_Sub(recordItemCS, Globals.ProductionData.orderNo);
+                    //}
 
                     //thùng
 

@@ -218,7 +218,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 {
                     HandleHealthCheck(context);
                 }
-                else if (path == "/carton" && method == "POST")
+                else if (path == "/carton/scan" && method == "POST")
                 {
                     HandleCartonRequest(context);
                 }

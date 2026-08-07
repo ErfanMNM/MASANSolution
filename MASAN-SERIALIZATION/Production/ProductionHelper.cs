@@ -1411,7 +1411,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_CameraSub_{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return (false, null, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -1419,7 +1419,7 @@ namespace MASAN_SERIALIZATION.Production
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         conn.Open();
-                        string query = "SELECT * FROM Records_CameraSub WHERE CartonID = @cartonID AND Status = 'Pass'";
+                        string query = "SELECT * FROM Records WHERE CartonID = @cartonID AND Status = 'Pass'";
                         var command = new SQLiteCommand(query, conn);
                         command.Parameters.AddWithValue("@cartonID", cartonID);
                         var adapter = new SQLiteDataAdapter(command);
@@ -1787,12 +1787,12 @@ namespace MASAN_SERIALIZATION.Production
                 using (SQLiteConnection connection = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                 {
                     connection.Open();
-                    string query = "INSERT INTO Records (Code, cartonCode, Status, PLC_Status, ActivateDate, ActivateUser, ProductionDate) " +
-                                   "VALUES (@Code, @cartonCode, @Status, @PLC_Status, @ActivateDate, @ActivateUser, @ProductionDate)";
+                    string query = "INSERT INTO Records (Code, cartonID, Status, PLC_Status, ActivateDate, ActivateUser, ProductionDate) " +
+                                   "VALUES (@Code, @cartonID, @Status, @PLC_Status, @ActivateDate, @ActivateUser, @ProductionDate)";
                     using (SQLiteCommand command = new SQLiteCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@Code", productionCodeData_Record.code);
-                        command.Parameters.AddWithValue("@cartonCode", productionCodeData_Record.cartonCode);
+                        command.Parameters.AddWithValue("@cartonID", productionCodeData_Record.cartonID);
                         command.Parameters.AddWithValue("@Status", productionCodeData_Record.status.ToString());
                         command.Parameters.AddWithValue("@PLC_Status", productionCodeData_Record.PLCStatus.ToString());
                         command.Parameters.AddWithValue("@ActivateDate", productionCodeData_Record.Activate_Datetime);
@@ -2168,7 +2168,7 @@ namespace MASAN_SERIALIZATION.Production
                         string createTableQuery = @"CREATE TABLE ""Records"" (
 	                                            ""ID""	INTEGER NOT NULL UNIQUE,
 	                                            ""Code""	TEXT NOT NULL DEFAULT 'FAIL',
-                                                ""cartonCode""	TEXT NOT NULL DEFAULT 0,
+                                                ""cartonID""	TEXT NOT NULL DEFAULT 0,
 	                                            ""Status""	TEXT NOT NULL DEFAULT 0,
 	                                            ""PLC_Status""	TEXT NOT NULL DEFAULT 'FAIL',
 	                                            ""ActivateDate""	TEXT NOT NULL DEFAULT 0,

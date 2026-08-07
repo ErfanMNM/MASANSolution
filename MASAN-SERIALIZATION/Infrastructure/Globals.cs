@@ -78,7 +78,7 @@ namespace MASAN_SERIALIZATION
 
         public static Queue<ProductionCodeData_Record> Insert_Product_To_Record_Queue = new Queue<ProductionCodeData_Record>();
 
-        public static Queue<ProductionCodeData_Record> Insert_Product_To_Record_CS_Queue = new Queue<ProductionCodeData_Record>();
+        //public static Queue<ProductionCodeData_Record> Insert_Product_To_Record_CS_Queue = new Queue<ProductionCodeData_Record>();
 
         public static Queue<ProductionCartonData> Update_Product_To_Record_Carton_Queue = new Queue<ProductionCartonData>();
 

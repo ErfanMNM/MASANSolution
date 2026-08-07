@@ -197,7 +197,7 @@
             // 
             this.opcartonPack.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opcartonPack.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opcartonPack.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.opcartonPack.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opcartonPack.ForeColor = System.Drawing.Color.White;
             this.opcartonPack.Location = new System.Drawing.Point(200, 356);
             this.opcartonPack.Margin = new System.Windows.Forms.Padding(2);
@@ -230,7 +230,7 @@
             // 
             this.opCZCodeCount.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opCZCodeCount.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opCZCodeCount.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.opCZCodeCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opCZCodeCount.ForeColor = System.Drawing.Color.White;
             this.opCZCodeCount.Location = new System.Drawing.Point(200, 297);
             this.opCZCodeCount.Margin = new System.Windows.Forms.Padding(2);
@@ -246,7 +246,7 @@
             // 
             this.opCustomerOrderNO.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opCustomerOrderNO.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opCustomerOrderNO.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.opCustomerOrderNO.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opCustomerOrderNO.ForeColor = System.Drawing.Color.White;
             this.opCustomerOrderNO.Location = new System.Drawing.Point(200, 238);
             this.opCustomerOrderNO.Margin = new System.Windows.Forms.Padding(2);
@@ -262,7 +262,7 @@
             // 
             this.opShift.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opShift.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opShift.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.opShift.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opShift.ForeColor = System.Drawing.Color.White;
             this.opShift.Location = new System.Drawing.Point(200, 179);
             this.opShift.Margin = new System.Windows.Forms.Padding(2);
@@ -278,7 +278,7 @@
             // 
             this.opProductionLine.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opProductionLine.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opProductionLine.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.opProductionLine.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opProductionLine.ForeColor = System.Drawing.Color.White;
             this.opProductionLine.Location = new System.Drawing.Point(200, 120);
             this.opProductionLine.Margin = new System.Windows.Forms.Padding(2);
@@ -345,7 +345,7 @@
             // 
             this.opFactory.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opFactory.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opFactory.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.opFactory.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opFactory.ForeColor = System.Drawing.Color.White;
             this.opFactory.Location = new System.Drawing.Point(200, 2);
             this.opFactory.Margin = new System.Windows.Forms.Padding(2);
@@ -361,7 +361,7 @@
             // 
             this.opSite.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opSite.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opSite.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.opSite.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opSite.ForeColor = System.Drawing.Color.White;
             this.opSite.Location = new System.Drawing.Point(200, 61);
             this.opSite.Margin = new System.Windows.Forms.Padding(2);
@@ -463,7 +463,7 @@
             // 
             this.opUOM.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opUOM.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opUOM.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.opUOM.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opUOM.ForeColor = System.Drawing.Color.White;
             this.opUOM.Location = new System.Drawing.Point(245, 356);
             this.opUOM.Margin = new System.Windows.Forms.Padding(2);
@@ -496,7 +496,7 @@
             // 
             this.opOrderQty.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opOrderQty.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opOrderQty.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.opOrderQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opOrderQty.ForeColor = System.Drawing.Color.White;
             this.opOrderQty.Location = new System.Drawing.Point(245, 238);
             this.opOrderQty.Margin = new System.Windows.Forms.Padding(2);
@@ -510,12 +510,14 @@
             // 
             // ipProductionDate
             // 
+            this.ipProductionDate.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ipProductionDate.DateFormat = "yyyy-MM-dd HH:mm:ss.fff";
-            this.ipProductionDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ipProductionDate.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
             this.ipProductionDate.FillColor2 = System.Drawing.Color.Blue;
             this.ipProductionDate.FillDisableColor = System.Drawing.Color.FromArgb(((int)(((byte)(149)))), ((int)(((byte)(165)))), ((int)(((byte)(166)))));
-            this.ipProductionDate.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.ipProductionDate.Font = new System.Drawing.Font("Segoe UI", 16F);
             this.ipProductionDate.ForeColor = System.Drawing.Color.Black;
             this.ipProductionDate.Location = new System.Drawing.Point(245, 61);
             this.ipProductionDate.Margin = new System.Windows.Forms.Padding(2);
@@ -538,7 +540,7 @@
             // 
             this.opGTIN.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opGTIN.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opGTIN.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.opGTIN.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opGTIN.ForeColor = System.Drawing.Color.White;
             this.opGTIN.Location = new System.Drawing.Point(245, 179);
             this.opGTIN.Margin = new System.Windows.Forms.Padding(2);
@@ -554,7 +556,7 @@
             // 
             this.opProductCode.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opProductCode.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opProductCode.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.opProductCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opProductCode.ForeColor = System.Drawing.Color.White;
             this.opProductCode.Location = new System.Drawing.Point(245, 297);
             this.opProductCode.Margin = new System.Windows.Forms.Padding(2);
@@ -586,7 +588,7 @@
             // 
             this.opLotNumber.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opLotNumber.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opLotNumber.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.opLotNumber.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
             this.opLotNumber.ForeColor = System.Drawing.Color.White;
             this.opLotNumber.Location = new System.Drawing.Point(0, 0);
             this.opLotNumber.Margin = new System.Windows.Forms.Padding(2);
@@ -595,7 +597,7 @@
             this.opLotNumber.Radius = 1;
             this.opLotNumber.Size = new System.Drawing.Size(602, 55);
             this.opLotNumber.TabIndex = 78;
-            this.opLotNumber.Text = "-";
+            this.opLotNumber.Text = "NO INFOMATION";
             this.opLotNumber.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // uiPanel5
@@ -1182,7 +1184,7 @@
             // 
             this.opProductName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.opProductName.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opProductName.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.opProductName.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.opProductName.ForeColor = System.Drawing.Color.White;
             this.opProductName.Location = new System.Drawing.Point(247, 2);
             this.opProductName.Margin = new System.Windows.Forms.Padding(2);

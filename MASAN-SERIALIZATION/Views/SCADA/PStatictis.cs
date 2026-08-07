@@ -710,9 +710,9 @@ namespace MASAN_SERIALIZATION.Views.SCADA
                         case "Insert Record Queue Count":
                             uc.LabelValue = Globals_Database.Insert_Product_To_Record_Queue?.Count.ToString() ?? "0";
                             break;
-                        case "Insert Record CS Queue Count":
-                            uc.LabelValue = Globals_Database.Insert_Product_To_Record_CS_Queue?.Count.ToString() ?? "0";
-                            break;
+                        //case "Insert Record CS Queue Count":
+                           // uc.LabelValue = Globals_Database.Insert_Product_To_Record_CS_Queue?.Count.ToString() ?? "0";
+                          //  break;
                         case "Update Carton Queue Count":
                             uc.LabelValue = Globals_Database.Update_Product_To_Record_Carton_Queue?.Count.ToString() ?? "0";
                             break;
