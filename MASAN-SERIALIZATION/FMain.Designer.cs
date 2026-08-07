@@ -58,6 +58,7 @@
             // 
             // lblStatus
             // 
+            this.lblStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblStatus.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.lblStatus.Location = new System.Drawing.Point(1531, 0);
@@ -66,7 +67,7 @@
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Radius = 0;
             this.lblStatus.RectColor = System.Drawing.Color.DodgerBlue;
-            this.lblStatus.Size = new System.Drawing.Size(205, 39);
+            this.lblStatus.Size = new System.Drawing.Size(205, 55);
             this.lblStatus.TabIndex = 8;
             this.lblStatus.Text = "...";
             this.lblStatus.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -96,13 +97,14 @@
             this.opClock.MinimumSize = new System.Drawing.Size(1, 1);
             this.opClock.Name = "opClock";
             this.opClock.Radius = 0;
-            this.opClock.Size = new System.Drawing.Size(166, 53);
+            this.opClock.Size = new System.Drawing.Size(166, 55);
             this.opClock.TabIndex = 1;
             this.opClock.Text = "20/11/2024 17:27:00.000";
             this.opClock.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblAllStatus
             // 
+            this.lblAllStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblAllStatus.FillColor = System.Drawing.Color.Red;
             this.lblAllStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
             this.lblAllStatus.ForeColor = System.Drawing.Color.Yellow;
@@ -113,7 +115,7 @@
             this.lblAllStatus.Radius = 0;
             this.lblAllStatus.RectColor = System.Drawing.Color.DodgerBlue;
             this.lblAllStatus.RectSize = 2;
-            this.lblAllStatus.Size = new System.Drawing.Size(296, 39);
+            this.lblAllStatus.Size = new System.Drawing.Size(296, 55);
             this.lblAllStatus.TabIndex = 3;
             this.lblAllStatus.Text = "Chưa sẵn sàng";
             this.lblAllStatus.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
@@ -132,12 +134,12 @@
             this.footer.Controls.Add(this.lblStatus, 3, 0);
             this.footer.Controls.Add(this.lblAllStatus, 2, 0);
             this.footer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.footer.Location = new System.Drawing.Point(0, 977);
+            this.footer.Location = new System.Drawing.Point(0, 1025);
             this.footer.Margin = new System.Windows.Forms.Padding(0);
             this.footer.Name = "footer";
             this.footer.RowCount = 1;
             this.footer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.footer.Size = new System.Drawing.Size(1902, 53);
+            this.footer.Size = new System.Drawing.Size(1902, 55);
             this.footer.TabIndex = 3;
             this.footer.TagString = null;
             // 
@@ -167,7 +169,7 @@
             this.NavMenu.ShowPlusMinus = false;
             this.NavMenu.ShowRootLines = false;
             this.NavMenu.ShowTips = true;
-            this.NavMenu.Size = new System.Drawing.Size(342, 815);
+            this.NavMenu.Size = new System.Drawing.Size(342, 859);
             this.NavMenu.TabIndex = 0;
             this.NavMenu.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             // 
@@ -179,12 +181,12 @@
             this.BodyPanel.Controls.Add(this.navPanel, 0, 0);
             this.BodyPanel.Controls.Add(this.TabBody, 1, 0);
             this.BodyPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.BodyPanel.Location = new System.Drawing.Point(0, 73);
+            this.BodyPanel.Location = new System.Drawing.Point(0, 77);
             this.BodyPanel.Margin = new System.Windows.Forms.Padding(0);
             this.BodyPanel.Name = "BodyPanel";
             this.BodyPanel.RowCount = 1;
             this.BodyPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.BodyPanel.Size = new System.Drawing.Size(1902, 904);
+            this.BodyPanel.Size = new System.Drawing.Size(1902, 948);
             this.BodyPanel.TabIndex = 2;
             this.BodyPanel.TagString = null;
             // 
@@ -204,7 +206,7 @@
             this.navPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.navPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 48F));
             this.navPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 41F));
-            this.navPanel.Size = new System.Drawing.Size(342, 904);
+            this.navPanel.Size = new System.Drawing.Size(342, 948);
             this.navPanel.TabIndex = 2;
             this.navPanel.TagString = null;
             // 
@@ -213,7 +215,7 @@
             this.btnAppClose.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnAppClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAppClose.ForeColor = System.Drawing.Color.MistyRose;
-            this.btnAppClose.Location = new System.Drawing.Point(2, 865);
+            this.btnAppClose.Location = new System.Drawing.Point(2, 909);
             this.btnAppClose.Margin = new System.Windows.Forms.Padding(2);
             this.btnAppClose.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnAppClose.Name = "btnAppClose";
@@ -232,7 +234,7 @@
             // 
             this.btnMini.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnMini.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnMini.Location = new System.Drawing.Point(2, 817);
+            this.btnMini.Location = new System.Drawing.Point(2, 861);
             this.btnMini.Margin = new System.Windows.Forms.Padding(2);
             this.btnMini.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnMini.Name = "btnMini";
@@ -258,7 +260,7 @@
             this.TabBody.MenuStyle = Sunny.UI.UIMenuStyle.Custom;
             this.TabBody.Name = "TabBody";
             this.TabBody.SelectedIndex = 0;
-            this.TabBody.Size = new System.Drawing.Size(1560, 904);
+            this.TabBody.Size = new System.Drawing.Size(1560, 948);
             this.TabBody.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.TabBody.TabBackColor = System.Drawing.Color.PaleTurquoise;
             this.TabBody.TabIndex = 1;
@@ -400,18 +402,20 @@
             this.mainPanelLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.161458F));
             this.mainPanelLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 87.76041F));
             this.mainPanelLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5F));
-            this.mainPanelLayout.Size = new System.Drawing.Size(1902, 1030);
+            this.mainPanelLayout.Size = new System.Drawing.Size(1902, 1080);
             this.mainPanelLayout.TabIndex = 1;
             this.mainPanelLayout.TagString = null;
             // 
             // FMain
             // 
             this.AllowShowTitle = false;
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(1902, 1030);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoSize = true;
+            this.ClientSize = new System.Drawing.Size(1902, 1080);
             this.Controls.Add(this.mainPanelLayout);
-            this.MaximumSize = new System.Drawing.Size(1902, 1080);
-            this.MinimumSize = new System.Drawing.Size(1902, 1030);
+            this.MaximumSize = new System.Drawing.Size(1902, 1090);
+            this.MinimumSize = new System.Drawing.Size(1902, 900);
             this.Name = "FMain";
             this.Padding = new System.Windows.Forms.Padding(0);
             this.ShowTitle = false;
