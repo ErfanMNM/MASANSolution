@@ -1211,23 +1211,13 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             });
         }
 
-        private void SetCountersToLoading()
-        {
-            opCZRunCount.Text = "Đang tải";
-            opPassCount.Text = "Đang tải";
-            opFailCount.Text = "Đang tải";
-            opAWSFullOKCount.Text = "Đang tải";
-            opAWSNotSent.Text = "Đang tải";
-            opAWSSentWating.Text = "Đang tải";
-        }
-
         private void LoadAndDisplayCounters()
         {
             var counters = LoadCountersFromDatabase();
             this.InvokeIfRequired(() =>
             {
                 opCZRunCount.Text = counters.runCount.ToString();
-                opPassCount.Text = counters.passCount.ToString() + "/" + counters.passCameraSub.ToString();
+                opPassCount.Text = counters.passCount.ToString();
                 opFailCount.Text = counters.failCount.ToString();
                 opAWSFullOKCount.Text = counters.awsFullOKCount.ToString();
                 opAWSNotSent.Text = $"{counters.awsNotSent}/{counters.awsSentFailed}";

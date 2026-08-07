@@ -28,15 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(page_SATO));
             this.ipContent = new Sunny.UI.UIRichTextBox();
             this.btnSend = new Sunny.UI.UIButton();
             this.opConsole = new Sunny.UI.UIListBox();
             this.uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel3 = new Sunny.UI.UITableLayoutPanel();
+            this.btnConnect = new Sunny.UI.UIButton();
             this.ipIP = new Sunny.UI.UIIPTextBox();
             this.ipPort = new Sunny.UI.UINumPadTextBox();
-            this.btnConnect = new Sunny.UI.UIButton();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel2.SuspendLayout();
             this.uiTableLayoutPanel3.SuspendLayout();
@@ -55,7 +56,6 @@
             this.ipContent.ShowText = false;
             this.ipContent.Size = new System.Drawing.Size(913, 70);
             this.ipContent.TabIndex = 0;
-            this.ipContent.Text = "uiRichTextBox1";
             this.ipContent.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnSend
@@ -68,7 +68,7 @@
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(188, 74);
             this.btnSend.TabIndex = 1;
-            this.btnSend.Text = "uiButton1";
+            this.btnSend.Text = "Gửi";
             this.btnSend.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             // 
             // opConsole
@@ -139,6 +139,19 @@
             this.uiTableLayoutPanel3.TabIndex = 4;
             this.uiTableLayoutPanel3.TagString = null;
             // 
+            // btnConnect
+            // 
+            this.btnConnect.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnConnect.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnConnect.Location = new System.Drawing.Point(923, 61);
+            this.btnConnect.MinimumSize = new System.Drawing.Size(1, 1);
+            this.btnConnect.Name = "btnConnect";
+            this.btnConnect.Size = new System.Drawing.Size(189, 53);
+            this.btnConnect.TabIndex = 3;
+            this.btnConnect.Text = "Kết nối";
+            this.btnConnect.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            // 
             // ipIP
             // 
             this.ipIP.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -152,7 +165,9 @@
             this.ipIP.ShowText = false;
             this.ipIP.Size = new System.Drawing.Size(912, 48);
             this.ipIP.TabIndex = 0;
+            this.ipIP.Text = "69.69.3.101";
             this.ipIP.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.ipIP.Value = ((System.Net.IPAddress)(resources.GetObject("ipIP.Value")));
             // 
             // ipPort
             // 
@@ -167,22 +182,9 @@
             this.ipPort.Size = new System.Drawing.Size(187, 48);
             this.ipPort.SymbolSize = 24;
             this.ipPort.TabIndex = 1;
-            this.ipPort.Text = "uiNumPadTextBox1";
+            this.ipPort.Text = "9100";
             this.ipPort.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipPort.Watermark = "";
-            // 
-            // btnConnect
-            // 
-            this.btnConnect.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnConnect.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnConnect.Location = new System.Drawing.Point(923, 61);
-            this.btnConnect.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(189, 53);
-            this.btnConnect.TabIndex = 3;
-            this.btnConnect.Text = "uiButton3";
-            this.btnConnect.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             // 
             // page_SATO
             // 
@@ -190,7 +192,7 @@
             this.ClientSize = new System.Drawing.Size(1121, 655);
             this.Controls.Add(this.uiTableLayoutPanel1);
             this.Name = "page_SATO";
-            this.Text = "page_SATO";
+            this.Text = "MÁY IN";
             this.uiTableLayoutPanel1.ResumeLayout(false);
             this.uiTableLayoutPanel2.ResumeLayout(false);
             this.uiTableLayoutPanel3.ResumeLayout(false);
