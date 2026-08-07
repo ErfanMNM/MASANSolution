@@ -41,7 +41,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 codeID = 0,
                 cartonCode = "pending",
                 Activate_User = Globals.CurrentUser.Username,
-                Camera_Status = "1",
+                Camera_Status = "0",
                 Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"),
                 Production_Datetime = Globals.ProductionData.productionDate
             };
@@ -333,7 +333,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
                         }
                         
-                        Send_Result_Content(e_Production_Status.Duplicate, code);
+                        Send_Result_Content(e_Production_Status.Duplicate,"D1:  " +code);
                         Enqueue_Product_To_Record(code, e_Production_Status.Duplicate, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
                         return;
                     }
@@ -453,7 +453,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 //phân làn
                 string sendCode = "0";
-                if (cache_CartonID % 2 == 0)
+                if (cache_CartonID % 2 != 0)
                 {
                     sendCode = "1"; // Gửi dữ liệu mã thùng đến PLC
                 }

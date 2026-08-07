@@ -557,7 +557,23 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 return false;
             }
+            Globals.ProductionData.orderQty = opOrderQty.Text;
+            string orderQty = "0";
+            int orderQtyInt = Convert.ToInt32(opOrderQty.Text);
+            if (orderQtyInt <= 0)
+            {
+                TResult orderInfoResult = Globals.ProductionData.getfromMES.ProductionOrder_Detail(ipOrderNO.Text);
+                if (orderInfoResult.issuccess)
+                {
+                    orderQty = orderInfoResult.data.Rows[0]["orderQty"].ToString();
+                }
+            }
+            else
+            {
+                orderQty = opOrderQty.Text;
+            }
 
+            Globals.ProductionData.orderQty = orderQty;
             return Globals.ProductionData.counter.passCount >= Globals.ProductionData.orderQty.ToInt32() && Globals.ProductionData.counter.passCount > 0;
         }
 
@@ -1432,11 +1448,26 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 // Clear tất cả dictionaries trước khi load PO mới
                 Globals_Database.Dictionary_ProductionCode_Data.Clear();
                 Globals_Database.Dictionary_ProductionCarton_Data.Clear();
-
+                string orderQty = "0";
+                int orderQtyInt = Convert.ToInt32(opOrderQty.Text);
+                if (orderQtyInt <= 0)
+                {
+                    TResult orderInfoResult = Globals.ProductionData.getfromMES.ProductionOrder_Detail(ipOrderNO.Text);
+                    if(orderInfoResult.issuccess)
+                    {
+                        orderQty = orderInfoResult.data.Rows[0]["orderQty"].ToString();
+                    }
+                }
+                else
+                {
+                    orderQty = opOrderQty.Text;
+                }
                 // QUAN TRỌNG: Kiểm tra và tạo database trước khi load records
                 var checkDbResult = Globals.ProductionData.Check_Database_File(
-                    ipOrderNO.SelectedText,
-                    opOrderQty.Text);
+                    ipOrderNO.SelectedText, orderQty
+                    );
+
+                
 
                 if (!checkDbResult.issucess)
                 {

@@ -505,7 +505,7 @@
             this.opOrderQty.Radius = 1;
             this.opOrderQty.Size = new System.Drawing.Size(255, 39);
             this.opOrderQty.TabIndex = 81;
-            this.opOrderQty.Text = "-";
+            this.opOrderQty.Text = "0";
             this.opOrderQty.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ipProductionDate

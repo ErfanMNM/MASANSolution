@@ -72,7 +72,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
         {
             isLoading = true;
             FirstCheck();
-            FirstCheck_CS();
+
             omronPLC_Hsl1.PLC_IP = PLCAddress.Get("PLC_IP");
             omronPLC_Hsl1.PLC_PORT = int.Parse(PLCAddress.Get("PLC_PORT").ToString());
 
@@ -85,27 +85,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
             omronPLC_Hsl1.InitPLC();
 
             // Khởi tạo PLC2 khi ở chế độ Duo Mode
-            if (AppConfigs.Current.PLC_Duo_Mode)
-            {
-                try
-                {
-                    omronPLC_Hsl2.PLC_IP = PLCAddress.Get("PLC2_IP");
-                    omronPLC_Hsl2.PLC_PORT = int.Parse(PLCAddress.Get("PLC2_PORT").ToString());
-
-                    if (AppConfigs.Current.PLC_Test_Mode)
-                    {
-                        omronPLC_Hsl2.PLC_IP = "127.0.0.1";
-                        omronPLC_Hsl2.PLC_PORT = 9601;
-                    }
-
-                    omronPLC_Hsl2.InitPLC();
-                    Console.WriteLine($"PLC2 khởi tạo thành công: {omronPLC_Hsl2.PLC_IP}:{omronPLC_Hsl2.PLC_PORT}");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Lỗi khởi tạo PLC2: {ex.Message}");
-                }
-            }
+            
 
             bgwUpdate.RunWorkerAsync();
             UpdateCBB();
@@ -164,60 +144,12 @@ namespace MASAN_SERIALIZATION.Views.Settings
             Check_Recipe(SelectRecipeName, defaultConfig);
         }
 
-        public void FirstCheck_CS()
-        {
-            PLC_Parameter defaultConfig_CS;
-            defaultConfig_CS = new PLC_Parameter
-            {
-                DelayCamera = "1000",
-                DelayReject = "2000",
-                RejectStreng = "20",
-            };
-            if (!Directory.Exists("PLC_RECIPEs_CS"))
-            {
-                Directory.CreateDirectory("PLC_RECIPEs_CS");
-            }
-            if (!File.Exists(log_FilePath_CS))
-            {
-                SQLiteConnection.CreateFile(log_FilePath_CS);
-                CreateLogTable(log_FilePath_CS);
-            }
-            if (!File.Exists(defaultFilePath_CS))
-            {
-                //tạo file json mặc định
-                File.WriteAllText(defaultFilePath_CS, JsonConvert.SerializeObject(defaultConfig_CS, Formatting.Indented));
-            }
-            DataTable datatable = Get_Last_Select_Recipe_CS();
-            
-            if (datatable.Rows.Count >= 1)
-            {
-                SelectRecipeName_CS = datatable.Rows[0]["RecipeName"].ToString();
-                string[] valueR = datatable.Rows[0]["RecipeValue"].ToString().Split(",");
-                defaultConfig_CS = new PLC_Parameter
-                {
-                    DelayCamera = valueR[0],
-                    DelayReject = valueR[1],
-                    RejectStreng = valueR[2]
-                };
-            }
-            else
-            {
-                SelectRecipeName_CS = "Default";
-                defaultConfig_CS = new PLC_Parameter
-                {
-                    DelayCamera = "1000",
-                    DelayReject = "2000",
-                    RejectStreng = "20",
-                };
-            }
-            Check_Recipe_CS(SelectRecipeName_CS, defaultConfig_CS);
-        }
-
+        
         private void uiTableLayoutPanel1_Paint(object sender, PaintEventArgs e) { }
 
         public void GetParameterFromPLC()
         {
-            OperateResult<int[]> read = omronPLC_Hsl1.plc.ReadInt32(PLCAddress.Get("PLC_Delay_Camera_DM_C2"), 3);
+            OperateResult<int[]> read = omronPLC_Hsl1.plc.ReadInt32(PLCAddress.Get("PLC_Delay_Camera_DM_C1"), 3);
             if (read.IsSuccess)
             {
                 PLC_Parameter_On_PLC.DelayCamera = read.Content[0].ToString();
@@ -363,23 +295,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
             {
                 ipRecipe.SelectedItem = "Default";
             }
-            foreach (var file in Directory.GetFiles("PLC_RECIPEs_CS", "*.rplc"))
-            {
-                ipRecipe_CS.Items.Add(Path.GetFileName(file.Replace(".rplc", "")));
-            }
-            if (ipRecipe_CS.Items.Count == 0)
-            {
-                ipRecipe_CS.Items.Add("Default");
-            }
-            ipRecipe_CS.SelectedIndex = 0;
-            if (ipRecipe_CS.Items.Contains(SelectRecipeName_CS))
-            {
-                ipRecipe_CS.SelectedItem = SelectRecipeName_CS;
-            }
-            else
-            {
-                ipRecipe_CS.SelectedItem = "Default";
-            }
+            
         }
 
         public class PLC_Parameter
@@ -407,7 +323,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
         {
             isOpen = false;
             webView21.Source = new Uri("https://google.com");
-            webView22.Source = new Uri("https://google.com");
+
         }
 
         private void ipRecipe_SelectedIndexChanged(object sender, EventArgs e)
@@ -443,7 +359,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
                 PLC_Parameter_On_PC.RejectStreng = rejectStreng;
                 string json = JsonConvert.SerializeObject(PLC_Parameter_On_PC, Formatting.Indented);
                 Write_Recipe_To_File(json);
-                OperateResult operateResult = omronPLC_Hsl1.plc.Write(PLCAddress.Get("PLC_Delay_Camera_DM_C2"), new int[] { int.Parse(delayCamera), int.Parse(delayReject), int.Parse(rejectStreng) });
+                OperateResult operateResult = omronPLC_Hsl1.plc.Write(PLCAddress.Get("PLC_Delay_Camera_DM_C1"), new int[] { int.Parse(delayCamera), int.Parse(delayReject), int.Parse(rejectStreng) });
                 e.Result = operateResult;
             }
             catch (Exception ex)
@@ -602,12 +518,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
                     PLC_Parameter_On_PC_CS = JsonConvert.DeserializeObject<PLC_Parameter>(jsonContent);
                 }
             }
-            this.InvokeIfRequired(() =>
-            {
-                ipDelayTriger_CS.Text = PLC_Parameter_On_PC_CS.DelayCamera;
-                ipDelayReject_CS.Text = PLC_Parameter_On_PC_CS.DelayReject;
-                ipRejectStreng_CS.Text = PLC_Parameter_On_PC_CS.RejectStreng;
-            });
+ 
         }
 
         public void GetParameterFromPLC_CS()
@@ -706,80 +617,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
 
         private void bgwSavePLCCS_DoWork(object sender, DoWorkEventArgs e)
         {
-            if(AppConfigs.Current.PLC_Duo_Mode)
-            {
-                try
-                {
-                    // Lấy giá trị từ UI cho Lane1 và Lane2
-                    string delayCamera_Lane1 = ipDelayTriger_CS.Text;
-                    string delayReject_Lane1 = ipDelayReject_CS.Text;
-                    
-                    // Cập nhật parameters trên PC
-                    PLC2_Parameter_On_PC_Lane1.DelayCamera = delayCamera_Lane1;
-                    PLC2_Parameter_On_PC_Lane1.DelayReject = delayReject_Lane1;
-                    
-                    // Sử dụng cùng giá trị cho Lane2 (có thể thêm UI riêng nếu cần)
-                    PLC2_Parameter_On_PC_Lane2.DelayCamera = delayCamera_Lane1;
-                    PLC2_Parameter_On_PC_Lane2.DelayReject = delayReject_Lane1;
-                    
-                    // Lưu vào file
-                    var plc2Config = new {
-                        Lane1 = PLC2_Parameter_On_PC_Lane1,
-                        Lane2 = PLC2_Parameter_On_PC_Lane2
-                    };
-                    string json = JsonConvert.SerializeObject(plc2Config, Formatting.Indented);
-                    Write_Recipe_To_File_CS(json);
-                    
-                    // Ghi vào PLC2 - Lane1 (2 giá trị: DelayCamera, DelayReject)
-                    OperateResult operateResult1 = omronPLC_Hsl2.plc.Write(
-                        PLCAddress.Get("PLC2_Delay_Lane1_DM_C1"), 
-                        new int[] { int.Parse(delayCamera_Lane1), int.Parse(delayReject_Lane1) }
-                    );
-                    
-                    // Ghi vào PLC2 - Lane2 (2 giá trị: DelayCamera, DelayReject)
-                    OperateResult operateResult2 = omronPLC_Hsl2.plc.Write(
-                        PLCAddress.Get("PLC2_Delay_Lane2_DM_C1"), 
-                        new int[] { int.Parse(delayCamera_Lane1), int.Parse(delayReject_Lane1) }
-                    );
-                    
-                    // Kiểm tra kết quả
-                    if (operateResult1.IsSuccess && operateResult2.IsSuccess)
-                    {
-                        e.Result = operateResult1; // Trả về success
-                    }
-                    else
-                    {
-                        string errorMsg = "";
-                        if (!operateResult1.IsSuccess) errorMsg += $"Lane1: {operateResult1.Message}; ";
-                        if (!operateResult2.IsSuccess) errorMsg += $"Lane2: {operateResult2.Message}";
-                        e.Result = new Exception(errorMsg);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    e.Result = ex;
-                }
-            }
-            else
-            {
-                try
-                {
-                    string delayCamera = ipDelayTriger_CS.Text;
-                    string delayReject = ipDelayReject_CS.Text;
-                    string rejectStreng = ipRejectStreng_CS.Text;
-                    PLC_Parameter_On_PC_CS.DelayCamera = delayCamera;
-                    PLC_Parameter_On_PC_CS.DelayReject = delayReject;
-                    PLC_Parameter_On_PC_CS.RejectStreng = rejectStreng;
-                    string json = JsonConvert.SerializeObject(PLC_Parameter_On_PC_CS, Formatting.Indented);
-                    Write_Recipe_To_File_CS(json);
-                    OperateResult operateResult = omronPLC_Hsl1.plc.Write(PLCAddress.Get("PLC_Delay_Camera_DM_C1"), new int[] { int.Parse(delayCamera), int.Parse(delayReject), int.Parse(rejectStreng) });
-                    e.Result = operateResult;
-                }
-                catch (Exception ex)
-                {
-                    e.Result = ex;
-                }
-            }
+
            
         }
 
@@ -821,35 +659,11 @@ namespace MASAN_SERIALIZATION.Views.Settings
                     File.WriteAllText($"PLC_RECIPEs_CS/{enterText.TextValue}.rplc", json);
                     AddLogRecipe(enterText.TextValue, $"{newRecipe.DelayCamera},{newRecipe.DelayReject},{newRecipe.RejectStreng}", "CREATE", Globals.CurrentUser.Username);
                     AddLogRecipe(enterText.TextValue, $"{newRecipe.DelayCamera},{newRecipe.DelayReject},{newRecipe.RejectStreng}", "SELECT", Globals.CurrentUser.Username);
-                    ipRecipe_CS.Items.Add(enterText.TextValue);
-                    SelectRecipeName_CS = enterText.TextValue;
-                    ipRecipe_CS.SelectedItem = SelectRecipeName;
+
                     this.ShowSuccessDialog($"Đã tạo Recipe mới: {enterText.TextValue}");
                 };
                 enterText.ShowDialog();
             }
-        }
-
-        private void ipRecipe_CS_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (ipRecipe_CS.SelectedText.Length > 3)
-            {
-                SelectRecipeName_CS = ipRecipe_CS.SelectedText;
-                string jsonContent = File.ReadAllText($"PLC_RECIPEs_CS/{SelectRecipeName_CS}.rplc");
-                PLC_Parameter az = JsonConvert.DeserializeObject<PLC_Parameter>(jsonContent);
-                ipDelayTriger_CS.Text = az.DelayCamera;
-                ipDelayReject_CS.Text = az.DelayReject;
-                ipRejectStreng_CS.Text = az.RejectStreng;
-            }
-            if (isLoading)
-                return;
-        }
-
-        private void btnUpCS_Click(object sender, EventArgs e)
-        {
-            ipDelayReject_CS.Text = PLC_Parameter_On_PLC_CS.DelayReject;
-            ipDelayTriger_CS.Text = PLC_Parameter_On_PLC_CS.DelayCamera;
-            ipRejectStreng_CS.Text = PLC_Parameter_On_PLC_CS.RejectStreng;
         }
 
         private void PLC_Comfirm_Async(object sender, DoWorkEventArgs e)
@@ -863,9 +677,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
                     GetParameterFromPLC();
                     this.InvokeIfRequired(() =>
                     {
-                        opDelayTriger_CS.Text = PLC_Parameter_On_PLC_CS.DelayCamera;
-                        opDelayReject_CS.Text = PLC_Parameter_On_PLC_CS.DelayReject;
-                        opRejectStreng_CS.Text = PLC_Parameter_On_PLC_CS.RejectStreng;
+  
                         opDelayTriger.Text = PLC_Parameter_On_PLC.DelayCamera;
                         opDelayReject.Text = PLC_Parameter_On_PLC.DelayReject;
                         opRejectStreng.Text = PLC_Parameter_On_PLC.RejectStreng;
