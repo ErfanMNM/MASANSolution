@@ -38,9 +38,12 @@
             this.btnConnect = new Sunny.UI.UIButton();
             this.ipIP = new Sunny.UI.UIIPTextBox();
             this.ipPort = new Sunny.UI.UINumPadTextBox();
+            this.uiTableLayoutPanel4 = new Sunny.UI.UITableLayoutPanel();
+            this.uiButton1 = new Sunny.UI.UIButton();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel2.SuspendLayout();
             this.uiTableLayoutPanel3.SuspendLayout();
+            this.uiTableLayoutPanel4.SuspendLayout();
             this.SuspendLayout();
             // 
             // ipContent
@@ -54,7 +57,7 @@
             this.ipContent.Name = "ipContent";
             this.ipContent.Padding = new System.Windows.Forms.Padding(2);
             this.ipContent.ShowText = false;
-            this.ipContent.Size = new System.Drawing.Size(913, 70);
+            this.ipContent.Size = new System.Drawing.Size(643, 68);
             this.ipContent.TabIndex = 0;
             this.ipContent.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -63,10 +66,10 @@
             this.btnSend.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSend.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnSend.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnSend.Location = new System.Drawing.Point(924, 3);
+            this.btnSend.Location = new System.Drawing.Point(654, 3);
             this.btnSend.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnSend.Name = "btnSend";
-            this.btnSend.Size = new System.Drawing.Size(188, 74);
+            this.btnSend.Size = new System.Drawing.Size(132, 72);
             this.btnSend.TabIndex = 1;
             this.btnSend.Text = "Gửi";
             this.btnSend.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -77,28 +80,30 @@
             this.opConsole.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.opConsole.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
             this.opConsole.ItemSelectForeColor = System.Drawing.Color.White;
-            this.opConsole.Location = new System.Drawing.Point(4, 214);
+            this.opConsole.Location = new System.Drawing.Point(4, 226);
             this.opConsole.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.opConsole.MinimumSize = new System.Drawing.Size(1, 1);
             this.opConsole.Name = "opConsole";
             this.opConsole.Padding = new System.Windows.Forms.Padding(2);
             this.opConsole.ShowText = false;
-            this.opConsole.Size = new System.Drawing.Size(1113, 436);
+            this.opConsole.Size = new System.Drawing.Size(787, 424);
             this.opConsole.TabIndex = 2;
             this.opConsole.Text = "uiListBox1";
             // 
             // uiTableLayoutPanel1
             // 
-            this.uiTableLayoutPanel1.ColumnCount = 1;
+            this.uiTableLayoutPanel1.ColumnCount = 2;
             this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 326F));
             this.uiTableLayoutPanel1.Controls.Add(this.opConsole, 0, 2);
             this.uiTableLayoutPanel1.Controls.Add(this.uiTableLayoutPanel2, 0, 1);
             this.uiTableLayoutPanel1.Controls.Add(this.uiTableLayoutPanel3, 0, 0);
+            this.uiTableLayoutPanel1.Controls.Add(this.uiTableLayoutPanel4, 1, 0);
             this.uiTableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uiTableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.uiTableLayoutPanel1.Name = "uiTableLayoutPanel1";
             this.uiTableLayoutPanel1.RowCount = 3;
-            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 123F));
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 137F));
             this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.24266F));
             this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 83.75734F));
             this.uiTableLayoutPanel1.Size = new System.Drawing.Size(1121, 655);
@@ -113,11 +118,11 @@
             this.uiTableLayoutPanel2.Controls.Add(this.ipContent, 0, 0);
             this.uiTableLayoutPanel2.Controls.Add(this.btnSend, 1, 0);
             this.uiTableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel2.Location = new System.Drawing.Point(3, 126);
+            this.uiTableLayoutPanel2.Location = new System.Drawing.Point(3, 140);
             this.uiTableLayoutPanel2.Name = "uiTableLayoutPanel2";
             this.uiTableLayoutPanel2.RowCount = 1;
             this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel2.Size = new System.Drawing.Size(1115, 80);
+            this.uiTableLayoutPanel2.Size = new System.Drawing.Size(789, 78);
             this.uiTableLayoutPanel2.TabIndex = 3;
             this.uiTableLayoutPanel2.TagString = null;
             // 
@@ -135,7 +140,7 @@
             this.uiTableLayoutPanel3.RowCount = 2;
             this.uiTableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.uiTableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel3.Size = new System.Drawing.Size(1115, 117);
+            this.uiTableLayoutPanel3.Size = new System.Drawing.Size(789, 131);
             this.uiTableLayoutPanel3.TabIndex = 4;
             this.uiTableLayoutPanel3.TagString = null;
             // 
@@ -144,10 +149,10 @@
             this.btnConnect.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnConnect.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnConnect.Location = new System.Drawing.Point(923, 61);
+            this.btnConnect.Location = new System.Drawing.Point(654, 68);
             this.btnConnect.MinimumSize = new System.Drawing.Size(1, 1);
             this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(189, 53);
+            this.btnConnect.Size = new System.Drawing.Size(132, 60);
             this.btnConnect.TabIndex = 3;
             this.btnConnect.Text = "Kết nối";
             this.btnConnect.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
@@ -163,28 +168,57 @@
             this.ipIP.Name = "ipIP";
             this.ipIP.Padding = new System.Windows.Forms.Padding(1);
             this.ipIP.ShowText = false;
-            this.ipIP.Size = new System.Drawing.Size(912, 48);
+            this.ipIP.Size = new System.Drawing.Size(643, 55);
             this.ipIP.TabIndex = 0;
             this.ipIP.Text = "192.168.230.9";
             this.ipIP.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            //this.ipIP.Value = ((System.Net.IPAddress)(resources.GetObject("ipIP.Value")));
+            this.ipIP.Value = ((System.Net.IPAddress)(resources.GetObject("ipIP.Value")));
             // 
             // ipPort
             // 
             this.ipPort.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ipPort.FillColor = System.Drawing.Color.White;
             this.ipPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.ipPort.Location = new System.Drawing.Point(924, 5);
+            this.ipPort.Location = new System.Drawing.Point(655, 5);
             this.ipPort.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ipPort.MinimumSize = new System.Drawing.Size(63, 0);
             this.ipPort.Name = "ipPort";
             this.ipPort.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
-            this.ipPort.Size = new System.Drawing.Size(187, 48);
+            this.ipPort.Size = new System.Drawing.Size(130, 55);
             this.ipPort.SymbolSize = 24;
             this.ipPort.TabIndex = 1;
             this.ipPort.Text = "9100";
             this.ipPort.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipPort.Watermark = "";
+            // 
+            // uiTableLayoutPanel4
+            // 
+            this.uiTableLayoutPanel4.ColumnCount = 2;
+            this.uiTableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.3125F));
+            this.uiTableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 49.6875F));
+            this.uiTableLayoutPanel4.Controls.Add(this.uiButton1, 0, 0);
+            this.uiTableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel4.Location = new System.Drawing.Point(798, 3);
+            this.uiTableLayoutPanel4.Name = "uiTableLayoutPanel4";
+            this.uiTableLayoutPanel4.RowCount = 2;
+            this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel4.Size = new System.Drawing.Size(320, 131);
+            this.uiTableLayoutPanel4.TabIndex = 5;
+            this.uiTableLayoutPanel4.TagString = null;
+            // 
+            // uiButton1
+            // 
+            this.uiButton1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiButton1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiButton1.Location = new System.Drawing.Point(3, 3);
+            this.uiButton1.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiButton1.Name = "uiButton1";
+            this.uiButton1.Size = new System.Drawing.Size(155, 59);
+            this.uiButton1.TabIndex = 4;
+            this.uiButton1.Text = "Kết nối";
+            this.uiButton1.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             // 
             // page_SATO
             // 
@@ -196,6 +230,7 @@
             this.uiTableLayoutPanel1.ResumeLayout(false);
             this.uiTableLayoutPanel2.ResumeLayout(false);
             this.uiTableLayoutPanel3.ResumeLayout(false);
+            this.uiTableLayoutPanel4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -211,5 +246,7 @@
         private Sunny.UI.UIButton btnConnect;
         private Sunny.UI.UIIPTextBox ipIP;
         private Sunny.UI.UINumPadTextBox ipPort;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel4;
+        private Sunny.UI.UIButton uiButton1;
     }
 }
