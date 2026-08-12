@@ -1042,7 +1042,7 @@
             // opPassCount
             // 
             this.opPassCount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opPassCount.FillColor = System.Drawing.Color.White;
+            this.opPassCount.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.opPassCount.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.opPassCount.Location = new System.Drawing.Point(240, 2);
             this.opPassCount.Margin = new System.Windows.Forms.Padding(2);
@@ -1057,7 +1057,7 @@
             // opFailCount
             // 
             this.opFailCount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opFailCount.FillColor = System.Drawing.Color.White;
+            this.opFailCount.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.opFailCount.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.opFailCount.Location = new System.Drawing.Point(240, 56);
             this.opFailCount.Margin = new System.Windows.Forms.Padding(2);

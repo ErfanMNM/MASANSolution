@@ -1422,7 +1422,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     }
                     else
                     {
-                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 3);
+                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"),1);
                     }
                 }
                 

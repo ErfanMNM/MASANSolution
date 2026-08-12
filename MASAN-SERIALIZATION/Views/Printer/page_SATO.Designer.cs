@@ -172,7 +172,7 @@
             this.ipIP.TabIndex = 0;
             this.ipIP.Text = "192.168.230.9";
             this.ipIP.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            this.ipIP.Value = ((System.Net.IPAddress)(resources.GetObject("ipIP.Value")));
+            //this.ipIP.Value = ((System.Net.IPAddress)(resources.GetObject("ipIP.Value")));
             // 
             // ipPort
             // 
