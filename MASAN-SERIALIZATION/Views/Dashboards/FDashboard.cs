@@ -1418,11 +1418,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 {
                     if (Globals.ProductionData.counter.cartonID % 2 == 0)
                     {
-                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 3);
+                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 2);
                     }
                     else
                     {
-                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 2);
+                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 3);
                     }
                 }
                 

@@ -305,7 +305,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                     //kiểm tra xem thùng đang chạy có code chưa
 
-                    if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out ProductionCartonData cartonDatah1))
+                    if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonDatah1))
                     { 
                         //kiểm tra xem chẵn hay lẻ 
                         if(Globals.ProductionData.counter.cartonID %2==0)
