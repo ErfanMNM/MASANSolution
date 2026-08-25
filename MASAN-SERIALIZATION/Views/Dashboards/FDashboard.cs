@@ -476,6 +476,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     successSend = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), sendCode);
                 }
 
+                Globals.Printer_Job--;
+
                 if (successSend)
                 {
                     // Timeout check: cho phép tắt hẳn, hoặc chọn V1/V2 bằng config
@@ -1526,9 +1528,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             // Clear tất cả dictionaries trước khi load PO mới
                             Globals_Database.Dictionary_ProductionCode_Data.Clear();
                             Globals_Database.Dictionary_ProductionCarton_Data.Clear();
-                            
+
                             //lấy mã chai
                             var getCodes = Globals.ProductionData.getDataPO.Get_Codes(Globals.ProductionData.orderNo);
+
                             if (getCodes.issucess)
                             {
                                 if (getCodes.Codes.Rows.Count == 0)
@@ -1553,7 +1556,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                     string activateUser = codeRow["ActivateUser"].ToString();
                                     string activateDatetime = codeRow["ActivateDate"].ToString();
                                     string productionDate = codeRow["ProductionDate"].ToString();
- 
+
 
                                     // Kiểm tra mã trùng với old_database (chỉ kiểm tra nếu không bypass)
                                     if (!AppConfigs.Current.Check_Db_Old_Bypass)
@@ -1603,9 +1606,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                         if (hasDuplicateWithCarton)
                                         {
                                             // Có mã trùng với cartonCode != 0 -> cảnh báo lỗi và về Ready
-                                            string errorMsg = $"Phát hiện mã trùng với dữ liệu cũ. Các mã: {string.Join(", ", duplicateCodesWithCarton.Take(10))}" + 
+                                            string errorMsg = $"Phát hiện mã trùng với dữ liệu cũ. Các mã: {string.Join(", ", duplicateCodesWithCarton.Take(10))}" +
                                                            (duplicateCodesWithCarton.Count > 10 ? $" và {duplicateCodesWithCarton.Count - 10} mã khác" : "");
-                                            DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error, 
+                                            DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error,
                                                 $"Phát hiện mã trùng với old_database (có cartonCode): {errorMsg}");
                                             this.InvokeIfRequired(() =>
                                             {
@@ -1634,7 +1637,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                         string errorMsg = $"Phát hiện mã trùng với dữ liệu cũ. " +
                                                          (hasDuplicateWithCarton ? $"Có {duplicateCodesWithCarton.Count} mã có cartonCode != 0. " : "") +
                                                          (hasDuplicateWithoutCarton ? $"Có {duplicateCodesWithoutCarton.Count} mã có cartonCode = 0." : "");
-                                        DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error, 
+                                        DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error,
                                             $"Phát hiện mã trùng với old_database: {errorMsg}");
                                         this.InvokeIfRequired(() =>
                                         {
@@ -1674,7 +1677,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         {
                             // Clear Dictionary_ProductionCarton_Data trước khi load PO mới
                             Globals_Database.Dictionary_ProductionCarton_Data.Clear();
-                            
+
                             TResult getCartons = new TResult(false, "Lỗi");
                             try
                             {
@@ -1857,9 +1860,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                     if (hasDuplicateWithCarton)
                                     {
                                         // Có mã trùng với cartonCode != 0 -> cảnh báo lỗi và về Ready
-                                        string errorMsg = $"Phát hiện mã trùng với dữ liệu cũ. Các mã: {string.Join(", ", duplicateCodesWithCarton.Take(10))}" + 
+                                        string errorMsg = $"Phát hiện mã trùng với dữ liệu cũ. Các mã: {string.Join(", ", duplicateCodesWithCarton.Take(10))}" +
                                                        (duplicateCodesWithCarton.Count > 10 ? $" và {duplicateCodesWithCarton.Count - 10} mã khác" : "");
-                                        DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error, 
+                                        DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error,
                                             $"Phát hiện mã trùng với old_database (có cartonCode): {errorMsg}");
                                         this.InvokeIfRequired(() =>
                                         {
@@ -1889,7 +1892,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                     string errorMsg = $"Phát hiện mã trùng với dữ liệu cũ. " +
                                                      (hasDuplicateWithCarton ? $"Có {duplicateCodesWithCarton.Count} mã có cartonCode != 0. " : "") +
                                                      (hasDuplicateWithoutCarton ? $"Có {duplicateCodesWithoutCarton.Count} mã có cartonCode = 0." : "");
-                                    DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error, 
+                                    DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error,
                                         $"Phát hiện mã trùng với old_database: {errorMsg}");
                                     this.InvokeIfRequired(() =>
                                     {
@@ -1918,6 +1921,13 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 case e_Production_State.Ready:
                     break;
                 case e_Production_State.Running:
+
+                    //kiểm tra xem máy in ok chưa, nếu chưa chuyển sang chế độ check máy in 
+                    //if(!Globals.Printer_Ready)
+                    //{
+                    //    Globals.Production_State = e_Production_State.Printer_Loading;
+                    //}
+
                     ProcessRunningState();
                     break;
                 case e_Production_State.Pause:
@@ -1951,14 +1961,14 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     //kiểm tra thùng đang xếp xếp hết chưa
                     if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonData5))
                     {
-                       if(cartonData5.Activate_Datetime != "0")
+                        if (cartonData5.Activate_Datetime != "0")
                         {
                             //isCartonReady4 = true;
                         }
                     }
 
                     //KIỂM TRA  thùng cũ chốt mã chưa
-                    if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID-1, out ProductionCartonData cartonDatat))
+                    if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID - 1, out ProductionCartonData cartonDatat))
                     {
                         if (cartonDatat.Activate_Datetime != "0")
                         {
@@ -1989,6 +1999,18 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         Globals.Production_State = e_Production_State.Completed;
                     }
 
+                    break;
+                case e_Production_State.DuSanPham:
+                    break;
+                case e_Production_State.ThieuSanPham:
+                    break;
+                case e_Production_State.KiemTraThieu:
+                    break;
+                case e_Production_State.MaBiTrung:
+                    break;
+                case e_Production_State.Printer_Loading:
+                    break;
+                case e_Production_State.Printer_Ready:
                     break;
             }
         }

@@ -15,6 +15,10 @@ namespace MASAN_SERIALIZATION
 {
     public static class Globals
     {
+        public static bool Printer_Ready { get; set; } = false; // Biến toàn cục để kiểm tra trạng thái máy in
+        public static int Printer_Job { get; set; } = 0; // Biến toàn cục để lưu trữ số lượng công việc in
+
+        public static int Printer_Counter { get; set; } = 0; // Biến toàn cục để lưu trữ số lượng công việc in đã hoàn thành
         // Biến toàn cục để lưu trữ thông tin người dùng hiện tại
         public static UserData CurrentUser { get; set; } = new UserData();
 
@@ -31,7 +35,7 @@ namespace MASAN_SERIALIZATION
 
         public static ProductionOrder ProductionData { get; set; } = new ProductionOrder();
 
-        public static ProductionOrder productionData_Cs { get; set; } = new ProductionOrder(); // Biến toàn cục để lưu trữ thông tin đơn hàng sản xuất hiện tại
+       // public static ProductionOrder productionData_Cs { get; set; } = new ProductionOrder(); // Biến toàn cục để lưu trữ thông tin đơn hàng sản xuất hiện tại
 
         // Biến toàn cục để lưu trữ trạng thái sản xuất
         public static e_Production_State Production_State { get; set; } = e_Production_State.Start;

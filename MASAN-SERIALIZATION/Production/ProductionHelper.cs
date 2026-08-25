@@ -1134,6 +1134,31 @@ namespace MASAN_SERIALIZATION.Production
                 }
             }
 
+
+            public (bool issucess, DataTable Codes, string message) Get_Codes_Printer(string orderNo)
+            {
+                try
+                {
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/{orderNo}.db";
+                    if (!File.Exists(czRunPath))
+                    {
+                        return (false, null, "Cơ sở dữ liệu ghi không tồn tại.");
+                    }
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
+                    {
+                        conn.Open();
+                        string query = "SELECT * FROM UniqueCodes WHERE status == '0'";
+                        var adapter = new SQLiteDataAdapter(query, conn);
+                        var table = new DataTable();
+                        adapter.Fill(table);
+                        return (table.Rows.Count > 0) ? (true, table, "Lấy danh sách bản ghi thành công.") : (true, null, "Không có bản ghi nào trong cơ sở dữ liệu.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return (false, null, $"Lỗi PH110 khi lấy danh sách bản ghi: {ex.Message}");
+                }
+            }
             /// <summary>
             /// Kiểm tra mã có tồn tại trong old_database.db không
             /// Trả về: (exists, cartonCode, message)
@@ -2351,6 +2376,8 @@ namespace MASAN_SERIALIZATION.Production
         KiemTraThieu,
         MaBiTrung,
         Pushing_to_Dic,
+        Printer_Loading,
+        Printer_Ready,
         Checking_Queue,
         Pause,
         Waiting_Stop,

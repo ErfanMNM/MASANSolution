@@ -1,6 +1,10 @@
-﻿using MASAN_SERIALIZATION.Utils;
+﻿using MASAN_SERIALIZATION.Production;
+using MASAN_SERIALIZATION.Utils;
 using Sunny.UI;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -8,16 +12,57 @@ using System.Threading.Tasks;
 
 namespace MASAN_SERIALIZATION.Views.Printer
 {
+
+   
     public partial class page_SATO : UIPage
     {
         private TcpClient tcpClient;
         private NetworkStream networkStream;
         private CancellationTokenSource ctsRead;
+        private e_PrinterStatus _printerStatus = e_PrinterStatus.DISCONNECT;
 
+        private DataTable sentCodesL1= new DataTable();
+
+        private BackgroundWorker backgroundWorker = new BackgroundWorker();
+
+        private string WH = "150;150";
+        private string LR = "4;4";
+        private string ClearPrinter = "AAA";
+
+        private string code = "\u001b10104680825412637215TGkBR(b;RunM\u001b191EE11\u001b192VFnOdvOodJm/5wO2JBj+9U0dq253icpdAd8Tx3E3vUE=";
+        private string MainCode = "\u001bA\u001bA3V+00000H+0000\u001bCS4\u001b#F7\u001bA1V00300H0300\u001b%0\u001bH0045\u001bV00044\u001b2D51,06,06,000,000\u001bDN0089,\u001b10104680825412637215TGkBR(b;RunM\u001b191EE11\u001b192VFnOdvOodJm/5wO2JBj+9U0dq253icpdAd8Tx3E3vUE=\u001bQ1\u001bZ\u0003\u001bZ\u001b";
         public page_SATO()
         {
             InitializeComponent();
             InitUI();
+            Connect();
+
+            backgroundWorker.WorkerSupportsCancellation = true;
+            backgroundWorker.DoWork += BackgroundWorker_DoWork;
+            if(backgroundWorker.IsBusy == false)
+            {
+                backgroundWorker.RunWorkerAsync();
+            }
+        }
+
+        private void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            while (!backgroundWorker.CancellationPending)
+            {
+                switch (Globals.Production_State)
+                {
+                    case e_Production_State.Running:
+                        if(Globals.Printer_Job <10)
+                        {
+                            SentToPrinter();
+                        }
+                        break;
+                    case e_Production_State.Printer_Loading:
+                        break;
+
+                }
+                Thread.Sleep(100); // Tạm dừng 1 giây trước khi gửi tiếp
+            }
         }
 
         private void InitUI()
@@ -57,6 +102,8 @@ namespace MASAN_SERIALIZATION.Views.Printer
                 _ = Task.Run(() => ReadLoop(ctsRead.Token));
 
                 btnConnect.Text = "Disconnect";
+                opStatus.Text= "ĐANG KẾT NỐI";
+                opStatus.BackColor = System.Drawing.Color.Green;
                 btnSend.Enabled = true;
                 ipIP.Enabled = false;
                 ipPort.Enabled = false;
@@ -87,6 +134,8 @@ namespace MASAN_SERIALIZATION.Views.Printer
                 btnSend.Enabled = false;
                 ipIP.Enabled = true;
                 ipPort.Enabled = true;
+                opStatus.Text = "CHƯA KẾT NỐI";
+                opStatus.BackColor = System.Drawing.Color.Red;
                 AppendLog("Disconnected.");
             }
         }
@@ -167,5 +216,115 @@ namespace MASAN_SERIALIZATION.Views.Printer
                     opConsole.SelectedIndex = opConsole.Items.Count - 1;
             });
         }
+
+        private void btnGetPrinterJob_Click(object sender, EventArgs e)
+        {
+            //lấy danh sách code vào bảng chờ
+            var a = Globals.ProductionData.getDataPO.Get_Codes_Printer(Globals.ProductionData.orderNo);
+            sentCodesL1 = a.Codes;
+            AppendLog($"Get Codes: {sentCodesL1.Rows.Count} rows");
+
+        }
+
+        private void GetPrinterJobAll()
+        {
+            //lấy danh sách code vào bảng chờ
+            var a = Globals.ProductionData.getDataPO.Get_Codes_Printer(Globals.ProductionData.orderNo);
+            sentCodesL1 = a.Codes;
+            AppendLog($"Get Codes: {sentCodesL1.Rows.Count} rows");
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (networkStream == null || !networkStream.CanWrite)
+            {
+                AppendLog("Not connected.");
+                return;
+            }
+
+            string text = ipClearPrinter.Text;
+            if (string.IsNullOrEmpty(text)) return;
+
+            try
+            {
+                byte[] data = Encoding.ASCII.GetBytes(text);
+                networkStream.Write(data, 0, data.Length);
+                AppendLog($"SEND: {text}");
+            }
+            catch (Exception ex)
+            {
+                AppendLog($"Send failed: {ex.Message}");
+                Disconnect();
+            }
+        }
+
+        private void btnSentToPrinter_Click(object sender, EventArgs e)
+        {
+            //SentToPrinter(MainCode);
+        }
+
+        private void SentToPrinter()
+        {
+            WH= uiTextBox2.Text;
+            LR= uiTextBox1.Text;
+            //lấy các dòng code từ điểm bắt đầu
+            int stopIndex = Globals.Printer_Counter +100;
+            int startIndex = Globals.Printer_Counter;
+            for (int i = startIndex; i < stopIndex; i++)
+            {
+                if (i < sentCodesL1.Rows.Count)
+                {
+                    string codeS = sentCodesL1.Rows[i]["Code"].ToString();
+                    codeS = codeS.Replace("\u001D", "").Replace("\u001b", "");
+
+                    string codeToSend = $"\u001bA\u001bA3V+00000H+0000\u001bCS4\u001b#F7\u001bA1V{WH.Split(";")[0]}H{WH.Split(";")[1]}\u001b%0\u001bH{LR.Split(";")[0]}\u001bV{LR.Split(";")[1]}\u001b2D51,04,04,000,000\u001bDN0089,\u001b{codeS}\u001bQ1\u001bZ\u0003\u001bZ\u001b";
+                    try
+                    {
+                        byte[] data = Encoding.ASCII.GetBytes(codeToSend);
+                        networkStream.Write(data, 0, data.Length);
+                        AppendLog($"SEND: {codeToSend}");
+
+                        Globals.Printer_Counter++; 
+                        Globals.Printer_Job++ ;
+                    }
+                    catch (Exception ex)
+                    {
+                        AppendLog($"Send failed: {ex.Message}");
+                        Disconnect();
+                        break;
+                    }
+                }
+            }
+
+
+            if (networkStream == null || !networkStream.CanWrite)
+            {
+                AppendLog("Not connected.");
+                return;
+            }
+            if (string.IsNullOrEmpty(code)) return;
+            try
+            {
+                byte[] data = Encoding.ASCII.GetBytes(code);
+                networkStream.Write(data, 0, data.Length);
+                AppendLog($"SEND: {code}");
+            }
+            catch (Exception ex)
+            {
+                AppendLog($"Send failed: {ex.Message}");
+                Disconnect();
+            }
+        }
+
+        private void btnReload_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+
+    public enum e_PrinterStatus
+    {
+        CONNECT = 1,
+        DISCONNECT = 0,
     }
 }
