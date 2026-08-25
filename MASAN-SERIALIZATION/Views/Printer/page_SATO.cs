@@ -268,7 +268,7 @@ namespace MASAN_SERIALIZATION.Views.Printer
             WH= uiTextBox2.Text;
             LR= uiTextBox1.Text;
             //lấy các dòng code từ điểm bắt đầu
-            int stopIndex = Globals.Printer_Counter +100;
+            int stopIndex = Globals.Printer_Counter+5;
             int startIndex = Globals.Printer_Counter;
             for (int i = startIndex; i < stopIndex; i++)
             {
