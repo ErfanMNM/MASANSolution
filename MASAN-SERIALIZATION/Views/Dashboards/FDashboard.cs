@@ -1420,11 +1420,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 {
                     if (Globals.ProductionData.counter.cartonID % 2 == 0)
                     {
-                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 3);
+                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 2);
                     }
                     else
                     {
-                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 2);
+                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"),1);
                     }
                 }
                 
@@ -2209,7 +2209,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         int product_in_carton = code_record.Rows.Count;
 
                         //nếu số lượng sản phẩm trong thùng khác với cấu hình thì dừng sản xuất và báo lỗi
-                        if (product_in_carton != AppConfigs.Current.cartonPack)
+                       if (product_in_carton != AppConfigs.Current.cartonPack)
                         {
                             //ghi log lỗi
                             DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.Error, "Lỗi DA01073: Số lượng sản phẩm trong thùng không đúng", $"Mã thùng: {cartonCode}, Số lượng sản phẩm trong thùng: {product_in_carton}, Số lượng cấu hình: {AppConfigs.Current.cartonPack}");

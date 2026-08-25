@@ -971,7 +971,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{GetOrderBasePath(orderNO)}/Record_CameraSub_{orderNO}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNO)}/Record_{orderNO}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(true, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -981,7 +981,7 @@ namespace MASAN_SERIALIZATION.Production
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         conn.Open();
-                        string query = "SELECT COUNT(*) FROM Records_CameraSub WHERE Status = @Status";
+                        string query = "SELECT COUNT(*) FROM Records WHERE Status = @Status";
                         var command = new SQLiteCommand(query, conn);
                         command.Parameters.AddWithValue("@Status", Production_Status.ToString());
                         int count = Convert.ToInt32(command.ExecuteScalar());
@@ -1059,7 +1059,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_CameraSub_{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(false, "Cơ sở dữ liệu ghi camera phụ không tồn tại.");
@@ -1068,7 +1068,7 @@ namespace MASAN_SERIALIZATION.Production
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         conn.Open();
-                        string query = "SELECT * FROM Records_CameraSub";
+                        string query = "SELECT * FROM Records";
                         var adapter = new SQLiteDataAdapter(query, conn);
                         var table = new DataTable();
                         adapter.Fill(table);
@@ -1410,7 +1410,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_CameraSub_{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return (false, 0, "Cơ sở dữ liệu ghi không tồn tại.");
@@ -1468,7 +1468,7 @@ namespace MASAN_SERIALIZATION.Production
             {
                 try
                 {
-                    string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_CameraSub_{orderNo}.db";
+                    string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_{orderNo}.db";
                     if (!File.Exists(czRunPath))
                     {
                         return new TResult(false, "Cơ sở dữ liệu Record_CameraSub không tồn tại.");
@@ -1477,7 +1477,7 @@ namespace MASAN_SERIALIZATION.Production
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         conn.Open();
-                        string query = "SELECT DISTINCT cartonID FROM Records_CameraSub WHERE Code = @Code AND cartonID <> 0 AND Status = 'Pass'";
+                        string query = "SELECT DISTINCT cartonID FROM Records WHERE Code = @Code AND cartonID <> 0 AND Status = 'Pass'";
                         using (var command = new SQLiteCommand(query, conn))
                         {
                             command.Parameters.AddWithValue("@Code", code);
@@ -1907,11 +1907,11 @@ namespace MASAN_SERIALIZATION.Production
 
             public void Insert_Record_Camera_Sub(ProductionCodeData_Record productionCodeData_Record, string orderNo)
             {
-                string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_CameraSub_{orderNo}.db";
+                string czRunPath = $"{GetOrderBasePath(orderNo)}/Record_{orderNo}.db";
                 using (SQLiteConnection connection = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                 {
                     connection.Open();
-                    string query = "INSERT INTO Records_CameraSub (Code, cartonID, Status, PLC_Status, ActivateDate, ActivateUser, ProductionDate) " +
+                    string query = "INSERT INTO Records (Code, cartonID, Status, PLC_Status, ActivateDate, ActivateUser, ProductionDate) " +
                                    "VALUES (@Code, @cartonID, @Status, @PLC_Status, @ActivateDate, @ActivateUser, @ProductionDate)";
                     using (SQLiteCommand command = new SQLiteCommand(query, connection))
                     {
@@ -2210,13 +2210,13 @@ namespace MASAN_SERIALIZATION.Production
                     }
                 }
 
-                string recordCSPath = Path.Combine(basePath, $"Record_CameraSub_{orderNo}.db");
+                string recordCSPath = Path.Combine(basePath, $"Record_{orderNo}.db");
                 if (!File.Exists(recordCSPath))
                 {
                     using (var conn = new SQLiteConnection($"Data Source={recordCSPath};Version=3;"))
                     {
                         conn.Open();
-                        string createTableQuery = @"CREATE TABLE ""Records_CameraSub"" (
+                        string createTableQuery = @"CREATE TABLE ""Records"" (
 	                                            ""ID""	INTEGER NOT NULL UNIQUE,
 	                                            ""Code""	TEXT NOT NULL DEFAULT 'FAIL',
                                                 ""cartonID""	INTERGER NOT NULL DEFAULT 0,
