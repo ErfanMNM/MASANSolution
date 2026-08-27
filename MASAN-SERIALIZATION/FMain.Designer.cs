@@ -86,7 +86,7 @@
             this.uiPanel1.RectColor = System.Drawing.Color.DodgerBlue;
             this.uiPanel1.Size = new System.Drawing.Size(183, 55);
             this.uiPanel1.TabIndex = 7;
-            this.uiPanel1.Text = "CZ Nước Tương v3f0";
+            this.uiPanel1.Text = "CZ VCF v1f1";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opClock

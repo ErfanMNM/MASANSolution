@@ -308,6 +308,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             string code = arawCode[0];
             //a4 Chuyển sang chuẩn đúng, giữ nguyên ký tự
             code = code.Replace("<GS>", "\u001D").Replace("<RS>", "\u001E").Replace("<US>", "\u001F");
+            code = code.Replace("(01)", "01").Replace("(21)", "21").Replace("(93)", "\u001D93");
 
             if (IsTestModeEnabled && !Globals_Database.Dictionary_ProductionCode_Data.ContainsKey(code))
             {
@@ -1309,7 +1310,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                             if (AppConfigs.Current.PLC_Duo_Mode)
                             {
-                                if (Globals.ProductionData.counter.cartonID % 2 == 0)
+                                if (Globals.ProductionData.counter.cartonID % 2 != 0)
                                 {
                                     OperateResult ws = OMRON_PLC_02.plc.Write(PLCAddress.Get("PLC2_Alarm_DM_C1"), 3);
                                 }
@@ -1320,7 +1321,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             }
                             else
                             {
-                                if (Globals.ProductionData.counter.cartonID % 2 == 0)
+                                if (Globals.ProductionData.counter.cartonID % 2 != 0)
                                 {
                                     OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 3);
                                 }
@@ -1407,7 +1408,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 if(AppConfigs.Current.PLC_Duo_Mode)
                 {
-                    if (Globals.ProductionData.counter.cartonID % 2 == 0)
+                    if (Globals.ProductionData.counter.cartonID % 2 != 0)
                     {
                         OperateResult ws = OMRON_PLC_02.plc.Write(PLCAddress.Get("PLC2_Alarm_DM_C1"), 3);
                     }
@@ -1418,7 +1419,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 }
                 else
                 {
-                    if (Globals.ProductionData.counter.cartonID % 2 == 0)
+                    if (Globals.ProductionData.counter.cartonID % 2 != 0)
                     {
                         OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 2);
                     }
@@ -1433,7 +1434,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 if (AppConfigs.Current.PLC_Duo_Mode)
                 {
-                    if (Globals.ProductionData.counter.cartonID % 2 == 0)
+                    if (Globals.ProductionData.counter.cartonID % 2 != 0)
                     {
                         OperateResult ws = OMRON_PLC_02.plc.Write(PLCAddress.Get("PLC2_Alarm_DM_C1"), 2);
                     }
@@ -1444,7 +1445,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 }
                 else
                 {
-                    if (Globals.ProductionData.counter.cartonID % 2 == 0)
+                    if (Globals.ProductionData.counter.cartonID % 2 != 0)
                     {
                         OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 2);
                     }

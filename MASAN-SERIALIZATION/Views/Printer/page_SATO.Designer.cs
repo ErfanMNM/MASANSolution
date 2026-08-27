@@ -35,6 +35,14 @@
             this.uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
             this.opResoponse = new Sunny.UI.UILabel();
             this.uiTableLayoutPanel7 = new Sunny.UI.UITableLayoutPanel();
+            this.opPrinterJob = new Sunny.UI.UILabel();
+            this.uiLabel4 = new Sunny.UI.UILabel();
+            this.ipClearPrinter = new Sunny.UI.UITextBox();
+            this.uiLabel3 = new Sunny.UI.UILabel();
+            this.uiTextBox1 = new Sunny.UI.UITextBox();
+            this.uiLabel2 = new Sunny.UI.UILabel();
+            this.uiLabel1 = new Sunny.UI.UILabel();
+            this.uiTextBox2 = new Sunny.UI.UITextBox();
             this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel3 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel5 = new Sunny.UI.UITableLayoutPanel();
@@ -47,14 +55,6 @@
             this.btnSentToPrinter = new Sunny.UI.UIButton();
             this.btnReload = new Sunny.UI.UIButton();
             this.btnGetPrinterJob = new Sunny.UI.UIButton();
-            this.uiTextBox2 = new Sunny.UI.UITextBox();
-            this.uiLabel1 = new Sunny.UI.UILabel();
-            this.uiLabel2 = new Sunny.UI.UILabel();
-            this.uiTextBox1 = new Sunny.UI.UITextBox();
-            this.uiLabel3 = new Sunny.UI.UILabel();
-            this.ipClearPrinter = new Sunny.UI.UITextBox();
-            this.uiLabel4 = new Sunny.UI.UILabel();
-            this.opPrinterJob = new Sunny.UI.UILabel();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel7.SuspendLayout();
             this.uiTableLayoutPanel2.SuspendLayout();
@@ -168,6 +168,121 @@
             this.uiTableLayoutPanel7.Size = new System.Drawing.Size(320, 430);
             this.uiTableLayoutPanel7.TabIndex = 7;
             this.uiTableLayoutPanel7.TagString = null;
+            // 
+            // opPrinterJob
+            // 
+            this.opPrinterJob.BackColor = System.Drawing.Color.Silver;
+            this.opPrinterJob.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opPrinterJob.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.opPrinterJob.ForeColor = System.Drawing.Color.Black;
+            this.opPrinterJob.Location = new System.Drawing.Point(93, 258);
+            this.opPrinterJob.Name = "opPrinterJob";
+            this.opPrinterJob.Size = new System.Drawing.Size(224, 86);
+            this.opPrinterJob.TabIndex = 13;
+            this.opPrinterJob.Text = "00000";
+            this.opPrinterJob.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiLabel4
+            // 
+            this.uiLabel4.BackColor = System.Drawing.Color.Silver;
+            this.uiLabel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiLabel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uiLabel4.ForeColor = System.Drawing.Color.Black;
+            this.uiLabel4.Location = new System.Drawing.Point(3, 258);
+            this.uiLabel4.Name = "uiLabel4";
+            this.uiLabel4.Size = new System.Drawing.Size(84, 86);
+            this.uiLabel4.TabIndex = 12;
+            this.uiLabel4.Text = "Số bản tin còn lại";
+            this.uiLabel4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // ipClearPrinter
+            // 
+            this.ipClearPrinter.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.ipClearPrinter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ipClearPrinter.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.ipClearPrinter.Location = new System.Drawing.Point(94, 177);
+            this.ipClearPrinter.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ipClearPrinter.MinimumSize = new System.Drawing.Size(1, 16);
+            this.ipClearPrinter.Name = "ipClearPrinter";
+            this.ipClearPrinter.Padding = new System.Windows.Forms.Padding(5);
+            this.ipClearPrinter.ShowText = false;
+            this.ipClearPrinter.Size = new System.Drawing.Size(222, 76);
+            this.ipClearPrinter.TabIndex = 11;
+            this.ipClearPrinter.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ipClearPrinter.Watermark = "";
+            // 
+            // uiLabel3
+            // 
+            this.uiLabel3.BackColor = System.Drawing.Color.Silver;
+            this.uiLabel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiLabel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uiLabel3.ForeColor = System.Drawing.Color.Black;
+            this.uiLabel3.Location = new System.Drawing.Point(3, 172);
+            this.uiLabel3.Name = "uiLabel3";
+            this.uiLabel3.Size = new System.Drawing.Size(84, 86);
+            this.uiLabel3.TabIndex = 10;
+            this.uiLabel3.Text = "Lệnh Xoá";
+            this.uiLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiTextBox1
+            // 
+            this.uiTextBox1.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.uiTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTextBox1.Location = new System.Drawing.Point(94, 91);
+            this.uiTextBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiTextBox1.MinimumSize = new System.Drawing.Size(1, 16);
+            this.uiTextBox1.Name = "uiTextBox1";
+            this.uiTextBox1.Padding = new System.Windows.Forms.Padding(5);
+            this.uiTextBox1.ShowText = false;
+            this.uiTextBox1.Size = new System.Drawing.Size(222, 76);
+            this.uiTextBox1.TabIndex = 9;
+            this.uiTextBox1.Text = "0055;0005";
+            this.uiTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiTextBox1.Watermark = "";
+            // 
+            // uiLabel2
+            // 
+            this.uiLabel2.BackColor = System.Drawing.Color.Silver;
+            this.uiLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uiLabel2.ForeColor = System.Drawing.Color.Black;
+            this.uiLabel2.Location = new System.Drawing.Point(3, 86);
+            this.uiLabel2.Name = "uiLabel2";
+            this.uiLabel2.Size = new System.Drawing.Size(84, 86);
+            this.uiLabel2.TabIndex = 8;
+            this.uiLabel2.Text = "Canh Lề";
+            this.uiLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiLabel1
+            // 
+            this.uiLabel1.BackColor = System.Drawing.Color.Silver;
+            this.uiLabel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uiLabel1.ForeColor = System.Drawing.Color.Black;
+            this.uiLabel1.Location = new System.Drawing.Point(3, 0);
+            this.uiLabel1.Name = "uiLabel1";
+            this.uiLabel1.Size = new System.Drawing.Size(84, 86);
+            this.uiLabel1.TabIndex = 7;
+            this.uiLabel1.Text = "Kích thước";
+            this.uiLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiTextBox2
+            // 
+            this.uiTextBox2.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.uiTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTextBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTextBox2.Location = new System.Drawing.Point(94, 5);
+            this.uiTextBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiTextBox2.MinimumSize = new System.Drawing.Size(1, 16);
+            this.uiTextBox2.Name = "uiTextBox2";
+            this.uiTextBox2.Padding = new System.Windows.Forms.Padding(5);
+            this.uiTextBox2.ShowText = false;
+            this.uiTextBox2.Size = new System.Drawing.Size(222, 76);
+            this.uiTextBox2.TabIndex = 2;
+            this.uiTextBox2.Text = "00200;0200";
+            this.uiTextBox2.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiTextBox2.Watermark = "";
             // 
             // uiTableLayoutPanel2
             // 
@@ -354,121 +469,6 @@
             this.btnGetPrinterJob.Text = "Lấy số bản tin";
             this.btnGetPrinterJob.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.btnGetPrinterJob.Click += new System.EventHandler(this.btnGetPrinterJob_Click);
-            // 
-            // uiTextBox2
-            // 
-            this.uiTextBox2.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.uiTextBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTextBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiTextBox2.Location = new System.Drawing.Point(94, 5);
-            this.uiTextBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.uiTextBox2.MinimumSize = new System.Drawing.Size(1, 16);
-            this.uiTextBox2.Name = "uiTextBox2";
-            this.uiTextBox2.Padding = new System.Windows.Forms.Padding(5);
-            this.uiTextBox2.ShowText = false;
-            this.uiTextBox2.Size = new System.Drawing.Size(222, 76);
-            this.uiTextBox2.TabIndex = 2;
-            this.uiTextBox2.Text = "00250;0250";
-            this.uiTextBox2.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.uiTextBox2.Watermark = "";
-            // 
-            // uiLabel1
-            // 
-            this.uiLabel1.BackColor = System.Drawing.Color.Silver;
-            this.uiLabel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uiLabel1.ForeColor = System.Drawing.Color.Black;
-            this.uiLabel1.Location = new System.Drawing.Point(3, 0);
-            this.uiLabel1.Name = "uiLabel1";
-            this.uiLabel1.Size = new System.Drawing.Size(84, 86);
-            this.uiLabel1.TabIndex = 7;
-            this.uiLabel1.Text = "Kích thước";
-            this.uiLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiLabel2
-            // 
-            this.uiLabel2.BackColor = System.Drawing.Color.Silver;
-            this.uiLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uiLabel2.ForeColor = System.Drawing.Color.Black;
-            this.uiLabel2.Location = new System.Drawing.Point(3, 86);
-            this.uiLabel2.Name = "uiLabel2";
-            this.uiLabel2.Size = new System.Drawing.Size(84, 86);
-            this.uiLabel2.TabIndex = 8;
-            this.uiLabel2.Text = "Canh Lề";
-            this.uiLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiTextBox1
-            // 
-            this.uiTextBox1.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.uiTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiTextBox1.Location = new System.Drawing.Point(94, 91);
-            this.uiTextBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.uiTextBox1.MinimumSize = new System.Drawing.Size(1, 16);
-            this.uiTextBox1.Name = "uiTextBox1";
-            this.uiTextBox1.Padding = new System.Windows.Forms.Padding(5);
-            this.uiTextBox1.ShowText = false;
-            this.uiTextBox1.Size = new System.Drawing.Size(222, 76);
-            this.uiTextBox1.TabIndex = 9;
-            this.uiTextBox1.Text = "0045;0005";
-            this.uiTextBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.uiTextBox1.Watermark = "";
-            // 
-            // uiLabel3
-            // 
-            this.uiLabel3.BackColor = System.Drawing.Color.Silver;
-            this.uiLabel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiLabel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uiLabel3.ForeColor = System.Drawing.Color.Black;
-            this.uiLabel3.Location = new System.Drawing.Point(3, 172);
-            this.uiLabel3.Name = "uiLabel3";
-            this.uiLabel3.Size = new System.Drawing.Size(84, 86);
-            this.uiLabel3.TabIndex = 10;
-            this.uiLabel3.Text = "Lệnh Xoá";
-            this.uiLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // ipClearPrinter
-            // 
-            this.ipClearPrinter.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.ipClearPrinter.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ipClearPrinter.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.ipClearPrinter.Location = new System.Drawing.Point(94, 177);
-            this.ipClearPrinter.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.ipClearPrinter.MinimumSize = new System.Drawing.Size(1, 16);
-            this.ipClearPrinter.Name = "ipClearPrinter";
-            this.ipClearPrinter.Padding = new System.Windows.Forms.Padding(5);
-            this.ipClearPrinter.ShowText = false;
-            this.ipClearPrinter.Size = new System.Drawing.Size(222, 76);
-            this.ipClearPrinter.TabIndex = 11;
-            this.ipClearPrinter.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ipClearPrinter.Watermark = "";
-            // 
-            // uiLabel4
-            // 
-            this.uiLabel4.BackColor = System.Drawing.Color.Silver;
-            this.uiLabel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiLabel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uiLabel4.ForeColor = System.Drawing.Color.Black;
-            this.uiLabel4.Location = new System.Drawing.Point(3, 258);
-            this.uiLabel4.Name = "uiLabel4";
-            this.uiLabel4.Size = new System.Drawing.Size(84, 86);
-            this.uiLabel4.TabIndex = 12;
-            this.uiLabel4.Text = "Số bản tin còn lại";
-            this.uiLabel4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opPrinterJob
-            // 
-            this.opPrinterJob.BackColor = System.Drawing.Color.Silver;
-            this.opPrinterJob.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opPrinterJob.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opPrinterJob.ForeColor = System.Drawing.Color.Black;
-            this.opPrinterJob.Location = new System.Drawing.Point(93, 258);
-            this.opPrinterJob.Name = "opPrinterJob";
-            this.opPrinterJob.Size = new System.Drawing.Size(224, 86);
-            this.opPrinterJob.TabIndex = 13;
-            this.opPrinterJob.Text = "00000";
-            this.opPrinterJob.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // page_SATO
             // 
