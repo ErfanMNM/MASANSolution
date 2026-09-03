@@ -1769,7 +1769,7 @@ namespace MASAN_SERIALIZATION.Production
                                        "`cartonCode` = @cartonCode, " +
                                        "`ActivateDate` = @activateDate, " +
                                        "`ProductionDate` = @productionDate,  " +
-                                       "`ActivateUser` = @UserName,  " +
+                                       "`ActivateUser` = @UserName " +
                                        " WHERE `ID` = @RowId ;";
 
                         using (SQLiteCommand command = new SQLiteCommand(query, connection))

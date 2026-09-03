@@ -1600,5 +1600,17 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 Globals.Log.WriteLogAsync("System", e_LogType.Error, "Lỗi khi kiểm tra và kích hoạt thùng tự động: " + ex.Message);
             }
         }
+
+        private void uiSymbolButton2_Click(object sender, EventArgs e)
+        {
+            if(AppConfigs.Current.APP_TEST_MODE2)
+            {
+                Globals.TestComand = ipTest1.Text;
+            }
+            else
+            {
+                this.ShowErrorDialog("Chức năng này chỉ dành cho chế độ test");
+            }
+        }
     }
 }

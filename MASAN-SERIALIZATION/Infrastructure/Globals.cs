@@ -15,6 +15,8 @@ namespace MASAN_SERIALIZATION
 {
     public static class Globals
     {
+
+        public static string TestComand { get; set; } = "2;1;1;1"; // Biến toàn cục để lưu trữ lệnh kiểm tra
         public static bool Printer_Ready { get; set; } = false; // Biến toàn cục để kiểm tra trạng thái máy in
         public static int Printer_Job { get; set; } = 0; // Biến toàn cục để lưu trữ số lượng công việc in
 

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Luồng Quét Thùng — PCartonDashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container { max-width: 1300px; width: 100%; }
+        h1 { text-align: center; color: #00d4ff; margin-bottom: 5px; font-size: 1.4em; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 20px; font-size: 0.85em; }
+        .legend {
+            display: flex; justify-content: center; gap: 24px;
+            margin-bottom: 18px; flex-wrap: wrap;
+        }
+        .legend-item { display: flex; align-items: center; gap: 7px; font-size: 0.8em; }
+        .legend-color { width: 14px; height: 14px; border-radius: 3px; }
+        svg {
+            display: block; margin: 0 auto;
+            background: #16213e; border-radius: 14px;
+            padding: 25px; box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+        }
+        .t { font-size: 12px; fill: #fff; }
+        .c { font-size: 10px; fill: #aaa; font-style: italic; }
+        .zone { stroke-width: 2; stroke-dasharray: 6 4; fill-opacity: 0.05; }
+        .zt { font-size: 11px; fill: #888; }
+        .a { stroke: #00d4ff; fill: none; stroke-width: 2; }
+        .ah { stroke: #ff6b6b; }
+        .as { stroke: #ffd93d; }
+        .am { stroke: #ff9f43; }
+        .a-head { fill: #00d4ff; }
+        .a-head-h { fill: #ff6b6b; }
+        .a-head-s { fill: #ffd93d; }
+        .a-head-m { fill: #ff9f43; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Luồng Quét Thùng — PCartonDashboard</h1>
+    <p class="subtitle">Máy 1 → Thùng 1 (lẻ) &nbsp;|&nbsp; Máy 2 → Thùng 2 (chẵn)</p>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#ff6b6b"></div> Máy 1 (Lane 01)</div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffd93d"></div> Máy 2 (Lane 02)</div>
+        <div class="legend-item"><div class="legend-color" style="background:#00d4ff"></div> Luồng chung</div>
+        <div class="legend-item"><div class="legend-color" style="background:#ff9f43"></div> Hợp nhất</div>
+    </div>
+
+<svg width="1240" height="1850" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- ===== ZONE: NGUỒN ===== -->
+  <rect class="zone" x="5" y="5" width="1230" height="165" stroke="#00d4ff" fill="#00d4ff"/>
+  <text class="zt" x="15" y="24" fill="#00d4ff">KHỞI TẠO — PCartonDashboard.INIT()</text>
+
+  <ellipse cx="620" cy="55" rx="60" ry="22" fill="#0d1b2a" stroke="#00d4ff" stroke-width="2"/>
+  <text class="t" x="620" y="61" text-anchor="middle" fill="#00d4ff">START</text>
+
+  <line x1="620" y1="77" x2="620" y2="106" class="a" marker-end="url(#ah)"/>
+
+  <!-- 5 nguồn input -->
+  <!-- Máy 1 HID -->
+  <rect x="20" y="106" width="190" height="62" rx="7" fill="#1a0808" stroke="#ff6b6b" stroke-width="2"/>
+  <text class="t" x="115" y="130" text-anchor="middle" fill="#ff6b6b">Máy 1 (HID)</text>
+  <text class="t" x="115" y="148" text-anchor="middle">Raw Input</text>
+  <text class="c" x="115" y="164" text-anchor="middle">RegisterRawInputDevices</text>
+
+  <!-- Máy 1 Serial -->
+  <rect x="225" y="106" width="190" height="62" rx="7" fill="#1a0808" stroke="#ff6b6b" stroke-width="2"/>
+  <text class="t" x="320" y="130" text-anchor="middle" fill="#ff6b6b">Máy 1 (Serial)</text>
+  <text class="t" x="320" y="148" text-anchor="middle">COM HandScanCOM01</text>
+  <text class="c" x="320" y="164" text-anchor="middle">_ScanConection01</text>
+
+  <!-- TCP -->
+  <rect x="430" y="106" width="190" height="62" rx="7" fill="#0a1a0a" stroke="#6bcb77" stroke-width="2"/>
+  <text class="t" x="525" y="130" text-anchor="middle" fill="#6bcb77">TCP/IP</text>
+  <text class="t" x="525" y="148" text-anchor="middle">tcpClient1</text>
+  <text class="c" x="525" y="164" text-anchor="middle">cartonScanerTCP_IP:Port</text>
+
+  <!-- Máy 2 Serial -->
+  <rect x="635" y="106" width="190" height="62" rx="7" fill="#1a1a08" stroke="#ffd93d" stroke-width="2"/>
+  <text class="t" x="730" y="130" text-anchor="middle" fill="#ffd93d">Máy 2 (Serial)</text>
+  <text class="t" x="730" y="148" text-anchor="middle">COM HandScanCOM02</text>
+  <text class="c" x="730" y="164" text-anchor="middle">_ScanConection02</text>
+
+  <!-- HTTP -->
+  <rect x="840" y="106" width="190" height="62" rx="7" fill="#0d0a1a" stroke="#c9b1ff" stroke-width="2"/>
+  <text class="t" x="935" y="130" text-anchor="middle" fill="#c9b1ff">HTTP Server</text>
+  <text class="t" x="935" y="148" text-anchor="middle">POST /carton/scan</text>
+  <text class="c" x="935" y="164" text-anchor="middle">port 9999</text>
+
+  <!-- Lines down -->
+  <line x1="115" y1="168" x2="115" y2="196" class="a ah" marker-end="url(#ahh)"/>
+  <line x1="320" y1="168" x2="320" y2="196" class="a ah" marker-end="url(#ahh)"/>
+  <line x1="525" y1="168" x2="525" y2="196" class="a" stroke="#6bcb77" marker-end="url(#ah)"/>
+  <line x1="730" y1="168" x2="730" y2="196" class="a as" marker-end="url(#ahs)"/>
+  <line x1="935" y1="168" x2="935" y2="196" class="a" stroke="#c9b1ff" marker-end="url(#ah)"/>
+
+  <!-- Diamond: Máy nào? -->
+  <polygon points="525,196 680,255 525,314 370,255" fill="#0d1b2a" stroke="#00d4ff" stroke-width="2"/>
+  <text class="t" x="525" y="243" text-anchor="middle" fill="#00d4ff">Máy nào?</text>
+  <text class="c" x="525" y="264" text-anchor="middle">HID: GetDeviceLane()</text>
+  <text class="c" x="525" y="280" text-anchor="middle">Serial/TCP: device ID</text>
+
+  <!-- Máy 1 -->
+  <line x1="370" y1="255" x2="190" y2="255" class="a ah" marker-end="url(#ahh)"/>
+  <rect x="65" y="222" width="125" height="66" rx="7" fill="#1a0808" stroke="#ff6b6b" stroke-width="2"/>
+  <text class="t" x="127" y="248" text-anchor="middle" fill="#ff6b6b">MÁY 1</text>
+  <text class="t" x="127" y="268" text-anchor="middle">Lane 01</text>
+
+  <!-- Máy 2 -->
+  <line x1="680" y1="255" x2="860" y2="255" class="a as" marker-end="url(#ahs)"/>
+  <rect x="860" y="222" width="125" height="66" rx="7" fill="#1a1a08" stroke="#ffd93d" stroke-width="2"/>
+  <text class="t" x="922" y="248" text-anchor="middle" fill="#ffd93d">MÁY 2</text>
+  <text class="t" x="922" y="268" text-anchor="middle">Lane 02</text>
+
+  <!-- HTTP branch -->
+  <line x1="935" y1="196" x2="935" y2="380" class="a" stroke="#c9b1ff"/>
+  <line x1="935" y1="380" x2="740" y2="380" class="a" stroke="#c9b1ff"/>
+  <line x1="740" y1="380" x2="740" y2="404" class="a" marker-end="url(#ah)"/>
+
+  <!-- Merge to HandScan -->
+  <line x1="65" y1="288" x2="65" y2="318" class="a ah"/>
+  <line x1="127" y1="288" x2="127" y2="318" class="a ah"/>
+  <line x1="320" y1="288" x2="320" y2="318" class="a ah"/>
+  <line x1="922" y1="288" x2="922" y2="318" class="a as"/>
+  <line x1="730" y1="288" x2="730" y2="318" class="a as"/>
+
+  <line x1="65" y1="318" x2="620" y2="318" class="a am" marker-end="url(#ahm)"/>
+  <line x1="127" y1="318" x2="620" y2="318" class="a am"/>
+  <line x1="320" y1="318" x2="620" y2="318" class="a am"/>
+  <line x1="730" y1="318" x2="620" y2="318" class="a am"/>
+  <line x1="922" y1="318" x2="620" y2="318" class="a am" marker-end="url(#ahm)"/>
+
+  <!-- ===== LUỒNG CHÍNH ===== -->
+  <rect class="zone" x="5" y="320" width="1230" height="1510" stroke="#00d4ff" fill="#00d4ff"/>
+  <text class="zt" x="15" y="340" fill="#00d4ff">LUỒNG XỬ LÝ — HandScan01_Process / HandScan02_Process</text>
+
+  <!-- HandScan call -->
+  <rect x="450" y="325" width="340" height="54" rx="9" fill="#0d1b2a" stroke="#00d4ff" stroke-width="2"/>
+  <text class="t" x="620" y="352" text-anchor="middle" fill="#00d4ff">GỌI HandScan0N_Process(code)</text>
+  <text class="c" x="620" y="370" text-anchor="middle">PCLog → Xác định máy → Xử lý thùng</text>
+
+  <line x1="620" y1="379" x2="620" y2="410" class="a" marker-end="url(#ah)"/>
+
+  <!-- Kim cương: Máy 1 hay Máy 2? -->
+  <polygon points="620,410 770,468 620,526 470,468" fill="#0d1b2a" stroke="#00d4ff" stroke-width="2"/>
+  <text class="t" x="620" y="456" text-anchor="middle" fill="#00d4ff">Máy 1</text>
+  <text class="t" x="620" y="475" text-anchor="middle" fill="#00d4ff">hay Máy 2?</text>
+
+  <!-- ==================== -->
+  <!-- === MÁY 1 branch === -->
+  <!-- ==================== -->
+  <line x1="470" y1="468" x2="310" y2="468" class="a ah" marker-end="url(#ahh)"/>
+  <text x="335" y="463" class="t" fill="#ff6b6b" font-size="11">Máy 1</text>
+
+  <!-- Máy 1 check -->
+  <rect x="135" y="435" width="175" height="68" rx="7" fill="#1a0808" stroke="#ff6b6b" stroke-width="2"/>
+  <text class="t" x="222" y="462" text-anchor="middle" fill="#ff6b6b">MÁY 1</text>
+  <text class="t" x="222" y="481" text-anchor="middle">ID % 2 == 0 ?</text>
+  <text class="c" x="222" y="497" text-anchor="middle">(thùng chẵn đang chạy?)</text>
+
+  <!-- YES Máy 1: Thùng tiếp theo -->
+  <line x1="135" y1="435" x2="135" y2="408" class="a ah"/>
+  <line x1="135" y1="408" x2="25" y2="408" class="a ah" marker-end="url(#ahh)"/>
+  <text x="62" y="403" class="t" fill="#ff6b6b" font-size="10">YES</text>
+
+  <rect x="5" y="362" width="120" height="46" rx="7" fill="#1a0808" stroke="#ff6b6b" stroke-width="2"/>
+  <text class="t" x="65" y="386" text-anchor="middle" fill="#ff6b6b">THÙNG TIẾP</text>
+  <text class="t" x="65" y="403" text-anchor="middle" fill="#ff6b6b">(ID+1)</text>
+
+  <!-- NO Máy 1: Thùng hiện tại -->
+  <line x1="135" y1="503" x2="135" y2="530" class="a ah"/>
+  <line x1="135" y1="530" x2="310" y2="530" class="a ah"/>
+  <line x1="310" y1="530" x2="310" y2="570" class="a ah" marker-end="url(#ahh)"/>
+  <text x="98" y="524" class="t" fill="#ff6b6b" font-size="10">NO</text>
+
+  <rect x="250" y="530" width="120" height="46" rx="7" fill="#1a0808" stroke="#ff6b6b" stroke-width="2"/>
+  <text class="t" x="310" y="554" text-anchor="middle" fill="#ff6b6b">THÙNG HIỆN</text>
+  <text class="t" x="310" y="571" text-anchor="middle" fill="#ff6b6b">(ID)</text>
+
+  <!-- ==================== -->
+  <!-- === MÁY 2 branch === -->
+  <!-- ==================== -->
+  <line x1="770" y1="468" x2="930" y2="468" class="a as" marker-end="url(#ahs)"/>
+  <text x="800" y="463" class="t" fill="#ffd93d" font-size="11">Máy 2</text>
+
+  <!-- Máy 2 check -->
+  <rect x="930" y="435" width="175" height="68" rx="7" fill="#1a1a08" stroke="#ffd93d" stroke-width="2"/>
+  <text class="t" x="1017" y="462" text-anchor="middle" fill="#ffd93d">MÁY 2</text>
+  <text class="t" x="1017" y="481" text-anchor="middle">ID % 2 != 0 ?</text>
+  <text class="c" x="1017" y="497" text-anchor="middle">(thùng lẻ đang chạy?)</text>
+
+  <!-- YES Máy 2: Thùng tiếp theo -->
+  <line x1="1105" y1="435" x2="1105" y2="408" class="a as"/>
+  <line x1="1105" y1="408" x2="1215" y2="408" class="a as" marker-end="url(#ahs)"/>
+  <text x="1160" y="403" class="t" fill="#ffd93d" font-size="10">YES</text>
+
+  <rect x="1100" y="362" width="120" height="46" rx="7" fill="#1a1a08" stroke="#ffd93d" stroke-width="2"/>
+  <text class="t" x="1160" y="386" text-anchor="middle" fill="#ffd93d">THÙNG TIẾP</text>
+  <text class="t" x="1160" y="403" text-anchor="middle" fill="#ffd93d">(ID+1)</text>
+
+  <!-- NO Máy 2: Thùng hiện tại -->
+  <line x1="1105" y1="503" x2="1105" y2="530" class="a as"/>
+  <line x1="1105" y1="530" x2="930" y2="530" class="a as"/>
+  <line x1="930" y1="530" x2="930" y2="570" class="a as" marker-end="url(#ahs)"/>
+  <text x="1070" y="524" class="t" fill="#ffd93d" font-size="10">NO</text>
+
+  <rect x="870" y="530" width="120" height="46" rx="7" fill="#1a1a08" stroke="#ffd93d" stroke-width="2"/>
+  <text class="t" x="930" y="554" text-anchor="middle" fill="#ffd93d">THÙNG HIỆN</text>
+  <text class="t" x="930" y="571" text-anchor="middle" fill="#ffd93d">(ID)</text>
+
+  <!-- === MERGE === -->
+  <line x1="65" y1="408" x2="65" y2="650" class="a ah"/>
+  <line x1="310" y1="576" x2="310" y2="650" class="a ah"/>
+  <line x1="1160" y1="408" x2="1160" y2="650" class="a as"/>
+  <line x1="930" y1="576" x2="930" y2="650" class="a as"/>
+
+  <line x1="65" y1="650" x2="620" y2="650" class="a am" marker-end="url(#ahm)"/>
+  <line x1="310" y1="650" x2="620" y2="650" class="a am"/>
+  <line x1="930" y1="650" x2="620" y2="650" class="a am"/>
+  <line x1="1160" y1="650" x2="620" y2="650" class="a am" marker-end="url(#ahm)"/>
+  <line x1="620" y1="526" x2="620" y2="650" class="a am"/>
+
+  <!-- Lấy thùng target -->
+  <rect x="435" y="655" width="370" height="52" rx="9" fill="#0d1b2a" stroke="#00d4ff" stroke-width="2"/>
+  <text class="t" x="620" y="680" text-anchor="middle" fill="#00d4ff">LẤY THÙNG TARGET (Dictionary)</text>
+  <text class="c" x="620" y="698" text-anchor="middle">cartonData = Dictionary[ID]</text>
+
+  <line x1="620" y1="707" x2="620" y2="736" class="a" marker-end="url(#ah)"/>
+
+  <!-- Kim cương: cartonCode == "0"? -->
+  <polygon points="620,736 770,794 620,852 470,794" fill="#0d1b2a" stroke="#00d4ff" stroke-width="2"/>
+  <text class="t" x="620" y="785" text-anchor="middle" fill="#00d4ff">cartonCode == "0" ?</text>
+  <text class="c" x="620" y="805" text-anchor="middle">Thùng đã quét mã chưa?</text>
+
+  <!-- NO: Bỏ qua -->
+  <line x1="470" y1="794" x2="240" y2="794" class="a" marker-end="url(#ah)"/>
+  <text x="285" y="789" class="t" fill="#00d4ff" font-size="10">NO</text>
+
+  <ellipse cx="145" cy="794" rx="105" ry="28" fill="#1a0505" stroke="#ff6b6b" stroke-width="2"/>
+  <text class="t" x="145" y="790" text-anchor="middle" fill="#888">ĐÃ CÓ MÃ</text>
+  <text class="t" x="145" y="808" text-anchor="middle" fill="#888">→ BỎ QUA</text>
+
+  <line x1="145" y1="822" x2="145" y2="920" class="a ah"/>
+  <line x1="240" y1="794" x2="145" y2="794" class="a ah"/>
+
+  <!-- YES: Tiếp tục -->
+  <line x1="620" y1="852" x2="620" y2="880" class="a" marker-end="url(#ah)"/>
+  <text x="638" y="873" class="t" fill="#00d4ff" font-size="10">YES</text>
+
+  <rect x="465" y="880" width="310" height="40" rx="7" fill="#0d1b2a" stroke="#00d4ff" stroke-width="1" stroke-dasharray="4 3"/>
+  <text class="t" x="620" y="905" text-anchor="middle">Chưa có mã → kiểm tra trùng mã</text>
+
+  <line x1="620" y1="920" x2="620" y2="948" class="a" marker-end="url(#ah)"/>
+
+  <!-- Kim cương: Trùng mã? -->
+  <polygon points="620,948 770,1006 620,1064 470,1006" fill="#0d1b2a" stroke="#ff6b6b" stroke-width="2"/>
+  <text class="t" x="620" y="992" text-anchor="middle" fill="#ff6b6b">Trùng mã trong DB?</text>
+  <text class="c" x="620" y="1012" text-anchor="middle">!TestMode && mã đã tồn tại</text>
+
+  <!-- YES: Cảnh báo -->
+  <line x1="470" y1="1006" x2="240" y2="1006" class="a ah" marker-end="url(#ahh)"/>
+  <text x="285" y="1001" class="t" fill="#ff6b6b" font-size="10">YES</text>
+
+  <rect x="85" y="974" width="155" height="66" rx="7" fill="#1a0505" stroke="#ff6b6b" stroke-width="2"/>
+  <text class="t" x="162" y="998" text-anchor="middle" fill="#ff6b6b">CẢNH BÁO</text>
+  <text class="t" x="162" y="1017" text-anchor="middle">"Mã thùng</text>
+  <text class="t" x="162" y="1034" text-anchor="middle">đã tồn tại"</text>
+
+  <line x1="240" y1="1006" x2="162" y2="1006" class="a ah"/>
+
+  <!-- NO: Gán mã -->
+  <line x1="620" y1="1064" x2="620" y2="1092" class="a" marker-end="url(#ah)"/>
+  <text x="638" y="1085" class="t" fill="#00d4ff" font-size="10">NO</text>
+
+  <rect x="435" y="1092" width="370" height="88" rx="9" fill="#0d1b2a" stroke="#00d4ff" stroke-width="2"/>
+  <text class="t" x="620" y="1120" text-anchor="middle" fill="#00d4ff">GÁN MÃ THÙNG</text>
+  <text class="t" x="620" y="1142" text-anchor="middle">cartonData.cartonCode = code</text>
+  <text class="t" x="620" y="1162" text-anchor="middle">Start_Datetime = DateTime.Now</text>
+  <text class="c" x="620" y="1177" text-anchor="middle">→ Cập nhật Dictionary</text>
+
+  <line x1="620" y1="1180" x2="620" y2="1208" class="a" marker-end="url(#ah)"/>
+
+  <!-- Enqueue -->
+  <rect x="405" y="1208" width="430" height="56" rx="9" fill="#0d1b2a" stroke="#00d4ff" stroke-width="2"/>
+  <text class="t" x="620" y="1235" text-anchor="middle" fill="#00d4ff">ENQUEUE — Update_Product_To_Record_Carton_Queue</text>
+  <text class="c" x="620" y="1255" text-anchor="middle">Hàng đợi cập nhật Database</text>
+
+  <line x1="620" y1="1264" x2="620" y2="1290" class="a" marker-end="url(#ah)"/>
+
+  <!-- END -->
+  <ellipse cx="620" cy="1320" rx="60" ry="30" fill="#0d1b2a" stroke="#00d4ff" stroke-width="2"/>
+  <text class="t" x="620" y="1326" text-anchor="middle" fill="#00d4ff">XONG</text>
+
+  <!-- === QUY TẮC box === -->
+  <rect x="880" y="590" width="350" height="310" rx="11" fill="#0d1b2a" stroke="#888" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="1055" y="624" text-anchor="middle" fill="#888" font-size="13" font-weight="bold">QUY TẮC ÁNH XẠ</text>
+
+  <line x1="895" y1="640" x2="1215" y2="640" stroke="#555" stroke-width="0.5"/>
+
+  <text x="895" y="666" fill="#ff6b6b" font-size="12" font-weight="bold">Máy 1 (Lane 01)</text>
+  <text x="895" y="692" fill="#fff" font-size="11">• ID % 2 == 0</text>
+  <text x="895" y="712" fill="#fff" font-size="11">  → THÙNG TIẾP (ID+1)</text>
+  <text x="895" y="734" fill="#fff" font-size="11">• ID % 2 != 0</text>
+  <text x="895" y="754" fill="#fff" font-size="11">  → THÙNG HIỆN TẠI (ID)</text>
+
+  <line x1="895" y1="770" x2="1215" y2="770" stroke="#555" stroke-width="0.5"/>
+
+  <text x="895" y="796" fill="#ffd93d" font-size="12" font-weight="bold">Máy 2 (Lane 02)</text>
+  <text x="895" y="822" fill="#fff" font-size="11">• ID % 2 != 0</text>
+  <text x="895" y="842" fill="#fff" font-size="11">  → THÙNG TIẾP (ID+1)</text>
+  <text x="895" y="864" fill="#fff" font-size="11">• ID % 2 == 0</text>
+  <text x="895" y="884" fill="#fff" font-size="11">  → THÙNG HIỆN TẠI (ID)</text>
+
+  <!-- Arrow defs -->
+  <defs>
+    <marker id="ah" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" class="a-head"/>
+    </marker>
+    <marker id="ahh" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" class="a-head-h"/>
+    </marker>
+    <marker id="ahs" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" class="a-head-s"/>
+    </marker>
+    <marker id="ahm" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" class="a-head-m"/>
+    </marker>
+  </defs>
+
+</svg>
+</div>
+</body>
+</html>

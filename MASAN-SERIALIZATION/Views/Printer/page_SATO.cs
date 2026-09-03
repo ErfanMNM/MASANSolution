@@ -35,7 +35,15 @@ namespace MASAN_SERIALIZATION.Views.Printer
         {
             InitializeComponent();
             InitUI();
-            Connect();
+            try
+            {
+                Connect();
+            }
+            catch (Exception ex)
+            {
+                AppendLog($"Connect failed: {ex.Message}");
+                Disconnect();
+            }
 
             backgroundWorker.WorkerSupportsCancellation = true;
             backgroundWorker.DoWork += BackgroundWorker_DoWork;
@@ -52,9 +60,18 @@ namespace MASAN_SERIALIZATION.Views.Printer
                 switch (Globals.Production_State)
                 {
                     case e_Production_State.Running:
-                        if(Globals.Printer_Job <10)
+                        if (sentCodesL1.Rows.Count <= 0)
                         {
-                            SentToPrinter();
+                            GetPrinterJobAll();
+                        }
+                        else
+                        {
+
+
+                            if (Globals.Printer_Job < 10)
+                            {
+                                //SentToPrinter();
+                            }
                         }
                         break;
                     case e_Production_State.Printer_Loading:
@@ -260,7 +277,7 @@ namespace MASAN_SERIALIZATION.Views.Printer
 
         private void btnSentToPrinter_Click(object sender, EventArgs e)
         {
-            //SentToPrinter(MainCode);
+            SentToPrinter();
         }
 
         private void SentToPrinter()
@@ -275,9 +292,10 @@ namespace MASAN_SERIALIZATION.Views.Printer
                 if (i < sentCodesL1.Rows.Count)
                 {
                     string codeS = sentCodesL1.Rows[i]["Code"].ToString();
-                    codeS = codeS.Replace("\u001D", "").Replace("\u001b", "");
-
-                    string codeToSend = $"\u001bA\u001bA3V+00000H+0000\u001bCS4\u001b#F7\u001bA1V{WH.Split(";")[0]}H{WH.Split(";")[1]}\u001b%0\u001bH{LR.Split(";")[0]}\u001bV{LR.Split(";")[1]}\u001b2D51,04,04,000,000\u001bDN0089,\u001b{codeS}\u001bQ1\u001bZ\u0003\u001bZ\u001b";
+                    codeS = codeS.Replace("\u001d", "\u001b1").Replace("\u001D", "\u001b1"); ;
+                    string test = "\u001bA\u001bA3V+00000H+0000\u001bCS4\u001b#F7\u001bA1V00200H0200\u001b%0\u001bH0055\u001bV00005\u001b2D51,06,06,000,000\u001bDN0041,\u001b10104630024630332215eAUgrLL&anYm\u001b193fKvI\u001bQ1\u001bZ\u0003\u001bZ\u001b";
+                    string testcode = $"\u001bA\u001bA3V+00000H+0000\u001bCS4\u001b#F7\u001bA1V00200H0200\u001b%0\u001bH0055\u001bV00005\u001b2D51,06,06,000,000\u001bDN0041,\u001b1{codeS}\u001bQ1\u001bZ\u0003\u001bZ\u001b";
+                    string codeToSend = $"\u001bA\u001bA3V+00000H+0000\u001bCS4\u001b#F7\u001bA1V{WH.Split(";")[0]}H{WH.Split(";")[1]}\u001b%0\u001bH{LR.Split(";")[0]}\u001bV{LR.Split(";")[1]}\u001b2D51,06,06,000,000\u001bDN0041,\u001b1{codeS}\u001bQ1\u001bZ\u0003\u001bZ\u001b";
                     try
                     {
                         byte[] data = Encoding.ASCII.GetBytes(codeToSend);
@@ -294,6 +312,8 @@ namespace MASAN_SERIALIZATION.Views.Printer
                         break;
                     }
                 }
+
+                Thread.Sleep(100); // Tạm dừng 1 giây trước khi gửi tiếp
             }
 
 
