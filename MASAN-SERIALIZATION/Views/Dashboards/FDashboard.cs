@@ -26,7 +26,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
     public partial class FDashboard : UIPage
     {
         private bool IsTestModeEnabled => AppConfigs.Current.APP_TEST_MODE2;
-
+        int lantest = 1;
+        int maxCtest = 1;
         private ProductionCodeData GetOrCreateTestModeCodeData(string code)
         {
             if (Globals_Database.Dictionary_ProductionCode_Data.TryGetValue(code, out ProductionCodeData existing))
@@ -279,9 +280,51 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             //a4 Không đọc được
             if (arawCode[1].ToString() == "NOREAD")
             {
-                bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
-                Send_Result_Content(e_Production_Status.ReadFail, rawCode);
-                Enqueue_Product_To_Record(rawCode, e_Production_Status.ReadFail, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
+
+                if (false)
+                {
+                    var a = Globals.TestComand.Split(";");
+
+                    var b = a[lantest-1].ToInt32();
+                    if (maxCtest <= b)
+                    {
+                        if (lantest % 2 != 0)
+                        {
+                            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "2");
+                        }
+                        else
+                        {
+                            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                        }
+                    }
+                    else
+                    {
+                        maxCtest = b;
+                        if (lantest % 2 != 0)
+                        {
+                            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "2");
+                        }
+                        else
+                        {
+                            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                        }
+                    }
+                    lantest++;
+                    if (lantest>4)
+                    {
+                        lantest = 1;
+                    }
+                    maxCtest++;
+                }
+                else
+                {
+
+
+                    bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                    Send_Result_Content(e_Production_Status.ReadFail, rawCode);
+                    Enqueue_Product_To_Record(rawCode, e_Production_Status.ReadFail, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
+                    
+                }
                 return;
             }
 
