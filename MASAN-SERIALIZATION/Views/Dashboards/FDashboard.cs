@@ -28,6 +28,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private bool IsTestModeEnabled => AppConfigs.Current.APP_TEST_MODE2;
         int lantest = 1;
         int maxCtest = 1;
+        int k = 1;
         private ProductionCodeData GetOrCreateTestModeCodeData(string code)
         {
             if (Globals_Database.Dictionary_ProductionCode_Data.TryGetValue(code, out ProductionCodeData existing))
@@ -283,38 +284,49 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 if (false)
                 {
-                    var a = Globals.TestComand.Split(";");
+                   // var a = Globals.TestComand.Split(";");
 
-                    var b = a[lantest-1].ToInt32();
-                    if (maxCtest <= b)
+                    //var b = a[lantest-1].ToInt32();
+                    //if (maxCtest <= b)
+                    //{
+                        //if (lantest % 2 != 0)
+                        //{
+                            //Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "2");
+                        //}
+                        //else
+                        //{
+                            //Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                        //}
+                   // }
+                    //else
+                   // {
+                       // maxCtest = b;
+                       // if (lantest % 2 != 0)
+                       // {
+                            //Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "2");
+                       // }
+                       // else
+                       // {
+                            //Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                       // }
+                   // }
+                   // lantest++;
+                   // if (lantest>4)
+                   // {
+                   //     lantest = 1;
+                  //  }
+                   // maxCtest++;
+
+                    if(k%2!=0)
                     {
-                        if (lantest % 2 != 0)
-                        {
-                            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "2");
-                        }
-                        else
-                        {
-                            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
-                        }
+                        Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "1");
                     }
                     else
                     {
-                        maxCtest = b;
-                        if (lantest % 2 != 0)
-                        {
-                            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "2");
-                        }
-                        else
-                        {
-                            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
-                        }
+                        Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "1");
                     }
-                    lantest++;
-                    if (lantest>4)
-                    {
-                        lantest = 1;
-                    }
-                    maxCtest++;
+                    k++;
+                    return;
                 }
                 else
                 {
@@ -497,7 +509,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 //phân làn
                 string sendCode = "0";
-                if (cache_CartonID % 2 != 0)
+                if (cache_CartonID % 2 == 0)
                 {
                     sendCode = "1"; // Gửi dữ liệu mã thùng đến PLC
                 }
@@ -1353,7 +1365,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                             if (AppConfigs.Current.PLC_Duo_Mode)
                             {
-                                if (Globals.ProductionData.counter.cartonID % 2 != 0)
+                                if (Globals.ProductionData.counter.cartonID % 2 == 0)
                                 {
                                     OperateResult ws = OMRON_PLC_02.plc.Write(PLCAddress.Get("PLC2_Alarm_DM_C1"), 3);
                                 }
@@ -1364,7 +1376,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             }
                             else
                             {
-                                if (Globals.ProductionData.counter.cartonID % 2 != 0)
+                                if (Globals.ProductionData.counter.cartonID % 2 == 0)
                                 {
                                     OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 3);
                                 }
@@ -1468,7 +1480,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     }
                     else
                     {
-                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"),1);
+                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"),3);
                     }
                 }
                 
@@ -1488,7 +1500,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 }
                 else
                 {
-                    if (Globals.ProductionData.counter.cartonID % 2 != 0)
+                    if (Globals.ProductionData.counter.cartonID % 2 == 0)
                     {
                         OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 2);
                     }

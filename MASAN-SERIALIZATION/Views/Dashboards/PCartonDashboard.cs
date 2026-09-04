@@ -129,7 +129,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         //
         // Sau khi chạy, Device Path sẽ hiện trên opLane01/opLane02.
         // Copy Device Path vào 2 biến dưới để cố định thiết bị.
-        private string FixedDeviceIdLane01 = "";
+        private string FixedDeviceIdLane01 = "";//@"\\\\?\\HID#{00001812-0000-1000-8000-00805f9b34fb}_Dev_VID&011d5a_PID&c080_REV&0001_c419d15d7cae&Col01#9&a450645&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}";
         private string FixedDeviceIdLane02 = "";
 
         private string _deviceIdLane01 = "";
@@ -508,6 +508,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 this.InvokeIfRequired(() =>
                 {
+                    
                     opLane01.Items.Insert(
                         0,
                         "[HID] DEVICE ID LANE 01: " + devicePath
@@ -526,6 +527,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 this.InvokeIfRequired(() =>
                 {
+                    
                     opLane02.Items.Insert(
                         0,
                         "[HID] DEVICE ID LANE 02: " + devicePath
