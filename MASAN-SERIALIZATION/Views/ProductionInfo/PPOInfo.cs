@@ -964,6 +964,21 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         private void HandleRunButtonInReadyState()
         {
             ConfigurePreparingMode();
+            //kiểm tra xem có file chưa
+            string orderNo = Globals.ProductionData.orderNo;
+            string basePath = ProductionOrder.GetOrderBasePath(orderNo);
+
+            // Bước 4: Tạo đường dẫn file database chính
+            string czRunPath = Path.Combine(basePath, $"{orderNo}.db");
+
+            // Bước 6: Tạo file database chính nếu chưa tồn tại
+            if (!File.Exists(czRunPath))
+            {
+                this.ShowWarningDialog("Cảnh báo: Vui lòng nhập số lượng đóng gói", false, 5000);
+                RestoreAfterRunning();
+                return;
+            }
+            ////
             if (!Globals.APP_Ready)
             {
                 this.ShowErrorDialog("Lỗi PP590: Ứng dụng chưa sẵn sàng, Vui lòng kiểm tra lại.", false, 5000);
