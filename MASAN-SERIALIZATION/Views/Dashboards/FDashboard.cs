@@ -282,7 +282,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             if (arawCode[1].ToString() == "NOREAD")
             {
 
-                if (false)
+                if (AppConfigs.Current.TestLai)
                 {
                    // var a = Globals.TestComand.Split(";");
 
@@ -323,7 +323,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     }
                     else
                     {
-                        Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "1");
+                        Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "2");
                     }
                     k++;
                     return;
@@ -2376,6 +2376,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
         #endregion
 
+        
         private void subpr_DoWork(object sender, DoWorkEventArgs e)
         {
             string code = e.Argument as string;

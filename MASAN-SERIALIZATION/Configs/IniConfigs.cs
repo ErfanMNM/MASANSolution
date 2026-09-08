@@ -22,7 +22,7 @@ namespace MASAN_SERIALIZATION.Configs
         /// - false : chỉ cảnh báo trên màn hình, KHÔNG gửi reject, cho sản phẩm đi thẳng (camera sub sẽ xử lý đá).
         /// </summary>
         public bool CameraMain_DuplicateReject_Enabled { get; set; }
-
+        public bool TestLai { get; set; } // Bật/Tắt chế độ test lại sản phẩm khi phát hiện mã trùng tại camera chính.
         public bool Check_Duplica_Enabled { get; set; }
         public string HandScanCOM01 { get; set; } // Tên đăng nhập của camera chính
         public string HandScanCOM02 { get; set; } // Tên đăng nhập của camera phụ
@@ -125,6 +125,7 @@ namespace MASAN_SERIALIZATION.Configs
             TestMode = false; // Mặc định không bật chế độ kiểm tra (Test Mode)
             Check_Db_Old_Active = false; // Mặc định tắt kiểm tra mã trùng với database cũ
             Check_Db_Old_Bypass = false; // Mặc định không bypass tính năng kiểm tra mã trùng
+            TestLai = false; // Mặc định tắt chế độ test lại sản phẩm khi phát hiện mã trùng tại camera chính
             CameraMain_DuplicateReject_Enabled = false; // Mặc định tắt cơ chế đá sản phẩm khi phát hiện mã trùng tại camera chính để chuyển sang chỉ cảnh báo trên
         }
     }
