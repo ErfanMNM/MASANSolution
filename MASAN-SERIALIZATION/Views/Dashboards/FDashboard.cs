@@ -144,7 +144,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     {
                         this.InvokeIfRequired(() =>
                         {
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CM Máy chưa bắt đầu sản xuất");
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss.fff}: Code: {data}");
                             ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                         });
                         break;
@@ -218,11 +218,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
             //A1. Camera Nhận dữ liệu, tăng tổng số đếm
             Globals.ProductionData.counter.totalCount++;
-            this.InvokeIfRequired(() =>
-            {
-                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: #{Globals.ProductionData.counter.totalCount} Camera chính nhận dữ liệu: {rawCode}");
-                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-            });
+          
 
             //K1 Kiểm tra đảm bảo đang không ở trạng thái khác chen vào
             if (Globals.Production_State != e_Production_State.Waiting_Stop)

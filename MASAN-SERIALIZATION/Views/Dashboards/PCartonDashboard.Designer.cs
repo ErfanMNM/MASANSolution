@@ -78,6 +78,7 @@
             this.uiLabel4 = new Sunny.UI.UILabel();
             this.btnNextCarton = new Sunny.UI.UISymbolButton();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.uiSymbolButton2 = new Sunny.UI.UISymbolButton();
             this.ipTest2 = new Sunny.UI.UITextBox();
             this.ipTest1 = new Sunny.UI.UITextBox();
             this.btnSend2 = new Sunny.UI.UISymbolButton();
@@ -85,7 +86,6 @@
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.serialPort2 = new System.IO.Ports.SerialPort(this.components);
             this.tcpClient1 = new SpT.Communications.TCP.TCPClient(this.components);
-            this.uiSymbolButton2 = new Sunny.UI.UISymbolButton();
             this.mainContainer.SuspendLayout();
             this.scannerGroup.SuspendLayout();
             this.scannerContainer.SuspendLayout();
@@ -197,6 +197,7 @@
             this.opLane01.Size = new System.Drawing.Size(794, 271);
             this.opLane01.TabIndex = 0;
             this.opLane01.Text = "uiListBox1";
+            this.opLane01.DoubleClick += new System.EventHandler(this.opLane01_DoubleClick);
             // 
             // lane02Group
             // 
@@ -228,6 +229,7 @@
             this.opLane02.Size = new System.Drawing.Size(794, 272);
             this.opLane02.TabIndex = 1;
             this.opLane02.Text = "uiListBox2";
+            this.opLane02.DoubleClick += new System.EventHandler(this.opLane02_DoubleClick);
             // 
             // statusGroup
             // 
@@ -975,10 +977,24 @@
             this.tabPage2.Controls.Add(this.btnSend1);
             this.tabPage2.Location = new System.Drawing.Point(0, 40);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(732, 180);
+            this.tabPage2.Size = new System.Drawing.Size(200, 60);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Test";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // uiSymbolButton2
+            // 
+            this.uiSymbolButton2.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.uiSymbolButton2.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.uiSymbolButton2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiSymbolButton2.Location = new System.Drawing.Point(610, 54);
+            this.uiSymbolButton2.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiSymbolButton2.Name = "uiSymbolButton2";
+            this.uiSymbolButton2.Size = new System.Drawing.Size(100, 73);
+            this.uiSymbolButton2.TabIndex = 4;
+            this.uiSymbolButton2.Text = "testMode";
+            this.uiSymbolButton2.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.uiSymbolButton2.Click += new System.EventHandler(this.uiSymbolButton2_Click);
             // 
             // ipTest2
             // 
@@ -1045,20 +1061,6 @@
             this.tcpClient1.IP = "127.0.0.1";
             this.tcpClient1.Port = 5566;
             this.tcpClient1.ClientCallBack += new SpT.Communications.TCP.TCPClient.EventForClient(this.tcpClient1_ClientCallBack);
-            // 
-            // uiSymbolButton2
-            // 
-            this.uiSymbolButton2.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.uiSymbolButton2.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.uiSymbolButton2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiSymbolButton2.Location = new System.Drawing.Point(610, 54);
-            this.uiSymbolButton2.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiSymbolButton2.Name = "uiSymbolButton2";
-            this.uiSymbolButton2.Size = new System.Drawing.Size(100, 73);
-            this.uiSymbolButton2.TabIndex = 4;
-            this.uiSymbolButton2.Text = "testMode";
-            this.uiSymbolButton2.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.uiSymbolButton2.Click += new System.EventHandler(this.uiSymbolButton2_Click);
             // 
             // PCartonDashboard
             // 

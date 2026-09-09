@@ -1614,5 +1614,15 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 this.ShowErrorDialog("Chức năng này chỉ dành cho chế độ test");
             }
         }
+
+        private void opLane01_DoubleClick(object sender, EventArgs e)
+        {
+            this.ShowInfoDialog(opLane01.SelectedItem?.ToString() ?? "Không có mục nào được chọn");
+        }
+
+        private void opLane02_DoubleClick(object sender, EventArgs e)
+        {
+            this.ShowInfoDialog(opLane02.SelectedItem?.ToString() ?? "Không có mục nào được chọn");
+        }
     }
 }
