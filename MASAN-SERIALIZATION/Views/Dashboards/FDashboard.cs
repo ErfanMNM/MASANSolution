@@ -28,6 +28,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private bool IsTestModeEnabled => AppConfigs.Current.APP_TEST_MODE2;
         int lantest = 1;
         int maxCtest = 1;
+        int k = 1;
         private ProductionCodeData GetOrCreateTestModeCodeData(string code)
         {
             if (Globals_Database.Dictionary_ProductionCode_Data.TryGetValue(code, out ProductionCodeData existing))
@@ -143,7 +144,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     {
                         this.InvokeIfRequired(() =>
                         {
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CM Máy chưa bắt đầu sản xuất");
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss.fff}: Code: {data}");
                             ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                         });
                         break;
@@ -217,11 +218,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
             //A1. Camera Nhận dữ liệu, tăng tổng số đếm
             Globals.ProductionData.counter.totalCount++;
-            this.InvokeIfRequired(() =>
-            {
-                ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: #{Globals.ProductionData.counter.totalCount} Camera chính nhận dữ liệu: {rawCode}");
-                ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
-            });
+          
 
             //K1 Kiểm tra đảm bảo đang không ở trạng thái khác chen vào
             if (Globals.Production_State != e_Production_State.Waiting_Stop)
@@ -281,40 +278,51 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             if (arawCode[1].ToString() == "NOREAD")
             {
 
-                if (false)
+                if (AppConfigs.Current.TestLai)
                 {
-                    var a = Globals.TestComand.Split(";");
+                   // var a = Globals.TestComand.Split(";");
 
-                    var b = a[lantest-1].ToInt32();
-                    if (maxCtest <= b)
+                    //var b = a[lantest-1].ToInt32();
+                    //if (maxCtest <= b)
+                    //{
+                        //if (lantest % 2 != 0)
+                        //{
+                            //Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "2");
+                        //}
+                        //else
+                        //{
+                            //Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                        //}
+                   // }
+                    //else
+                   // {
+                       // maxCtest = b;
+                       // if (lantest % 2 != 0)
+                       // {
+                            //Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "2");
+                       // }
+                       // else
+                       // {
+                            //Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                       // }
+                   // }
+                   // lantest++;
+                   // if (lantest>4)
+                   // {
+                   //     lantest = 1;
+                  //  }
+                   // maxCtest++;
+
+                    if(k%2!=0)
                     {
-                        if (lantest % 2 != 0)
-                        {
-                            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "2");
-                        }
-                        else
-                        {
-                            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
-                        }
+                        Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "1");
                     }
                     else
                     {
-                        maxCtest = b;
-                        if (lantest % 2 != 0)
-                        {
-                            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "2");
-                        }
-                        else
-                        {
-                            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
-                        }
+                        Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "2");
                     }
-                    lantest++;
-                    if (lantest>4)
-                    {
-                        lantest = 1;
-                    }
-                    maxCtest++;
+                    k++;
+                    return;
                 }
                 else
                 {
@@ -497,7 +505,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 //phân làn
                 string sendCode = "0";
-                if (cache_CartonID % 2 != 0)
+                if (cache_CartonID % 2 == 0)
                 {
                     sendCode = "1"; // Gửi dữ liệu mã thùng đến PLC
                 }
@@ -1353,7 +1361,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                             if (AppConfigs.Current.PLC_Duo_Mode)
                             {
-                                if (Globals.ProductionData.counter.cartonID % 2 != 0)
+                                if (Globals.ProductionData.counter.cartonID % 2 == 0)
                                 {
                                     OperateResult ws = OMRON_PLC_02.plc.Write(PLCAddress.Get("PLC2_Alarm_DM_C1"), 3);
                                 }
@@ -1364,7 +1372,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             }
                             else
                             {
-                                if (Globals.ProductionData.counter.cartonID % 2 != 0)
+                                if (Globals.ProductionData.counter.cartonID % 2 == 0)
                                 {
                                     OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 3);
                                 }
@@ -1468,7 +1476,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     }
                     else
                     {
-                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"),1);
+                        OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"),3);
                     }
                 }
                 
@@ -1488,7 +1496,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 }
                 else
                 {
-                    if (Globals.ProductionData.counter.cartonID % 2 != 0)
+                    if (Globals.ProductionData.counter.cartonID % 2 == 0)
                     {
                         OperateResult ws = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm_DM_C1"), 2);
                     }
@@ -2364,6 +2372,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
         #endregion
 
+        
         private void subpr_DoWork(object sender, DoWorkEventArgs e)
         {
             string code = e.Argument as string;
