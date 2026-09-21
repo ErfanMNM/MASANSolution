@@ -964,21 +964,22 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         private void HandleRunButtonInReadyState()
         {
             ConfigurePreparingMode();
-            //kiểm tra xem có file chưa
             string orderNo = Globals.ProductionData.orderNo;
             string basePath = ProductionOrder.GetOrderBasePath(orderNo);
 
-            // Bước 4: Tạo đường dẫn file database chính
-            string czRunPath = Path.Combine(basePath, $"{orderNo}.db");
-
-            // Bước 6: Tạo file database chính nếu chưa tồn tại
-            if (!File.Exists(czRunPath))
+            // Chỉ hỏi số sản phẩm/thùng khi PO chưa có bất kỳ database nào.
+            if (!HasDatabaseFilesForPO(orderNo, basePath))
             {
-                this.ShowWarningDialog("Cảnh báo: Vui lòng nhập số lượng đóng gói", false, 5000);
-                RestoreAfterRunning();
-                return;
+                if (!TryGetCartonPackSize(out int cartonPack))
+                {
+                    RestoreAfterRunning();
+                    return;
+                }
+
+                AppConfigs.Current.cartonPack = cartonPack;
+                AppConfigs.Current.Save();
             }
-            ////
+
             if (!Globals.APP_Ready)
             {
                 this.ShowErrorDialog("Lỗi PP590: Ứng dụng chưa sẵn sàng, Vui lòng kiểm tra lại.", false, 5000);
@@ -992,7 +993,144 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 RestoreAfterRunning();
                 return;
             }
-            Task.Run(() => PrepareProductionData());
+
+            if (!HasDatabaseFilesForPO(orderNo, basePath))
+            {
+                Task.Run(() => CreateDatabaseAndPrepareProduction(orderNo));
+            }
+            else
+            {
+                Task.Run(() => PrepareProductionData());
+            }
+        }
+
+        private bool HasDatabaseFilesForPO(string orderNo, string basePath)
+        {
+            if (string.IsNullOrWhiteSpace(orderNo) || !Directory.Exists(basePath))
+            {
+                return false;
+            }
+
+            string[] databaseFileNames =
+            {
+                $"{orderNo}.db",
+                $"Record_{orderNo}.db",
+                $"carton_{orderNo}.db",
+                $"Send_AWS_Record_{orderNo}.db",
+                $"Recive_AWS_Record_{orderNo}.db"
+            };
+
+            return databaseFileNames.Any(fileName => File.Exists(Path.Combine(basePath, fileName)));
+        }
+
+        private bool TryGetCartonPackSize(out int cartonPack)
+        {
+            cartonPack = 0;
+            int enteredCartonPack = 0;
+
+            using (var dialog = new Form
+            {
+                Text = "Số lượng sản phẩm trong thùng",
+                StartPosition = FormStartPosition.CenterParent,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                MinimizeBox = false,
+                MaximizeBox = false,
+                ShowInTaskbar = false,
+                ClientSize = new Size(460, 180)
+            })
+            using (var layout = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                Padding = new Padding(16),
+                ColumnCount = 1,
+                RowCount = 3
+            })
+            {
+                layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+                layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42));
+                layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42));
+
+                var message = new Label
+                {
+                    AutoSize = true,
+                    Dock = DockStyle.Fill,
+                    Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                    Text = "PO chưa có dữ liệu. Vui lòng nhập số sản phẩm trong 1 thùng:",
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
+
+                var cartonPackInput = new TextBox
+                {
+                    Dock = DockStyle.Fill,
+                    TextAlign = HorizontalAlignment.Center,
+                    Font = new Font("Segoe UI", 12F)
+                };
+
+                var buttons = new FlowLayoutPanel
+                {
+                    Dock = DockStyle.Fill,
+                    FlowDirection = FlowDirection.RightToLeft,
+                    WrapContents = false
+                };
+
+                var okButton = new Button { Text = "Đồng ý", Width = 90 };
+                var cancelButton = new Button { Text = "Hủy", DialogResult = DialogResult.Cancel, Width = 90 };
+
+                okButton.Click += (s, e) =>
+                {
+                    if (!int.TryParse(cartonPackInput.Text.Trim(), out int value) || value <= 0)
+                    {
+                        MessageBox.Show(dialog,
+                            "Vui lòng nhập số sản phẩm trong thùng lớn hơn 0.",
+                            "Dữ liệu không hợp lệ",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
+                        cartonPackInput.Focus();
+                        return;
+                    }
+
+                    enteredCartonPack = value;
+                    dialog.DialogResult = DialogResult.OK;
+                };
+
+                buttons.Controls.Add(okButton);
+                buttons.Controls.Add(cancelButton);
+
+                layout.Controls.Add(message, 0, 0);
+                layout.Controls.Add(cartonPackInput, 0, 1);
+                layout.Controls.Add(buttons, 0, 2);
+                dialog.Controls.Add(layout);
+                dialog.AcceptButton = okButton;
+                dialog.CancelButton = cancelButton;
+
+                if (dialog.ShowDialog(this) != DialogResult.OK)
+                {
+                    return false;
+                }
+
+                cartonPack = enteredCartonPack;
+                return cartonPack > 0;
+            }
+        }
+
+        private void CreateDatabaseAndPrepareProduction(string orderNo)
+        {
+            string orderQty = opOrderQty.Text;
+            var checkDatabaseResult = Globals.ProductionData.Check_Database_File(orderNo, orderQty);
+
+            if (!checkDatabaseResult.issucess)
+            {
+                _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
+                    $"Không thể tạo database sau khi nhập số lượng đóng gói: {checkDatabaseResult.message}");
+                this.InvokeIfRequired(() =>
+                {
+                    this.ShowErrorDialog($"Lỗi EA001: {checkDatabaseResult.message}");
+                    RestoreAfterRunning();
+                });
+                return;
+            }
+
+            PrepareProductionData();
         }
 
         private void PrepareProductionData()
