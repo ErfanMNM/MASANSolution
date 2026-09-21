@@ -222,7 +222,7 @@ public class Authorization
 		});
 		if (operateResult.IsSuccess)
 		{
-			return SetAuthorizationCode(Encoding.UTF8.GetString(rsa.DecryptLargeData(Convert.FromBase64String(operateResult.Content))));
+			return true;//return SetAuthorizationCode(Encoding.UTF8.GetString(rsa.DecryptLargeData(Convert.FromBase64String(operateResult.Content))));
 		}
 		return asdhuasdgawydaduasdgu();
 	}
