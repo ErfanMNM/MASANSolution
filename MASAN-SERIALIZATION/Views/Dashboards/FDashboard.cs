@@ -552,7 +552,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 //Đọc ID hiện tại dưới PLC
 
-                OperateResult<int[]> readID_Status = OMRON_PLC_02.plc.ReadInt32(PLCAddress.Get("PLC_CurrentID_DM_C2"), 2);
+                OperateResult<int[]> readID_Status = OMRON_PLC.plc.ReadInt32(PLCAddress.Get("PLC_CurrentID_DM_C2"), 2);
                 if(readID_Status.IsSuccess)
                 {
                     Globals.CurrentPLCID = readID_Status.Content[0];
@@ -601,7 +601,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         while (true)
                         {
                             // Đọc lại status từ PLC xem status đã được cập nhật chưa
-                            OperateResult<int[]> readID_Check = OMRON_PLC_02.plc.ReadInt32(PLCAddress.Get("PLC_CurrentID_DM_C2"), 2); 
+                            OperateResult<int[]> readID_Check = OMRON_PLC.plc.ReadInt32(PLCAddress.Get("PLC_CurrentID_DM_C2"), 2); 
                             int currentID_Check = -1;
                             int currentStatus_Check = -1;
 
