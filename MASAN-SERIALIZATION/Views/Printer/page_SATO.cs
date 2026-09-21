@@ -293,8 +293,8 @@ namespace MASAN_SERIALIZATION.Views.Printer
                 {
                     string codeS = sentCodesL1.Rows[i]["Code"].ToString();
                     codeS = codeS.Replace("\u001d", "\u001b1").Replace("\u001D", "\u001b1"); ;
-                    string test = "\u001bA\u001bA3V+00000H+0000\u001bCS4\u001b#F7\u001bA1V00200H0200\u001b%0\u001bH0055\u001bV00005\u001b2D51,06,06,000,000\u001bDN0041,\u001b10104630024630332215eAUgrLL&anYm\u001b193fKvI\u001bQ1\u001bZ\u0003\u001bZ\u001b";
-                    string testcode = $"\u001bA\u001bA3V+00000H+0000\u001bCS4\u001b#F7\u001bA1V00200H0200\u001b%0\u001bH0055\u001bV00005\u001b2D51,06,06,000,000\u001bDN0041,\u001b1{codeS}\u001bQ1\u001bZ\u0003\u001bZ\u001b";
+                    //string test = "\u001bA\u001bA3V+00000H+0000\u001bCS4\u001b#F7\u001bA1V00200H0200\u001b%0\u001bH0055\u001bV00005\u001b2D51,06,06,000,000\u001bDN0041,\u001b10104630024630332215eAUgrLL&anYm\u001b193fKvI\u001bQ1\u001bZ\u0003\u001bZ\u001b";
+                    //string testcode = $"\u001bA\u001bA3V+00000H+0000\u001bCS4\u001b#F7\u001bA1V00200H0200\u001b%0\u001bH0055\u001bV00005\u001b2D51,06,06,000,000\u001bDN0041,\u001b1{codeS}\u001bQ1\u001bZ\u0003\u001bZ\u001b";
                     string codeToSend = $"\u001bA\u001bA3V+00000H+0000\u001bCS4\u001b#F7\u001bA1V{WH.Split(";")[0]}H{WH.Split(";")[1]}\u001b%0\u001bH{LR.Split(";")[0]}\u001bV{LR.Split(";")[1]}\u001b2D51,06,06,000,000\u001bDN0041,\u001b1{codeS}\u001bQ1\u001bZ\u0003\u001bZ\u001b";
                     try
                     {
