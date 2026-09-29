@@ -68,6 +68,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.opCurrentProcessingTime = new Sunny.UI.UIPanel();
             this.uiTitlePanel3 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel4 = new Sunny.UI.UITableLayoutPanel();
+            this.uiTitlePanel6 = new Sunny.UI.UITitlePanel();
+            this.uiPanel2 = new Sunny.UI.UIPanel();
             this.uiTitlePanel2 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel6 = new Sunny.UI.UITableLayoutPanel();
             this.opLedC1 = new Sunny.UI.UILedBulb();
@@ -100,8 +102,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.WK_Update_UI = new System.ComponentModel.BackgroundWorker();
             this.OMRON_PLC_02 = new SpT.OmronPLC_Hsl(this.components);
             this.subpr = new System.ComponentModel.BackgroundWorker();
-            this.uiTitlePanel6 = new Sunny.UI.UITitlePanel();
-            this.uiPanel2 = new Sunny.UI.UIPanel();
             this.uiTableLayoutPanel3.SuspendLayout();
             this.uiTitlePanel5.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -113,6 +113,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel10.SuspendLayout();
             this.uiTitlePanel3.SuspendLayout();
             this.uiTableLayoutPanel4.SuspendLayout();
+            this.uiTitlePanel6.SuspendLayout();
             this.uiTitlePanel2.SuspendLayout();
             this.uiTableLayoutPanel6.SuspendLayout();
             this.uiTitlePanel7.SuspendLayout();
@@ -129,7 +130,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel16.SuspendLayout();
             this.uiTableLayoutPanel37.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
-            this.uiTitlePanel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // uiTableLayoutPanel3
@@ -721,6 +721,39 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel4.TabIndex = 14;
             this.uiTableLayoutPanel4.TagString = null;
             // 
+            // uiTitlePanel6
+            // 
+            this.uiTitlePanel6.Controls.Add(this.uiPanel2);
+            this.uiTitlePanel6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTitlePanel6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.uiTitlePanel6.Location = new System.Drawing.Point(123, 5);
+            this.uiTitlePanel6.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.uiTitlePanel6.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiTitlePanel6.Name = "uiTitlePanel6";
+            this.uiTitlePanel6.Padding = new System.Windows.Forms.Padding(1, 35, 1, 1);
+            this.uiTitlePanel6.ShowText = false;
+            this.uiTitlePanel6.Size = new System.Drawing.Size(111, 82);
+            this.uiTitlePanel6.TabIndex = 2;
+            this.uiTitlePanel6.Text = "Máy chủ";
+            this.uiTitlePanel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.uiTitlePanel6.TitleColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            // 
+            // uiPanel2
+            // 
+            this.uiPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel2.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.uiPanel2.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uiPanel2.Location = new System.Drawing.Point(1, 35);
+            this.uiPanel2.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel2.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel2.Name = "uiPanel2";
+            this.uiPanel2.RectColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.uiPanel2.RectSize = 2;
+            this.uiPanel2.Size = new System.Drawing.Size(109, 46);
+            this.uiPanel2.TabIndex = 2;
+            this.uiPanel2.Text = "Kết Nối";
+            this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // uiTitlePanel2
             // 
             this.uiTitlePanel2.Controls.Add(this.uiTableLayoutPanel6);
@@ -935,6 +968,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.ipConsole.Size = new System.Drawing.Size(459, 405);
             this.ipConsole.TabIndex = 5;
             this.ipConsole.Text = "Thông báo";
+            this.ipConsole.DockChanged += new System.EventHandler(this.ipConsole_DoubleClick);
             // 
             // tabPage2
             // 
@@ -1159,39 +1193,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             // 
             this.subpr.DoWork += new System.ComponentModel.DoWorkEventHandler(this.subpr_DoWork);
             // 
-            // uiTitlePanel6
-            // 
-            this.uiTitlePanel6.Controls.Add(this.uiPanel2);
-            this.uiTitlePanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTitlePanel6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiTitlePanel6.Location = new System.Drawing.Point(123, 5);
-            this.uiTitlePanel6.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.uiTitlePanel6.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiTitlePanel6.Name = "uiTitlePanel6";
-            this.uiTitlePanel6.Padding = new System.Windows.Forms.Padding(1, 35, 1, 1);
-            this.uiTitlePanel6.ShowText = false;
-            this.uiTitlePanel6.Size = new System.Drawing.Size(111, 82);
-            this.uiTitlePanel6.TabIndex = 2;
-            this.uiTitlePanel6.Text = "Máy chủ";
-            this.uiTitlePanel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            this.uiTitlePanel6.TitleColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            // 
-            // uiPanel2
-            // 
-            this.uiPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel2.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.uiPanel2.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uiPanel2.Location = new System.Drawing.Point(1, 35);
-            this.uiPanel2.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel2.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel2.Name = "uiPanel2";
-            this.uiPanel2.RectColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.uiPanel2.RectSize = 2;
-            this.uiPanel2.Size = new System.Drawing.Size(109, 46);
-            this.uiPanel2.TabIndex = 2;
-            this.uiPanel2.Text = "Kết Nối";
-            this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // FDashboard
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -1211,6 +1212,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel10.ResumeLayout(false);
             this.uiTitlePanel3.ResumeLayout(false);
             this.uiTableLayoutPanel4.ResumeLayout(false);
+            this.uiTitlePanel6.ResumeLayout(false);
             this.uiTitlePanel2.ResumeLayout(false);
             this.uiTableLayoutPanel6.ResumeLayout(false);
             this.uiTitlePanel7.ResumeLayout(false);
@@ -1227,7 +1229,6 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             this.uiTableLayoutPanel16.ResumeLayout(false);
             this.uiTableLayoutPanel37.ResumeLayout(false);
             this.uiTableLayoutPanel1.ResumeLayout(false);
-            this.uiTitlePanel6.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

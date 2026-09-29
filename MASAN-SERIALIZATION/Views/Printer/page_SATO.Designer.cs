@@ -374,9 +374,9 @@
             this.ipIP.ShowText = false;
             this.ipIP.Size = new System.Drawing.Size(643, 55);
             this.ipIP.TabIndex = 0;
-            this.ipIP.Text = "192.168.230.9";
+            this.ipIP.Text = "192.168.231.101";
             this.ipIP.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            //this.ipIP.Value = ((System.Net.IPAddress)(resources.GetObject("ipIP.Value")));
+           // this.ipIP.Value = ((System.Net.IPAddress)(resources.GetObject("ipIP.Value")));
             // 
             // ipPort
             // 

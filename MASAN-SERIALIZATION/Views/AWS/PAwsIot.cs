@@ -331,7 +331,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
                     status = Status.ToInt32(),
                     activate_datetime = activateDate,
                     production_date = productionDate,
-                    thing_name = "VCFWP507"
+                    thing_name = "MIPWP508"
                 };
 
                 var dict = new OrderedDictionary
@@ -344,7 +344,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
                                 { "status", Status.ToInt32() },
                                 { "activate_datetime", activateDate },
                                 { "production_date", productionDate },
-                                { "thing_name", "VCFWP507" }
+                                { "thing_name", "MIPWP508" }
                             };
 
 

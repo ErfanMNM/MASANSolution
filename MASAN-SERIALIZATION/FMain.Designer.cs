@@ -84,9 +84,9 @@
             this.uiPanel1.Name = "uiPanel1";
             this.uiPanel1.Radius = 0;
             this.uiPanel1.RectColor = System.Drawing.Color.DodgerBlue;
-            this.uiPanel1.Size = new System.Drawing.Size(183, 55);
+            this.uiPanel1.Size = new System.Drawing.Size(199, 55);
             this.uiPanel1.TabIndex = 7;
-            this.uiPanel1.Text = "CZ VCF v1f1";
+            this.uiPanel1.Text = "CZ MSI V7968";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opClock
@@ -125,7 +125,7 @@
             // 
             this.footer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.footer.ColumnCount = 5;
-            this.footer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 183F));
+            this.footer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 199F));
             this.footer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.footer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 296F));
             this.footer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 205F));
