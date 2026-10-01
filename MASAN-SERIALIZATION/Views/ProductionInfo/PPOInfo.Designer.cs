@@ -90,6 +90,7 @@
             this.opCZRunCount = new Sunny.UI.UIPanel();
             this.uiPanel3 = new Sunny.UI.UIPanel();
             this.opProductName = new Sunny.UI.UIPanel();
+            this.uiPanel19 = new Sunny.UI.UIPanel();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel2.SuspendLayout();
@@ -1139,6 +1140,7 @@
             this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
             this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 192F));
             this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 306F));
+            this.uiTableLayoutPanel6.Controls.Add(this.uiPanel19, 4, 0);
             this.uiTableLayoutPanel6.Controls.Add(this.uiPanel14, 3, 0);
             this.uiTableLayoutPanel6.Controls.Add(this.opCZRunCount, 2, 0);
             this.uiTableLayoutPanel6.Controls.Add(this.uiPanel3, 0, 0);
@@ -1217,6 +1219,22 @@
             this.opProductName.TabIndex = 80;
             this.opProductName.Text = "-";
             this.opProductName.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // uiPanel19
+            // 
+            this.uiPanel19.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiPanel19.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
+            this.uiPanel19.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uiPanel19.ForeColor = System.Drawing.Color.White;
+            this.uiPanel19.Location = new System.Drawing.Point(1251, 2);
+            this.uiPanel19.Margin = new System.Windows.Forms.Padding(2);
+            this.uiPanel19.MinimumSize = new System.Drawing.Size(1, 1);
+            this.uiPanel19.Name = "uiPanel19";
+            this.uiPanel19.Radius = 1;
+            this.uiPanel19.Size = new System.Drawing.Size(303, 62);
+            this.uiPanel19.TabIndex = 87;
+            this.uiPanel19.Text = "-";
+            this.uiPanel19.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // PPOInfo
             // 
@@ -1308,5 +1326,6 @@
         private Sunny.UI.UIRichTextBox opTer;
         private Sunny.UI.UISymbolButton btnReport;
         private Sunny.UI.UIPanel uiPanel14;
+        private Sunny.UI.UIPanel uiPanel19;
     }
 }

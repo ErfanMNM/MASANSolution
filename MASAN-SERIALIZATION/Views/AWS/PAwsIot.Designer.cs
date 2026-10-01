@@ -50,7 +50,7 @@
             this.opNotiboardAndSend.Name = "opNotiboardAndSend";
             this.opNotiboardAndSend.Padding = new System.Windows.Forms.Padding(2);
             this.opNotiboardAndSend.ShowText = false;
-            this.opNotiboardAndSend.Size = new System.Drawing.Size(402, 340);
+            this.opNotiboardAndSend.Size = new System.Drawing.Size(832, 340);
             this.opNotiboardAndSend.TabIndex = 0;
             this.opNotiboardAndSend.Text = "uiListBox1";
             this.opNotiboardAndSend.DoubleClick += new System.EventHandler(this.opNotiboardAndSend_DoubleClick);
@@ -100,13 +100,13 @@
             this.opRecive.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.opRecive.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
             this.opRecive.ItemSelectForeColor = System.Drawing.Color.White;
-            this.opRecive.Location = new System.Drawing.Point(423, 56);
+            this.opRecive.Location = new System.Drawing.Point(853, 70);
             this.opRecive.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.opRecive.MinimumSize = new System.Drawing.Size(1, 1);
             this.opRecive.Name = "opRecive";
             this.opRecive.Padding = new System.Windows.Forms.Padding(2);
             this.opRecive.ShowText = false;
-            this.opRecive.Size = new System.Drawing.Size(405, 340);
+            this.opRecive.Size = new System.Drawing.Size(836, 326);
             this.opRecive.TabIndex = 10;
             this.opRecive.Text = "uiListBox1";
             this.opRecive.DoubleClick += new System.EventHandler(this.opRecive_DoubleClick);
@@ -168,7 +168,7 @@
             // PAwsIot
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(840, 674);
+            this.ClientSize = new System.Drawing.Size(1702, 957);
             this.Controls.Add(this.opErr);
             this.Controls.Add(this.uiSymbolButton1);
             this.Controls.Add(this.uiPanel1);

@@ -36,12 +36,12 @@ namespace MASAN_SERIALIZATION
         //private PAws _pAws1 = new PAws();
         private PAwsIot _pAws = new PAwsIot();
         private PSettings _pSettings = new PSettings();
-        private PLCSetting _pPLCSetting = new PLCSetting();
+       // private PLCSetting _pPLCSetting = new PLCSetting();
         private CheckVIP CheckVIP = new CheckVIP();
         //private PScaner _pScaner = new PScaner();
         //private PCodeSearch _pCodeSearch = new PCodeSearch();
         //private POrderNoViewer _pOrderNoViewer = new POrderNoViewer();
-        private DBBrowser _pDBBrowser = new DBBrowser();
+        //private DBBrowser _pDBBrowser = new DBBrowser();
         private page_SATO _pageSATO = new page_SATO();
         #endregion
 
@@ -139,13 +139,13 @@ namespace MASAN_SERIALIZATION
                 NavMenu.CreateNode(AddPage(_pCartonDashboard, 1004));
                 //NavMenu.CreateNode(AddPage(_pScaner, 1005));
                 NavMenu.CreateNode(AddPage(_pAws, 1006));
-                NavMenu.CreateNode(AddPage(_pPLCSetting, 1007));
+               // NavMenu.CreateNode(AddPage(_pPLCSetting, 1007));
                 NavMenu.CreateNode(AddPage(_pSettings, 1008));
                // NavMenu.CreateNode(AddPage(_pAws1, 1009));
                 // Database tools
                 //NavMenu.CreateNode(AddPage(_pCodeSearch, 1010));
                 //NavMenu.CreateNode(AddPage(_pOrderNoViewer, 1011));
-                NavMenu.CreateNode(AddPage(_pDBBrowser, 1012));
+                //NavMenu.CreateNode(AddPage(_pDBBrowser, 1012));
                 NavMenu.CreateNode(AddPage(CheckVIP, 1013));
                 NavMenu.CreateNode(AddPage(_pageSATO, 1014));
                 NavMenu.CreateNode(AddPage(_pLogin, 2001));
@@ -175,7 +175,7 @@ namespace MASAN_SERIALIZATION
                 _pCartonDashboard.INIT();
                 //_pScaner.INIT();
                 _pSettings.INIT();
-                _pPLCSetting.INIT();
+                //_pPLCSetting.INIT();
                 _pProduction.START();
                 _pAws.START_AWS_Process();
                 //CheckVIP.START();

@@ -958,6 +958,9 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 case e_Production_State.Pause:
                     this.ShowErrorDialog("Lỗi PP443: Vui lòng hoàn tất các sự kiện trước khi dừng sản xuất");
                     break;
+                case e_Production_State.ThieuSanPham:
+                    HandleRunButtonInRunningState();
+                    break;
             }
         }
 

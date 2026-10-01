@@ -244,7 +244,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
                     }
 
-                    Send_Result_Content(e_Production_Status.Error, rawCode);
+                    Send_Result_Content(e_Production_Status.Error, "Máy chưa sẵn sàng - " + rawCode);
                     Enqueue_Product_To_Record(rawCode, e_Production_Status.Error, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
                     return;
                 }
@@ -254,7 +254,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             if (rawCode.IsNullOrEmpty())
             {
                 bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
-                Send_Result_Content(e_Production_Status.Error, rawCode);
+                Send_Result_Content(e_Production_Status.Error, "Code rỗng - " + rawCode);
                 Enqueue_Product_To_Record(rawCode, e_Production_Status.Error, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
                 return;
             }
@@ -272,7 +272,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             if (arawCode.Length != 2)
             {
                 bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
-                Send_Result_Content(e_Production_Status.Error, rawCode);
+                Send_Result_Content(e_Production_Status.Error, "Sai cấu trúc, thiếu | - " + rawCode);
                 Enqueue_Product_To_Record(rawCode, e_Production_Status.Error, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
                 return;
             }
@@ -347,7 +347,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             if (arawCode[1].ToString() == "REJECT")
             {
                 bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
-                Send_Result_Content(e_Production_Status.Error, rawCode);
+                Send_Result_Content(e_Production_Status.Error, "REJECT FNC1 - " + rawCode);
                 Enqueue_Product_To_Record(rawCode, e_Production_Status.Error, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
                 return;
             }
@@ -356,7 +356,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             if (arawCode[1].ToString() != "OK")
             {
                 bool stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
-                Send_Result_Content(e_Production_Status.Error, rawCode);
+                Send_Result_Content(e_Production_Status.Error, "Lỗi khác thiếu chữ | OK- " + rawCode);
                 Enqueue_Product_To_Record(rawCode, e_Production_Status.Error, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
                 return;
             }
@@ -424,7 +424,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                         //Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
                         Enqueue_Product_To_Record(code, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
-                        Send_Result_Content(e_Production_Status.Error, code);
+                        Send_Result_Content(e_Production_Status.Error, "Không có mã Thùng - Đá " + code);
 
                         this.InvokeIfRequired(() =>
                         {
@@ -494,12 +494,12 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         readCurrentIdBeforeSend.Content == null || readCurrentStatusBeforeSend.Content == null ||
                         readCurrentIdBeforeSend.Content.Length == 0 || readCurrentStatusBeforeSend.Content.Length == 0)
                     {
-                        Send_Result_Content(e_Production_Status.Error, code);
+                        Send_Result_Content(e_Production_Status.Error, "Mất Đồng Bộ PLC - " + code);
                         Enqueue_Product_To_Record(code, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
 
                         this.InvokeIfRequired(() =>
                         {
-                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss}: CS V2 READ BEFORE SEND ERROR - Mã {code}. IDMsg={readCurrentIdBeforeSend.Message}, StatusMsg={readCurrentStatusBeforeSend.Message}");
+                            ipConsole.Items.Add($"{DateTime.Now:HH:mm:ss.fff}:ID={readCurrentIdBeforeSend.Message}, S={readCurrentStatusBeforeSend.Message}");
                             ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                         });
 
@@ -510,6 +510,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     cameraSubPreviousStatus = readCurrentStatusBeforeSend.Content[0];
                 }
 
+                //Thread.Sleep(200);
                 //phân làn
                 string sendCode = "0";
                 if (cache_CartonID % 2 == 0)
@@ -536,6 +537,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 }
 
                 Globals.Printer_Job--;
+
+                Thread.Sleep(150); // Thêm độ trễ 50ms trước khi kiểm tra timeout
 
                 bool isTimeout = false;
 
@@ -565,12 +568,12 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                         if (resultV2.Result == e_CameraSubSyncV2_Result.NoResponse)
                         {
-                            Send_Result_Content(e_Production_Status.Error, code);
+                            Send_Result_Content(e_Production_Status.Error, "Không có phản hồi PLC - " + code);
                             Enqueue_Product_To_Record(code, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
 
                             this.InvokeIfRequired(() =>
                             {
-                                ipConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: CS V2 POLLING EXIT -> APP ERROR - Mã {code}. {resultV2.Message}");
+                                ipConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: T-out - {resultV2.Message}");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                             });
 
@@ -580,12 +583,12 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                         if (resultV2.Result == e_CameraSubSyncV2_Result.SyncError || resultV2.Result == e_CameraSubSyncV2_Result.ReadError)
                         {
-                            Send_Result_Content(e_Production_Status.Error, code);
+                            Send_Result_Content(e_Production_Status.Error, "Lỗi đồng bộ hoặc đọc PLC - " + code);
                             Enqueue_Product_To_Record(code, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
 
                             this.InvokeIfRequired(() =>
                             {
-                                ipConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: CS V2 SYNC ERROR - Mã {code}. {resultV2.Message}");
+                                ipConsole.Items.Insert(0, $"{DateTime.Now:HH:mm:ss.fff}:{resultV2.Message}");
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                             });
 
@@ -655,7 +658,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 //nếu gửi PLC thất bại
                 Enqueue_Product_To_Record(code, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate);
-                Send_Result_Content(e_Production_Status.Error, code);
+                Send_Result_Content(e_Production_Status.Error, "Lỗi gửi dữ liệu đến PLC - " + code);
                 return;
 
 
@@ -1013,6 +1016,30 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         {
             // Đọc counter cho CameraMain (luôn từ PLC chính)
             OperateResult<int[]> readCount = OMRON_PLC.plc.ReadInt32(PLCAddress.Get("PLC_Total_Count_DM_C1"), 5);
+            OperateResult<int[]> readAlarm = OMRON_PLC.plc.ReadInt32(PLCAddress.Get("PLC_Alarm2_DM_C1"), 1);
+            if (readAlarm.IsSuccess)
+            {
+                if (readAlarm.Content[0] == 7)
+                {
+                    if (Globals.Production_State != e_Production_State.Running)
+                    {
+                        OperateResult writeAlarmReset = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm2_DM_C1"), 0);
+                    }
+                    else
+                    {
+
+                        Globals.Production_State = e_Production_State.ThieuSanPham;
+                        OperateResult writeAlarmReset = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Alarm2_DM_C1"), 0);
+                    }
+                }
+
+                
+            }
+            else
+            {
+                //ghi log lỗi
+                //DashboardPageLog.WriteLogAsync(Globals.CurrentUser.Username, e_Dash_LogType.PlcError, "Lỗi DA01067 khi đọc dữ liệu báo động từ PLC", readAlarm.Message);
+            }
             if (readCount.IsSuccess)
             {
                 // Cập nhật các giá trị đếm từ PLC
@@ -1829,6 +1856,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     //gửi dữ liệu mới xuống PLC
                     //xóa số đếm PLC
                     OperateResult writeClear = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Reset_Counter_DM_C1"), 1);
+                    //xóa lỗi
+                    OperateResult writeClearError = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Clear_DM"), 1);
                     //xóa số đếm SS
                     OperateResult writeClear1 = OMRON_PLC.plc.Write(PLCAddress.Get("RESET_COUNT_DM_SS1"), 1);
 
@@ -1837,9 +1866,21 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     Globals.Production_State = e_Production_State.Camera_Processing;
                     break;
                 case e_Production_State.Pushing_continue_PO_to_PLC:
-
+                    //xóa lỗi PLC
+                    OperateResult writeClearError1 = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Clear_DM"), 1);
                     //gửi số lượng order xuống
                     OperateResult writeOrderQty1 = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), Globals.ProductionData.orderQty.ToInt32());
+                    //gửi số đang chạy 
+                    OperateResult writeCartonPack = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Carton_Pack_DM"), AppConfigs.Current.cartonPack);
+                    if(Globals.ProductionData.counter.cartonID%2 != 0)
+                    {
+                        OperateResult writeCartonCount = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Sensor_Check_Lane_01_DM"), Globals.ProductionData.counter.carton_Packing_Count);
+                    }
+                    else
+                    {
+                        OperateResult writeCartonCount = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Sensor_Check_Lane_02_DM"), Globals.ProductionData.counter.carton_Packing_Count);
+                    }
+
                     OperateResult writeStart3 = OMRON_PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 1);//gửi lệnh bắt đầu
 
                     Task task2 = Task.Run(() =>

@@ -191,7 +191,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         public void INIT()
         {
 
-            RegisterKeyboardRawInput();
+            //RegisterKeyboardRawInput();
             if (AppConfigs.Current.cartonScanerMode != 1)
             {
                 _ScanConection01.SERIALPORT = serialPort1;
@@ -1190,7 +1190,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
             base.Dispose(disposing);
         }
-
+        string sCache02 = string.Empty;
         //scan chẵn
         private void _ScanConection02_EVENT(e_Serial e, string s)
         {
@@ -1209,10 +1209,22 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     }
                     break;
                 case e_Serial.Recive:
+                    
+                    if (!s.Contains("\r"))
+                    {
+                        sCache02 += s;
+                        break;
+                    }
+                    else
+                    {
+                        sCache02 += s;
+                        s = sCache02.Replace("\r", "");
+                        sCache02 = string.Empty;
+                    }
 
                     this.InvokeIfRequired(() =>
                     {
-                        opLane02.Items.Insert(0, s.Trim());
+                        opLane02.Items.Insert(0, "CartonCode: " + s.Trim());
                     });
 
                     if (AppConfigs.Current.cartonScaner_Only_Once)
@@ -1225,6 +1237,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         }
 
         string saveLine = AppConfigs.Current.cartonCode_Line01;
+        string sCache = string.Empty;
         private void _ScanConection01_EVENT(e_Serial e, string s)
         {
             switch (e)
@@ -1243,12 +1256,22 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     }
                     break;
                 case e_Serial.Recive:
-                    this.InvokeIfRequired(() =>
+                    if (!s.Contains("\r"))
                     {
-                        opLane01.Items.Insert(0, s.Trim());
-                        opLane01.Items.Insert(0, saveLine);
-                    });
-
+                        sCache += s;
+                        break;
+                    }
+                    else
+                    {
+                        sCache += s;
+                        s = sCache.Replace("\r", "");
+                        sCache = string.Empty;
+                    }
+                    this.InvokeIfRequired(() =>
+                        {
+                            opLane01.Items.Insert(0,"CartonCode: " + s.Trim());
+                            opLane01.Items.Insert(0, saveLine);
+                        });
                     if (AppConfigs.Current.cartonScaner_Only_Once)
                     {
                         if (s.Contains(AppConfigs.Current.cartonCode_Line01) || s.Contains(AppConfigs.Current.cartonCode_Line02))
