@@ -740,6 +740,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
         private void Enqueue_Product_To_SQLite(string code, ProductionCodeData productionCodeData, bool duplicate = false)
         {
+            productionCodeData.Production_Datetime = Globals.ProductionData.productionDate.ToString();
             Globals_Database.Update_Product_To_SQLite_Queue.Enqueue((code, productionCodeData, duplicate));
         }
 
@@ -1872,8 +1873,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     OperateResult writeOrderQty1 = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_ORDERQTY_DM"), Globals.ProductionData.orderQty.ToInt32());
                     //gửi số đang chạy 
                     OperateResult writeCartonPack = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Carton_Pack_DM"), AppConfigs.Current.cartonPack);
-                    if(Globals.ProductionData.counter.cartonID%2 != 0)
+                    OperateResult writeStart3 = OMRON_PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 1);//gửi lệnh bắt đầu
+                    Thread.Sleep(1000);
+                    if (Globals.ProductionData.counter.cartonID%2 != 0)
                     {
+                        
                         OperateResult writeCartonCount = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Sensor_Check_Lane_01_DM"), Globals.ProductionData.counter.carton_Packing_Count);
                     }
                     else
@@ -1881,7 +1885,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         OperateResult writeCartonCount = OMRON_PLC.plc.Write(PLCAddress.Get("PLC_Sensor_Check_Lane_02_DM"), Globals.ProductionData.counter.carton_Packing_Count);
                     }
 
-                    OperateResult writeStart3 = OMRON_PLC.plc.Write(PLCAddress.Get("ENA_START_PO_DM"), 1);//gửi lệnh bắt đầu
+                    
 
                     Task task2 = Task.Run(() =>
                     {
