@@ -1368,7 +1368,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     debounceFlag = false;
                     this.InvokeIfRequired(() =>
                     {
-                        uiButton1.Enabled = true;
+                        btnResetPO.Enabled = true;
                     });
                 }
                     LoadAndDisplayCounters();
@@ -1889,7 +1889,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         bool debounceFlag = false;
         private void uiButton1_Click(object sender, EventArgs e)
         {
-            uiButton1.Enabled = false;
+            btnResetPO.Enabled = false;
             debounceFlag = true;
             if (Globals.Production_State == e_Production_State.Editing)
             {
