@@ -31,1192 +31,1221 @@
             this.uiTitlePanel1 = new Sunny.UI.UITitlePanel();
             this.uiTableLayoutPanel1 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel2 = new Sunny.UI.UITableLayoutPanel();
+            this.uiTableLayoutPanel3 = new Sunny.UI.UITableLayoutPanel();
             this.uiTableLayoutPanel14 = new Sunny.UI.UITableLayoutPanel();
-            this.opcartonPack = new Sunny.UI.UIPanel();
-            this.uiPanel25 = new Sunny.UI.UIPanel();
-            this.opCZCodeCount = new Sunny.UI.UIPanel();
+            this.cardProduct = new Sunny.UI.UIPanel();
+            this.uiTableLayoutPanel9 = new Sunny.UI.UITableLayoutPanel();
+            this.lblProductName = new Sunny.UI.UILabel();
+            this.opProductName = new Sunny.UI.UIPanel();
+            this.lblProductCode = new Sunny.UI.UILabel();
+            this.lblGTIN = new Sunny.UI.UILabel();
+            this.lblUOM = new Sunny.UI.UILabel();
+            this.opProductCode = new Sunny.UI.UIPanel();
+            this.opGTIN = new Sunny.UI.UIPanel();
+            this.opUOM = new Sunny.UI.UIPanel();
+            this.cardOrder = new Sunny.UI.UIPanel();
+            this.uiTableLayoutPanel4 = new Sunny.UI.UITableLayoutPanel();
+            this.lblOrderTitle = new Sunny.UI.UILabel();
+            this.lblOrderNO = new Sunny.UI.UILabel();
+            this.ipOrderNO = new Sunny.UI.UIComboBox();
+            this.lblProductionDate = new Sunny.UI.UILabel();
+            this.ipProductionDate = new Sunny.UI.UIDatetimePicker();
+            this.lblLot = new Sunny.UI.UILabel();
+            this.lblQty = new Sunny.UI.UILabel();
+            this.lblCustomerOrder = new Sunny.UI.UILabel();
+            this.opLotNumber = new Sunny.UI.UIPanel();
+            this.opOrderQty = new Sunny.UI.UIPanel();
             this.opCustomerOrderNO = new Sunny.UI.UIPanel();
-            this.opShift = new Sunny.UI.UIPanel();
-            this.opProductionLine = new Sunny.UI.UIPanel();
-            this.uiPanel24 = new Sunny.UI.UIPanel();
-            this.uiPanel4 = new Sunny.UI.UIPanel();
-            this.uiPanel11 = new Sunny.UI.UIPanel();
+            this.cardLine = new Sunny.UI.UIPanel();
+            this.uiTableLayoutPanel12 = new Sunny.UI.UITableLayoutPanel();
+            this.lblLineTitle = new Sunny.UI.UILabel();
+            this.lblFactory = new Sunny.UI.UILabel();
+            this.lblSite = new Sunny.UI.UILabel();
+            this.lblProductionLine = new Sunny.UI.UILabel();
+            this.lblShift = new Sunny.UI.UILabel();
             this.opFactory = new Sunny.UI.UIPanel();
             this.opSite = new Sunny.UI.UIPanel();
-            this.uiPanel6 = new Sunny.UI.UIPanel();
-            this.uiPanel15 = new Sunny.UI.UIPanel();
-            this.uiPanel21 = new Sunny.UI.UIPanel();
-            this.uiTableLayoutPanel3 = new Sunny.UI.UITableLayoutPanel();
-            this.opUOM = new Sunny.UI.UIPanel();
-            this.dfdsf = new Sunny.UI.UIPanel();
-            this.opOrderQty = new Sunny.UI.UIPanel();
-            this.ipProductionDate = new Sunny.UI.UIDatetimePicker();
-            this.opGTIN = new Sunny.UI.UIPanel();
-            this.opProductCode = new Sunny.UI.UIPanel();
-            this.uiPanel13 = new Sunny.UI.UIPanel();
-            this.opLotNumber = new Sunny.UI.UIPanel();
-            this.uiPanel5 = new Sunny.UI.UIPanel();
-            this.uiPanel8 = new Sunny.UI.UIPanel();
-            this.ipOrderNO = new Sunny.UI.UIComboBox();
-            this.uiPanel12 = new Sunny.UI.UIPanel();
-            this.uiPanel20 = new Sunny.UI.UIPanel();
-            this.uiPanel10 = new Sunny.UI.UIPanel();
-            this.uiPanel7 = new Sunny.UI.UIPanel();
-            this.uiTableLayoutPanel4 = new Sunny.UI.UITableLayoutPanel();
+            this.opProductionLine = new Sunny.UI.UIPanel();
+            this.opShift = new Sunny.UI.UIPanel();
+            this.cardCZ = new Sunny.UI.UIPanel();
+            this.uiTableLayoutPanel13 = new Sunny.UI.UITableLayoutPanel();
+            this.lblCZTitle = new Sunny.UI.UILabel();
+            this.lblCZCodeCount = new Sunny.UI.UILabel();
+            this.lblCZRunCount = new Sunny.UI.UILabel();
+            this.lblCartonPack = new Sunny.UI.UILabel();
+            this.lblItemsPerCarton = new Sunny.UI.UILabel();
+            this.opCZCodeCount = new Sunny.UI.UIPanel();
+            this.opCZRunCount = new Sunny.UI.UIPanel();
+            this.opcartonPack = new Sunny.UI.UIPanel();
+            this.opItemsPerCarton = new Sunny.UI.UIPanel();
+            this.uiTableLayoutPanel8 = new Sunny.UI.UITableLayoutPanel();
+            this.cardKpi1 = new Sunny.UI.UIPanel();
+            this.opPassCount = new Sunny.UI.UIPanel();
+            this.lblPass = new Sunny.UI.UILabel();
+            this.cardKpi2 = new Sunny.UI.UIPanel();
+            this.opFailCount = new Sunny.UI.UIPanel();
+            this.lblFail = new Sunny.UI.UILabel();
+            this.cardKpi3 = new Sunny.UI.UIPanel();
+            this.opCarton = new Sunny.UI.UIPanel();
+            this.lblCarton = new Sunny.UI.UILabel();
+            this.cardKpi4 = new Sunny.UI.UIPanel();
+            this.opAWSFullOKCount = new Sunny.UI.UIPanel();
+            this.lblMesDone = new Sunny.UI.UILabel();
+            this.cardKpi5 = new Sunny.UI.UIPanel();
+            this.opAWSNotSent = new Sunny.UI.UIPanel();
+            this.lblMesPending = new Sunny.UI.UILabel();
+            this.cardKpi6 = new Sunny.UI.UIPanel();
+            this.opAWSSentWating = new Sunny.UI.UIPanel();
+            this.lblMesWaiting = new Sunny.UI.UILabel();
+            this.opTer = new Sunny.UI.UIRichTextBox();
             this.uiTableLayoutPanel5 = new Sunny.UI.UITableLayoutPanel();
             this.btnRUN = new Sunny.UI.UISymbolButton();
-            this.btnResetPO = new Sunny.UI.UISymbolButton();
-            this.btnProductionDate = new Sunny.UI.UISymbolButton();
             this.btnPO = new Sunny.UI.UISymbolButton();
-            this.uiGroupBox1 = new Sunny.UI.UIGroupBox();
-            this.uiTableLayoutPanel8 = new Sunny.UI.UITableLayoutPanel();
-            this.opAWSSentWating = new Sunny.UI.UIPanel();
-            this.opCarton = new Sunny.UI.UIPanel();
-            this.opAWSNotSent = new Sunny.UI.UIPanel();
-            this.uiPanel16 = new Sunny.UI.UIPanel();
-            this.uiPanel1 = new Sunny.UI.UIPanel();
-            this.uiPanel18 = new Sunny.UI.UIPanel();
-            this.uiPanel17 = new Sunny.UI.UIPanel();
-            this.uiPanel9 = new Sunny.UI.UIPanel();
-            this.uiPanel2 = new Sunny.UI.UIPanel();
-            this.opPassCount = new Sunny.UI.UIPanel();
-            this.opFailCount = new Sunny.UI.UIPanel();
-            this.opAWSFullOKCount = new Sunny.UI.UIPanel();
-            this.uiTableLayoutPanel7 = new Sunny.UI.UITableLayoutPanel();
-            this.opTer = new Sunny.UI.UIRichTextBox();
+            this.btnProductionDate = new Sunny.UI.UISymbolButton();
+            this.btnResetPO = new Sunny.UI.UISymbolButton();
             this.btnReport = new Sunny.UI.UISymbolButton();
-            this.uiTableLayoutPanel6 = new Sunny.UI.UITableLayoutPanel();
-            this.uiPanel14 = new Sunny.UI.UIPanel();
-            this.opCZRunCount = new Sunny.UI.UIPanel();
-            this.uiPanel3 = new Sunny.UI.UIPanel();
-            this.opProductName = new Sunny.UI.UIPanel();
             this.uiTitlePanel1.SuspendLayout();
             this.uiTableLayoutPanel1.SuspendLayout();
             this.uiTableLayoutPanel2.SuspendLayout();
-            this.uiTableLayoutPanel14.SuspendLayout();
             this.uiTableLayoutPanel3.SuspendLayout();
-            this.uiPanel13.SuspendLayout();
+            this.uiTableLayoutPanel14.SuspendLayout();
+            this.cardProduct.SuspendLayout();
+            this.uiTableLayoutPanel9.SuspendLayout();
+            this.cardOrder.SuspendLayout();
             this.uiTableLayoutPanel4.SuspendLayout();
-            this.uiTableLayoutPanel5.SuspendLayout();
-            this.uiGroupBox1.SuspendLayout();
+            this.cardLine.SuspendLayout();
+            this.uiTableLayoutPanel12.SuspendLayout();
+            this.cardCZ.SuspendLayout();
+            this.uiTableLayoutPanel13.SuspendLayout();
             this.uiTableLayoutPanel8.SuspendLayout();
-            this.uiTableLayoutPanel7.SuspendLayout();
-            this.uiTableLayoutPanel6.SuspendLayout();
+            this.cardKpi1.SuspendLayout();
+            this.cardKpi2.SuspendLayout();
+            this.cardKpi3.SuspendLayout();
+            this.cardKpi4.SuspendLayout();
+            this.cardKpi5.SuspendLayout();
+            this.cardKpi6.SuspendLayout();
+            this.uiTableLayoutPanel5.SuspendLayout();
             this.SuspendLayout();
             // 
             // uiTitlePanel1
             // 
             this.uiTitlePanel1.Controls.Add(this.uiTableLayoutPanel1);
             this.uiTitlePanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTitlePanel1.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
-            this.uiTitlePanel1.Location = new System.Drawing.Point(0, 0);
-            this.uiTitlePanel1.Margin = new System.Windows.Forms.Padding(8, 10, 8, 10);
-            this.uiTitlePanel1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiTitlePanel1.Name = "uiTitlePanel1";
-            this.uiTitlePanel1.Padding = new System.Windows.Forms.Padding(1, 50, 1, 1);
+            this.uiTitlePanel1.FillColor = System.Drawing.Color.FromArgb(242, 244, 247);
+            this.uiTitlePanel1.RectColor = System.Drawing.Color.FromArgb(11, 61, 46);
+            this.uiTitlePanel1.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
+            this.uiTitlePanel1.Padding = new System.Windows.Forms.Padding(8, 56, 8, 8);
             this.uiTitlePanel1.ShowText = false;
+            this.uiTitlePanel1.Text = "BẢNG THÔNG TIN SẢN XUẤT";
+            this.uiTitlePanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.uiTitlePanel1.TitleColor = System.Drawing.Color.FromArgb(11, 61, 46);
+            this.uiTitlePanel1.TitleHeight = 56;
+            this.uiTitlePanel1.StyleCustomMode = true;
             this.uiTitlePanel1.Size = new System.Drawing.Size(1560, 904);
             this.uiTitlePanel1.TabIndex = 1;
-            this.uiTitlePanel1.Text = "🏭 BẢNG THÔNG TIN SẢN XUẤT";
-            this.uiTitlePanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            this.uiTitlePanel1.TitleColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(125)))), ((int)(((byte)(50)))));
-            this.uiTitlePanel1.TitleHeight = 50;
             // 
             // uiTableLayoutPanel1
             // 
             this.uiTableLayoutPanel1.ColumnCount = 1;
             this.uiTableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.uiTableLayoutPanel1.Controls.Add(this.uiTableLayoutPanel2, 0, 0);
-            this.uiTableLayoutPanel1.Controls.Add(this.uiTableLayoutPanel4, 0, 2);
-            this.uiTableLayoutPanel1.Controls.Add(this.uiTableLayoutPanel6, 0, 1);
+            this.uiTableLayoutPanel1.Controls.Add(this.uiTableLayoutPanel8, 0, 1);
+            this.uiTableLayoutPanel1.Controls.Add(this.opTer, 0, 2);
+            this.uiTableLayoutPanel1.Controls.Add(this.uiTableLayoutPanel5, 0, 3);
+            this.uiTableLayoutPanel1.BackColor = System.Drawing.Color.FromArgb(242, 244, 247);
             this.uiTableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel1.Location = new System.Drawing.Point(1, 50);
-            this.uiTableLayoutPanel1.Name = "uiTableLayoutPanel1";
-            this.uiTableLayoutPanel1.RowCount = 3;
-            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 49.75923F));
-            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.025682F));
-            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 42F));
-            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.uiTableLayoutPanel1.Size = new System.Drawing.Size(1558, 853);
-            this.uiTableLayoutPanel1.TabIndex = 9;
             this.uiTableLayoutPanel1.TagString = null;
+            this.uiTableLayoutPanel1.RowCount = 4;
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 110F));
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.uiTableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 72F));
             // 
             // uiTableLayoutPanel2
             // 
             this.uiTableLayoutPanel2.ColumnCount = 2;
-            this.uiTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 55F));
-            this.uiTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45F));
-            this.uiTableLayoutPanel2.Controls.Add(this.uiTableLayoutPanel14, 1, 0);
+            this.uiTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 58F));
+            this.uiTableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 42F));
             this.uiTableLayoutPanel2.Controls.Add(this.uiTableLayoutPanel3, 0, 0);
+            this.uiTableLayoutPanel2.Controls.Add(this.uiTableLayoutPanel14, 1, 0);
+            this.uiTableLayoutPanel2.BackColor = System.Drawing.Color.FromArgb(242, 244, 247);
             this.uiTableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel2.Location = new System.Drawing.Point(1, 1);
-            this.uiTableLayoutPanel2.Margin = new System.Windows.Forms.Padding(1);
-            this.uiTableLayoutPanel2.Name = "uiTableLayoutPanel2";
-            this.uiTableLayoutPanel2.RowCount = 1;
-            this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.uiTableLayoutPanel2.Size = new System.Drawing.Size(1556, 423);
-            this.uiTableLayoutPanel2.TabIndex = 8;
             this.uiTableLayoutPanel2.TagString = null;
-            // 
-            // uiTableLayoutPanel14
-            // 
-            this.uiTableLayoutPanel14.BackColor = System.Drawing.Color.Transparent;
-            this.uiTableLayoutPanel14.ColumnCount = 2;
-            this.uiTableLayoutPanel14.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28.48921F));
-            this.uiTableLayoutPanel14.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 71.51079F));
-            this.uiTableLayoutPanel14.Controls.Add(this.opcartonPack, 1, 6);
-            this.uiTableLayoutPanel14.Controls.Add(this.uiPanel25, 0, 6);
-            this.uiTableLayoutPanel14.Controls.Add(this.opCZCodeCount, 1, 5);
-            this.uiTableLayoutPanel14.Controls.Add(this.opCustomerOrderNO, 1, 4);
-            this.uiTableLayoutPanel14.Controls.Add(this.opShift, 1, 3);
-            this.uiTableLayoutPanel14.Controls.Add(this.opProductionLine, 1, 2);
-            this.uiTableLayoutPanel14.Controls.Add(this.uiPanel24, 0, 2);
-            this.uiTableLayoutPanel14.Controls.Add(this.uiPanel4, 0, 0);
-            this.uiTableLayoutPanel14.Controls.Add(this.uiPanel11, 0, 1);
-            this.uiTableLayoutPanel14.Controls.Add(this.opFactory, 1, 0);
-            this.uiTableLayoutPanel14.Controls.Add(this.opSite, 1, 1);
-            this.uiTableLayoutPanel14.Controls.Add(this.uiPanel6, 0, 4);
-            this.uiTableLayoutPanel14.Controls.Add(this.uiPanel15, 0, 3);
-            this.uiTableLayoutPanel14.Controls.Add(this.uiPanel21, 0, 5);
-            this.uiTableLayoutPanel14.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel14.Location = new System.Drawing.Point(858, 3);
-            this.uiTableLayoutPanel14.Name = "uiTableLayoutPanel14";
-            this.uiTableLayoutPanel14.RowCount = 7;
-            this.uiTableLayoutPanel14.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.uiTableLayoutPanel14.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.uiTableLayoutPanel14.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.uiTableLayoutPanel14.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.uiTableLayoutPanel14.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.uiTableLayoutPanel14.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.uiTableLayoutPanel14.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.uiTableLayoutPanel14.Size = new System.Drawing.Size(695, 417);
-            this.uiTableLayoutPanel14.TabIndex = 13;
-            this.uiTableLayoutPanel14.TagString = null;
-            // 
-            // opcartonPack
-            // 
-            this.opcartonPack.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opcartonPack.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opcartonPack.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opcartonPack.ForeColor = System.Drawing.Color.White;
-            this.opcartonPack.Location = new System.Drawing.Point(200, 356);
-            this.opcartonPack.Margin = new System.Windows.Forms.Padding(2);
-            this.opcartonPack.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opcartonPack.Name = "opcartonPack";
-            this.opcartonPack.Radius = 1;
-            this.opcartonPack.Size = new System.Drawing.Size(493, 59);
-            this.opcartonPack.TabIndex = 81;
-            this.opcartonPack.Text = "-";
-            this.opcartonPack.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel25
-            // 
-            this.uiPanel25.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel25.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel25.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel25.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel25.Location = new System.Drawing.Point(2, 356);
-            this.uiPanel25.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel25.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel25.Name = "uiPanel25";
-            this.uiPanel25.Radius = 1;
-            this.uiPanel25.RectColor = System.Drawing.Color.Blue;
-            this.uiPanel25.Size = new System.Drawing.Size(194, 59);
-            this.uiPanel25.TabIndex = 80;
-            this.uiPanel25.Text = "Số lượng đóng gói";
-            this.uiPanel25.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opCZCodeCount
-            // 
-            this.opCZCodeCount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opCZCodeCount.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opCZCodeCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opCZCodeCount.ForeColor = System.Drawing.Color.White;
-            this.opCZCodeCount.Location = new System.Drawing.Point(200, 297);
-            this.opCZCodeCount.Margin = new System.Windows.Forms.Padding(2);
-            this.opCZCodeCount.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opCZCodeCount.Name = "opCZCodeCount";
-            this.opCZCodeCount.Radius = 1;
-            this.opCZCodeCount.Size = new System.Drawing.Size(493, 55);
-            this.opCZCodeCount.TabIndex = 79;
-            this.opCZCodeCount.Text = "-";
-            this.opCZCodeCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opCustomerOrderNO
-            // 
-            this.opCustomerOrderNO.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opCustomerOrderNO.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opCustomerOrderNO.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opCustomerOrderNO.ForeColor = System.Drawing.Color.White;
-            this.opCustomerOrderNO.Location = new System.Drawing.Point(200, 238);
-            this.opCustomerOrderNO.Margin = new System.Windows.Forms.Padding(2);
-            this.opCustomerOrderNO.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opCustomerOrderNO.Name = "opCustomerOrderNO";
-            this.opCustomerOrderNO.Radius = 1;
-            this.opCustomerOrderNO.Size = new System.Drawing.Size(493, 55);
-            this.opCustomerOrderNO.TabIndex = 76;
-            this.opCustomerOrderNO.Text = "-";
-            this.opCustomerOrderNO.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opShift
-            // 
-            this.opShift.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opShift.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opShift.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opShift.ForeColor = System.Drawing.Color.White;
-            this.opShift.Location = new System.Drawing.Point(200, 179);
-            this.opShift.Margin = new System.Windows.Forms.Padding(2);
-            this.opShift.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opShift.Name = "opShift";
-            this.opShift.Radius = 1;
-            this.opShift.Size = new System.Drawing.Size(493, 55);
-            this.opShift.TabIndex = 75;
-            this.opShift.Text = "-";
-            this.opShift.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opProductionLine
-            // 
-            this.opProductionLine.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opProductionLine.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opProductionLine.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opProductionLine.ForeColor = System.Drawing.Color.White;
-            this.opProductionLine.Location = new System.Drawing.Point(200, 120);
-            this.opProductionLine.Margin = new System.Windows.Forms.Padding(2);
-            this.opProductionLine.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opProductionLine.Name = "opProductionLine";
-            this.opProductionLine.Radius = 1;
-            this.opProductionLine.Size = new System.Drawing.Size(493, 55);
-            this.opProductionLine.TabIndex = 74;
-            this.opProductionLine.Text = "-";
-            this.opProductionLine.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel24
-            // 
-            this.uiPanel24.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel24.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel24.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel24.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel24.Location = new System.Drawing.Point(2, 120);
-            this.uiPanel24.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel24.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel24.Name = "uiPanel24";
-            this.uiPanel24.Radius = 1;
-            this.uiPanel24.RectColor = System.Drawing.Color.Blue;
-            this.uiPanel24.Size = new System.Drawing.Size(194, 55);
-            this.uiPanel24.TabIndex = 56;
-            this.uiPanel24.Text = "Dây chuyền (Production Line)";
-            this.uiPanel24.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel4
-            // 
-            this.uiPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel4.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel4.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.uiPanel4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel4.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel4.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel4.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel4.Name = "uiPanel4";
-            this.uiPanel4.Radius = 1;
-            this.uiPanel4.RectColor = System.Drawing.Color.MediumBlue;
-            this.uiPanel4.Size = new System.Drawing.Size(194, 55);
-            this.uiPanel4.TabIndex = 49;
-            this.uiPanel4.Text = "Nhà máy (Factory)";
-            this.uiPanel4.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel11
-            // 
-            this.uiPanel11.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel11.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel11.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.uiPanel11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel11.Location = new System.Drawing.Point(2, 61);
-            this.uiPanel11.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel11.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel11.Name = "uiPanel11";
-            this.uiPanel11.Radius = 1;
-            this.uiPanel11.RectColor = System.Drawing.Color.MediumBlue;
-            this.uiPanel11.Size = new System.Drawing.Size(194, 55);
-            this.uiPanel11.TabIndex = 48;
-            this.uiPanel11.Text = "Nhà xưởng (Site)";
-            this.uiPanel11.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opFactory
-            // 
-            this.opFactory.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opFactory.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opFactory.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opFactory.ForeColor = System.Drawing.Color.White;
-            this.opFactory.Location = new System.Drawing.Point(200, 2);
-            this.opFactory.Margin = new System.Windows.Forms.Padding(2);
-            this.opFactory.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opFactory.Name = "opFactory";
-            this.opFactory.Radius = 1;
-            this.opFactory.Size = new System.Drawing.Size(493, 55);
-            this.opFactory.TabIndex = 71;
-            this.opFactory.Text = "-";
-            this.opFactory.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opSite
-            // 
-            this.opSite.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opSite.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opSite.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opSite.ForeColor = System.Drawing.Color.White;
-            this.opSite.Location = new System.Drawing.Point(200, 61);
-            this.opSite.Margin = new System.Windows.Forms.Padding(2);
-            this.opSite.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opSite.Name = "opSite";
-            this.opSite.Radius = 1;
-            this.opSite.Size = new System.Drawing.Size(493, 55);
-            this.opSite.TabIndex = 65;
-            this.opSite.Text = "-";
-            this.opSite.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel6
-            // 
-            this.uiPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel6.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel6.Location = new System.Drawing.Point(2, 238);
-            this.uiPanel6.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel6.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel6.Name = "uiPanel6";
-            this.uiPanel6.Radius = 1;
-            this.uiPanel6.RectColor = System.Drawing.Color.Blue;
-            this.uiPanel6.Size = new System.Drawing.Size(194, 55);
-            this.uiPanel6.TabIndex = 72;
-            this.uiPanel6.Text = "Mã đơn (customerOrderNo)";
-            this.uiPanel6.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel15
-            // 
-            this.uiPanel15.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel15.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel15.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel15.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel15.Location = new System.Drawing.Point(2, 179);
-            this.uiPanel15.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel15.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel15.Name = "uiPanel15";
-            this.uiPanel15.Radius = 1;
-            this.uiPanel15.RectColor = System.Drawing.Color.Blue;
-            this.uiPanel15.Size = new System.Drawing.Size(194, 55);
-            this.uiPanel15.TabIndex = 73;
-            this.uiPanel15.Text = "Ca làm (Shift)";
-            this.uiPanel15.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel21
-            // 
-            this.uiPanel21.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel21.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel21.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel21.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel21.Location = new System.Drawing.Point(2, 297);
-            this.uiPanel21.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel21.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel21.Name = "uiPanel21";
-            this.uiPanel21.Radius = 1;
-            this.uiPanel21.RectColor = System.Drawing.Color.Blue;
-            this.uiPanel21.Size = new System.Drawing.Size(194, 55);
-            this.uiPanel21.TabIndex = 78;
-            this.uiPanel21.Text = "Tổng mã CZ đã nhận";
-            this.uiPanel21.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.uiTableLayoutPanel2.RowCount = 1;
+            this.uiTableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             // 
             // uiTableLayoutPanel3
             // 
-            this.uiTableLayoutPanel3.BackColor = System.Drawing.Color.Transparent;
-            this.uiTableLayoutPanel3.ColumnCount = 2;
-            this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28.62191F));
-            this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 71.37809F));
-            this.uiTableLayoutPanel3.Controls.Add(this.opUOM, 1, 6);
-            this.uiTableLayoutPanel3.Controls.Add(this.dfdsf, 0, 6);
-            this.uiTableLayoutPanel3.Controls.Add(this.opOrderQty, 1, 4);
-            this.uiTableLayoutPanel3.Controls.Add(this.ipProductionDate, 1, 1);
-            this.uiTableLayoutPanel3.Controls.Add(this.opGTIN, 1, 3);
-            this.uiTableLayoutPanel3.Controls.Add(this.opProductCode, 1, 5);
-            this.uiTableLayoutPanel3.Controls.Add(this.uiPanel13, 1, 2);
-            this.uiTableLayoutPanel3.Controls.Add(this.uiPanel5, 0, 3);
-            this.uiTableLayoutPanel3.Controls.Add(this.uiPanel8, 0, 1);
-            this.uiTableLayoutPanel3.Controls.Add(this.ipOrderNO, 1, 0);
-            this.uiTableLayoutPanel3.Controls.Add(this.uiPanel12, 0, 0);
-            this.uiTableLayoutPanel3.Controls.Add(this.uiPanel20, 0, 5);
-            this.uiTableLayoutPanel3.Controls.Add(this.uiPanel10, 0, 4);
-            this.uiTableLayoutPanel3.Controls.Add(this.uiPanel7, 0, 2);
+            this.uiTableLayoutPanel3.ColumnCount = 1;
+            this.uiTableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.uiTableLayoutPanel3.Controls.Add(this.cardProduct, 0, 0);
+            this.uiTableLayoutPanel3.Controls.Add(this.cardOrder, 0, 1);
+            this.uiTableLayoutPanel3.BackColor = System.Drawing.Color.FromArgb(242, 244, 247);
             this.uiTableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel3.Location = new System.Drawing.Point(3, 3);
-            this.uiTableLayoutPanel3.Name = "uiTableLayoutPanel3";
-            this.uiTableLayoutPanel3.RowCount = 7;
-            this.uiTableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.uiTableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.uiTableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.uiTableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.uiTableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.uiTableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.uiTableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.uiTableLayoutPanel3.Size = new System.Drawing.Size(849, 417);
-            this.uiTableLayoutPanel3.TabIndex = 12;
             this.uiTableLayoutPanel3.TagString = null;
+            this.uiTableLayoutPanel3.RowCount = 2;
+            this.uiTableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 214F));
+            this.uiTableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             // 
-            // opUOM
+            // uiTableLayoutPanel14
             // 
-            this.opUOM.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opUOM.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opUOM.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opUOM.ForeColor = System.Drawing.Color.White;
-            this.opUOM.Location = new System.Drawing.Point(245, 356);
-            this.opUOM.Margin = new System.Windows.Forms.Padding(2);
-            this.opUOM.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opUOM.Name = "opUOM";
-            this.opUOM.Radius = 1;
-            this.opUOM.Size = new System.Drawing.Size(602, 59);
-            this.opUOM.TabIndex = 83;
-            this.opUOM.Text = "-";
-            this.opUOM.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.uiTableLayoutPanel14.ColumnCount = 1;
+            this.uiTableLayoutPanel14.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.uiTableLayoutPanel14.Controls.Add(this.cardLine, 0, 0);
+            this.uiTableLayoutPanel14.Controls.Add(this.cardCZ, 0, 1);
+            this.uiTableLayoutPanel14.BackColor = System.Drawing.Color.FromArgb(242, 244, 247);
+            this.uiTableLayoutPanel14.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel14.TagString = null;
+            this.uiTableLayoutPanel14.RowCount = 2;
+            this.uiTableLayoutPanel14.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 42F));
+            this.uiTableLayoutPanel14.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 58F));
             // 
-            // dfdsf
+            // cardProduct
             // 
-            this.dfdsf.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dfdsf.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.dfdsf.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.dfdsf.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.dfdsf.Location = new System.Drawing.Point(2, 356);
-            this.dfdsf.Margin = new System.Windows.Forms.Padding(2);
-            this.dfdsf.MinimumSize = new System.Drawing.Size(1, 1);
-            this.dfdsf.Name = "dfdsf";
-            this.dfdsf.Radius = 2;
-            this.dfdsf.RectColor = System.Drawing.Color.MediumBlue;
-            this.dfdsf.Size = new System.Drawing.Size(239, 59);
-            this.dfdsf.TabIndex = 82;
-            this.dfdsf.Text = "Đơn vị sản phẩm (UOM)";
-            this.dfdsf.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.cardProduct.Controls.Add(this.uiTableLayoutPanel9);
+            this.cardProduct.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cardProduct.FillColor = System.Drawing.Color.FromArgb(11, 61, 46);
+            this.cardProduct.RectColor = System.Drawing.Color.FromArgb(11, 61, 46);
+            this.cardProduct.Radius = 24;
+            this.cardProduct.Padding = new System.Windows.Forms.Padding(22, 12, 22, 14);
+            this.cardProduct.Margin = new System.Windows.Forms.Padding(8);
+            this.cardProduct.StyleCustomMode = true;
+            this.cardProduct.Text = "";
+            this.cardProduct.ShowText = false;
             // 
-            // opOrderQty
+            // uiTableLayoutPanel9
             // 
-            this.opOrderQty.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opOrderQty.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opOrderQty.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opOrderQty.ForeColor = System.Drawing.Color.White;
-            this.opOrderQty.Location = new System.Drawing.Point(245, 238);
-            this.opOrderQty.Margin = new System.Windows.Forms.Padding(2);
-            this.opOrderQty.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opOrderQty.Name = "opOrderQty";
-            this.opOrderQty.Radius = 1;
-            this.opOrderQty.Size = new System.Drawing.Size(602, 55);
-            this.opOrderQty.TabIndex = 81;
-            this.opOrderQty.Text = "0";
-            this.opOrderQty.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.uiTableLayoutPanel9.ColumnCount = 3;
+            this.uiTableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
+            this.uiTableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
+            this.uiTableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.34F));
+            this.uiTableLayoutPanel9.Controls.Add(this.lblProductName, 0, 0);
+            this.uiTableLayoutPanel9.Controls.Add(this.opProductName, 0, 1);
+            this.uiTableLayoutPanel9.Controls.Add(this.lblProductCode, 0, 2);
+            this.uiTableLayoutPanel9.Controls.Add(this.lblGTIN, 1, 2);
+            this.uiTableLayoutPanel9.Controls.Add(this.lblUOM, 2, 2);
+            this.uiTableLayoutPanel9.Controls.Add(this.opProductCode, 0, 3);
+            this.uiTableLayoutPanel9.Controls.Add(this.opGTIN, 1, 3);
+            this.uiTableLayoutPanel9.Controls.Add(this.opUOM, 2, 3);
+            this.uiTableLayoutPanel9.BackColor = System.Drawing.Color.FromArgb(11, 61, 46);
+            this.uiTableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel9.TagString = null;
+            this.uiTableLayoutPanel9.RowCount = 4;
+            this.uiTableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 24F));
+            this.uiTableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.uiTableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 24F));
+            this.uiTableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 48F));
+            this.uiTableLayoutPanel9.SetColumnSpan(this.lblProductName, 3);
+            this.uiTableLayoutPanel9.SetColumnSpan(this.opProductName, 3);
             // 
-            // ipProductionDate
+            // lblProductName
             // 
-            this.ipProductionDate.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ipProductionDate.DateFormat = "yyyy-MM-dd HH:mm:ss.fff";
-            this.ipProductionDate.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.ipProductionDate.FillColor2 = System.Drawing.Color.Blue;
-            this.ipProductionDate.FillDisableColor = System.Drawing.Color.FromArgb(((int)(((byte)(149)))), ((int)(((byte)(165)))), ((int)(((byte)(166)))));
-            this.ipProductionDate.Font = new System.Drawing.Font("Segoe UI", 16F);
-            this.ipProductionDate.ForeColor = System.Drawing.Color.Black;
-            this.ipProductionDate.Location = new System.Drawing.Point(245, 61);
-            this.ipProductionDate.Margin = new System.Windows.Forms.Padding(2);
-            this.ipProductionDate.MaxLength = 23;
-            this.ipProductionDate.MinimumSize = new System.Drawing.Size(63, 0);
-            this.ipProductionDate.Name = "ipProductionDate";
-            this.ipProductionDate.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
-            this.ipProductionDate.RectColor = System.Drawing.Color.Black;
-            this.ipProductionDate.Size = new System.Drawing.Size(602, 55);
-            this.ipProductionDate.SymbolDropDown = 61555;
-            this.ipProductionDate.SymbolNormal = 61555;
-            this.ipProductionDate.SymbolSize = 24;
-            this.ipProductionDate.TabIndex = 1;
-            this.ipProductionDate.Text = "2025-07-11 09:33:59.000";
-            this.ipProductionDate.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
-            this.ipProductionDate.Value = new System.DateTime(2025, 7, 11, 9, 33, 59, 0);
-            this.ipProductionDate.Watermark = "";
+            this.lblProductName.AutoSize = false;
+            this.lblProductName.BackColor = System.Drawing.Color.FromArgb(11, 61, 46);
+            this.lblProductName.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblProductName.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblProductName.ForeColor = System.Drawing.Color.FromArgb(127, 214, 178);
+            this.lblProductName.Text = "TÊN SẢN PHẨM (productName)";
+            this.lblProductName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblProductName.StyleCustomMode = true;
             // 
-            // opGTIN
+            // opProductName
             // 
-            this.opGTIN.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opGTIN.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opGTIN.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opGTIN.ForeColor = System.Drawing.Color.White;
-            this.opGTIN.Location = new System.Drawing.Point(245, 179);
-            this.opGTIN.Margin = new System.Windows.Forms.Padding(2);
-            this.opGTIN.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opGTIN.Name = "opGTIN";
-            this.opGTIN.Radius = 1;
-            this.opGTIN.Size = new System.Drawing.Size(602, 55);
-            this.opGTIN.TabIndex = 80;
-            this.opGTIN.Text = "-";
-            this.opGTIN.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.opProductName.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opProductName.FillColor = System.Drawing.Color.FromArgb(11, 61, 46);
+            this.opProductName.RectColor = System.Drawing.Color.FromArgb(11, 61, 46);
+            this.opProductName.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opProductName.Font = new System.Drawing.Font("Segoe UI", 17F, System.Drawing.FontStyle.Bold);
+            this.opProductName.Margin = new System.Windows.Forms.Padding(0);
+            this.opProductName.Radius = 1;
+            this.opProductName.StyleCustomMode = true;
+            this.opProductName.Text = "-";
+            this.opProductName.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblProductCode
+            // 
+            this.lblProductCode.AutoSize = false;
+            this.lblProductCode.BackColor = System.Drawing.Color.FromArgb(11, 61, 46);
+            this.lblProductCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblProductCode.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lblProductCode.ForeColor = System.Drawing.Color.FromArgb(127, 214, 178);
+            this.lblProductCode.Text = "Mã sản phẩm";
+            this.lblProductCode.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblProductCode.StyleCustomMode = true;
+            // 
+            // lblGTIN
+            // 
+            this.lblGTIN.AutoSize = false;
+            this.lblGTIN.BackColor = System.Drawing.Color.FromArgb(11, 61, 46);
+            this.lblGTIN.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblGTIN.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lblGTIN.ForeColor = System.Drawing.Color.FromArgb(127, 214, 178);
+            this.lblGTIN.Text = "Mã vạch (GTIN)";
+            this.lblGTIN.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblGTIN.StyleCustomMode = true;
+            // 
+            // lblUOM
+            // 
+            this.lblUOM.AutoSize = false;
+            this.lblUOM.BackColor = System.Drawing.Color.FromArgb(11, 61, 46);
+            this.lblUOM.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblUOM.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.lblUOM.ForeColor = System.Drawing.Color.FromArgb(127, 214, 178);
+            this.lblUOM.Text = "Đơn vị (UOM)";
+            this.lblUOM.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblUOM.StyleCustomMode = true;
             // 
             // opProductCode
             // 
             this.opProductCode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opProductCode.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opProductCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opProductCode.ForeColor = System.Drawing.Color.White;
-            this.opProductCode.Location = new System.Drawing.Point(245, 297);
-            this.opProductCode.Margin = new System.Windows.Forms.Padding(2);
-            this.opProductCode.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opProductCode.Name = "opProductCode";
-            this.opProductCode.Radius = 1;
-            this.opProductCode.Size = new System.Drawing.Size(602, 55);
-            this.opProductCode.TabIndex = 78;
+            this.opProductCode.FillColor = System.Drawing.Color.FromArgb(21, 85, 63);
+            this.opProductCode.RectColor = System.Drawing.Color.FromArgb(21, 85, 63);
+            this.opProductCode.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opProductCode.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
+            this.opProductCode.Margin = new System.Windows.Forms.Padding(3);
+            this.opProductCode.Radius = 12;
+            this.opProductCode.StyleCustomMode = true;
             this.opProductCode.Text = "-";
             this.opProductCode.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // uiPanel13
+            // opGTIN
             // 
-            this.uiPanel13.Controls.Add(this.opLotNumber);
-            this.uiPanel13.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel13.FillColor = System.Drawing.Color.White;
-            this.uiPanel13.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.uiPanel13.Location = new System.Drawing.Point(245, 120);
-            this.uiPanel13.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel13.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel13.Name = "uiPanel13";
-            this.uiPanel13.Radius = 1;
-            this.uiPanel13.Size = new System.Drawing.Size(602, 55);
-            this.uiPanel13.TabIndex = 77;
-            this.uiPanel13.Text = "-";
-            this.uiPanel13.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.opGTIN.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opGTIN.FillColor = System.Drawing.Color.FromArgb(21, 85, 63);
+            this.opGTIN.RectColor = System.Drawing.Color.FromArgb(21, 85, 63);
+            this.opGTIN.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opGTIN.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
+            this.opGTIN.Margin = new System.Windows.Forms.Padding(3);
+            this.opGTIN.Radius = 12;
+            this.opGTIN.StyleCustomMode = true;
+            this.opGTIN.Text = "-";
+            this.opGTIN.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // opLotNumber
+            // opUOM
             // 
-            this.opLotNumber.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opLotNumber.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opLotNumber.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
-            this.opLotNumber.ForeColor = System.Drawing.Color.White;
-            this.opLotNumber.Location = new System.Drawing.Point(0, 0);
-            this.opLotNumber.Margin = new System.Windows.Forms.Padding(2);
-            this.opLotNumber.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opLotNumber.Name = "opLotNumber";
-            this.opLotNumber.Radius = 1;
-            this.opLotNumber.Size = new System.Drawing.Size(602, 55);
-            this.opLotNumber.TabIndex = 78;
-            this.opLotNumber.Text = "NO INFOMATION";
-            this.opLotNumber.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.opUOM.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opUOM.FillColor = System.Drawing.Color.FromArgb(21, 85, 63);
+            this.opUOM.RectColor = System.Drawing.Color.FromArgb(21, 85, 63);
+            this.opUOM.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opUOM.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
+            this.opUOM.Margin = new System.Windows.Forms.Padding(3);
+            this.opUOM.Radius = 12;
+            this.opUOM.StyleCustomMode = true;
+            this.opUOM.Text = "-";
+            this.opUOM.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // uiPanel5
+            // cardOrder
             // 
-            this.uiPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel5.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel5.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.uiPanel5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel5.Location = new System.Drawing.Point(2, 179);
-            this.uiPanel5.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel5.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel5.Name = "uiPanel5";
-            this.uiPanel5.Radius = 1;
-            this.uiPanel5.RectColor = System.Drawing.Color.MediumBlue;
-            this.uiPanel5.Size = new System.Drawing.Size(239, 55);
-            this.uiPanel5.TabIndex = 31;
-            this.uiPanel5.Text = "Mã vạch (GTIN)";
-            this.uiPanel5.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.cardOrder.Controls.Add(this.uiTableLayoutPanel4);
+            this.cardOrder.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cardOrder.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardOrder.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardOrder.Radius = 24;
+            this.cardOrder.Padding = new System.Windows.Forms.Padding(22, 14, 22, 14);
+            this.cardOrder.Margin = new System.Windows.Forms.Padding(8);
+            this.cardOrder.StyleCustomMode = true;
+            this.cardOrder.Text = "";
+            this.cardOrder.ShowText = false;
             // 
-            // uiPanel8
+            // uiTableLayoutPanel4
             // 
-            this.uiPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel8.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel8.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel8.Location = new System.Drawing.Point(2, 61);
-            this.uiPanel8.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel8.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel8.Name = "uiPanel8";
-            this.uiPanel8.Radius = 1;
-            this.uiPanel8.RectColor = System.Drawing.Color.Blue;
-            this.uiPanel8.Size = new System.Drawing.Size(239, 55);
-            this.uiPanel8.TabIndex = 76;
-            this.uiPanel8.Text = "Ngày sản xuất (ProductionDate)";
-            this.uiPanel8.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.uiTableLayoutPanel4.ColumnCount = 3;
+            this.uiTableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
+            this.uiTableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33F));
+            this.uiTableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.34F));
+            this.uiTableLayoutPanel4.Controls.Add(this.lblOrderTitle, 0, 0);
+            this.uiTableLayoutPanel4.Controls.Add(this.lblOrderNO, 0, 1);
+            this.uiTableLayoutPanel4.Controls.Add(this.ipOrderNO, 0, 2);
+            this.uiTableLayoutPanel4.Controls.Add(this.lblProductionDate, 0, 3);
+            this.uiTableLayoutPanel4.Controls.Add(this.ipProductionDate, 0, 4);
+            this.uiTableLayoutPanel4.Controls.Add(this.lblLot, 0, 5);
+            this.uiTableLayoutPanel4.Controls.Add(this.lblQty, 1, 5);
+            this.uiTableLayoutPanel4.Controls.Add(this.lblCustomerOrder, 2, 5);
+            this.uiTableLayoutPanel4.Controls.Add(this.opLotNumber, 0, 6);
+            this.uiTableLayoutPanel4.Controls.Add(this.opOrderQty, 1, 6);
+            this.uiTableLayoutPanel4.Controls.Add(this.opCustomerOrderNO, 2, 6);
+            this.uiTableLayoutPanel4.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.uiTableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel4.TagString = null;
+            this.uiTableLayoutPanel4.RowCount = 7;
+            this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
+            this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11F));
+            this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 21F));
+            this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11F));
+            this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 21F));
+            this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11F));
+            this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.uiTableLayoutPanel4.SetColumnSpan(this.lblOrderTitle, 3);
+            this.uiTableLayoutPanel4.SetColumnSpan(this.lblOrderNO, 3);
+            this.uiTableLayoutPanel4.SetColumnSpan(this.ipOrderNO, 3);
+            this.uiTableLayoutPanel4.SetColumnSpan(this.lblProductionDate, 3);
+            this.uiTableLayoutPanel4.SetColumnSpan(this.ipProductionDate, 3);
+            // 
+            // lblOrderTitle
+            // 
+            this.lblOrderTitle.AutoSize = false;
+            this.lblOrderTitle.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblOrderTitle.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblOrderTitle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblOrderTitle.ForeColor = System.Drawing.Color.FromArgb(15, 157, 117);
+            this.lblOrderTitle.Text = "ĐƠN HÀNG";
+            this.lblOrderTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblOrderTitle.StyleCustomMode = true;
+            // 
+            // lblOrderNO
+            // 
+            this.lblOrderNO.AutoSize = false;
+            this.lblOrderNO.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblOrderNO.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblOrderNO.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblOrderNO.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblOrderNO.Text = "Số yêu cầu (orderNO)";
+            this.lblOrderNO.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblOrderNO.StyleCustomMode = true;
             // 
             // ipOrderNO
             // 
             this.ipOrderNO.DataSource = null;
             this.ipOrderNO.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ipOrderNO.DropDownStyle = Sunny.UI.UIDropDownStyle.DropDownList;
-            this.ipOrderNO.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.ipOrderNO.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.ipOrderNO.ForeColor = System.Drawing.Color.White;
-            this.ipOrderNO.ItemHoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(200)))), ((int)(((byte)(255)))));
+            this.ipOrderNO.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.ipOrderNO.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
+            this.ipOrderNO.ForeColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.ipOrderNO.ItemHoverColor = System.Drawing.Color.FromArgb(231, 246, 239);
             this.ipOrderNO.Items.AddRange(new object[] {
             "TO-123-123"});
-            this.ipOrderNO.ItemSelectForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(243)))), ((int)(((byte)(255)))));
-            this.ipOrderNO.Location = new System.Drawing.Point(245, 2);
-            this.ipOrderNO.Margin = new System.Windows.Forms.Padding(2);
-            this.ipOrderNO.MinimumSize = new System.Drawing.Size(63, 0);
-            this.ipOrderNO.Name = "ipOrderNO";
+            this.ipOrderNO.ItemSelectForeColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.ipOrderNO.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.ipOrderNO.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
-            this.ipOrderNO.Radius = 1;
+            this.ipOrderNO.Radius = 12;
             this.ipOrderNO.ReadOnly = true;
-            this.ipOrderNO.RectColor = System.Drawing.Color.Black;
+            this.ipOrderNO.RectColor = System.Drawing.Color.FromArgb(208, 213, 221);
             this.ipOrderNO.RectSize = 2;
-            this.ipOrderNO.Size = new System.Drawing.Size(602, 55);
             this.ipOrderNO.SymbolSize = 24;
-            this.ipOrderNO.TabIndex = 75;
+            this.ipOrderNO.StyleCustomMode = true;
             this.ipOrderNO.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             this.ipOrderNO.Watermark = "";
             this.ipOrderNO.SelectedIndexChanged += new System.EventHandler(this.ipOrderNO_SelectedIndexChanged);
             // 
-            // uiPanel12
+            // lblProductionDate
             // 
-            this.uiPanel12.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel12.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel12.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.uiPanel12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel12.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel12.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel12.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel12.Name = "uiPanel12";
-            this.uiPanel12.Radius = 1;
-            this.uiPanel12.RectColor = System.Drawing.Color.MediumBlue;
-            this.uiPanel12.Size = new System.Drawing.Size(239, 55);
-            this.uiPanel12.TabIndex = 65;
-            this.uiPanel12.Text = "Số yêu cầu (orderNO)";
-            this.uiPanel12.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblProductionDate.AutoSize = false;
+            this.lblProductionDate.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblProductionDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblProductionDate.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblProductionDate.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblProductionDate.Text = "Ngày sản xuất (ProductionDate)";
+            this.lblProductionDate.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblProductionDate.StyleCustomMode = true;
             // 
-            // uiPanel20
+            // ipProductionDate
             // 
-            this.uiPanel20.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel20.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel20.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel20.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel20.Location = new System.Drawing.Point(2, 297);
-            this.uiPanel20.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel20.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel20.Name = "uiPanel20";
-            this.uiPanel20.Radius = 2;
-            this.uiPanel20.RectColor = System.Drawing.Color.MediumBlue;
-            this.uiPanel20.Size = new System.Drawing.Size(239, 55);
-            this.uiPanel20.TabIndex = 55;
-            this.uiPanel20.Text = "Mã sản phẩm (ProductCode)";
-            this.uiPanel20.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.ipProductionDate.DateFormat = "yyyy-MM-dd HH:mm:ss.fff";
+            this.ipProductionDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ipProductionDate.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.ipProductionDate.FillDisableColor = System.Drawing.Color.FromArgb(242, 244, 247);
+            this.ipProductionDate.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
+            this.ipProductionDate.ForeColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.ipProductionDate.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
+            this.ipProductionDate.MaxLength = 23;
+            this.ipProductionDate.Padding = new System.Windows.Forms.Padding(0, 0, 30, 2);
+            this.ipProductionDate.Radius = 12;
+            this.ipProductionDate.RectColor = System.Drawing.Color.FromArgb(208, 213, 221);
+            this.ipProductionDate.RectSize = 2;
+            this.ipProductionDate.SymbolDropDown = 61555;
+            this.ipProductionDate.SymbolNormal = 61555;
+            this.ipProductionDate.SymbolSize = 24;
+            this.ipProductionDate.StyleCustomMode = true;
+            this.ipProductionDate.Text = "2025-07-11 09:33:59.000";
+            this.ipProductionDate.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.ipProductionDate.Value = new System.DateTime(2025, 7, 11, 9, 33, 59, 0);
+            this.ipProductionDate.Watermark = "";
             // 
-            // uiPanel10
+            // lblLot
             // 
-            this.uiPanel10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel10.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel10.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.uiPanel10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel10.Location = new System.Drawing.Point(2, 238);
-            this.uiPanel10.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel10.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel10.Name = "uiPanel10";
-            this.uiPanel10.Radius = 1;
-            this.uiPanel10.RectColor = System.Drawing.Color.MediumBlue;
-            this.uiPanel10.Size = new System.Drawing.Size(239, 55);
-            this.uiPanel10.TabIndex = 53;
-            this.uiPanel10.Text = "Sản lượng (orderQty)";
-            this.uiPanel10.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblLot.AutoSize = false;
+            this.lblLot.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblLot.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblLot.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblLot.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblLot.Text = "Số lô (lotNumber)";
+            this.lblLot.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblLot.StyleCustomMode = true;
             // 
-            // uiPanel7
+            // lblQty
             // 
-            this.uiPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel7.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel7.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.uiPanel7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel7.Location = new System.Drawing.Point(2, 120);
-            this.uiPanel7.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel7.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel7.Name = "uiPanel7";
-            this.uiPanel7.Radius = 1;
-            this.uiPanel7.RectColor = System.Drawing.Color.MediumBlue;
-            this.uiPanel7.Size = new System.Drawing.Size(239, 55);
-            this.uiPanel7.TabIndex = 35;
-            this.uiPanel7.Text = "Số lô (lotNumber)";
-            this.uiPanel7.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblQty.AutoSize = false;
+            this.lblQty.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblQty.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblQty.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblQty.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblQty.Text = "Sản lượng (orderQty)";
+            this.lblQty.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblQty.StyleCustomMode = true;
             // 
-            // uiTableLayoutPanel4
+            // lblCustomerOrder
             // 
-            this.uiTableLayoutPanel4.ColumnCount = 1;
-            this.uiTableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel4.Controls.Add(this.uiTableLayoutPanel5, 0, 2);
-            this.uiTableLayoutPanel4.Controls.Add(this.uiGroupBox1, 0, 0);
-            this.uiTableLayoutPanel4.Controls.Add(this.uiTableLayoutPanel7, 0, 1);
-            this.uiTableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel4.Location = new System.Drawing.Point(3, 496);
-            this.uiTableLayoutPanel4.Name = "uiTableLayoutPanel4";
-            this.uiTableLayoutPanel4.RowCount = 3;
-            this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 204F));
-            this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 55.75221F));
-            this.uiTableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 44.24779F));
-            this.uiTableLayoutPanel4.Size = new System.Drawing.Size(1552, 354);
-            this.uiTableLayoutPanel4.TabIndex = 9;
-            this.uiTableLayoutPanel4.TagString = null;
+            this.lblCustomerOrder.AutoSize = false;
+            this.lblCustomerOrder.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblCustomerOrder.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblCustomerOrder.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblCustomerOrder.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblCustomerOrder.Text = "Mã đơn (customerOrderNo)";
+            this.lblCustomerOrder.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblCustomerOrder.StyleCustomMode = true;
+            // 
+            // opLotNumber
+            // 
+            this.opLotNumber.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opLotNumber.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opLotNumber.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opLotNumber.ForeColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.opLotNumber.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
+            this.opLotNumber.Margin = new System.Windows.Forms.Padding(2);
+            this.opLotNumber.Radius = 1;
+            this.opLotNumber.StyleCustomMode = true;
+            this.opLotNumber.Text = "-";
+            this.opLotNumber.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // opOrderQty
+            // 
+            this.opOrderQty.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opOrderQty.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opOrderQty.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opOrderQty.ForeColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.opOrderQty.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
+            this.opOrderQty.Margin = new System.Windows.Forms.Padding(2);
+            this.opOrderQty.Radius = 1;
+            this.opOrderQty.StyleCustomMode = true;
+            this.opOrderQty.Text = "0";
+            this.opOrderQty.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // opCustomerOrderNO
+            // 
+            this.opCustomerOrderNO.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opCustomerOrderNO.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opCustomerOrderNO.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opCustomerOrderNO.ForeColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.opCustomerOrderNO.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
+            this.opCustomerOrderNO.Margin = new System.Windows.Forms.Padding(2);
+            this.opCustomerOrderNO.Radius = 1;
+            this.opCustomerOrderNO.StyleCustomMode = true;
+            this.opCustomerOrderNO.Text = "-";
+            this.opCustomerOrderNO.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cardLine
+            // 
+            this.cardLine.Controls.Add(this.uiTableLayoutPanel12);
+            this.cardLine.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cardLine.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardLine.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardLine.Radius = 24;
+            this.cardLine.Padding = new System.Windows.Forms.Padding(22, 14, 22, 14);
+            this.cardLine.Margin = new System.Windows.Forms.Padding(8);
+            this.cardLine.StyleCustomMode = true;
+            this.cardLine.Text = "";
+            this.cardLine.ShowText = false;
+            // 
+            // uiTableLayoutPanel12
+            // 
+            this.uiTableLayoutPanel12.ColumnCount = 2;
+            this.uiTableLayoutPanel12.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel12.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel12.Controls.Add(this.lblLineTitle, 0, 0);
+            this.uiTableLayoutPanel12.Controls.Add(this.lblFactory, 0, 1);
+            this.uiTableLayoutPanel12.Controls.Add(this.lblSite, 1, 1);
+            this.uiTableLayoutPanel12.Controls.Add(this.opFactory, 0, 2);
+            this.uiTableLayoutPanel12.Controls.Add(this.opSite, 1, 2);
+            this.uiTableLayoutPanel12.Controls.Add(this.lblProductionLine, 0, 3);
+            this.uiTableLayoutPanel12.Controls.Add(this.lblShift, 1, 3);
+            this.uiTableLayoutPanel12.Controls.Add(this.opProductionLine, 0, 4);
+            this.uiTableLayoutPanel12.Controls.Add(this.opShift, 1, 4);
+            this.uiTableLayoutPanel12.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.uiTableLayoutPanel12.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel12.TagString = null;
+            this.uiTableLayoutPanel12.RowCount = 5;
+            this.uiTableLayoutPanel12.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
+            this.uiTableLayoutPanel12.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16F));
+            this.uiTableLayoutPanel12.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 34F));
+            this.uiTableLayoutPanel12.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16F));
+            this.uiTableLayoutPanel12.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 34F));
+            this.uiTableLayoutPanel12.SetColumnSpan(this.lblLineTitle, 2);
+            // 
+            // lblLineTitle
+            // 
+            this.lblLineTitle.AutoSize = false;
+            this.lblLineTitle.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblLineTitle.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblLineTitle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblLineTitle.ForeColor = System.Drawing.Color.FromArgb(15, 157, 117);
+            this.lblLineTitle.Text = "ĐỊA ĐIỂM SẢN XUẤT";
+            this.lblLineTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblLineTitle.StyleCustomMode = true;
+            // 
+            // lblFactory
+            // 
+            this.lblFactory.AutoSize = false;
+            this.lblFactory.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblFactory.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblFactory.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblFactory.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblFactory.Text = "Nhà máy (Factory)";
+            this.lblFactory.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblFactory.StyleCustomMode = true;
+            // 
+            // lblSite
+            // 
+            this.lblSite.AutoSize = false;
+            this.lblSite.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblSite.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblSite.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblSite.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblSite.Text = "Nhà xưởng (Site)";
+            this.lblSite.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblSite.StyleCustomMode = true;
+            // 
+            // lblProductionLine
+            // 
+            this.lblProductionLine.AutoSize = false;
+            this.lblProductionLine.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblProductionLine.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblProductionLine.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblProductionLine.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblProductionLine.Text = "Dây chuyền (Production Line)";
+            this.lblProductionLine.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblProductionLine.StyleCustomMode = true;
+            // 
+            // lblShift
+            // 
+            this.lblShift.AutoSize = false;
+            this.lblShift.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblShift.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblShift.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblShift.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblShift.Text = "Ca làm (Shift)";
+            this.lblShift.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblShift.StyleCustomMode = true;
+            // 
+            // opFactory
+            // 
+            this.opFactory.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opFactory.FillColor = System.Drawing.Color.FromArgb(249, 250, 251);
+            this.opFactory.RectColor = System.Drawing.Color.FromArgb(249, 250, 251);
+            this.opFactory.ForeColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.opFactory.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.opFactory.Margin = new System.Windows.Forms.Padding(3);
+            this.opFactory.Radius = 12;
+            this.opFactory.StyleCustomMode = true;
+            this.opFactory.Text = "-";
+            this.opFactory.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // opSite
+            // 
+            this.opSite.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opSite.FillColor = System.Drawing.Color.FromArgb(249, 250, 251);
+            this.opSite.RectColor = System.Drawing.Color.FromArgb(249, 250, 251);
+            this.opSite.ForeColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.opSite.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.opSite.Margin = new System.Windows.Forms.Padding(3);
+            this.opSite.Radius = 12;
+            this.opSite.StyleCustomMode = true;
+            this.opSite.Text = "-";
+            this.opSite.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // opProductionLine
+            // 
+            this.opProductionLine.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opProductionLine.FillColor = System.Drawing.Color.FromArgb(249, 250, 251);
+            this.opProductionLine.RectColor = System.Drawing.Color.FromArgb(249, 250, 251);
+            this.opProductionLine.ForeColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.opProductionLine.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.opProductionLine.Margin = new System.Windows.Forms.Padding(3);
+            this.opProductionLine.Radius = 12;
+            this.opProductionLine.StyleCustomMode = true;
+            this.opProductionLine.Text = "-";
+            this.opProductionLine.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // opShift
+            // 
+            this.opShift.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opShift.FillColor = System.Drawing.Color.FromArgb(249, 250, 251);
+            this.opShift.RectColor = System.Drawing.Color.FromArgb(249, 250, 251);
+            this.opShift.ForeColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.opShift.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.opShift.Margin = new System.Windows.Forms.Padding(3);
+            this.opShift.Radius = 12;
+            this.opShift.StyleCustomMode = true;
+            this.opShift.Text = "-";
+            this.opShift.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cardCZ
+            // 
+            this.cardCZ.Controls.Add(this.uiTableLayoutPanel13);
+            this.cardCZ.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cardCZ.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardCZ.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardCZ.Radius = 24;
+            this.cardCZ.Padding = new System.Windows.Forms.Padding(22, 14, 22, 14);
+            this.cardCZ.Margin = new System.Windows.Forms.Padding(8);
+            this.cardCZ.StyleCustomMode = true;
+            this.cardCZ.Text = "";
+            this.cardCZ.ShowText = false;
+            // 
+            // uiTableLayoutPanel13
+            // 
+            this.uiTableLayoutPanel13.ColumnCount = 2;
+            this.uiTableLayoutPanel13.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel13.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.uiTableLayoutPanel13.Controls.Add(this.lblCZTitle, 0, 0);
+            this.uiTableLayoutPanel13.Controls.Add(this.lblCZCodeCount, 0, 1);
+            this.uiTableLayoutPanel13.Controls.Add(this.lblCZRunCount, 1, 1);
+            this.uiTableLayoutPanel13.Controls.Add(this.opCZCodeCount, 0, 2);
+            this.uiTableLayoutPanel13.Controls.Add(this.opCZRunCount, 1, 2);
+            this.uiTableLayoutPanel13.Controls.Add(this.lblCartonPack, 0, 3);
+            this.uiTableLayoutPanel13.Controls.Add(this.lblItemsPerCarton, 1, 3);
+            this.uiTableLayoutPanel13.Controls.Add(this.opcartonPack, 0, 4);
+            this.uiTableLayoutPanel13.Controls.Add(this.opItemsPerCarton, 1, 4);
+            this.uiTableLayoutPanel13.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.uiTableLayoutPanel13.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel13.TagString = null;
+            this.uiTableLayoutPanel13.RowCount = 5;
+            this.uiTableLayoutPanel13.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
+            this.uiTableLayoutPanel13.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16F));
+            this.uiTableLayoutPanel13.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 34F));
+            this.uiTableLayoutPanel13.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16F));
+            this.uiTableLayoutPanel13.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 34F));
+            this.uiTableLayoutPanel13.SetColumnSpan(this.lblCZTitle, 2);
+            // 
+            // lblCZTitle
+            // 
+            this.lblCZTitle.AutoSize = false;
+            this.lblCZTitle.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblCZTitle.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblCZTitle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblCZTitle.ForeColor = System.Drawing.Color.FromArgb(15, 157, 117);
+            this.lblCZTitle.Text = "MÃ CZ VÀ ĐÓNG GÓI";
+            this.lblCZTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblCZTitle.StyleCustomMode = true;
+            // 
+            // lblCZCodeCount
+            // 
+            this.lblCZCodeCount.AutoSize = false;
+            this.lblCZCodeCount.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblCZCodeCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblCZCodeCount.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblCZCodeCount.ForeColor = System.Drawing.Color.FromArgb(6, 118, 71);
+            this.lblCZCodeCount.Text = "Tổng mã CZ đã nhận";
+            this.lblCZCodeCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblCZCodeCount.StyleCustomMode = true;
+            // 
+            // lblCZRunCount
+            // 
+            this.lblCZRunCount.AutoSize = false;
+            this.lblCZRunCount.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblCZRunCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblCZRunCount.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblCZRunCount.ForeColor = System.Drawing.Color.FromArgb(53, 56, 205);
+            this.lblCZRunCount.Text = "Mã CZ đang chạy";
+            this.lblCZRunCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblCZRunCount.StyleCustomMode = true;
+            // 
+            // lblCartonPack
+            // 
+            this.lblCartonPack.AutoSize = false;
+            this.lblCartonPack.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblCartonPack.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblCartonPack.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblCartonPack.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblCartonPack.Text = "Số lượng đóng gói";
+            this.lblCartonPack.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblCartonPack.StyleCustomMode = true;
+            // 
+            // lblItemsPerCarton
+            // 
+            this.lblItemsPerCarton.AutoSize = false;
+            this.lblItemsPerCarton.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblItemsPerCarton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblItemsPerCarton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblItemsPerCarton.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblItemsPerCarton.Text = "Số sản phẩm trong 1 thùng";
+            this.lblItemsPerCarton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblItemsPerCarton.StyleCustomMode = true;
+            // 
+            // opCZCodeCount
+            // 
+            this.opCZCodeCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opCZCodeCount.FillColor = System.Drawing.Color.FromArgb(231, 246, 239);
+            this.opCZCodeCount.RectColor = System.Drawing.Color.FromArgb(231, 246, 239);
+            this.opCZCodeCount.ForeColor = System.Drawing.Color.FromArgb(6, 118, 71);
+            this.opCZCodeCount.Font = new System.Drawing.Font("Segoe UI", 28F, System.Drawing.FontStyle.Bold);
+            this.opCZCodeCount.Margin = new System.Windows.Forms.Padding(3);
+            this.opCZCodeCount.Radius = 12;
+            this.opCZCodeCount.StyleCustomMode = true;
+            this.opCZCodeCount.Text = "-";
+            this.opCZCodeCount.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // opCZRunCount
+            // 
+            this.opCZRunCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opCZRunCount.FillColor = System.Drawing.Color.FromArgb(238, 244, 255);
+            this.opCZRunCount.RectColor = System.Drawing.Color.FromArgb(238, 244, 255);
+            this.opCZRunCount.ForeColor = System.Drawing.Color.FromArgb(53, 56, 205);
+            this.opCZRunCount.Font = new System.Drawing.Font("Segoe UI", 28F, System.Drawing.FontStyle.Bold);
+            this.opCZRunCount.Margin = new System.Windows.Forms.Padding(3);
+            this.opCZRunCount.Radius = 12;
+            this.opCZRunCount.StyleCustomMode = true;
+            this.opCZRunCount.Text = "-";
+            this.opCZRunCount.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // opcartonPack
+            // 
+            this.opcartonPack.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opcartonPack.FillColor = System.Drawing.Color.FromArgb(249, 250, 251);
+            this.opcartonPack.RectColor = System.Drawing.Color.FromArgb(249, 250, 251);
+            this.opcartonPack.ForeColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.opcartonPack.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.opcartonPack.Margin = new System.Windows.Forms.Padding(3);
+            this.opcartonPack.Radius = 12;
+            this.opcartonPack.StyleCustomMode = true;
+            this.opcartonPack.Text = "-";
+            this.opcartonPack.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // opItemsPerCarton
+            // 
+            this.opItemsPerCarton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opItemsPerCarton.FillColor = System.Drawing.Color.FromArgb(249, 250, 251);
+            this.opItemsPerCarton.RectColor = System.Drawing.Color.FromArgb(249, 250, 251);
+            this.opItemsPerCarton.ForeColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.opItemsPerCarton.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.opItemsPerCarton.Margin = new System.Windows.Forms.Padding(3);
+            this.opItemsPerCarton.Radius = 12;
+            this.opItemsPerCarton.StyleCustomMode = true;
+            this.opItemsPerCarton.Text = "-";
+            this.opItemsPerCarton.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // uiTableLayoutPanel8
+            // 
+            this.uiTableLayoutPanel8.ColumnCount = 6;
+            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.67F));
+            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.67F));
+            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66F));
+            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.67F));
+            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.67F));
+            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66F));
+            this.uiTableLayoutPanel8.Controls.Add(this.cardKpi1, 0, 0);
+            this.uiTableLayoutPanel8.Controls.Add(this.cardKpi2, 1, 0);
+            this.uiTableLayoutPanel8.Controls.Add(this.cardKpi3, 2, 0);
+            this.uiTableLayoutPanel8.Controls.Add(this.cardKpi4, 3, 0);
+            this.uiTableLayoutPanel8.Controls.Add(this.cardKpi5, 4, 0);
+            this.uiTableLayoutPanel8.Controls.Add(this.cardKpi6, 5, 0);
+            this.uiTableLayoutPanel8.BackColor = System.Drawing.Color.FromArgb(242, 244, 247);
+            this.uiTableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.uiTableLayoutPanel8.TagString = null;
+            this.uiTableLayoutPanel8.RowCount = 1;
+            this.uiTableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            // 
+            // cardKpi1
+            // 
+            this.cardKpi1.Controls.Add(this.opPassCount);
+            this.cardKpi1.Controls.Add(this.lblPass);
+            this.cardKpi1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cardKpi1.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardKpi1.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardKpi1.Radius = 20;
+            this.cardKpi1.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
+            this.cardKpi1.Margin = new System.Windows.Forms.Padding(6);
+            this.cardKpi1.StyleCustomMode = true;
+            this.cardKpi1.Text = "";
+            this.cardKpi1.ShowText = false;
+            // 
+            // opPassCount
+            // 
+            this.opPassCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opPassCount.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opPassCount.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opPassCount.ForeColor = System.Drawing.Color.FromArgb(6, 118, 71);
+            this.opPassCount.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
+            this.opPassCount.Margin = new System.Windows.Forms.Padding(0);
+            this.opPassCount.Radius = 1;
+            this.opPassCount.StyleCustomMode = true;
+            this.opPassCount.Text = "-";
+            this.opPassCount.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblPass
+            // 
+            this.lblPass.AutoSize = false;
+            this.lblPass.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblPass.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblPass.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblPass.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblPass.Text = "Đã đóng thùng";
+            this.lblPass.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblPass.StyleCustomMode = true;
+            this.lblPass.Size = new System.Drawing.Size(100, 34);
+            // 
+            // cardKpi2
+            // 
+            this.cardKpi2.Controls.Add(this.opFailCount);
+            this.cardKpi2.Controls.Add(this.lblFail);
+            this.cardKpi2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cardKpi2.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardKpi2.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardKpi2.Radius = 20;
+            this.cardKpi2.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
+            this.cardKpi2.Margin = new System.Windows.Forms.Padding(6);
+            this.cardKpi2.StyleCustomMode = true;
+            this.cardKpi2.Text = "";
+            this.cardKpi2.ShowText = false;
+            // 
+            // opFailCount
+            // 
+            this.opFailCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opFailCount.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opFailCount.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opFailCount.ForeColor = System.Drawing.Color.FromArgb(217, 45, 32);
+            this.opFailCount.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
+            this.opFailCount.Margin = new System.Windows.Forms.Padding(0);
+            this.opFailCount.Radius = 1;
+            this.opFailCount.StyleCustomMode = true;
+            this.opFailCount.Text = "-";
+            this.opFailCount.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblFail
+            // 
+            this.lblFail.AutoSize = false;
+            this.lblFail.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblFail.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblFail.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblFail.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblFail.Text = "Tổng số sản phẩm loại";
+            this.lblFail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblFail.StyleCustomMode = true;
+            this.lblFail.Size = new System.Drawing.Size(100, 34);
+            // 
+            // cardKpi3
+            // 
+            this.cardKpi3.Controls.Add(this.opCarton);
+            this.cardKpi3.Controls.Add(this.lblCarton);
+            this.cardKpi3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cardKpi3.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardKpi3.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardKpi3.Radius = 20;
+            this.cardKpi3.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
+            this.cardKpi3.Margin = new System.Windows.Forms.Padding(6);
+            this.cardKpi3.StyleCustomMode = true;
+            this.cardKpi3.Text = "";
+            this.cardKpi3.ShowText = false;
+            // 
+            // opCarton
+            // 
+            this.opCarton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opCarton.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opCarton.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opCarton.ForeColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.opCarton.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
+            this.opCarton.Margin = new System.Windows.Forms.Padding(0);
+            this.opCarton.Radius = 1;
+            this.opCarton.StyleCustomMode = true;
+            this.opCarton.Text = "-";
+            this.opCarton.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblCarton
+            // 
+            this.lblCarton.AutoSize = false;
+            this.lblCarton.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblCarton.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblCarton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblCarton.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblCarton.Text = "Thùng đang đóng / Dự kiến";
+            this.lblCarton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblCarton.StyleCustomMode = true;
+            this.lblCarton.Size = new System.Drawing.Size(100, 34);
+            // 
+            // cardKpi4
+            // 
+            this.cardKpi4.Controls.Add(this.opAWSFullOKCount);
+            this.cardKpi4.Controls.Add(this.lblMesDone);
+            this.cardKpi4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cardKpi4.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardKpi4.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardKpi4.Radius = 20;
+            this.cardKpi4.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
+            this.cardKpi4.Margin = new System.Windows.Forms.Padding(6);
+            this.cardKpi4.StyleCustomMode = true;
+            this.cardKpi4.Text = "";
+            this.cardKpi4.ShowText = false;
+            // 
+            // opAWSFullOKCount
+            // 
+            this.opAWSFullOKCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opAWSFullOKCount.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opAWSFullOKCount.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opAWSFullOKCount.ForeColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.opAWSFullOKCount.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
+            this.opAWSFullOKCount.Margin = new System.Windows.Forms.Padding(0);
+            this.opAWSFullOKCount.Radius = 1;
+            this.opAWSFullOKCount.StyleCustomMode = true;
+            this.opAWSFullOKCount.Text = "-";
+            this.opAWSFullOKCount.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblMesDone
+            // 
+            this.lblMesDone.AutoSize = false;
+            this.lblMesDone.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblMesDone.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblMesDone.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblMesDone.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblMesDone.Text = "Gửi nhận hoàn thành MES";
+            this.lblMesDone.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblMesDone.StyleCustomMode = true;
+            this.lblMesDone.Size = new System.Drawing.Size(100, 34);
+            // 
+            // cardKpi5
+            // 
+            this.cardKpi5.Controls.Add(this.opAWSNotSent);
+            this.cardKpi5.Controls.Add(this.lblMesPending);
+            this.cardKpi5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cardKpi5.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardKpi5.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardKpi5.Radius = 20;
+            this.cardKpi5.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
+            this.cardKpi5.Margin = new System.Windows.Forms.Padding(6);
+            this.cardKpi5.StyleCustomMode = true;
+            this.cardKpi5.Text = "";
+            this.cardKpi5.ShowText = false;
+            // 
+            // opAWSNotSent
+            // 
+            this.opAWSNotSent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opAWSNotSent.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opAWSNotSent.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opAWSNotSent.ForeColor = System.Drawing.Color.FromArgb(181, 71, 8);
+            this.opAWSNotSent.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
+            this.opAWSNotSent.Margin = new System.Windows.Forms.Padding(0);
+            this.opAWSNotSent.Radius = 1;
+            this.opAWSNotSent.StyleCustomMode = true;
+            this.opAWSNotSent.Text = "-";
+            this.opAWSNotSent.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblMesPending
+            // 
+            this.lblMesPending.AutoSize = false;
+            this.lblMesPending.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblMesPending.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblMesPending.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblMesPending.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblMesPending.Text = "Đang chờ gửi / Gửi lại";
+            this.lblMesPending.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblMesPending.StyleCustomMode = true;
+            this.lblMesPending.Size = new System.Drawing.Size(100, 34);
+            // 
+            // cardKpi6
+            // 
+            this.cardKpi6.Controls.Add(this.opAWSSentWating);
+            this.cardKpi6.Controls.Add(this.lblMesWaiting);
+            this.cardKpi6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cardKpi6.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardKpi6.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.cardKpi6.Radius = 20;
+            this.cardKpi6.Padding = new System.Windows.Forms.Padding(16, 10, 16, 10);
+            this.cardKpi6.Margin = new System.Windows.Forms.Padding(6);
+            this.cardKpi6.StyleCustomMode = true;
+            this.cardKpi6.Text = "";
+            this.cardKpi6.ShowText = false;
+            // 
+            // opAWSSentWating
+            // 
+            this.opAWSSentWating.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opAWSSentWating.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opAWSSentWating.RectColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.opAWSSentWating.ForeColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.opAWSSentWating.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
+            this.opAWSSentWating.Margin = new System.Windows.Forms.Padding(0);
+            this.opAWSSentWating.Radius = 1;
+            this.opAWSSentWating.StyleCustomMode = true;
+            this.opAWSSentWating.Text = "-";
+            this.opAWSSentWating.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // lblMesWaiting
+            // 
+            this.lblMesWaiting.AutoSize = false;
+            this.lblMesWaiting.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.lblMesWaiting.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblMesWaiting.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblMesWaiting.ForeColor = System.Drawing.Color.FromArgb(102, 112, 133);
+            this.lblMesWaiting.Text = "Đang chờ trả về MES";
+            this.lblMesWaiting.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblMesWaiting.StyleCustomMode = true;
+            this.lblMesWaiting.Size = new System.Drawing.Size(100, 34);
+            // 
+            // opTer
+            // 
+            this.opTer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.opTer.FillColor = System.Drawing.Color.FromArgb(255, 250, 235);
+            this.opTer.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.opTer.ForeColor = System.Drawing.Color.FromArgb(181, 71, 8);
+            this.opTer.Margin = new System.Windows.Forms.Padding(8, 6, 8, 6);
+            this.opTer.Padding = new System.Windows.Forms.Padding(10, 6, 10, 4);
+            this.opTer.Radius = 14;
+            this.opTer.RectColor = System.Drawing.Color.FromArgb(254, 223, 137);
+            this.opTer.ShowText = false;
+            this.opTer.StyleCustomMode = true;
+            this.opTer.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // uiTableLayoutPanel5
             // 
-            this.uiTableLayoutPanel5.ColumnCount = 4;
-            this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35F));
-            this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
+            this.uiTableLayoutPanel5.ColumnCount = 5;
+            this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 26F));
+            this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18F));
+            this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18F));
+            this.uiTableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18F));
             this.uiTableLayoutPanel5.Controls.Add(this.btnRUN, 0, 0);
-            this.uiTableLayoutPanel5.Controls.Add(this.btnResetPO, 3, 0);
-            this.uiTableLayoutPanel5.Controls.Add(this.btnProductionDate, 2, 0);
             this.uiTableLayoutPanel5.Controls.Add(this.btnPO, 1, 0);
+            this.uiTableLayoutPanel5.Controls.Add(this.btnProductionDate, 2, 0);
+            this.uiTableLayoutPanel5.Controls.Add(this.btnResetPO, 3, 0);
+            this.uiTableLayoutPanel5.Controls.Add(this.btnReport, 4, 0);
+            this.uiTableLayoutPanel5.BackColor = System.Drawing.Color.FromArgb(242, 244, 247);
             this.uiTableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel5.Location = new System.Drawing.Point(2, 289);
-            this.uiTableLayoutPanel5.Margin = new System.Windows.Forms.Padding(2);
-            this.uiTableLayoutPanel5.Name = "uiTableLayoutPanel5";
+            this.uiTableLayoutPanel5.TagString = null;
+            this.uiTableLayoutPanel5.Margin = new System.Windows.Forms.Padding(2, 6, 2, 6);
             this.uiTableLayoutPanel5.RowCount = 1;
             this.uiTableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.uiTableLayoutPanel5.Size = new System.Drawing.Size(1548, 63);
-            this.uiTableLayoutPanel5.TabIndex = 11;
-            this.uiTableLayoutPanel5.TagString = null;
             // 
             // btnRUN
             // 
             this.btnRUN.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnRUN.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnRUN.Enabled = false;
-            this.btnRUN.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(204)))), ((int)(((byte)(113)))));
-            this.btnRUN.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
-            this.btnRUN.Location = new System.Drawing.Point(2, 2);
-            this.btnRUN.Margin = new System.Windows.Forms.Padding(2);
-            this.btnRUN.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btnRUN.Name = "btnRUN";
-            this.btnRUN.Radius = 8;
-            this.btnRUN.Size = new System.Drawing.Size(537, 59);
+            this.btnRUN.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
+            this.btnRUN.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.btnRUN.Radius = 16;
             this.btnRUN.Symbol = 61515;
-            this.btnRUN.TabIndex = 4;
+            this.btnRUN.SymbolSize = 26;
+            this.btnRUN.StyleCustomMode = true;
             this.btnRUN.Text = "BẮT ĐẦU SẢN XUẤT";
-            this.btnRUN.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnRUN.TipsFont = new System.Drawing.Font("Segoe UI", 9F);
             this.btnRUN.Click += new System.EventHandler(this.btnRUN_Click);
-            // 
-            // btnResetPO
-            // 
-            this.btnResetPO.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnResetPO.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnResetPO.Enabled = false;
-            this.btnResetPO.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(188)))), ((int)(((byte)(156)))));
-            this.btnResetPO.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.btnResetPO.Location = new System.Drawing.Point(1317, 2);
-            this.btnResetPO.Margin = new System.Windows.Forms.Padding(2);
-            this.btnResetPO.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btnResetPO.Name = "btnResetPO";
-            this.btnResetPO.Radius = 8;
-            this.btnResetPO.Size = new System.Drawing.Size(229, 59);
-            this.btnResetPO.Symbol = 561534;
-            this.btnResetPO.TabIndex = 0;
-            this.btnResetPO.Text = "RESET LỖI";
-            this.btnResetPO.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnResetPO.Click += new System.EventHandler(this.btnClosePO_Click);
-            // 
-            // btnProductionDate
-            // 
-            this.btnProductionDate.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnProductionDate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnProductionDate.Enabled = false;
-            this.btnProductionDate.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(89)))), ((int)(((byte)(182)))));
-            this.btnProductionDate.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.btnProductionDate.Location = new System.Drawing.Point(930, 2);
-            this.btnProductionDate.Margin = new System.Windows.Forms.Padding(2);
-            this.btnProductionDate.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btnProductionDate.Name = "btnProductionDate";
-            this.btnProductionDate.Radius = 8;
-            this.btnProductionDate.Size = new System.Drawing.Size(383, 59);
-            this.btnProductionDate.Symbol = 559670;
-            this.btnProductionDate.TabIndex = 1;
-            this.btnProductionDate.Text = "Sửa Ngày SX";
-            this.btnProductionDate.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnProductionDate.Click += new System.EventHandler(this.btnProductionDate_Click);
+            this.btnRUN.FillColor = System.Drawing.Color.FromArgb(15, 157, 117);
+            this.btnRUN.FillHoverColor = System.Drawing.Color.FromArgb(11, 127, 93);
+            this.btnRUN.FillPressColor = System.Drawing.Color.FromArgb(8, 122, 85);
+            this.btnRUN.FillDisableColor = System.Drawing.Color.FromArgb(166, 216, 200);
+            this.btnRUN.RectColor = System.Drawing.Color.FromArgb(15, 157, 117);
+            this.btnRUN.RectHoverColor = System.Drawing.Color.FromArgb(11, 127, 93);
+            this.btnRUN.RectPressColor = System.Drawing.Color.FromArgb(8, 122, 85);
+            this.btnRUN.RectDisableColor = System.Drawing.Color.FromArgb(166, 216, 200);
+            this.btnRUN.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.btnRUN.ForeHoverColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.btnRUN.ForePressColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.btnRUN.ForeDisableColor = System.Drawing.Color.FromArgb(255, 255, 255);
             // 
             // btnPO
             // 
             this.btnPO.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnPO.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnPO.Enabled = false;
-            this.btnPO.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.btnPO.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.btnPO.Location = new System.Drawing.Point(543, 2);
-            this.btnPO.Margin = new System.Windows.Forms.Padding(2);
-            this.btnPO.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btnPO.Name = "btnPO";
-            this.btnPO.Radius = 8;
-            this.btnPO.Size = new System.Drawing.Size(383, 59);
+            this.btnPO.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
+            this.btnPO.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.btnPO.Radius = 16;
             this.btnPO.Symbol = 61508;
-            this.btnPO.SymbolSize = 44;
-            this.btnPO.TabIndex = 3;
+            this.btnPO.SymbolSize = 26;
+            this.btnPO.StyleCustomMode = true;
             this.btnPO.Text = "Chọn PO";
-            this.btnPO.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnPO.TipsFont = new System.Drawing.Font("Segoe UI", 9F);
             this.btnPO.Click += new System.EventHandler(this.btnPO_Click);
+            this.btnPO.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.btnPO.FillHoverColor = System.Drawing.Color.FromArgb(242, 244, 247);
+            this.btnPO.FillPressColor = System.Drawing.Color.FromArgb(234, 236, 240);
+            this.btnPO.FillDisableColor = System.Drawing.Color.FromArgb(249, 250, 251);
+            this.btnPO.RectColor = System.Drawing.Color.FromArgb(208, 213, 221);
+            this.btnPO.RectHoverColor = System.Drawing.Color.FromArgb(152, 162, 179);
+            this.btnPO.RectPressColor = System.Drawing.Color.FromArgb(152, 162, 179);
+            this.btnPO.RectDisableColor = System.Drawing.Color.FromArgb(234, 236, 240);
+            this.btnPO.ForeColor = System.Drawing.Color.FromArgb(52, 64, 84);
+            this.btnPO.ForeHoverColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.btnPO.ForePressColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.btnPO.ForeDisableColor = System.Drawing.Color.FromArgb(152, 162, 179);
             // 
-            // uiGroupBox1
+            // btnProductionDate
             // 
-            this.uiGroupBox1.Controls.Add(this.uiTableLayoutPanel8);
-            this.uiGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiGroupBox1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uiGroupBox1.Location = new System.Drawing.Point(4, 5);
-            this.uiGroupBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.uiGroupBox1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiGroupBox1.Name = "uiGroupBox1";
-            this.uiGroupBox1.Padding = new System.Windows.Forms.Padding(0, 32, 0, 0);
-            this.uiGroupBox1.Size = new System.Drawing.Size(1544, 194);
-            this.uiGroupBox1.TabIndex = 15;
-            this.uiGroupBox1.Text = "Thống kê cơ bản";
-            this.uiGroupBox1.TextAlignment = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnProductionDate.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnProductionDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnProductionDate.Enabled = false;
+            this.btnProductionDate.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
+            this.btnProductionDate.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.btnProductionDate.Radius = 16;
+            this.btnProductionDate.Symbol = 559670;
+            this.btnProductionDate.SymbolSize = 26;
+            this.btnProductionDate.StyleCustomMode = true;
+            this.btnProductionDate.Text = "Sửa Ngày SX";
+            this.btnProductionDate.TipsFont = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnProductionDate.Click += new System.EventHandler(this.btnProductionDate_Click);
+            this.btnProductionDate.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.btnProductionDate.FillHoverColor = System.Drawing.Color.FromArgb(242, 244, 247);
+            this.btnProductionDate.FillPressColor = System.Drawing.Color.FromArgb(234, 236, 240);
+            this.btnProductionDate.FillDisableColor = System.Drawing.Color.FromArgb(249, 250, 251);
+            this.btnProductionDate.RectColor = System.Drawing.Color.FromArgb(208, 213, 221);
+            this.btnProductionDate.RectHoverColor = System.Drawing.Color.FromArgb(152, 162, 179);
+            this.btnProductionDate.RectPressColor = System.Drawing.Color.FromArgb(152, 162, 179);
+            this.btnProductionDate.RectDisableColor = System.Drawing.Color.FromArgb(234, 236, 240);
+            this.btnProductionDate.ForeColor = System.Drawing.Color.FromArgb(52, 64, 84);
+            this.btnProductionDate.ForeHoverColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.btnProductionDate.ForePressColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.btnProductionDate.ForeDisableColor = System.Drawing.Color.FromArgb(152, 162, 179);
             // 
-            // uiTableLayoutPanel8
+            // btnResetPO
             // 
-            this.uiTableLayoutPanel8.ColumnCount = 4;
-            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15.41451F));
-            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 39.2487F));
-            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.62953F));
-            this.uiTableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 32.57772F));
-            this.uiTableLayoutPanel8.Controls.Add(this.opAWSSentWating, 3, 2);
-            this.uiTableLayoutPanel8.Controls.Add(this.opCarton, 1, 2);
-            this.uiTableLayoutPanel8.Controls.Add(this.opAWSNotSent, 3, 1);
-            this.uiTableLayoutPanel8.Controls.Add(this.uiPanel16, 0, 1);
-            this.uiTableLayoutPanel8.Controls.Add(this.uiPanel1, 0, 0);
-            this.uiTableLayoutPanel8.Controls.Add(this.uiPanel18, 2, 2);
-            this.uiTableLayoutPanel8.Controls.Add(this.uiPanel17, 2, 1);
-            this.uiTableLayoutPanel8.Controls.Add(this.uiPanel9, 2, 0);
-            this.uiTableLayoutPanel8.Controls.Add(this.uiPanel2, 0, 2);
-            this.uiTableLayoutPanel8.Controls.Add(this.opPassCount, 1, 0);
-            this.uiTableLayoutPanel8.Controls.Add(this.opFailCount, 1, 1);
-            this.uiTableLayoutPanel8.Controls.Add(this.opAWSFullOKCount, 3, 0);
-            this.uiTableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel8.Location = new System.Drawing.Point(0, 32);
-            this.uiTableLayoutPanel8.Margin = new System.Windows.Forms.Padding(2);
-            this.uiTableLayoutPanel8.Name = "uiTableLayoutPanel8";
-            this.uiTableLayoutPanel8.RowCount = 3;
-            this.uiTableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.uiTableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.uiTableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.uiTableLayoutPanel8.Size = new System.Drawing.Size(1544, 162);
-            this.uiTableLayoutPanel8.TabIndex = 14;
-            this.uiTableLayoutPanel8.TagString = null;
-            // 
-            // opAWSSentWating
-            // 
-            this.opAWSSentWating.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opAWSSentWating.FillColor = System.Drawing.Color.White;
-            this.opAWSSentWating.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.opAWSSentWating.Location = new System.Drawing.Point(1041, 110);
-            this.opAWSSentWating.Margin = new System.Windows.Forms.Padding(2);
-            this.opAWSSentWating.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opAWSSentWating.Name = "opAWSSentWating";
-            this.opAWSSentWating.Radius = 1;
-            this.opAWSSentWating.Size = new System.Drawing.Size(501, 50);
-            this.opAWSSentWating.TabIndex = 87;
-            this.opAWSSentWating.Text = "-";
-            this.opAWSSentWating.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opCarton
-            // 
-            this.opCarton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opCarton.FillColor = System.Drawing.Color.White;
-            this.opCarton.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.opCarton.Location = new System.Drawing.Point(240, 110);
-            this.opCarton.Margin = new System.Windows.Forms.Padding(2);
-            this.opCarton.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opCarton.Name = "opCarton";
-            this.opCarton.Radius = 1;
-            this.opCarton.Size = new System.Drawing.Size(602, 50);
-            this.opCarton.TabIndex = 86;
-            this.opCarton.Text = "-";
-            this.opCarton.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opAWSNotSent
-            // 
-            this.opAWSNotSent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opAWSNotSent.FillColor = System.Drawing.Color.White;
-            this.opAWSNotSent.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.opAWSNotSent.Location = new System.Drawing.Point(1041, 56);
-            this.opAWSNotSent.Margin = new System.Windows.Forms.Padding(2);
-            this.opAWSNotSent.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opAWSNotSent.Name = "opAWSNotSent";
-            this.opAWSNotSent.Radius = 1;
-            this.opAWSNotSent.Size = new System.Drawing.Size(501, 50);
-            this.opAWSNotSent.TabIndex = 85;
-            this.opAWSNotSent.Text = "-";
-            this.opAWSNotSent.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel16
-            // 
-            this.uiPanel16.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel16.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel16.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel16.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel16.Location = new System.Drawing.Point(2, 56);
-            this.uiPanel16.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel16.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel16.Name = "uiPanel16";
-            this.uiPanel16.Radius = 2;
-            this.uiPanel16.RectColor = System.Drawing.Color.MediumBlue;
-            this.uiPanel16.Size = new System.Drawing.Size(234, 50);
-            this.uiPanel16.TabIndex = 83;
-            this.uiPanel16.Text = "Tổng số sản phẩm loại";
-            this.uiPanel16.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel1
-            // 
-            this.uiPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel1.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel1.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel1.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel1.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel1.Name = "uiPanel1";
-            this.uiPanel1.Radius = 2;
-            this.uiPanel1.RectColor = System.Drawing.Color.MediumBlue;
-            this.uiPanel1.Size = new System.Drawing.Size(234, 50);
-            this.uiPanel1.TabIndex = 81;
-            this.uiPanel1.Text = "Đã đóng thùng";
-            this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel18
-            // 
-            this.uiPanel18.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel18.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel18.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel18.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel18.Location = new System.Drawing.Point(846, 110);
-            this.uiPanel18.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel18.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel18.Name = "uiPanel18";
-            this.uiPanel18.Radius = 2;
-            this.uiPanel18.RectColor = System.Drawing.Color.MediumBlue;
-            this.uiPanel18.Size = new System.Drawing.Size(191, 50);
-            this.uiPanel18.TabIndex = 84;
-            this.uiPanel18.Text = "Đang chờ trả về MES";
-            this.uiPanel18.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel17
-            // 
-            this.uiPanel17.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel17.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel17.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel17.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel17.Location = new System.Drawing.Point(846, 56);
-            this.uiPanel17.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel17.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel17.Name = "uiPanel17";
-            this.uiPanel17.Radius = 2;
-            this.uiPanel17.RectColor = System.Drawing.Color.MediumBlue;
-            this.uiPanel17.Size = new System.Drawing.Size(191, 50);
-            this.uiPanel17.TabIndex = 83;
-            this.uiPanel17.Text = "Đang chờ gửi / Gửi lại";
-            this.uiPanel17.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel9
-            // 
-            this.uiPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel9.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel9.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel9.Location = new System.Drawing.Point(846, 2);
-            this.uiPanel9.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel9.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel9.Name = "uiPanel9";
-            this.uiPanel9.Radius = 2;
-            this.uiPanel9.RectColor = System.Drawing.Color.MediumBlue;
-            this.uiPanel9.Size = new System.Drawing.Size(191, 50);
-            this.uiPanel9.TabIndex = 82;
-            this.uiPanel9.Text = "Gửi nhận hoàn thành MES";
-            this.uiPanel9.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel2
-            // 
-            this.uiPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel2.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel2.Location = new System.Drawing.Point(2, 110);
-            this.uiPanel2.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel2.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel2.Name = "uiPanel2";
-            this.uiPanel2.Radius = 2;
-            this.uiPanel2.RectColor = System.Drawing.Color.MediumBlue;
-            this.uiPanel2.Size = new System.Drawing.Size(234, 50);
-            this.uiPanel2.TabIndex = 82;
-            this.uiPanel2.Text = "Thùng đang đóng/Dự kiến";
-            this.uiPanel2.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opPassCount
-            // 
-            this.opPassCount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opPassCount.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.opPassCount.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.opPassCount.Location = new System.Drawing.Point(240, 2);
-            this.opPassCount.Margin = new System.Windows.Forms.Padding(2);
-            this.opPassCount.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opPassCount.Name = "opPassCount";
-            this.opPassCount.Radius = 1;
-            this.opPassCount.Size = new System.Drawing.Size(602, 50);
-            this.opPassCount.TabIndex = 80;
-            this.opPassCount.Text = "-";
-            this.opPassCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opFailCount
-            // 
-            this.opFailCount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opFailCount.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.opFailCount.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.opFailCount.Location = new System.Drawing.Point(240, 56);
-            this.opFailCount.Margin = new System.Windows.Forms.Padding(2);
-            this.opFailCount.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opFailCount.Name = "opFailCount";
-            this.opFailCount.Radius = 1;
-            this.opFailCount.Size = new System.Drawing.Size(602, 50);
-            this.opFailCount.TabIndex = 83;
-            this.opFailCount.Text = "-";
-            this.opFailCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opAWSFullOKCount
-            // 
-            this.opAWSFullOKCount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opAWSFullOKCount.FillColor = System.Drawing.Color.White;
-            this.opAWSFullOKCount.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.opAWSFullOKCount.Location = new System.Drawing.Point(1041, 2);
-            this.opAWSFullOKCount.Margin = new System.Windows.Forms.Padding(2);
-            this.opAWSFullOKCount.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opAWSFullOKCount.Name = "opAWSFullOKCount";
-            this.opAWSFullOKCount.Radius = 1;
-            this.opAWSFullOKCount.Size = new System.Drawing.Size(501, 50);
-            this.opAWSFullOKCount.TabIndex = 84;
-            this.opAWSFullOKCount.Text = "-";
-            this.opAWSFullOKCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiTableLayoutPanel7
-            // 
-            this.uiTableLayoutPanel7.ColumnCount = 2;
-            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 84.99353F));
-            this.uiTableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15.00647F));
-            this.uiTableLayoutPanel7.Controls.Add(this.opTer, 0, 0);
-            this.uiTableLayoutPanel7.Controls.Add(this.btnReport, 1, 0);
-            this.uiTableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel7.Location = new System.Drawing.Point(3, 207);
-            this.uiTableLayoutPanel7.Name = "uiTableLayoutPanel7";
-            this.uiTableLayoutPanel7.RowCount = 1;
-            this.uiTableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel7.Size = new System.Drawing.Size(1546, 77);
-            this.uiTableLayoutPanel7.TabIndex = 16;
-            this.uiTableLayoutPanel7.TagString = null;
-            // 
-            // opTer
-            // 
-            this.opTer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opTer.FillColor = System.Drawing.Color.White;
-            this.opTer.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.opTer.Location = new System.Drawing.Point(4, 5);
-            this.opTer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.opTer.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opTer.Name = "opTer";
-            this.opTer.Padding = new System.Windows.Forms.Padding(2);
-            this.opTer.ShowText = false;
-            this.opTer.Size = new System.Drawing.Size(1306, 67);
-            this.opTer.TabIndex = 16;
-            this.opTer.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnResetPO.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnResetPO.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnResetPO.Enabled = false;
+            this.btnResetPO.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
+            this.btnResetPO.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.btnResetPO.Radius = 16;
+            this.btnResetPO.Symbol = 561534;
+            this.btnResetPO.SymbolSize = 26;
+            this.btnResetPO.StyleCustomMode = true;
+            this.btnResetPO.Text = "RESET LỖI";
+            this.btnResetPO.TipsFont = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnResetPO.Click += new System.EventHandler(this.btnClosePO_Click);
+            this.btnResetPO.FillColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.btnResetPO.FillHoverColor = System.Drawing.Color.FromArgb(242, 244, 247);
+            this.btnResetPO.FillPressColor = System.Drawing.Color.FromArgb(234, 236, 240);
+            this.btnResetPO.FillDisableColor = System.Drawing.Color.FromArgb(249, 250, 251);
+            this.btnResetPO.RectColor = System.Drawing.Color.FromArgb(208, 213, 221);
+            this.btnResetPO.RectHoverColor = System.Drawing.Color.FromArgb(152, 162, 179);
+            this.btnResetPO.RectPressColor = System.Drawing.Color.FromArgb(152, 162, 179);
+            this.btnResetPO.RectDisableColor = System.Drawing.Color.FromArgb(234, 236, 240);
+            this.btnResetPO.ForeColor = System.Drawing.Color.FromArgb(52, 64, 84);
+            this.btnResetPO.ForeHoverColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.btnResetPO.ForePressColor = System.Drawing.Color.FromArgb(16, 24, 40);
+            this.btnResetPO.ForeDisableColor = System.Drawing.Color.FromArgb(152, 162, 179);
             // 
             // btnReport
             // 
             this.btnReport.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnReport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnReport.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.btnReport.Location = new System.Drawing.Point(1317, 3);
-            this.btnReport.MinimumSize = new System.Drawing.Size(1, 1);
-            this.btnReport.Name = "btnReport";
-            this.btnReport.Size = new System.Drawing.Size(226, 71);
+            this.btnReport.Font = new System.Drawing.Font("Segoe UI", 13F, System.Drawing.FontStyle.Bold);
+            this.btnReport.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.btnReport.Radius = 16;
             this.btnReport.Symbol = 61787;
-            this.btnReport.TabIndex = 3;
+            this.btnReport.SymbolSize = 26;
+            this.btnReport.StyleCustomMode = true;
             this.btnReport.Text = "Báo Cáo";
-            this.btnReport.TipsFont = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnReport.TipsFont = new System.Drawing.Font("Segoe UI", 9F);
             this.btnReport.Click += new System.EventHandler(this.btnReport_Click);
-            // 
-            // uiTableLayoutPanel6
-            // 
-            this.uiTableLayoutPanel6.ColumnCount = 5;
-            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28.70478F));
-            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 71.29522F));
-            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
-            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 192F));
-            this.uiTableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 306F));
-            this.uiTableLayoutPanel6.Controls.Add(this.uiPanel14, 3, 0);
-            this.uiTableLayoutPanel6.Controls.Add(this.opCZRunCount, 2, 0);
-            this.uiTableLayoutPanel6.Controls.Add(this.uiPanel3, 0, 0);
-            this.uiTableLayoutPanel6.Controls.Add(this.opProductName, 1, 0);
-            this.uiTableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiTableLayoutPanel6.Location = new System.Drawing.Point(1, 426);
-            this.uiTableLayoutPanel6.Margin = new System.Windows.Forms.Padding(1);
-            this.uiTableLayoutPanel6.Name = "uiTableLayoutPanel6";
-            this.uiTableLayoutPanel6.RowCount = 1;
-            this.uiTableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.uiTableLayoutPanel6.Size = new System.Drawing.Size(1556, 66);
-            this.uiTableLayoutPanel6.TabIndex = 10;
-            this.uiTableLayoutPanel6.TagString = null;
-            // 
-            // uiPanel14
-            // 
-            this.uiPanel14.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel14.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel14.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel14.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel14.Location = new System.Drawing.Point(1059, 2);
-            this.uiPanel14.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel14.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel14.Name = "uiPanel14";
-            this.uiPanel14.Radius = 1;
-            this.uiPanel14.RectColor = System.Drawing.Color.Blue;
-            this.uiPanel14.Size = new System.Drawing.Size(188, 62);
-            this.uiPanel14.TabIndex = 86;
-            this.uiPanel14.Text = "Số sản phẩm trong 1 thùng";
-            this.uiPanel14.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opCZRunCount
-            // 
-            this.opCZRunCount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opCZRunCount.FillColor = System.Drawing.Color.White;
-            this.opCZRunCount.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.opCZRunCount.Location = new System.Drawing.Point(859, 2);
-            this.opCZRunCount.Margin = new System.Windows.Forms.Padding(2);
-            this.opCZRunCount.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opCZRunCount.Name = "opCZRunCount";
-            this.opCZRunCount.Radius = 1;
-            this.opCZRunCount.Size = new System.Drawing.Size(196, 62);
-            this.opCZRunCount.TabIndex = 85;
-            this.opCZRunCount.Text = "-";
-            this.opCZRunCount.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // uiPanel3
-            // 
-            this.uiPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.uiPanel3.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
-            this.uiPanel3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.uiPanel3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
-            this.uiPanel3.Location = new System.Drawing.Point(2, 2);
-            this.uiPanel3.Margin = new System.Windows.Forms.Padding(2);
-            this.uiPanel3.MinimumSize = new System.Drawing.Size(1, 1);
-            this.uiPanel3.Name = "uiPanel3";
-            this.uiPanel3.Radius = 1;
-            this.uiPanel3.RectColor = System.Drawing.Color.MediumBlue;
-            this.uiPanel3.Size = new System.Drawing.Size(242, 62);
-            this.uiPanel3.TabIndex = 81;
-            this.uiPanel3.Text = "Tên sản phẩm (productName)";
-            this.uiPanel3.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // opProductName
-            // 
-            this.opProductName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.opProductName.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(152)))), ((int)(((byte)(219)))));
-            this.opProductName.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.opProductName.ForeColor = System.Drawing.Color.White;
-            this.opProductName.Location = new System.Drawing.Point(248, 2);
-            this.opProductName.Margin = new System.Windows.Forms.Padding(2);
-            this.opProductName.MinimumSize = new System.Drawing.Size(1, 1);
-            this.opProductName.Name = "opProductName";
-            this.opProductName.Radius = 1;
-            this.opProductName.Size = new System.Drawing.Size(607, 62);
-            this.opProductName.TabIndex = 80;
-            this.opProductName.Text = "-";
-            this.opProductName.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnReport.FillColor = System.Drawing.Color.FromArgb(15, 157, 117);
+            this.btnReport.FillHoverColor = System.Drawing.Color.FromArgb(11, 127, 93);
+            this.btnReport.FillPressColor = System.Drawing.Color.FromArgb(8, 122, 85);
+            this.btnReport.FillDisableColor = System.Drawing.Color.FromArgb(166, 216, 200);
+            this.btnReport.RectColor = System.Drawing.Color.FromArgb(15, 157, 117);
+            this.btnReport.RectHoverColor = System.Drawing.Color.FromArgb(11, 127, 93);
+            this.btnReport.RectPressColor = System.Drawing.Color.FromArgb(8, 122, 85);
+            this.btnReport.RectDisableColor = System.Drawing.Color.FromArgb(166, 216, 200);
+            this.btnReport.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.btnReport.ForeHoverColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.btnReport.ForePressColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.btnReport.ForeDisableColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            this.btnReport.Enabled = true;
             // 
             // PPOInfo
             // 
@@ -1228,18 +1257,27 @@
             this.Text = "Sản Xuất";
             this.Initialize += new System.EventHandler(this.PPOInfo_Initialize);
             this.Finalize += new System.EventHandler(this.PPOInfo_Finalize);
-            this.uiTitlePanel1.ResumeLayout(false);
-            this.uiTableLayoutPanel1.ResumeLayout(false);
-            this.uiTableLayoutPanel2.ResumeLayout(false);
+            this.uiTableLayoutPanel5.ResumeLayout(false);
+            this.cardKpi6.ResumeLayout(false);
+            this.cardKpi5.ResumeLayout(false);
+            this.cardKpi4.ResumeLayout(false);
+            this.cardKpi3.ResumeLayout(false);
+            this.cardKpi2.ResumeLayout(false);
+            this.cardKpi1.ResumeLayout(false);
+            this.uiTableLayoutPanel8.ResumeLayout(false);
+            this.uiTableLayoutPanel13.ResumeLayout(false);
+            this.cardCZ.ResumeLayout(false);
+            this.uiTableLayoutPanel12.ResumeLayout(false);
+            this.cardLine.ResumeLayout(false);
+            this.uiTableLayoutPanel4.ResumeLayout(false);
+            this.cardOrder.ResumeLayout(false);
+            this.uiTableLayoutPanel9.ResumeLayout(false);
+            this.cardProduct.ResumeLayout(false);
             this.uiTableLayoutPanel14.ResumeLayout(false);
             this.uiTableLayoutPanel3.ResumeLayout(false);
-            this.uiPanel13.ResumeLayout(false);
-            this.uiTableLayoutPanel4.ResumeLayout(false);
-            this.uiTableLayoutPanel5.ResumeLayout(false);
-            this.uiGroupBox1.ResumeLayout(false);
-            this.uiTableLayoutPanel8.ResumeLayout(false);
-            this.uiTableLayoutPanel7.ResumeLayout(false);
-            this.uiTableLayoutPanel6.ResumeLayout(false);
+            this.uiTableLayoutPanel2.ResumeLayout(false);
+            this.uiTableLayoutPanel1.ResumeLayout(false);
+            this.uiTitlePanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1249,64 +1287,78 @@
         private Sunny.UI.UITitlePanel uiTitlePanel1;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel1;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel2;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel3;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel14;
-        private Sunny.UI.UIPanel opCZCodeCount;
+        private Sunny.UI.UIPanel cardProduct;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel9;
+        private Sunny.UI.UILabel lblProductName;
+        private Sunny.UI.UIPanel opProductName;
+        private Sunny.UI.UILabel lblProductCode;
+        private Sunny.UI.UILabel lblGTIN;
+        private Sunny.UI.UILabel lblUOM;
+        private Sunny.UI.UIPanel opProductCode;
+        private Sunny.UI.UIPanel opGTIN;
+        private Sunny.UI.UIPanel opUOM;
+        private Sunny.UI.UIPanel cardOrder;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel4;
+        private Sunny.UI.UILabel lblOrderTitle;
+        private Sunny.UI.UILabel lblOrderNO;
+        private Sunny.UI.UIComboBox ipOrderNO;
+        private Sunny.UI.UILabel lblProductionDate;
+        private Sunny.UI.UIDatetimePicker ipProductionDate;
+        private Sunny.UI.UILabel lblLot;
+        private Sunny.UI.UILabel lblQty;
+        private Sunny.UI.UILabel lblCustomerOrder;
+        private Sunny.UI.UIPanel opLotNumber;
+        private Sunny.UI.UIPanel opOrderQty;
         private Sunny.UI.UIPanel opCustomerOrderNO;
-        private Sunny.UI.UIPanel opShift;
-        private Sunny.UI.UIPanel opProductionLine;
-        private Sunny.UI.UIPanel uiPanel24;
-        private Sunny.UI.UIPanel uiPanel4;
-        private Sunny.UI.UIPanel uiPanel11;
+        private Sunny.UI.UIPanel cardLine;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel12;
+        private Sunny.UI.UILabel lblLineTitle;
+        private Sunny.UI.UILabel lblFactory;
+        private Sunny.UI.UILabel lblSite;
+        private Sunny.UI.UILabel lblProductionLine;
+        private Sunny.UI.UILabel lblShift;
         private Sunny.UI.UIPanel opFactory;
         private Sunny.UI.UIPanel opSite;
-        private Sunny.UI.UIPanel uiPanel6;
-        private Sunny.UI.UIPanel uiPanel15;
-        private Sunny.UI.UIPanel uiPanel21;
-        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel3;
-        private Sunny.UI.UIPanel opOrderQty;
-        private Sunny.UI.UIDatetimePicker ipProductionDate;
-        private Sunny.UI.UIPanel opGTIN;
-        private Sunny.UI.UIPanel opProductCode;
-        private Sunny.UI.UIPanel uiPanel13;
-        private Sunny.UI.UIPanel opLotNumber;
-        private Sunny.UI.UIPanel uiPanel5;
-        private Sunny.UI.UIPanel uiPanel8;
-        private Sunny.UI.UIComboBox ipOrderNO;
-        private Sunny.UI.UIPanel uiPanel12;
-        private Sunny.UI.UIPanel uiPanel20;
-        private Sunny.UI.UIPanel uiPanel10;
-        private Sunny.UI.UIPanel uiPanel7;
-        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel4;
+        private Sunny.UI.UIPanel opProductionLine;
+        private Sunny.UI.UIPanel opShift;
+        private Sunny.UI.UIPanel cardCZ;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel13;
+        private Sunny.UI.UILabel lblCZTitle;
+        private Sunny.UI.UILabel lblCZCodeCount;
+        private Sunny.UI.UILabel lblCZRunCount;
+        private Sunny.UI.UILabel lblCartonPack;
+        private Sunny.UI.UILabel lblItemsPerCarton;
+        private Sunny.UI.UIPanel opCZCodeCount;
+        private Sunny.UI.UIPanel opCZRunCount;
+        private Sunny.UI.UIPanel opcartonPack;
+        private Sunny.UI.UIPanel opItemsPerCarton;
+        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel8;
+        private Sunny.UI.UIPanel cardKpi1;
+        private Sunny.UI.UIPanel opPassCount;
+        private Sunny.UI.UILabel lblPass;
+        private Sunny.UI.UIPanel cardKpi2;
+        private Sunny.UI.UIPanel opFailCount;
+        private Sunny.UI.UILabel lblFail;
+        private Sunny.UI.UIPanel cardKpi3;
+        private Sunny.UI.UIPanel opCarton;
+        private Sunny.UI.UILabel lblCarton;
+        private Sunny.UI.UIPanel cardKpi4;
+        private Sunny.UI.UIPanel opAWSFullOKCount;
+        private Sunny.UI.UILabel lblMesDone;
+        private Sunny.UI.UIPanel cardKpi5;
+        private Sunny.UI.UIPanel opAWSNotSent;
+        private Sunny.UI.UILabel lblMesPending;
+        private Sunny.UI.UIPanel cardKpi6;
+        private Sunny.UI.UIPanel opAWSSentWating;
+        private Sunny.UI.UILabel lblMesWaiting;
+        private Sunny.UI.UIRichTextBox opTer;
         private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel5;
         private Sunny.UI.UISymbolButton btnRUN;
-        private Sunny.UI.UISymbolButton btnResetPO;
-        private Sunny.UI.UISymbolButton btnProductionDate;
         private Sunny.UI.UISymbolButton btnPO;
-        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel6;
-        private Sunny.UI.UIPanel opCZRunCount;
-        private Sunny.UI.UIPanel uiPanel3;
-        private Sunny.UI.UIPanel opProductName;
-        private Sunny.UI.UIPanel opcartonPack;
-        private Sunny.UI.UIPanel uiPanel25;
-        private Sunny.UI.UIPanel opUOM;
-        private Sunny.UI.UIPanel dfdsf;
-        private Sunny.UI.UIGroupBox uiGroupBox1;
-        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel8;
-        private Sunny.UI.UIPanel opAWSSentWating;
-        private Sunny.UI.UIPanel opCarton;
-        private Sunny.UI.UIPanel opAWSNotSent;
-        private Sunny.UI.UIPanel uiPanel16;
-        private Sunny.UI.UIPanel uiPanel1;
-        private Sunny.UI.UIPanel uiPanel18;
-        private Sunny.UI.UIPanel uiPanel17;
-        private Sunny.UI.UIPanel uiPanel9;
-        private Sunny.UI.UIPanel uiPanel2;
-        private Sunny.UI.UIPanel opPassCount;
-        private Sunny.UI.UIPanel opFailCount;
-        private Sunny.UI.UIPanel opAWSFullOKCount;
-        private Sunny.UI.UITableLayoutPanel uiTableLayoutPanel7;
-        private Sunny.UI.UIRichTextBox opTer;
+        private Sunny.UI.UISymbolButton btnProductionDate;
+        private Sunny.UI.UISymbolButton btnResetPO;
         private Sunny.UI.UISymbolButton btnReport;
-        private Sunny.UI.UIPanel uiPanel14;
     }
 }
