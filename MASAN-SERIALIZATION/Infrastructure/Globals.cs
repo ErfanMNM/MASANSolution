@@ -93,6 +93,43 @@ namespace MASAN_SERIALIZATION
 
         public static Queue<AWS_Recive_Data> aWS_Recive_Datas = new Queue<AWS_Recive_Data>(); // Hàng đợi dữ liệu AWS IoT
         public static Queue<AWS_Send_Data> aWS_Send_Datas = new Queue<AWS_Send_Data>(); // Hàng đợi dữ liệu AWS IoT
+
+        #region Cross-PO Carton Check (lưu mã thùng toàn bộ PO)
+
+        // DB mới: lưu mã thùng của TẤT CẢ PO (cross-PO) - 1 file duy nhất
+        public static string CartonCrossPO_DbPath = @"C:/MasanSerialization_v2/CrossPO_Databases/Carton.db";
+
+        // Dictionary lưu trên RAM toàn bộ mã thùng của mọi PO đã load
+        // Key: cartonCode (string) - Value: thông tin (orderNo, cartonID, ngày tháng)
+        public static Dictionary<string, CrossPoCartonRecord> Dictionary_AllCartons_CrossPO
+            = new Dictionary<string, CrossPoCartonRecord>();
+
+        // Hàng đợi thêm mới vào Carton.db (BackgroundWorker sẽ flush)
+        public static Queue<CrossPoCartonRecord> Insert_Carton_CrossPO_Queue
+            = new Queue<CrossPoCartonRecord>();
+
+        // Delegate sự kiện phát hiện mã thùng trùng cross-PO
+        // (caller đăng ký handler để tự xử lý nghiệp vụ: dừng line, log, v.v.)
+        // Dùng delegate field thuần (không phải event) để có thể Invoke từ bên ngoài class.
+        public delegate void CartonDuplicateFoundHandler(
+            string cartonCode, string orderNo, string source); // source: "HandScan01"/"HandScan02"/"TCP"
+        public static CartonDuplicateFoundHandler OnCartonDuplicateFound;
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Record lưu thông tin 1 mã thùng cross-PO (dùng cho Dictionary_AllCartons_CrossPO và Insert_Carton_CrossPO_Queue)
+    /// </summary>
+    public class CrossPoCartonRecord
+    {
+        public string cartonCode { get; set; }       // Mã thùng
+        public string orderNo { get; set; }          // PO sở hữu
+        public int cartonID { get; set; }            // ID thùng trong PO
+        public string Start_Datetime { get; set; }   // Thời gian bắt đầu
+        public string Activate_Datetime { get; set; }// Thời gian kích hoạt
+        public string Production_Datetime { get; set; }// Thời gian sản xuất
+        public string Activate_User { get; set; }    // Người kích hoạt
     }
 
     #region Các lớp dữ liệu liên quan đến sản xuất

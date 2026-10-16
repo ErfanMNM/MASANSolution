@@ -1773,6 +1773,148 @@ namespace MASAN_SERIALIZATION.Production
 
             }
 
+            #region Cross-PO Carton DB (lưu mã thùng toàn bộ PO)
+
+            /// <summary>
+            /// Khởi tạo DB Carton.db và bảng AllCartons nếu chưa tồn tại (idempotent - gọi nhiều lần an toàn)
+            /// </summary>
+            public void Ensure_CrossPO_Carton_DB()
+            {
+                try
+                {
+                    string dbPath = Globals_Database.CartonCrossPO_DbPath;
+                    string folder = Path.GetDirectoryName(dbPath);
+                    if (!string.IsNullOrEmpty(folder) && !Directory.Exists(folder))
+                    {
+                        Directory.CreateDirectory(folder);
+                    }
+
+                    using (SQLiteConnection connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
+                    {
+                        connection.Open();
+                        string createTableQuery = @"CREATE TABLE IF NOT EXISTS AllCartons (
+                                                        ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                                                        cartonCode TEXT NOT NULL UNIQUE,
+                                                        orderNo TEXT NOT NULL DEFAULT '0',
+                                                        cartonID INTEGER NOT NULL DEFAULT 0,
+                                                        Start_Datetime TEXT NOT NULL DEFAULT '0',
+                                                        Activate_Datetime TEXT NOT NULL DEFAULT '0',
+                                                        Production_Datetime TEXT NOT NULL DEFAULT '0',
+                                                        Activate_User TEXT NOT NULL DEFAULT '0'
+                                                    );";
+                        using (SQLiteCommand command = new SQLiteCommand(createTableQuery, connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
+
+                        // Index để tra cứu nhanh theo orderNo
+                        string createIndexQuery = @"CREATE INDEX IF NOT EXISTS idx_AllCartons_orderNo ON AllCartons(orderNo);";
+                        using (SQLiteCommand idxCmd = new SQLiteCommand(createIndexQuery, connection))
+                        {
+                            idxCmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Lỗi P_CROSSPO_01 khi khởi tạo Carton.db: {ex.Message}");
+                }
+            }
+
+            /// <summary>
+            /// Load toàn bộ mã thùng cross-PO từ Carton.db lên RAM (Dictionary_AllCartons_CrossPO)
+            /// Trả về số lượng record đã load.
+            /// </summary>
+            public int Load_AllCartons_CrossPO_To_RAM()
+            {
+                try
+                {
+                    string dbPath = Globals_Database.CartonCrossPO_DbPath;
+                    if (!File.Exists(dbPath))
+                    {
+                        return 0;
+                    }
+
+                    using (SQLiteConnection connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
+                    {
+                        connection.Open();
+                        string query = "SELECT cartonCode, orderNo, cartonID, Start_Datetime, Activate_Datetime, Production_Datetime, Activate_User FROM AllCartons";
+                        using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            // Clear trước khi load để tránh trùng khi reload nhiều lần
+                            Globals_Database.Dictionary_AllCartons_CrossPO.Clear();
+
+                            int count = 0;
+                            while (reader.Read())
+                            {
+                                string code = reader["cartonCode"]?.ToString();
+                                if (string.IsNullOrEmpty(code)) continue;
+
+                                Globals_Database.Dictionary_AllCartons_CrossPO[code] = new CrossPoCartonRecord
+                                {
+                                    cartonCode = code,
+                                    orderNo = reader["orderNo"]?.ToString() ?? "0",
+                                    cartonID = Convert.ToInt32(reader["cartonID"] ?? 0),
+                                    Start_Datetime = reader["Start_Datetime"]?.ToString() ?? "0",
+                                    Activate_Datetime = reader["Activate_Datetime"]?.ToString() ?? "0",
+                                    Production_Datetime = reader["Production_Datetime"]?.ToString() ?? "0",
+                                    Activate_User = reader["Activate_User"]?.ToString() ?? "0"
+                                };
+                                count++;
+                            }
+                            return count;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Lỗi P_CROSSPO_02 khi load AllCartons lên RAM: {ex.Message}");
+                    return 0;
+                }
+            }
+
+            /// <summary>
+            /// Insert 1 carton mới vào Carton.db. INSERT OR IGNORE để không lỗi khi trùng key UNIQUE.
+            /// Trả về true nếu insert thành công, false nếu trùng/lỗi.
+            /// </summary>
+            public bool Insert_Carton_CrossPO(CrossPoCartonRecord rec)
+            {
+                if (rec == null || string.IsNullOrEmpty(rec.cartonCode)) return false;
+
+                try
+                {
+                    string dbPath = Globals_Database.CartonCrossPO_DbPath;
+                    using (SQLiteConnection connection = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
+                    {
+                        connection.Open();
+                        string query = @"INSERT OR IGNORE INTO AllCartons
+                                            (cartonCode, orderNo, cartonID, Start_Datetime, Activate_Datetime, Production_Datetime, Activate_User)
+                                         VALUES
+                                            (@cartonCode, @orderNo, @cartonID, @Start_Datetime, @Activate_Datetime, @Production_Datetime, @Activate_User)";
+                        using (SQLiteCommand command = new SQLiteCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@cartonCode", rec.cartonCode);
+                            command.Parameters.AddWithValue("@orderNo", rec.orderNo ?? "0");
+                            command.Parameters.AddWithValue("@cartonID", rec.cartonID);
+                            command.Parameters.AddWithValue("@Start_Datetime", rec.Start_Datetime ?? "0");
+                            command.Parameters.AddWithValue("@Activate_Datetime", rec.Activate_Datetime ?? "0");
+                            command.Parameters.AddWithValue("@Production_Datetime", rec.Production_Datetime ?? "0");
+                            command.Parameters.AddWithValue("@Activate_User", rec.Activate_User ?? "0");
+                            int rowsAffected = command.ExecuteNonQuery();
+                            return rowsAffected > 0;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Lỗi P_CROSSPO_03 khi insert carton cross-PO '{rec.cartonCode}': {ex.Message}");
+                    return false;
+                }
+            }
+
+            #endregion
+
             /// <summary>
             /// Reset thùng về trạng thái chưa đóng: set cartonCode = 0, Start_Datetime = 0
             /// </summary>

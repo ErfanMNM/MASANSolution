@@ -882,10 +882,24 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             
             if (!recordsResult.issuccess)
             {
-                _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
+                _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
                     $"Lấy dữ liệu đơn hàng thất bại: {recordsResult.message}");
                 this.ShowErrorDialog($"Lỗi PP05: {recordsResult.message}");
                 return;
+            }
+
+            // (MỚI) Load cross-PO Carton DB lên RAM - check trùng mã thùng toàn bộ PO
+            try
+            {
+                Globals.ProductionData.setDB.Ensure_CrossPO_Carton_DB();
+                int loadedCount = Globals.ProductionData.setDB.Load_AllCartons_CrossPO_To_RAM();
+                _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Info,
+                    $"Đã load {loadedCount} mã thùng cross-PO lên RAM (Carton.db)");
+            }
+            catch (Exception ex)
+            {
+                _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Warning,
+                    $"Lỗi khi load cross-PO carton DB: {ex.Message}");
             }
 
             ResetCounters();

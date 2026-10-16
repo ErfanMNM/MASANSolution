@@ -26,7 +26,10 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
         BackgroundWorker _bw_update_ui = new BackgroundWorker();
 
-        //tạo file log 
+        // BackgroundWorker flush Insert_Carton_CrossPO_Queue xuống Carton.db (cross-PO)
+        BackgroundWorker _bw_flush_crosspo_carton = new BackgroundWorker();
+
+        //tạo file log
         private LogHelper<e_LogType> PCLog;
 
         public PCartonDashboard()
@@ -71,7 +74,124 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 this.ShowErrorDialog("Vui lòng không thao tác liên tiếp nhiều lần");
             }
 
+            // Khởi động worker flush queue cross-PO
+            _bw_flush_crosspo_carton.WorkerSupportsCancellation = true;
+            _bw_flush_crosspo_carton.DoWork += bw_flush_crosspo_carton;
+            if (!_bw_flush_crosspo_carton.IsBusy)
+            {
+                _bw_flush_crosspo_carton.RunWorkerAsync();
+            }
 
+        }
+
+        /// <summary>
+        /// BackgroundWorker liên tục lấy record từ Insert_Carton_CrossPO_Queue
+        /// và flush xuống Carton.db (cross-PO)
+        /// </summary>
+        private void bw_flush_crosspo_carton(object sender, DoWorkEventArgs e)
+        {
+            while (!_bw_flush_crosspo_carton.CancellationPending)
+            {
+                try
+                {
+                    while (Globals_Database.Insert_Carton_CrossPO_Queue.Count > 0)
+                    {
+                        CrossPoCartonRecord rec;
+                        lock (Globals_Database.Insert_Carton_CrossPO_Queue)
+                        {
+                            if (Globals_Database.Insert_Carton_CrossPO_Queue.Count == 0) break;
+                            rec = Globals_Database.Insert_Carton_CrossPO_Queue.Dequeue();
+                        }
+                        try
+                        {
+                            Globals.ProductionData.setDB.Insert_Carton_CrossPO(rec);
+                        }
+                        catch (Exception exInsert)
+                        {
+                            PCLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
+                                "Lỗi flush Carton cross-PO: " + exInsert.Message);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    PCLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
+                        "Lỗi worker flush cross-PO carton: " + ex.Message);
+                }
+
+                Thread.Sleep(300);
+            }
+        }
+
+        /// <summary>
+        /// Check trùng mã thùng cross-PO (toàn bộ PO đã load trong Dictionary_AllCartons_CrossPO).
+        /// Nếu trùng -> hiển thị thông báo + thêm chữ "Trùng" vào listbox tương ứng (opLane01/opLane02)
+        ///   + phát sự kiện OnCartonDuplicateFound (caller tự code tiếp) + return true.
+        /// Nếu không trùng -> return false.
+        /// </summary>
+        private bool CheckCrossPoCartonDuplicate(string scannedCode, string source)
+        {
+            if (string.IsNullOrEmpty(scannedCode)) return false;
+            string code = scannedCode.Trim();
+
+            if (Globals_Database.Dictionary_AllCartons_CrossPO.TryGetValue(code, out CrossPoCartonRecord existed))
+            {
+                this.InvokeIfRequired(() =>
+                {
+                    // Thêm chữ "Trùng" vào listbox tương ứng với nguồn scan
+                    if (source == nameof(HandScan02_Process))
+                    {
+                        opLane02.Items.Insert(0, $"Trùng: {code} (PO {existed.orderNo})");
+                    }
+                    else
+                    {
+                        // Mặc định (HandScan01 / TCP) -> opLane01
+                        opLane01.Items.Insert(0, $"Trùng: {code} (PO {existed.orderNo})");
+                    }
+
+                    this.ShowErrorNotifier(
+                        $"Mã thùng '{code}' đã tồn tại ở PO {existed.orderNo} (cartonID={existed.cartonID}). Vui lòng kiểm tra lại!",
+                        false, 5000);
+                });
+                PCLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Warning,
+                    $"Phát hiện trùng mã thùng cross-PO: '{code}' từ PO {existed.orderNo} (nguồn: {source})");
+
+                // Phát sự kiện - caller (bạn) tự code tiếp xử lý nghiệp vụ
+                try
+                {
+                    Globals_Database.OnCartonDuplicateFound?.Invoke(code, existed.orderNo, source);
+                }
+                catch (Exception exEvt)
+                {
+                    PCLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
+                        "Lỗi khi gọi OnCartonDuplicateFound: " + exEvt.Message);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Thêm 1 mã thùng mới vào Dictionary_AllCartons_CrossPO + enqueue vào queue flush xuống Carton.db
+        /// </summary>
+        private void RegisterNewCrossPoCarton(string scannedCode, ProductionCartonData cartonData)
+        {
+            if (string.IsNullOrEmpty(scannedCode) || cartonData == null) return;
+            string code = scannedCode.Trim();
+            if (Globals_Database.Dictionary_AllCartons_CrossPO.ContainsKey(code)) return;
+
+            var rec = new CrossPoCartonRecord
+            {
+                cartonCode = code,
+                orderNo = Globals.ProductionData.orderNo,
+                cartonID = cartonData.cartonID,
+                Start_Datetime = cartonData.Start_Datetime,
+                Activate_Datetime = cartonData.Activate_Datetime,
+                Production_Datetime = cartonData.Production_Datetime,
+                Activate_User = cartonData.Activate_User
+            };
+            Globals_Database.Dictionary_AllCartons_CrossPO[code] = rec;
+            Globals_Database.Insert_Carton_CrossPO_Queue.Enqueue(rec);
         }
 
         string lastWarning = string.Empty;
@@ -234,6 +354,13 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         {
             //lưu log scan
             PCLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.DataChange, "Scan 02" + s.Trim(), s.Trim());
+
+            // (MỚI) Check trùng cross-PO - nếu trùng thì return (đã phát sự kiện OnCartonDuplicateFound)
+            if (CheckCrossPoCartonDuplicate(s, nameof(HandScan02_Process)))
+            {
+                return;
+            }
+
             //kiểm tra xem thùng đang chạy chẵn hay lẻ
             if (Globals.ProductionData.counter.cartonID % 2 != 0)
             {
@@ -264,6 +391,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             cartonData.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                             //thêm vào hàng chờ cập nhật
                             Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData);
+                            // (MỚI) Đăng ký mã thùng cross-PO + enqueue flush
+                            RegisterNewCrossPoCarton(s, cartonData);
                             //Globals_Database.Activate_Carton.Enqueue(s.Trim());
                         }
                     }
@@ -300,6 +429,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             cartonDataL.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                             //thêm vào hàng chờ cập nhật
                             Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonDataL);
+                            // (MỚI) Đăng ký mã thùng cross-PO + enqueue flush
+                            RegisterNewCrossPoCarton(s, cartonDataL);
                         }
                     }
                 }
@@ -314,6 +445,13 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             {
                 opLane01.Items.Insert(0, s.Trim());
             });
+
+            // (MỚI) Check trùng cross-PO - nếu trùng thì return (đã phát sự kiện OnCartonDuplicateFound)
+            if (CheckCrossPoCartonDuplicate(s, nameof(HandScan01_Process)))
+            {
+                return;
+            }
+
             //kiểm tra xem thùng đang chạy chẵn hay lẻ
             if (Globals.ProductionData.counter.cartonID % 2 == 0)
             {
@@ -344,6 +482,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             cartonData.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                             //thêm vào hàng chờ cập nhật
                             Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData);
+                            // (MỚI) Đăng ký mã thùng cross-PO + enqueue flush
+                            RegisterNewCrossPoCarton(s, cartonData);
                             //Globals_Database.Activate_Carton.Enqueue(s.Trim());
                         }
                     }
@@ -378,6 +518,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             cartonDataL.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
                             //thêm vào hàng chờ cập nhật
                             Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonDataL);
+                            // (MỚI) Đăng ký mã thùng cross-PO + enqueue flush
+                            RegisterNewCrossPoCarton(s, cartonDataL);
 
                             ////kết thúc thùng chẵn cũ
                             //cartonData.cartonCode = s.Trim();
