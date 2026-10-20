@@ -1382,7 +1382,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                 opCZRunCount.Text = counters.runCount.ToString();
                 opPassCount.Text = counters.passCount.ToString();
-                opFailCount.Text = counters.failCount.ToString();
+                opFailCount.Text = (counters.runCount - counters.passCount).ToString(); // counters.failCount.ToString();
                 opAWSFullOKCount.Text = counters.awsFullOKCount.ToString();
                 opAWSNotSent.Text = $"{counters.awsNotSent}/{counters.awsSentFailed}";
                 opAWSSentWating.Text = counters.awsSentWaiting.ToString();
