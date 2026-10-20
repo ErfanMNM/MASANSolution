@@ -86,7 +86,7 @@
             this.uiPanel1.RectColor = System.Drawing.Color.DodgerBlue;
             this.uiPanel1.Size = new System.Drawing.Size(199, 55);
             this.uiPanel1.TabIndex = 7;
-            this.uiPanel1.Text = "CZ MSI V7968";
+            this.uiPanel1.Text = "CZ VCF V61019";
             this.uiPanel1.TextAlignment = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // opClock
@@ -417,7 +417,8 @@
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(1920, 1080);
             this.Controls.Add(this.mainPanelLayout);
-            this.MinimumSize = new System.Drawing.Size(1902, 1078);
+            this.MaximumSize = new System.Drawing.Size(1920, 1080);
+            this.MinimumSize = new System.Drawing.Size(1902, 1030);
             this.Name = "FMain";
             this.Padding = new System.Windows.Forms.Padding(0);
             this.ShowFullScreen = true;
