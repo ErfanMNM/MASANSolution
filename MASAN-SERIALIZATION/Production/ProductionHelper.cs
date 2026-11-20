@@ -2130,53 +2130,85 @@ namespace MASAN_SERIALIZATION.Production
                     }
                 }
 
-                string CartonPath = Path.Combine(basePath, $"carton_{orderNo}.db");
-                if (!File.Exists(CartonPath))
+                string cartonPath = Path.Combine(basePath, $"carton_{orderNo}.db");
+                int parsedOrderQty;
+                if (!int.TryParse(orderQty, out parsedOrderQty) || parsedOrderQty <= 0)
                 {
-                using (var conn = new SQLiteConnection($"Data Source={CartonPath};Version=3;"))
-                {
-                    conn.Open();
-
-                    // Tạo bảng
-                    string createTableQuery = @"
-                                                CREATE TABLE IF NOT EXISTS Carton (
-                                                    ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                                                    cartonCode TEXT NOT NULL DEFAULT '0',
-                                                    Start_Datetime TEXT NOT NULL DEFAULT '0',
-                                                    Activate_Datetime TEXT NOT NULL DEFAULT 'FAIL',
-                                                    ActivateUser TEXT NOT NULL DEFAULT '0',
-                                                    ProductionDate TEXT NOT NULL DEFAULT '0'
-                                                );
-                                        PRAGMA journal_mode = WAL;
-                                        PRAGMA synchronous = NORMAL;
-                                        PRAGMA cache_size = 1000000;
-                                        PRAGMA temp_store = memory;
-                                            ";
-
-                    using (var createCmd = new SQLiteCommand(createTableQuery, conn))
+                    // Khi UI đang chuyển PO, opOrderQty có thể còn là giá trị cũ/0.
+                    // JSON của PO là nguồn dữ liệu ổn định để khôi phục số lượng.
+                    try
                     {
-                        createCmd.ExecuteNonQuery();
-                    }
-
-                    // Tạo số thùng = orderQty / 24
-                    int orderCartonQty = orderQty.ToInt32() / AppConfigs.Current.cartonPack;
-
-                    using (var tran = conn.BeginTransaction())
-                    using (var insertCmd = new SQLiteCommand(@"
-                                                                INSERT INTO Carton (cartonCode, Start_Datetime, Activate_Datetime, ActivateUser, ProductionDate) 
-                                                                VALUES ('0', '0', '0', 'System', '0');", conn, tran))
-                    {
-                        for (int i = 0; i < orderCartonQty; i++)
+                        string jsonContent = File.ReadAllText(jsonPath);
+                        var jsonObj = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonContent);
+                        object jsonOrderQty;
+                        if (jsonObj == null || !jsonObj.TryGetValue("orderQty", out jsonOrderQty) ||
+                            !int.TryParse(jsonOrderQty == null ? null : jsonOrderQty.ToString(), out parsedOrderQty) ||
+                            parsedOrderQty <= 0)
                         {
-                            insertCmd.ExecuteNonQuery();
+                            return (false, $"PH006: Số lượng PO không hợp lệ: {orderQty}");
                         }
-                        tran.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        return (false, $"PH006: Không đọc được số lượng PO: {ex.Message}");
                     }
                 }
 
+                int cartonPack = AppConfigs.Current.cartonPack;
+                if (cartonPack <= 0)
+                {
+                    return (false, $"PH007: Cấu hình số sản phẩm mỗi thùng không hợp lệ: {cartonPack}");
+                }
 
+                // SQLite có thể đã tạo file trước khi ứng dụng bị ngắt. Luôn kiểm tra
+                // schema và bù các dòng còn thiếu để việc khởi tạo có thể chạy lại an toàn.
+                int expectedCartonCount = Math.Max(1, parsedOrderQty / cartonPack);
+                using (var conn = new SQLiteConnection($"Data Source={cartonPath};Version=3;"))
+                {
+                    conn.Open();
+                    using (var busyTimeoutCmd = new SQLiteCommand("PRAGMA busy_timeout = 5000;", conn))
+                    {
+                        busyTimeoutCmd.ExecuteNonQuery();
+                    }
+                    using (var tran = conn.BeginTransaction())
+                    {
+                        string createTableQuery = @"
+                                                    CREATE TABLE IF NOT EXISTS Carton (
+                                                        ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                                                        cartonCode TEXT NOT NULL DEFAULT '0',
+                                                        Start_Datetime TEXT NOT NULL DEFAULT '0',
+                                                        Activate_Datetime TEXT NOT NULL DEFAULT 'FAIL',
+                                                        ActivateUser TEXT NOT NULL DEFAULT '0',
+                                                        ProductionDate TEXT NOT NULL DEFAULT '0'
+                                                    );";
+                        using (var createCmd = new SQLiteCommand(createTableQuery, conn, tran))
+                        {
+                            createCmd.ExecuteNonQuery();
+                        }
 
-            }
+                        int existingCartonCount;
+                        using (var countCmd = new SQLiteCommand("SELECT COUNT(*) FROM Carton;", conn, tran))
+                        {
+                            existingCartonCount = Convert.ToInt32(countCmd.ExecuteScalar());
+                        }
+
+                        int missingCartonCount = expectedCartonCount - existingCartonCount;
+                        if (missingCartonCount > 0)
+                        {
+                            using (var insertCmd = new SQLiteCommand(@"
+                                INSERT INTO Carton (cartonCode, Start_Datetime, Activate_Datetime, ActivateUser, ProductionDate)
+                                VALUES ('0', '0', '0', 'System', '0');", conn, tran))
+                            {
+                                for (int i = 0; i < missingCartonCount; i++)
+                                {
+                                    insertCmd.ExecuteNonQuery();
+                                }
+                            }
+                        }
+
+                        tran.Commit();
+                    }
+                }
 
             //kiểm tra xem bảng ghi history tất cả các result của PO đã tồn tại hay chưa, nếu chưa thì tạo mới nếu chưa thì tạo mới
             string recordAWS = Path.Combine(basePath, $"Send_AWS_Record_{orderNo}.db");

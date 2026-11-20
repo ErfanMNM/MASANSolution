@@ -480,7 +480,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private bool IsOrderDeleted()
         {
-            return Globals.ProductionData.getDataPO.Is_PO_Deleted(ipOrderNO.SelectedText);
+            return Globals.ProductionData.getDataPO.Is_PO_Deleted(ipOrderNO.Text);
         }
 
         private void HandleCompletedOrder()
@@ -545,7 +545,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private bool ValidateOrderForSaving()
         {
-            if (Globals.ProductionData.getDataPO.Is_PO_Deleted(ipOrderNO.SelectedText))
+            if (Globals.ProductionData.getDataPO.Is_PO_Deleted(ipOrderNO.Text))
             {
                 this.ShowErrorDialog("Lỗi PP02: Đơn hàng đã bị xóa, Vui lòng chọn đơn hàng khác.");
                 SetEditMode();
@@ -553,7 +553,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 return false;
             }
 
-            if (Globals.ProductionData.getDataPO.Is_PO_Completed(ipOrderNO.SelectedText))
+            if (Globals.ProductionData.getDataPO.Is_PO_Completed(ipOrderNO.Text))
             {
                 this.InvokeIfRequired(() =>
                 {
@@ -1027,12 +1027,12 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         {
             string orderQty = PO.Rows[0]["orderQty"].ToString();
 
-            var checkResult = Globals.ProductionData.Check_Database_File(ipOrderNO.SelectedText, 
+            var checkResult = Globals.ProductionData.Check_Database_File(ipOrderNO.Text,
                 orderQty);
             if (!checkResult.issucess)
             {
                 _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
-                    $"Không tìm thấy dữ liệu đơn hàng: {ipOrderNO.SelectedText}");
+                    $"Không tìm thấy dữ liệu đơn hàng: {ipOrderNO.Text}");
                 this.ShowErrorDialog($"Lỗi EA001, Vui lòng liên hệ nhà cung cấp để kiểm tra lỗi này, Đây là lỗi VÔ CÙNG NGHIÊM TRỌNG");
             }
         }
@@ -1321,7 +1321,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
                 // QUAN TRỌNG: Kiểm tra và tạo database trước khi load records
                 var checkDbResult = Globals.ProductionData.Check_Database_File(
-                    ipOrderNO.SelectedText,
+                    ipOrderNO.Text,
                     opOrderQty.Text);
 
                 if (!checkDbResult.issucess)
@@ -1358,7 +1358,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void SaveProductionData()
         {
-            Globals.ProductionData.orderNo = ipOrderNO.SelectedText;
+            Globals.ProductionData.orderNo = ipOrderNO.Text;
             Globals.ProductionData.productionLine = opProductionLine.Text;
             Globals.ProductionData.uom = opUOM.Text;
             Globals.ProductionData.orderQty = opOrderQty.Text;
@@ -1405,7 +1405,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             {
                // var productionDateUtc = DateTime.ParseExact(ipProductionDate.Text, "dd-MM-yyyy HH:mm:ss", null);
 
-                var saveResult = Globals.ProductionData.Save_PO(ipOrderNO.SelectedText,
+                var saveResult = Globals.ProductionData.Save_PO(ipOrderNO.Text,
                     ipProductionDate.Text, Globals.CurrentUser.Username);
 
                 if (saveResult.issucces)
@@ -1428,12 +1428,12 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         private void HandleSaveSuccess()
         {
             Globals.Log.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.UserAction, 
-                $"Người dùng đã lưu đơn hàng: {ipOrderNO.SelectedText}");
+                $"Người dùng đã lưu đơn hàng: {ipOrderNO.Text}");
 
             this.InvokeIfRequired(() =>
             {
                 this.ShowSuccessTip("Đã lưu thông tin đơn hàng thành công.");
-                UpdateStatusMessage($"Đơn hàng {ipOrderNO.SelectedText} đã được lưu thành công.", Color.Green);
+                UpdateStatusMessage($"Đơn hàng {ipOrderNO.Text} đã được lưu thành công.", Color.Green);
                 
                 btnPO.Enabled = true;
                 btnResetPO.Enabled = true;
