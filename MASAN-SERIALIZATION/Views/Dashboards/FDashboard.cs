@@ -10,10 +10,12 @@ using SpT.Logs;
 using Sunny.UI;
 using Sunny.UI.Win32;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -41,6 +43,8 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         private bool isSimulatorRunning = false;
         private int simulatorInterval = 500; // milliseconds
         private int simulatorMode = 0; // 0 = Both, 1 = Camera Main only, 2 = Camera Sub only
+        private readonly ConcurrentQueue<CameraSubHistoryEntry> _cameraSubHistory = new ConcurrentQueue<CameraSubHistoryEntry>();
+        private readonly object _cameraSubCounterLock = new object();
         #endregion
 
         #region Constructor
@@ -129,7 +133,13 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     break;
 
                 case enumClient.RECEIVED:
-                    //Task.Run(() => CameraSub_Process(data));
+                    long receivedTimestamp = Stopwatch.GetTimestamp();
+                    int scanId;
+                    lock (_cameraSubCounterLock)
+                    {
+                        scanId = ++Globals.productionData_Cs.counter.totalCount;
+                    }
+                    var request = new CameraSubRequest(data, receivedTimestamp, scanId);
 
                     if (subpr.IsBusy)
                     {
@@ -139,38 +149,29 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                             ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                         });
                         //gửi xuống PLC loại sản phẩm
-                        if (AppConfigs.Current.PLC_Duo_Mode)
-                        {
-                            Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
-                        }
-                        else
-                        {
-                            Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
-                        }
+                        bool usePlc2 = AppConfigs.Current.PLC_Duo_Mode;
+                        bool plcSent = SendCameraSubToPLC(request,
+                            usePlc2 ? PLCAddress.Get("PLC2_Reject_DM_C1") : PLCAddress.Get("PLC_Reject_DM_C1"), "0", usePlc2);
 
                         //gửi loại sản phẩm
                         // Timeout detected - hủy thêm vào thùng
-                        Send_Result_Content_CSub(e_Production_Status.Error, data);
-                        Enqueue_Product_To_Record(data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
+                        Send_Result_Content_CSub(e_Production_Status.Error, data, request);
+                        Enqueue_Product_To_Record(data, e_Production_Status.Error, plcSent, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
 
                     }
                     else
                     {
                         if (Globals.Production_State == e_Production_State.Running || Globals.Production_State == e_Production_State.Waiting_Stop || Globals.Production_State == e_Production_State.Check_After_Completed)
                         {
-                            subpr.RunWorkerAsync(data);
+                            subpr.RunWorkerAsync(request);
                         }
                          else
                         {
-                            if (AppConfigs.Current.PLC_Duo_Mode)
-                            {
-                                Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
-                            }
-                            else
-                            {
-                                Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
-                            }
-
+                            bool usePlc2 = AppConfigs.Current.PLC_Duo_Mode;
+                            bool plcSent = SendCameraSubToPLC(request,
+                                usePlc2 ? PLCAddress.Get("PLC2_Reject_DM_C1") : PLCAddress.Get("PLC_Reject_DM_C1"), "0", usePlc2);
+                            Send_Result_Content_CSub(e_Production_Status.Error, data, request);
+                            Enqueue_Product_To_Record(data, e_Production_Status.Error, plcSent, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                         }
                     }
                     break;
@@ -233,6 +234,55 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         #endregion
 
         #region Camera Data Processing
+        private sealed class CameraSubRequest
+        {
+            public string Code { get; private set; }
+            public long ReceivedTimestamp { get; private set; }
+            public int ScanId { get; private set; }
+            public double? MillisecondsBeforePlcSend { get; set; }
+
+            public CameraSubRequest(string code, long receivedTimestamp, int scanId)
+            {
+                Code = code;
+                ReceivedTimestamp = receivedTimestamp;
+                ScanId = scanId;
+            }
+        }
+
+        private sealed class CameraSubHistoryEntry
+        {
+            public long ReceivedTimestamp { get; private set; }
+            public string Text { get; private set; }
+
+            public CameraSubHistoryEntry(long receivedTimestamp, string text)
+            {
+                ReceivedTimestamp = receivedTimestamp;
+                Text = text;
+            }
+
+            public override string ToString()
+            {
+                return Text;
+            }
+        }
+
+        private double MeasureCameraSubPrePlcLatency(CameraSubRequest request)
+        {
+            return (Stopwatch.GetTimestamp() - request.ReceivedTimestamp) * 1000d / Stopwatch.Frequency;
+        }
+
+        private bool SendCameraSubToPLC(CameraSubRequest request, string address, string value, bool usePlc2)
+        {
+            request.MillisecondsBeforePlcSend = MeasureCameraSubPrePlcLatency(request);
+
+            if (usePlc2)
+            {
+                return Send_To_PLC_2(address, value);
+            }
+
+            return Send_To_PLC(address, value);
+        }
+
         private void CameraMain_Process(string _data)
         {
             Globals.ProductionData.counter.totalCount++;
@@ -376,9 +426,9 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 return;
             }
         }
-        private void CameraSub_Process(string _data)
+        private void CameraSub_Process(CameraSubRequest request)
         {
-            Globals.productionData_Cs.counter.totalCount++;
+            string _data = request.Code;
 
             if(Globals.Production_State != e_Production_State.Waiting_Stop)
             {
@@ -392,13 +442,13 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     bool stp = false;
                     if (AppConfigs.Current.PLC_Duo_Mode)
                     {
-                        stp = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
+                        stp = SendCameraSubToPLC(request, PLCAddress.Get("PLC2_Reject_DM_C1"), "0", true);
                     }
                     else
                     {
-                        stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                        stp = SendCameraSubToPLC(request, PLCAddress.Get("PLC_Reject_DM_C1"), "0", false);
                     }
-                    Send_Result_Content_CSub(e_Production_Status.Error, _data);
+                    Send_Result_Content_CSub(e_Production_Status.Error, _data, request);
                     Enqueue_Product_To_Record(_data, e_Production_Status.Error, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                     return;
                 }
@@ -409,13 +459,13 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 bool stp = false;
                 if(AppConfigs.Current.PLC_Duo_Mode)
                 {
-                    stp = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
+                    stp = SendCameraSubToPLC(request, PLCAddress.Get("PLC2_Reject_DM_C1"), "0", true);
                 }
                 else
                 {
-                    stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                    stp = SendCameraSubToPLC(request, PLCAddress.Get("PLC_Reject_DM_C1"), "0", false);
                 }
-                Send_Result_Content_CSub(e_Production_Status.Error, _data);
+                Send_Result_Content_CSub(e_Production_Status.Error, _data, request);
                 Enqueue_Product_To_Record(_data, e_Production_Status.Error, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                 return;
             }
@@ -425,14 +475,14 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 bool stp = false;
                 if (AppConfigs.Current.PLC_Duo_Mode)
                 {
-                    stp = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
+                    stp = SendCameraSubToPLC(request, PLCAddress.Get("PLC2_Reject_DM_C1"), "0", true);
                 }
                 else
                 {
-                    stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                    stp = SendCameraSubToPLC(request, PLCAddress.Get("PLC_Reject_DM_C1"), "0", false);
                 }
 
-                Send_Result_Content_CSub(e_Production_Status.ReadFail, _data);
+                Send_Result_Content_CSub(e_Production_Status.ReadFail, _data, request);
                 Enqueue_Product_To_Record(_data, e_Production_Status.ReadFail, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                 return;
             }
@@ -448,14 +498,15 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     bool stp = false; // Gửi dữ liệu loại sản phẩm đến PLC
                     if (AppConfigs.Current.PLC_Duo_Mode)
                     {
-                        stp = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
+                        stp = SendCameraSubToPLC(request, PLCAddress.Get("PLC2_Reject_DM_C1"), "0", true);
                     }
                     else
                     {
-                        stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                        stp = SendCameraSubToPLC(request, PLCAddress.Get("PLC_Reject_DM_C1"), "0", false);
                     }
 
                     //gửi vào hàng chờ thêm record
+                    Send_Result_Content_CSub(e_Production_Status.ReadFail, _data, request);
                     Enqueue_Product_To_Record(_data, e_Production_Status.ReadFail, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                     return;
                 }
@@ -470,13 +521,13 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         bool stp = false;
                         if (AppConfigs.Current.PLC_Duo_Mode)
                         {
-                            stp = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
+                            stp = SendCameraSubToPLC(request, PLCAddress.Get("PLC2_Reject_DM_C1"), "0", true);
                         }
                         else
                         {
-                            stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                            stp = SendCameraSubToPLC(request, PLCAddress.Get("PLC_Reject_DM_C1"), "0", false);
                         }
-                        Send_Result_Content_CSub(e_Production_Status.Duplicate, _data);
+                        Send_Result_Content_CSub(e_Production_Status.Duplicate, _data, request);
                         Enqueue_Product_To_Record(_data, e_Production_Status.Duplicate, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
                         return;
                     }
@@ -495,15 +546,15 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         bool stp = false; // Gửi dữ liệu loại sản phẩm đến PLC
                         if (AppConfigs.Current.PLC_Duo_Mode)
                         {
-                            stp = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
+                            stp = SendCameraSubToPLC(request, PLCAddress.Get("PLC2_Reject_DM_C1"), "0", true);
                         }
                         else
                         {
-                            stp = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                            stp = SendCameraSubToPLC(request, PLCAddress.Get("PLC_Reject_DM_C1"), "0", false);
                         }
-                        //Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
-                        Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
-                        Send_Result_Content_CSub(e_Production_Status.Error, _data);
+                        //SendCameraSubToPLC(request, PLCAddress.Get("PLC_Reject_DM_C1"), "0", false); // Gửi dữ liệu loại sản phẩm đến PLC
+                        Enqueue_Product_To_Record(_data, e_Production_Status.Error, stp, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
+                        Send_Result_Content_CSub(e_Production_Status.Error, _data, request);
 
                         this.InvokeIfRequired(() =>
                         {
@@ -536,6 +587,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                                 ipConsole.SelectedIndex = ipConsole.Items.Count - 1;
                                 //this.ShowErrorNotifier("#02 Thùng chuẩn bị xếp chưa có mã!");
                             });
+                            Send_Result_Content_CSub(e_Production_Status.Error, _data, request);
                             return; //nếu thùng chưa có mã thì không xử lý tiếp
                         }
                     }
@@ -585,11 +637,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                 bool successSend = false;
                 if (AppConfigs.Current.PLC_Duo_Mode)
                 {
-                    successSend = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), sendCode);
+                    successSend = SendCameraSubToPLC(request, PLCAddress.Get("PLC2_Reject_DM_C1"), sendCode, true);
                 }
                 else
                 {
-                    successSend = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), sendCode);
+                    successSend = SendCameraSubToPLC(request, PLCAddress.Get("PLC_Reject_DM_C1"), sendCode, false);
                 }
 
                 if (successSend)
@@ -659,7 +711,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     if (isTimeout)
                     {
                         // Timeout detected - hủy thêm vào thùng
-                        Send_Result_Content_CSub(e_Production_Status.Error, _data);
+                        Send_Result_Content_CSub(e_Production_Status.Error, _data, request);
                         Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
 
                         this.InvokeIfRequired(() =>
@@ -687,7 +739,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                     Enqueue_Product_To_SQLite(_data, _produtionCodeData); //thêm vào hàng chờ lưu sqlite
                     Enqueue_Product_To_Record(_data, e_Production_Status.Pass, true, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false, Globals.ProductionData.counter.cartonID);
-                    Send_Result_Content_CSub(e_Production_Status.Pass, _data);
+                    Send_Result_Content_CSub(e_Production_Status.Pass, _data, request);
 
                     //kiểm tra thùng đã hết chưa, chuyển thùng mới từ đây
                     if (Globals.ProductionData.counter.carton_Packing_Count == AppConfigs.Current.cartonPack)
@@ -725,7 +777,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
                 //nếu gửi PLC thất bại
                 Enqueue_Product_To_Record(_data, e_Production_Status.Error, false, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
-                Send_Result_Content_CSub(e_Production_Status.Error, _data);
+                Send_Result_Content_CSub(e_Production_Status.Error, _data, request);
                 return;
 
 
@@ -735,15 +787,15 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             bool stp2 = false;
             if (AppConfigs.Current.PLC_Duo_Mode)
             {
-                stp2 = Send_To_PLC_2(PLCAddress.Get("PLC2_Reject_DM_C1"), "0");
+                stp2 = SendCameraSubToPLC(request, PLCAddress.Get("PLC2_Reject_DM_C1"), "0", true);
             }
             else
             {
-                stp2 = Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0");
+                stp2 = SendCameraSubToPLC(request, PLCAddress.Get("PLC_Reject_DM_C1"), "0", false);
             }
 
-            //Send_To_PLC(PLCAddress.Get("PLC_Reject_DM_C1"), "0"); // Gửi dữ liệu loại sản phẩm đến PLC
-            Send_Result_Content_CSub(e_Production_Status.NotFound, _data);
+            //SendCameraSubToPLC(request, PLCAddress.Get("PLC_Reject_DM_C1"), "0", false); // Gửi dữ liệu loại sản phẩm đến PLC
+            Send_Result_Content_CSub(e_Production_Status.NotFound, _data, request);
             //gửi vào hàng chờ thêm record
             Enqueue_Product_To_Record(_data, e_Production_Status.NotFound, true, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700"), Globals.ProductionData.productionDate, false);
             return;
@@ -784,7 +836,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     break;
             }
         }
-        private void Send_Result_Content_CSub(e_Production_Status status, string data)
+        private void Send_Result_Content_CSub(e_Production_Status status, string data, CameraSubRequest request)
         {
             if (status != e_Production_Status.Pass)
             {
@@ -792,8 +844,13 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
             }
 
             CameraSub_HMI.Camera_Status = status;
-            CameraSub_HMI.ID = Globals.productionData_Cs.counter.totalCount;
+            CameraSub_HMI.ID = request == null ? Globals.productionData_Cs.counter.totalCount : request.ScanId;
             CameraSub_HMI.Camera_Content = data;
+            string plcTiming = request != null && request.MillisecondsBeforePlcSend.HasValue
+                ? $" - {request.MillisecondsBeforePlcSend.Value:F2} ms trước PLC"
+                : " - chưa gửi PLC";
+            _cameraSubHistory.Enqueue(new CameraSubHistoryEntry(request.ReceivedTimestamp,
+                $"#{CameraSub_HMI.ID} : {status} - {data}{plcTiming}"));
 
             switch (status)
             {
@@ -2563,7 +2620,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
         }
 
         int lastvisibleCount1 = 0; // Biến để lưu số lượng sản phẩm đã hiển thị
-        int lastvisibleCount2 = 0; // Biến để lưu số lượng sản phẩm đã hiển thị cho camera phụ
+
         public void Update_Result_UI()
         {
             this.InvokeIfRequired(() =>
@@ -2577,7 +2634,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     if (opHis2.Items.Count > 20)
                     {
                         // Xóa các mục cũ nếu số lượng mục lớn hơn 20
-                        opHis2.Items.Remove(opHis2.Items.Count -1);
+                        opHis2.Items.RemoveAt(opHis2.Items.Count - 1);
                     }
                     
                     switch (CameraMain_HMI.Camera_Status)
@@ -2610,14 +2667,21 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                     }
                 }
 
-                if(lastvisibleCount2 != CameraSub_HMI.ID)
+                CameraSubHistoryEntry cameraSubHistoryItem;
+                while (_cameraSubHistory.TryDequeue(out cameraSubHistoryItem))
                 {
-                    lastvisibleCount2 = CameraSub_HMI.ID;
-                    opHisCS.Items.Insert(0, $"#{CameraSub_HMI.ID} : {CameraSub_HMI.Camera_Status} - {CameraSub_HMI.Camera_Content}"); // Thêm mục mới vào danh sách lịch sử camera phụ
+                    int insertAt = 0;
+                    while (insertAt < opHisCS.Items.Count &&
+                        opHisCS.Items[insertAt] is CameraSubHistoryEntry existingEntry &&
+                        existingEntry.ReceivedTimestamp > cameraSubHistoryItem.ReceivedTimestamp)
+                    {
+                        insertAt++;
+                    }
+                    opHisCS.Items.Insert(insertAt, cameraSubHistoryItem);
                     if (opHisCS.Items.Count > 20)
                     {
                         // Xóa các mục cũ nếu số lượng mục lớn hơn 20
-                        opHisCS.Items.Remove(opHisCS.Items.Count - 1);
+                        opHisCS.Items.RemoveAt(opHisCS.Items.Count - 1);
                     }
                 }
             });
@@ -2849,9 +2913,11 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
         private void subpr_DoWork(object sender, DoWorkEventArgs e)
         {
-            string code = e.Argument as string;
-
-            CameraSub_Process(code);
+            CameraSubRequest request = e.Argument as CameraSubRequest;
+            if (request != null)
+            {
+                CameraSub_Process(request);
+            }
         }
 
     }
