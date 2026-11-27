@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -9,191 +8,166 @@ using System.Threading.Tasks;
 
 namespace SpT.Communications.TCP
 {
-    public enum enumClient
-    {
-        CONNECTED,
-        DISCONNECTED,
-        RECEIVED,
-        RECONNECT
-    }
+    public enum enumClient { CONNECTED, DISCONNECTED, RECEIVED, RECONNECT }
 
-    public partial class TCPClient : Component, IDisposable
+    public partial class TCPClient : Component
     {
         public delegate void EventForClient(enumClient state, string data);
         public event EventForClient ClientCallBack;
-
         public string IP { get; set; }
         public int Port { get; set; }
-        public bool Connected { get; private set; } = false;
+        private volatile bool connected;
+        public bool Connected { get { return connected; } private set { connected = value; } }
 
+        private readonly object stateGate = new object();
+        private readonly object sendGate = new object();
         private Socket client;
         private CancellationTokenSource cts;
         private Task reconnectTask;
+        private bool disposed;
 
-        public TCPClient()
-        {
-            InitializeComponent();
-        }
-
-        public TCPClient(IContainer container)
-        {
-            container.Add(this);
-            InitializeComponent();
-        }
+        public TCPClient() { InitializeComponent(); }
+        public TCPClient(IContainer container) { container.Add(this); InitializeComponent(); }
 
         public void Connect()
         {
-            if (cts != null)
+            lock (stateGate)
             {
-                cts.Cancel();
-                cts.Dispose();
+                if (disposed) throw new ObjectDisposedException(nameof(TCPClient));
+                if (cts != null) return;
+                var lifetime = new CancellationTokenSource();
+                cts = lifetime;
+                reconnectTask = Task.Run(() => RunConnectionAsync(lifetime));
             }
-            cts = new CancellationTokenSource();
-
-            reconnectTask = Task.Run(async () =>
-            {
-                while (!cts.Token.IsCancellationRequested)
-                {
-                    if (!Connected)
-                    {
-                        try
-                        {
-                            ClientCallBack?.Invoke(enumClient.RECONNECT, "Reconnecting...");
-
-                            if (!PingHost(IP))
-                            {
-                                await Task.Delay(2000, cts.Token);
-                                continue;
-                            }
-
-                            client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                            client.Connect(IPAddress.Parse(IP), Port);
-                            Connected = true;
-                            ClientCallBack?.Invoke(enumClient.CONNECTED, "Connected");
-
-                            StartReceiveLoop();
-                        }
-                        catch (Exception ex)
-                        {
-                            Connected = false;
-                            ClientCallBack?.Invoke(enumClient.DISCONNECTED, $"Connect failed: {ex.Message}");
-                            await Task.Delay(3000, cts.Token);
-                        }
-                    }
-                    await Task.Delay(1000, cts.Token);
-                }
-            }, cts.Token);
         }
 
-        private bool PingHost(string ip)
+        private async Task RunConnectionAsync(CancellationTokenSource lifetime)
         {
+            var token = lifetime.Token;
             try
             {
-                using (var ping = new Ping())
+                while (!token.IsCancellationRequested)
                 {
-                    var reply = ping.Send(ip, 1000);
-                    return reply.Status == IPStatus.Success;
-                }
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private void StartReceiveLoop()
-        {
-            Task.Run(async () =>
-            {
-                var buffer = new byte[512];
-
-                while (Connected && client != null && client.Connected)
-                {
+                    var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    string error = "Server closed connection";
                     try
                     {
-                        int received = await client.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
-                        if (received > 0)
+                        lock (stateGate)
                         {
-                            
-                            var data = Encoding.UTF8.GetString(buffer, 0, received);
-                            ClientCallBack?.Invoke(enumClient.RECEIVED, data);
+                            if (token.IsCancellationRequested || !ReferenceEquals(cts, lifetime)) break;
+                            // Publish before connecting so Disconnect can abort a pending connect.
+                            client = socket;
                         }
-                        else
+                        Notify(enumClient.RECONNECT, "Reconnecting...");
+                        await socket.ConnectAsync(new IPEndPoint(IPAddress.Parse(IP), Port)).ConfigureAwait(false);
+                        lock (stateGate)
                         {
-                            HandleDisconnect("Server closed connection");
-                            break;
+                            if (token.IsCancellationRequested || !ReferenceEquals(client, socket)) break;
+                            Connected = true;
+                        }
+                        Notify(enumClient.CONNECTED, "Connected");
+                        var buffer = new byte[512];
+                        var chars = new char[Encoding.UTF8.GetMaxCharCount(buffer.Length)];
+                        var decoder = Encoding.UTF8.GetDecoder();
+                        while (!token.IsCancellationRequested)
+                        {
+                            int count = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None).ConfigureAwait(false);
+                            if (count == 0) break;
+                            int length = decoder.GetChars(buffer, 0, count, chars, 0);
+                            if (length > 0 && !token.IsCancellationRequested)
+                                Notify(enumClient.RECEIVED, new string(chars, 0, length));
                         }
                     }
                     catch (Exception ex)
                     {
-                        HandleDisconnect($"Receive error: {ex.Message}");
-                        break;
+                        error = ex.Message;
                     }
+                    finally
+                    {
+                        bool notify = false;
+                        lock (stateGate)
+                        {
+                            if (ReferenceEquals(cts, lifetime) && ReferenceEquals(client, socket))
+                            {
+                                client = null;
+                                Connected = false;
+                                notify = !token.IsCancellationRequested;
+                            }
+                        }
+                        socket.Dispose();
+                        if (notify) Notify(enumClient.DISCONNECTED, error);
+                    }
+                    await Task.Delay(3000, token).ConfigureAwait(false);
                 }
-            });
+            }
+            catch (OperationCanceledException) when (token.IsCancellationRequested) { }
+            finally
+            {
+                lock (stateGate)
+                {
+                    if (ReferenceEquals(cts, lifetime)) cts = null;
+                }
+                lifetime.Dispose();
+            }
         }
 
         public void Send(string data)
         {
+            if (data == null) return;
+            Socket socket;
+            lock (stateGate) socket = client;
+            if (socket == null || !Connected) return;
             try
             {
-                if (client != null && client.Connected)
+                var bytes = Encoding.UTF8.GetBytes(data);
+                lock (sendGate)
                 {
-                    var bytes = Encoding.UTF8.GetBytes(data);
-                    client.Send(bytes);
-                }
-                else
-                {
-                    HandleDisconnect("Send failed: Not connected");
+                    int offset = 0;
+                    while (offset < bytes.Length)
+                    {
+                        int sent = socket.Send(bytes, offset, bytes.Length - offset, SocketFlags.None);
+                        if (sent == 0) throw new SocketException((int)SocketError.ConnectionReset);
+                        offset += sent;
+                    }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                HandleDisconnect($"Send error: {ex.Message}");
+                // Close only the captured socket. Its receive loop owns state and reconnect.
+                socket.Dispose();
             }
         }
 
-        public void Disconnect()
+        private void Notify(enumClient state, string data)
         {
-            cts?.Cancel();
-
-            if (client != null)
+            var handlers = ClientCallBack;
+            if (handlers == null) return;
+            foreach (EventForClient handler in handlers.GetInvocationList())
             {
-                try
+                try { handler(state, data); }
+                catch (Exception ex)
                 {
-                    if (client.Connected)
-                        client.Shutdown(SocketShutdown.Both);
-                    client.Close();
-                }
-                catch { }
-                finally
-                {
-                    client = null;
+                    System.Diagnostics.Trace.TraceError("TCP callback failed: {0}", ex.GetType().Name);
                 }
             }
-            Connected = false;
-            ClientCallBack?.Invoke(enumClient.DISCONNECTED, "Disconnected");
         }
 
-        private void HandleDisconnect(string message)
+        public void Disconnect() { StopConnection(false); }
+
+        private void StopConnection(bool disposing)
         {
-            Connected = false;
-            try
+            Socket socket;
+            lock (stateGate)
             {
-                client?.Close();
+                if (disposing) disposed = true;
+                cts?.Cancel();
+                cts = null;
+                socket = client;
+                client = null;
+                Connected = false;
             }
-            catch { }
-            ClientCallBack?.Invoke(enumClient.DISCONNECTED, message);
+            socket?.Dispose();
+            if (!disposing) Notify(enumClient.DISCONNECTED, "Disconnected");
         }
-
-        //protected override void Dispose(bool disposing)
-        //{
-        //    if (disposing)
-        //    {
-        //        Disconnect();
-        //        cts?.Dispose();
-        //    }
-        //    base.Dispose(disposing);
-        //}
     }
 }

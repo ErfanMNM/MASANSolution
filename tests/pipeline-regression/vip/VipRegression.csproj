@@ -1,0 +1,22 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+    <Platform Condition="'$(Platform)' == ''">x64</Platform>
+    <OutputType>Exe</OutputType><AssemblyName>VipRegression</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion><PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion><Optimize>true</Optimize><Deterministic>true</Deterministic>
+    <BaseIntermediateOutputPath>$(FixtureArtifacts)\obj\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(FixtureArtifacts)\obj\</IntermediateOutputPath>
+    <OutputPath>$(FixtureArtifacts)\bin\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System"/><Reference Include="System.Core"/>
+    <Reference Include="System.Data"/><Reference Include="System.Web.Extensions"/>
+    <Compile Include="Harness.cs"/><Compile Include="$(GeneratedSource)"/>
+  </ItemGroup>
+  <Target Name="RequireIsolatedInputs" BeforeTargets="BeforeBuild">
+    <Error Condition="'$(FixtureArtifacts)' == ''" Text="Use run_vip_regression.py with an external artifact directory."/>
+    <Error Condition="'$(GeneratedSource)' == '' Or !Exists('$(GeneratedSource)')" Text="SHA-pinned production methods required."/>
+  </Target>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+</Project>

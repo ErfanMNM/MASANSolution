@@ -1,4 +1,4 @@
-﻿using iTextSharp.text.pdf;
+using iTextSharp.text.pdf;
 using iTextSharp.text;
 using System;
 using System.Collections.Generic;
@@ -24,9 +24,10 @@ namespace QR_MASAN_01.Report
             Font vnFont = new Font(baseFont, 12, Font.NORMAL);
 
             // 1️⃣ Tạo file PDF
-            Document doc = new Document(PageSize.A4, 50, 50, 50, 50);
-            PdfWriter writer = PdfWriter.GetInstance(doc, new FileStream(filePath, FileMode.Create));
-
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            using (Document doc = new Document(PageSize.A4, 50, 50, 50, 50))
+            using (PdfWriter writer = PdfWriter.GetInstance(doc, stream))
+            {
             doc.Open();
 
             // 2️⃣ Tiêu đề trên cùng
@@ -50,12 +51,12 @@ namespace QR_MASAN_01.Report
             Font metaFont = new Font(baseFont, 12, Font.NORMAL);
             StringBuilder meta = new StringBuilder();
             meta.AppendLine($"Loại báo cáo :");
-            meta.Append("Truy vết hệ thống - " + LogType);
+            meta.AppendLine("Truy vết hệ thống - " + LogType);
             meta.AppendLine($"Thời gian xuất : {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
             meta.AppendLine($"Người xuất : {Environment.UserName}");
 
             // Tạm thời gán chuỗi rỗng cho Hash, lát nữa tính rồi update.
-            meta.AppendLine($"Mã xác thực báo cáo : Tạm tính...");
+            meta.AppendLine("Mã SHA256 được trả riêng sau khi xuất báo cáo.");
 
             Paragraph metaInfo = new Paragraph(meta.ToString(), metaFont);
             metaInfo.SpacingBefore = 20;
@@ -91,37 +92,11 @@ namespace QR_MASAN_01.Report
 
             doc.Close();
             writer.Close();
+            }
 
             // 6️⃣ Tính Hash file PDF sau khi xuất
             string hash = HashHelper.ComputeFileHash(filePath,"SHA256");
 
-            // 7️⃣ Ghi đè file PDF để update hash trong meta
-            // (Mở lại file, thêm dòng hash đúng)
-            string newFilePath = filePath; // Bạn có thể ghi đè luôn
-            doc = new Document(PageSize.A4, 50, 50, 50, 50);
-            writer = PdfWriter.GetInstance(doc, new FileStream(newFilePath, FileMode.Create));
-            doc.Open();
-
-            // Add lại phần giống cũ:
-            doc.Add(header);
-            doc.Add(new Paragraph(new Chunk(new LineSeparator())));
-            doc.Add(title);
-
-            meta.Clear();
-            meta.AppendLine($"Loại báo cáo : Lịch sử hệ thống – LOGIN");
-            meta.AppendLine($"Thời gian xuất : {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-            meta.AppendLine($"Người xuất : {Environment.UserName}");
-            meta.AppendLine($"Mã xác thực báo cáo : {hash}");
-
-            metaInfo = new Paragraph(meta.ToString(), metaFont);
-            metaInfo.SpacingBefore = 20;
-            doc.Add(metaInfo);
-
-            doc.Add(contentTitle);
-            doc.Add(pdfTable);
-
-            doc.Close();
-            writer.Close();
             return (hash, true, filePath);
         }
     }

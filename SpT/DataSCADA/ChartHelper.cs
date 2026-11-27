@@ -1,15 +1,18 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace SpT.DataSCADA
 {
     public class ChartHelper
     {
-        private readonly string _dbFolder = @"C:\MasanSerialization\PODatabases";
+        private readonly string _dbFolder;
+        public ChartHelper() : this(@"C:\MasanSerialization\PODatabases") { }
+        public ChartHelper(string databaseFolder) { _dbFolder = databaseFolder; }
 
         public string GenerateHtmlFromSQLite(string fileName)
         {
@@ -37,7 +40,7 @@ namespace SpT.DataSCADA
                         var rawValue = row["ActivateDate"]?.ToString();
                         if (DateTime.TryParse(rawValue, out DateTime dt))
                         {
-                            string hourKey = dt.ToString("yyyy-MM-dd HH:mm:ss");
+                            string hourKey = dt.ToString("yyyy-MM-dd HH:00:00");
                             if (!dict.ContainsKey(hourKey)) dict[hourKey] = 0;
                             dict[hourKey]++;
                         }
@@ -45,7 +48,7 @@ namespace SpT.DataSCADA
                 }
 
 
-                foreach (var kv in dict)
+                foreach (var kv in dict.OrderBy(pair => pair.Key, StringComparer.Ordinal))
                 {
                     labels.Add(kv.Key);
                     counts.Add(kv.Value);

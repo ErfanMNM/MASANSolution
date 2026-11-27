@@ -432,6 +432,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
             try
             {
                 var config = AppConfigs.Current;
+                var pendingValues = new Dictionary<PropertyInfo, object>();
                 
                 // Cập nhật config từ UI động
                 foreach (var kvp in _configControls)
@@ -445,7 +446,12 @@ namespace MASAN_SERIALIZATION.Views.Settings
                         var value = GetControlValue(control, property.PropertyType);
                         if (value != null)
                         {
-                            property.SetValue(config, value);
+                            if (propertyName == "cartonPack" && Convert.ToInt32(value) <= 0)
+                            {
+                                this.ShowErrorTip("Số sản phẩm trong thùng phải lớn hơn 0.");
+                                return;
+                            }
+                            pendingValues[property] = value;
                         }
                     }
                     catch (Exception ex)
@@ -456,6 +462,8 @@ namespace MASAN_SERIALIZATION.Views.Settings
                 }
 
                 // Lưu config
+                foreach (var pending in pendingValues)
+                    pending.Key.SetValue(config, pending.Value);
                 config.Save();
                 
                 this.ShowSuccessTip("Cài đặt đã được lưu thành công!");

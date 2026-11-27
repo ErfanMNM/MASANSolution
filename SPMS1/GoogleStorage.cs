@@ -134,7 +134,7 @@ namespace SPMS1
                 FileStream outputFileStream = null;
                 try
                 {
-                    outputFileStream = File.OpenWrite(destinationFilePath);
+                    outputFileStream = File.Create(destinationFilePath);
                     storage.DownloadObject(projectName, ObjectName, outputFileStream);
                 }
                 finally
@@ -199,7 +199,7 @@ namespace SPMS1
                 // Trả về thông báo lỗi nếu có exception xảy ra
                 return new Big_Query_Result
                 {
-                    Success = true,
+                    Success = false,
                     Message = $"Lỗi khi dùng bigquery: {ex.Message}",
                     DataTable = dataTable
                 };

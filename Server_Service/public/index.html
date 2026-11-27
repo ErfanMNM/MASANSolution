@@ -222,7 +222,7 @@
 
     <script>
         const API_URL = 'http://localhost:49211';
-        let keyCache = {};
+        let keyCache = Object.create(null);
 
         // Bật/tắt input TTL khi checkbox Permanent được chọn
         function toggleTtl() {
@@ -319,7 +319,7 @@
                 return;
             }
             try {
-                const res = await fetch(`${API_URL}/get/${key}`);
+                const res = await fetch(`${API_URL}/get/${encodeURIComponent(key)}`);
                 const data = await res.json();
                 showMessage('response', `Value of ${key}: ${data.value}`);
             } catch (err) {
@@ -335,7 +335,7 @@
                 return;
             }
             try {
-                const res = await fetch(`${API_URL}/delete/${key}`, {
+                const res = await fetch(`${API_URL}/delete/${encodeURIComponent(key)}`, {
                     method: 'DELETE'
                 });
                 const data = await res.json();
@@ -383,24 +383,17 @@
                 }
 
                 const tableBody = document.getElementById('activeKeysBody');
-                const newCache = {};
+                const newCache = Object.create(null);
 
                 for (const key of keys) {
                     let value, expiresAt, status;
                     if (forceRefresh || !keyCache[key]) {
-                        const res = await fetch(`${API_URL}/get/${key}`);
+                        const res = await fetch(`${API_URL}/get/${encodeURIComponent(key)}`);
                         const data = await res.json();
                         value = data.value;
 
-                        // Giả lập lấy thông tin TTL và expiresAt
-                        const tempRes = await fetch(`${API_URL}/set`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ key, value, ttl: null })
-                        });
-                        const tempData = await tempRes.json();
-                        expiresAt = tempData.ttl ? Date.now() + tempData.ttl : null;
-                        status = tempData.ttl ? 'Temporary' : 'Permanent';
+                        expiresAt = data.expiresAt;
+                        status = expiresAt === null ? 'Permanent' : 'Temporary';
                     } else {
                         value = keyCache[key].value;
                         expiresAt = keyCache[key].expiresAt;
@@ -419,18 +412,18 @@
                     if (!row) {
                         row = document.createElement('tr');
                         row.id = `key-row-${key}`;
-                        row.innerHTML = `
-                            <td>${key}</td>
-                            <td id="value-${key}">${value}</td>
-                            <td id="status-${key}">${status}</td>
-                            <td id="expires-${key}">${expiresAt ? new Date(expiresAt).toLocaleString() : 'Never'}</td>
-                        `;
+                        [key, value, status, expiresAt ? new Date(expiresAt).toLocaleString() : 'Never'].forEach((text, index) => {
+                            const cell = document.createElement('td');
+                            if (index > 0) cell.id = `${['', 'value', 'status', 'expires'][index]}-${key}`;
+                            cell.textContent = String(text ?? '');
+                            row.appendChild(cell);
+                        });
                         tableBody.appendChild(row);
                     } else {
                         const valueCell = document.getElementById(`value-${key}`);
                         const statusCell = document.getElementById(`status-${key}`);
                         const expiresCell = document.getElementById(`expires-${key}`);
-                        if (valueCell.textContent !== value.toString()) {
+                        if (valueCell.textContent !== String(value ?? '')) {
                             valueCell.textContent = value;
                         }
                         if (statusCell.textContent !== status) {

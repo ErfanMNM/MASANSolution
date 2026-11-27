@@ -241,7 +241,7 @@ namespace Norwix
                             lblIndex.Text = ((int)obj - 1 + Old).ToString();
                             Send1Data();
                             UpdateCounter();
-                            INVOKE(e_PRINTER.DATA_PRINTING, new List<string>() { "Index: " + ((int)obj - 1 + Old).ToString(), "Remain: " + Remain.ToString(), DATA[(int)obj - 1], });
+                            INVOKE(e_PRINTER.DATA_PRINTING, new List<string>() { "Index: " + ((int)obj - 1 + Old).ToString(), "Remain: " + Remain.ToString(), DATA[(int)obj - 1 + Old], });
                            
                         }
                         break;
@@ -337,9 +337,9 @@ namespace Norwix
 
         public void Send1Data()
         {
-            if (INDEX < DATA.Count && BUFFER <= SetBuffer)
+            if (INDEX + Old < DATA.Count && BUFFER <= SetBuffer)
             {
-                sendPrinter.SEND_DYNAMIC_DATA_TM1_REMOTE(DATA[INDEX], Convert.ToUInt64(INDEX + 1));
+                sendPrinter.SEND_DYNAMIC_DATA_TM1_REMOTE(DATA[INDEX + Old], Convert.ToUInt64(INDEX + 1));
                 INDEX++;
                 BUFFER++;
             }           

@@ -10,6 +10,12 @@ namespace TestApp
 {
     public class VirtualCOMManager
     {
+        internal static bool IsVirtualPortEntry(string entry, string port)
+        {
+            return !string.IsNullOrEmpty(entry) && !string.IsNullOrEmpty(port)
+                && entry.StartsWith("VCP_" + port + "_", StringComparison.OrdinalIgnoreCase);
+        }
+
         // Windows API cho Device Management
         [DllImport("setupapi.dll", SetLastError = true)]
         private static extern IntPtr SetupDiCreateDeviceInfoList(
@@ -255,7 +261,7 @@ VirtualCOM.SvcDesc=""Virtual COM Port Service""
                         {
                             foreach (string subKeyName in key.GetSubKeyNames())
                             {
-                                if (subKeyName.StartsWith("VCP_" + com1) || subKeyName.StartsWith("VCP_" + com2))
+                                if (IsVirtualPortEntry(subKeyName, com1) || IsVirtualPortEntry(subKeyName, com2))
                                 {
                                     key.DeleteSubKeyTree(subKeyName);
                                 }
@@ -411,6 +417,34 @@ VirtualCOM.SvcDesc=""Virtual COM Port Service""
             {
                 return false;
             }
+        }
+    }
+}
+namespace TestApp
+{
+    public sealed class MemoryCOMBridge : IDisposable
+    {
+        private readonly VirtualCOMManager.VirtualCOMPortMemory first, second;
+        private readonly EventHandler<byte[]> onFirst, onSecond;
+        private bool disposed;
+        public MemoryCOMBridge(VirtualCOMManager.VirtualCOMPortMemory first, VirtualCOMManager.VirtualCOMPortMemory second, Action<string> log)
+        {
+            if (first == null || second == null || ReferenceEquals(first, second)
+                || !ReferenceEquals(first.ConnectedPort, second) || !ReferenceEquals(second.ConnectedPort, first))
+                throw new ArgumentException("Ports must be a distinct connected pair.");
+            this.first = first; this.second = second;
+            onFirst = (sender, data) => { if (!disposed) log?.Invoke(second.PortName + " → " + first.PortName + ": " + System.Text.Encoding.UTF8.GetString(data)); };
+            onSecond = (sender, data) => { if (!disposed) log?.Invoke(first.PortName + " → " + second.PortName + ": " + System.Text.Encoding.UTF8.GetString(data)); };
+            first.DataReceived += onFirst; second.DataReceived += onSecond;
+            try { if (!first.Open() || !second.Open()) throw new InvalidOperationException("Cannot open memory ports."); }
+            catch { Dispose(); throw; }
+        }
+        public void Dispose()
+        {
+            if (disposed) return;
+            disposed = true;
+            first.DataReceived -= onFirst; second.DataReceived -= onSecond;
+            try { first.Close(); } finally { second.Close(); }
         }
     }
 }

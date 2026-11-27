@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -29,12 +29,6 @@ namespace TeraCharts
         private void LoadTemplates()
         {
             cmbTemplate.Items.Clear();
-            
-            // Add new offline templates first
-            cmbTemplate.Items.Add("bar-chart-offline.html");
-            cmbTemplate.Items.Add("line-chart-offline.html");
-            cmbTemplate.Items.Add("pie-chart-offline.html");
-            cmbTemplate.Items.Add("bar-label-rotation.html");
             
             string chartPath = Path.Combine(Application.StartupPath, "ChartCS");
             if (Directory.Exists(chartPath))

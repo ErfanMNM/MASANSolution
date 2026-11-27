@@ -1,4 +1,4 @@
-﻿using MFI_Service;
+using MFI_Service;
 using QR_MASAN_01.Mid;
 using QR_MASAN_01.Views;
 using QR_MASAN_01.Views.MFI_Service;
@@ -290,14 +290,14 @@ namespace QR_MASAN_01
                 try
                 {
                     // Kiểm tra hàng đợi và thêm bản ghi vào SQLite
-                    if (LogQueue.Count > 0)
+                    if (LogQueue.TryDequeue(out var systemLog))
                     {
-                        InsertToSQLite(LogQueue.Dequeue());
+                        InsertToSQLite(systemLog);
                     }
 
-                    if (AWSLogsQueue.Count > 0)
+                    if (AWSLogsQueue.TryDequeue(out var awsLog))
                     {
-                        AWSInsertToSQLite(AWSLogsQueue.Dequeue());
+                        AWSInsertToSQLite(awsLog);
                     }
 
                 }

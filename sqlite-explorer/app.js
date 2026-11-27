@@ -26,7 +26,8 @@ const storage = multer.diskStorage({
     filename: (req, file, cb) => {
         // Tạo tên file unique để tránh conflict
         const uniqueSuffix = crypto.randomBytes(16).toString('hex');
-        cb(null, `${uniqueSuffix}_${file.originalname}`);
+        const extension = path.extname(file.originalname);
+        cb(null, `${uniqueSuffix}${/^\.[a-z0-9]+$/i.test(extension) ? extension : '.sqlite'}`);
     }
 });
 
@@ -124,7 +125,7 @@ app.get('/export/:fileId/:tableName/csv', async (req, res) => {
         }
 
         // Tạo file CSV tạm thời
-        const csvFileName = `${tableName}_${Date.now()}.csv`;
+        const csvFileName = `${crypto.randomBytes(16).toString('hex')}.csv`;
         const csvFilePath = path.join(TEMP_DIR, csvFileName);
 
         const columns = Object.keys(data[0]);
@@ -166,7 +167,7 @@ app.get('/export/:fileId/:tableName/json', async (req, res) => {
         const data = await getAllTableData(filePath, tableName, filter, sortColumn, sortOrder);
 
         res.setHeader('Content-Type', 'application/json');
-        res.setHeader('Content-Disposition', `attachment; filename="${tableName}.json"`);
+        res.attachment(`${tableName}.json`);
         res.json(data);
 
     } catch (error) {
@@ -240,19 +241,26 @@ app.delete('/cleanup/:fileId', async (req, res) => {
 // Các hàm tiện ích
 function findFileById(fileId) {
     const files = fs.readdirSync(TEMP_DIR);
-    const targetFile = files.find(file => file.startsWith(fileId));
+    const targetFile = files.find(file => path.basename(file, path.extname(file)) === fileId);
     return targetFile ? path.join(TEMP_DIR, targetFile) : null;
 }
 
-function analyzeSQLiteFile(filePath) {
+function quoteIdentifier(value) {
+    return '"' + String(value).replace(/"/g, '""') + '"';
+}
+
+function openReadonly(filePath) {
     return new Promise((resolve, reject) => {
         const db = new sqlite3.Database(filePath, sqlite3.OPEN_READONLY, (err) => {
-            if (err) {
-                reject(err);
-                return;
-            }
+            if (err) reject(err);
+            else resolve(db);
         });
+    });
+}
 
+async function analyzeSQLiteFile(filePath) {
+    const db = await openReadonly(filePath);
+    return new Promise((resolve, reject) => {
         // Lấy danh sách các bảng
         db.all(`SELECT name, type FROM sqlite_master WHERE type IN ('table', 'view') ORDER BY name`, (err, tables) => {
             if (err) {
@@ -264,7 +272,7 @@ function analyzeSQLiteFile(filePath) {
             // Lấy thông tin về từng bảng
             const tablePromises = tables.map(table => {
                 return new Promise((resolveTable, rejectTable) => {
-                    db.get(`SELECT COUNT(*) as count FROM "${table.name}"`, (err, result) => {
+                    db.get(`SELECT COUNT(*) as count FROM ${quoteIdentifier(table.name)}`, (err, result) => {
                         if (err) {
                             rejectTable(err);
                             return;
@@ -295,19 +303,20 @@ function analyzeSQLiteFile(filePath) {
     });
 }
 
-function getTableData(filePath, tableName, limit = 100, offset = 0, filter = '', sortColumn = '', sortOrder = 'ASC') {
+async function getTableData(filePath, tableName, limit = 100, offset = 0, filter = '', sortColumn = '', sortOrder = 'ASC') {
+    const db = await openReadonly(filePath);
     return new Promise((resolve, reject) => {
-        const db = new sqlite3.Database(filePath, sqlite3.OPEN_READONLY);
+        sortOrder = String(sortOrder).toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
 
-        let sql = `SELECT * FROM "${tableName}"`;
-        let countSql = `SELECT COUNT(*) as total FROM "${tableName}"`;
+        let sql = `SELECT * FROM ${quoteIdentifier(tableName)}`;
+        let countSql = `SELECT COUNT(*) as total FROM ${quoteIdentifier(tableName)}`;
         let params = [];
         let countParams = [];
 
         // Thêm filter nếu có
         if (filter) {
             // Lấy danh sách cột trước
-            db.all(`PRAGMA table_info("${tableName}")`, (err, columns) => {
+            db.all(`PRAGMA table_info(${quoteIdentifier(tableName)})`, (err, columns) => {
                 if (err) {
                     db.close();
                     reject(err);
@@ -315,7 +324,7 @@ function getTableData(filePath, tableName, limit = 100, offset = 0, filter = '',
                 }
 
                 const columnNames = columns.map(col => col.name);
-                const whereConditions = columnNames.map(col => `"${col}" LIKE ?`).join(' OR ');
+                const whereConditions = columnNames.map(col => `${quoteIdentifier(col)} LIKE ?`).join(' OR ');
                 const filterValue = `%${filter}%`;
                 const filterParams = columnNames.map(() => filterValue);
 
@@ -326,7 +335,7 @@ function getTableData(filePath, tableName, limit = 100, offset = 0, filter = '',
 
                 // Thêm sorting nếu có
                 if (sortColumn && columns.some(col => col.name === sortColumn)) {
-                    sql += ` ORDER BY "${sortColumn}" ${sortOrder}`;
+                    sql += ` ORDER BY ${quoteIdentifier(sortColumn)} ${sortOrder}`;
                 }
 
                 sql += ` LIMIT ? OFFSET ?`;
@@ -337,7 +346,7 @@ function getTableData(filePath, tableName, limit = 100, offset = 0, filter = '',
         } else {
             // Thêm sorting nếu có
             if (sortColumn) {
-                sql += ` ORDER BY "${sortColumn}" ${sortOrder}`;
+                sql += ` ORDER BY ${quoteIdentifier(sortColumn)} ${sortOrder}`;
             }
 
             sql += ` LIMIT ? OFFSET ?`;
@@ -375,16 +384,17 @@ function getTableData(filePath, tableName, limit = 100, offset = 0, filter = '',
     });
 }
 
-function getAllTableData(filePath, tableName, filter = '', sortColumn = '', sortOrder = 'ASC') {
+async function getAllTableData(filePath, tableName, filter = '', sortColumn = '', sortOrder = 'ASC') {
+    const db = await openReadonly(filePath);
     return new Promise((resolve, reject) => {
-        const db = new sqlite3.Database(filePath, sqlite3.OPEN_READONLY);
+        sortOrder = String(sortOrder).toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
 
-        let sql = `SELECT * FROM "${tableName}"`;
+        let sql = `SELECT * FROM ${quoteIdentifier(tableName)}`;
         let params = [];
 
         // Thêm filter nếu có
         if (filter) {
-            db.all(`PRAGMA table_info("${tableName}")`, (err, columns) => {
+            db.all(`PRAGMA table_info(${quoteIdentifier(tableName)})`, (err, columns) => {
                 if (err) {
                     db.close();
                     reject(err);
@@ -392,7 +402,7 @@ function getAllTableData(filePath, tableName, filter = '', sortColumn = '', sort
                 }
 
                 const columnNames = columns.map(col => col.name);
-                const whereConditions = columnNames.map(col => `"${col}" LIKE ?`).join(' OR ');
+                const whereConditions = columnNames.map(col => `${quoteIdentifier(col)} LIKE ?`).join(' OR ');
                 const filterValue = `%${filter}%`;
                 params = columnNames.map(() => filterValue);
 
@@ -400,7 +410,7 @@ function getAllTableData(filePath, tableName, filter = '', sortColumn = '', sort
 
                 // Thêm sorting nếu có
                 if (sortColumn && columns.some(col => col.name === sortColumn)) {
-                    sql += ` ORDER BY "${sortColumn}" ${sortOrder}`;
+                    sql += ` ORDER BY ${quoteIdentifier(sortColumn)} ${sortOrder}`;
                 }
 
                 executeQuery();
@@ -408,7 +418,7 @@ function getAllTableData(filePath, tableName, filter = '', sortColumn = '', sort
         } else {
             // Thêm sorting nếu có
             if (sortColumn) {
-                sql += ` ORDER BY "${sortColumn}" ${sortOrder}`;
+                sql += ` ORDER BY ${quoteIdentifier(sortColumn)} ${sortOrder}`;
             }
 
             executeQuery();
@@ -427,11 +437,11 @@ function getAllTableData(filePath, tableName, filter = '', sortColumn = '', sort
     });
 }
 
-function getTableSchema(filePath, tableName) {
+async function getTableSchema(filePath, tableName) {
+    const db = await openReadonly(filePath);
     return new Promise((resolve, reject) => {
-        const db = new sqlite3.Database(filePath, sqlite3.OPEN_READONLY);
 
-        db.all(`PRAGMA table_info("${tableName}")`, (err, columns) => {
+        db.all(`PRAGMA table_info(${quoteIdentifier(tableName)})`, (err, columns) => {
             if (err) {
                 db.close();
                 reject(err);
@@ -454,9 +464,9 @@ function getTableSchema(filePath, tableName) {
     });
 }
 
-function executeQuery(filePath, sql) {
+async function executeQuery(filePath, sql) {
+    const db = await openReadonly(filePath);
     return new Promise((resolve, reject) => {
-        const db = new sqlite3.Database(filePath, sqlite3.OPEN_READONLY);
 
         db.all(sql, (err, rows) => {
             db.close();

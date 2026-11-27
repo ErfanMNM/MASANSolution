@@ -1,4 +1,4 @@
-﻿using DATALOGIC_SCAN;
+using DATALOGIC_SCAN;
 using Diaglogs;
 using Dialogs;
 using DocumentFormat.OpenXml.Office.Word;
@@ -24,6 +24,8 @@ namespace QR_MASAN_01
     {
         public static bool formOpen { get; set; } = true;
         Connection _ScanConection = new Connection();
+        private bool scannerInitialized;
+        private bool scannerDisposed;
 
     
         public ScanQR_V2()
@@ -50,14 +52,27 @@ namespace QR_MASAN_01
 
         public void INIT()
         {
+            if (scannerInitialized || scannerDisposed) return;
+            scannerInitialized = true;
             _ScanConection.SERIALPORT = serialPort1;
-            _ScanConection.EVENT += _ScanConection_EVENT; ;
+            _ScanConection.EVENT += _ScanConection_EVENT;
             _ScanConection.LOAD();
             _ScanConection.CONNECT(Setting.Current.HandScanCOM);
         }
 
+        private void DisposeScanner()
+        {
+            if (scannerDisposed) return;
+            scannerDisposed = true;
+            if (!scannerInitialized) return;
+            _ScanConection.EVENT -= _ScanConection_EVENT;
+            _ScanConection.DISCONNECT();
+        }
+
         private void _ScanConection_EVENT(e_Serial e, string s)
         {
+            if (scannerDisposed || IsDisposed || Disposing) return;
+            if (e == e_Serial.Recive && !formOpen) return;
             switch (e)
             {
                 case e_Serial.Connected:

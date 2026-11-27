@@ -66,6 +66,11 @@ class RequestQueue {
                 reject,
                 timestamp: new Date().toISOString(),
                 timeout: setTimeout(() => {
+                    const index = this.queue.indexOf(request);
+                    if (index !== -1) {
+                        this.queue.splice(index, 1);
+                        this.stats.errors++;
+                    }
                     reject(new Error('Request timeout'));
                 }, 60000) // 60 second timeout
             };
@@ -340,11 +345,9 @@ app.post('/api/orders', async (req, res) => {
             orderNo, uniqueCode, blockNo, site, factory, productionLine,
             productionDate, shift, orderQty, lotNumber,
             productCode, productName, GTIN, customerOrderNo, uom
-        } = req.body;
+        } = req.body || {};
 
         // Validation - uniqueCode is optional if GTIN already has codes
-        const gtinHasCodes = fileManager.codesFileExists(GTIN);
-
         const requiredFields = {
             orderNo, blockNo, site, factory, productionLine,
             productionDate, shift, orderQty, lotNumber,
@@ -363,6 +366,16 @@ app.post('/api/orders', async (req, res) => {
                 });
             }
         }
+
+        for (const [key, value] of Object.entries(requiredFields)) {
+            if (key !== 'orderQty' && typeof value !== 'string') {
+                return res.status(400).json({ message: `Trường '${key}' phải là chuỗi.`, at: new Date().toISOString() });
+            }
+        }
+        if (uniqueCode !== undefined && !Array.isArray(uniqueCode)) {
+            return res.status(400).json({ message: "Trường 'uniqueCode' phải là mảng.", at: new Date().toISOString() });
+        }
+        const gtinHasCodes = await fileManager.codesFileExists(GTIN);
 
         // Check uniqueCode - required only if GTIN doesn't have codes yet
         if (!gtinHasCodes) {
@@ -438,7 +451,7 @@ app.post('/api/orders', async (req, res) => {
         res.json(result);
 
     } catch (error) {
-        logError(error, `POST /api/orders error for orderNo: ${req.body.orderNo}`);
+        logError(error, `POST /api/orders error for orderNo: ${req.body && req.body.orderNo}`);
         res.status(500).json({
             message: error.message.includes('queue') ? 'Hệ thống đang quá tải, vui lòng thử lại.' : 'Lỗi xử lý request.',
             at: new Date().toISOString()
@@ -636,7 +649,7 @@ app.get('/api/codes/:gtin', async (req, res) => {
         const { gtin } = req.params;
         const { blockNo } = req.query;
 
-        if (!fileManager.codesFileExists(gtin)) {
+        if (!await fileManager.codesFileExists(gtin)) {
             return res.status(404).json({ message: 'Không tìm thấy codes của GTIN này.' });
         }
 
@@ -690,7 +703,7 @@ app.get('/api/orders/:orderNo/codes', async (req, res) => {
             return res.status(404).json({ message: 'PO không có thông tin GTIN.' });
         }
 
-        if (!fileManager.codesFileExists(gtin)) {
+        if (!await fileManager.codesFileExists(gtin)) {
             return res.status(404).json({ message: 'Không tìm thấy codes của GTIN này.' });
         }
 
@@ -720,10 +733,10 @@ app.get('/api/orders/:orderNo/codes', async (req, res) => {
  *     responses:
  *       200: { description: Queue statistics }
  */
-app.get('/api/queue/stats', (req, res) => {
+app.get('/api/queue/stats', async (req, res) => {
     try {
         const stats = requestQueue.getStats();
-        const storageStats = fileManager.getStorageStats();
+        const storageStats = await fileManager.getStorageStats();
 
         res.json({
             queue: stats,

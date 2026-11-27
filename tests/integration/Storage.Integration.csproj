@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <AssemblyName>Storage.Integration</AssemblyName>
+    <RootNamespace>StorageIntegration</RootNamespace>
+    <LangVersion>7.3</LangVersion>
+    <PlatformTarget>x64</PlatformTarget>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <Deterministic>true</Deterministic>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" /><Reference Include="System.Core" /><Reference Include="System.Data" />
+    <Reference Include="MASAN-SERIALIZATION"><HintPath>$(AppBinary)</HintPath><Private>True</Private></Reference>
+    <Reference Include="System.Data.SQLite"><HintPath>$(AppDependencyDirectory)\System.Data.SQLite.dll</HintPath><Private>True</Private></Reference>
+    <Reference Include="Newtonsoft.Json"><HintPath>$(AppDependencyDirectory)\Newtonsoft.Json.dll</HintPath><Private>True</Private></Reference>
+    <Reference Include="SunnyUI"><HintPath>$(AppDependencyDirectory)\SunnyUI.dll</HintPath><Private>True</Private></Reference>
+    <Reference Include="SunnyUI.Common"><HintPath>$(AppDependencyDirectory)\SunnyUI.Common.dll</HintPath><Private>True</Private></Reference>
+    <Reference Include="System.Windows.Forms" /><Reference Include="System.Drawing" />
+    <Compile Include="Program.cs" />
+    <Compile Include="POInitialization.cs" />
+    <Compile Include="PORefill.cs" />
+    <None Include="App.config" />
+    <Content Include="$(AppDependencyDirectory)\x64\SQLite.Interop.dll"><Link>x64\SQLite.Interop.dll</Link><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+  </ItemGroup>
+  <Target Name="RequireExplicitBinaryAndIsolatedOutput" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(AppBinary)' == '' Or '$(AppDependencyDirectory)' == '' Or '$(OutputPath)' == '' Or '$(IntermediateOutputPath)' == ''" Text="Use run-storage.ps1 after acquiring the shared build slot. Explicit compiled application binary, dependencies, and isolated outputs are required." />
+    <Error Condition="!Exists('$(AppBinary)') Or !Exists('$(AppDependencyDirectory)\System.Data.SQLite.dll') Or !Exists('$(AppDependencyDirectory)\x64\SQLite.Interop.dll')" Text="Compiled application or SQLite dependencies are missing." />
+  </Target>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

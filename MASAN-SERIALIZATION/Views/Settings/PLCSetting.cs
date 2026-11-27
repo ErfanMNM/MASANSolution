@@ -286,7 +286,7 @@ namespace MASAN_SERIALIZATION.Views.Settings
             }
             else
             {
-                bool fileExists = files.Any(file => Path.GetFileName(file).Equals(SelectRecipeName, StringComparison.OrdinalIgnoreCase));
+                bool fileExists = files.Any(file => Path.GetFileName(file).Equals(SelectRecipeName + ".rplc", StringComparison.OrdinalIgnoreCase));
                 if (!fileExists)
                 {
                     string json = JsonConvert.SerializeObject(defaultConfig, Formatting.Indented);
@@ -697,8 +697,8 @@ namespace MASAN_SERIALIZATION.Views.Settings
 
         public void Write_Recipe_To_File_CS(string json)
         {
-            File.WriteAllText($"PLC_RECIPEs/{SelectRecipeName_CS}.json", json);
-            AddLogRecipe(SelectRecipeName, json, "UPDATE", "Operator");
+            File.WriteAllText($"PLC_RECIPEs_CS/{SelectRecipeName_CS}.rplc", json);
+            AddLogRecipe_CS(SelectRecipeName_CS, json, "UPDATE", "Operator");
         }
 
         private void btnSaveCS_Click(object sender, EventArgs e)

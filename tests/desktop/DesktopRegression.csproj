@@ -1,0 +1,58 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+    <Platform Condition="'$(Platform)' == ''">x64</Platform>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>DesktopRegression</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" /><Reference Include="System.Core" />
+    <Reference Include="System.Data" /><Reference Include="System.Windows.Forms" /><Reference Include="System.Xml" />
+    <Reference Include="System.Data.SQLite"><HintPath>..\..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.119.0\lib\net46\System.Data.SQLite.dll</HintPath></Reference>
+    <Reference Include="Newtonsoft.Json"><HintPath>..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath></Reference>
+    <Compile Include="Program.cs" />
+    <Reference Include="System.Data.DataSetExtensions"/><Reference Include="System.Management"/><Reference Include="Microsoft.VisualBasic"/><Reference Include="System.Web"/><Reference Include="System.Xml.Linq"/>
+    <Reference Include="itextsharp"><HintPath>..\..\packages\iTextSharp.5.5.13.4\lib\net461\itextsharp.dll</HintPath></Reference>
+    <Reference Include="BouncyCastle.Cryptography"><HintPath>..\..\packages\BouncyCastle.Cryptography.2.6.1\lib\net461\BouncyCastle.Cryptography.dll</HintPath></Reference>
+    <Compile Include="Round2Tests.cs"/>
+    <Compile Include="Round2Transport.cs"/>
+    <Compile Include="Round2Native.cs"/>
+    <Compile Include="Round2Simulator.cs"/>
+    <Compile Include="..\..\TestApp\COMPortEmulator.cs"><Link>Production\COMPortEmulator.cs</Link></Compile>
+    <Compile Include="..\..\TestApp\VirtualCOMPort.cs"><Link>Production\VirtualCOMPort.cs</Link></Compile>
+    <Compile Include="..\..\TestApp\VirtualSerialPort.cs"><Link>Production\VirtualSerialPort.cs</Link></Compile>
+    <Compile Include="..\..\TestApp\VirtualCOMBridge.cs"><Link>Production\VirtualCOMBridge.cs</Link></Compile>
+    <Compile Include="..\..\TestApp\TCPCOMBridge.cs"><Link>Production\TCPCOMBridge.cs</Link></Compile>
+
+    <Compile Include="..\..\QR-MASAN-01\Mid\POService.cs"><Link>Production\POService.cs</Link></Compile>
+    <Compile Include="..\..\QR-MASAN-01\Mid\MainClass.cs"><Link>Production\MainClass.cs</Link></Compile>
+    <Compile Include="..\..\QR-MASAN-01\Report\ReportClass.cs"><Link>Production\ReportClass.cs</Link></Compile>
+    <Compile Include="..\..\SpT\DecodeEncode\Hash.cs"><Link>Production\Hash.cs</Link></Compile>
+    <Compile Include="..\..\SpT\Files\FileControl.cs"><Link>Production\FileControl.cs</Link></Compile>
+    <Compile Include="..\..\SpT\DataSCADA\ChartHelper.cs"><Link>Production\DataChart.cs</Link></Compile>
+    <Compile Include="..\..\SPMS1\CSV_Extention.cs"><Link>Production\CSV.cs</Link></Compile>
+    <Compile Include="..\..\SPMS1\CSV_Extention.Designer.cs"><Link>Production\CSV.Designer.cs</Link></Compile>
+    <Compile Include="..\..\SPMS1\RandomStringGenerator.cs"><Link>Production\Random.cs</Link></Compile>
+    <Compile Include="..\..\SPMS1\RandomStringGenerator.Designer.cs"><Link>Production\Random.Designer.cs</Link></Compile>
+    <Compile Include="..\..\TestApp\VirtualCOMManager.cs"><Link>Production\VirtualCOMManager.cs</Link></Compile>
+
+    <Compile Include="obj\ExtractedFixtures.g.cs" />
+    <Compile Include="..\..\SpT\AuditTrail\LogHelper.cs"><Link>Production\LogHelper.cs</Link></Compile>
+    <Compile Include="..\..\SPMS1\TCPClient.cs"><Link>Production\LegacyTCPClient.cs</Link></Compile>
+    <Compile Include="..\..\SPMS1\TCPClient.Designer.cs"><Link>Production\LegacyTCPClient.Designer.cs</Link></Compile>
+    <Compile Include="..\..\SpT\Communications\TCP\TCPClient.cs"><Link>Production\TCPClient.cs</Link></Compile>
+    <Compile Include="..\..\SpT\Communications\TCP\TCPClient.Designer.cs"><Link>Production\TCPClient.Designer.cs</Link></Compile>
+    <Compile Include="..\..\QR-MASAN-01\Mid\Audittrail.cs"><Link>Production\Audittrail.cs</Link></Compile>
+    <Compile Include="..\..\TeraCharts\Utils\ChartHelper.cs"><Link>Production\ChartHelper.cs</Link></Compile>
+    <Content Include="..\..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.119.0\build\net46\x64\SQLite.Interop.dll"><Link>x64\SQLite.Interop.dll</Link><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></Content>
+  </ItemGroup>
+  <Target Name="PrepareExtractedFixtures" BeforeTargets="BeforeBuild">
+    <Exec Command="python -X utf8 &quot;$(MSBuildProjectDirectory)\prepare_sources.py&quot;" />
+  </Target>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

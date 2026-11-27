@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using Sunny.UI;
@@ -11,6 +11,8 @@ namespace Dialogs
     public partial class Scaner : Form
     {
         Connection _ScanConection = new Connection();
+        private bool scannerInitialized;
+        private bool scannerDisposed;
         public string TextValue { get; private set; }
         public string _Title { get; set; } = "SCANER";
 
@@ -23,7 +25,7 @@ namespace Dialogs
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
-            _ScanConection.DISCONNECT();
+            DisposeScanner();
         }
 
         private void btnOK_Click(object sender, EventArgs e)
@@ -41,7 +43,7 @@ namespace Dialogs
                 DialogResult = DialogResult.OK;
 
                 this.Close();
-                _ScanConection.DISCONNECT();
+                DisposeScanner();
             }
             else
             {
@@ -53,16 +55,30 @@ namespace Dialogs
 
         private void Scaner_Load(object sender, EventArgs e)
         {
+            if (!scannerInitialized && !scannerDisposed)
+            {
+                scannerInitialized = true;
+                _ScanConection.SERIALPORT = serialPort1;
+                _ScanConection.EVENT += _ScanConection_EVENT;
+                _ScanConection.LOAD();
+            }
             ScanCOMPorts();
-            _ScanConection.SERIALPORT = serialPort1;
-            _ScanConection.EVENT += _ScanConection_EVENT; ;
-            _ScanConection.LOAD();
             
             uiTitlePanel1.Text= _Title;
         }
 
+        private void DisposeScanner()
+        {
+            if (scannerDisposed) return;
+            scannerDisposed = true;
+            if (!scannerInitialized) return;
+            _ScanConection.EVENT -= _ScanConection_EVENT;
+            _ScanConection.DISCONNECT();
+        }
+
         private void _ScanConection_EVENT(e_Serial e, string s)
         {
+            if (scannerDisposed || IsDisposed || Disposing) return;
             switch (e)
             {
                 case e_Serial.Connected:
@@ -117,7 +133,8 @@ namespace Dialogs
 
         private void ipCOM_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _ScanConection.CONNECT(ipCOM.SelectedText);
+            string port = ipCOM.SelectedItem?.ToString();
+            if (!string.IsNullOrWhiteSpace(port)) _ScanConection.CONNECT(port);
         }
     }
 }

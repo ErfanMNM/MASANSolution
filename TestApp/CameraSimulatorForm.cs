@@ -32,6 +32,10 @@ namespace TestApp
         public int MaxCount { get; set; }
         public int DelayMs { get; set; }
         public bool IsSending { get; set; }
+        internal readonly object ClientsGate = new object();
+        internal readonly object SendGate = new object();
+        internal Task AcceptTask = Task.CompletedTask;
+        internal string[] SendingLines;
         
         public CameraInstance(int id, string name, int port)
         {
@@ -49,12 +53,187 @@ namespace TestApp
         }
     }
 
+    // No UI or device dependencies: every listener generation owns its clients.
+    internal static class CameraSimulatorCore
+    {
+        internal static int ClientCount(CameraInstance camera)
+        {
+            lock (camera.ClientsGate) return camera.ConnectedClients.Count;
+        }
+
+        internal static void Start(CameraInstance camera, int port, Action<string> log, Action changed, IPAddress address = null)
+        {
+            lock (camera.ClientsGate)
+            {
+                if (camera.ServerRunning) return;
+                var listener = new TcpListener(address ?? IPAddress.Any, port);
+                try { listener.Start(); }
+                catch { listener.Stop(); throw; }
+                var stop = new CancellationTokenSource();
+                camera.Port = ((IPEndPoint)listener.LocalEndpoint).Port;
+                camera.TcpListener = listener;
+                camera.CancellationTokenSource = stop;
+                camera.ServerRunning = true;
+                camera.AcceptTask = Task.Run(() => Accept(camera, listener, stop, log, changed));
+            }
+        }
+
+        private static async Task Accept(CameraInstance camera, TcpListener listener,
+            CancellationTokenSource stop, Action<string> log, Action changed)
+        {
+            var token = stop.Token;
+            try
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    var client = await listener.AcceptTcpClientAsync().ConfigureAwait(false);
+                    bool accepted;
+                    lock (camera.ClientsGate)
+                    {
+                        accepted = camera.ServerRunning && !token.IsCancellationRequested && ReferenceEquals(camera.TcpListener, listener);
+                        if (accepted) camera.ConnectedClients.Add(client);
+                    }
+                    if (!accepted) { client.Close(); break; }
+                    log("Client kết nối");
+                    changed();
+                }
+            }
+            catch (Exception ex)
+            {
+                if (!token.IsCancellationRequested) log("Lỗi chấp nhận client: " + ex.Message);
+            }
+            finally
+            {
+                TcpClient[] clients = new TcpClient[0];
+                lock (camera.ClientsGate)
+                {
+                    if (ReferenceEquals(camera.TcpListener, listener))
+                    {
+                        camera.ServerRunning = false;
+                        camera.TcpListener = null;
+                        camera.CancellationTokenSource = null;
+                        clients = camera.ConnectedClients.ToArray();
+                        camera.ConnectedClients.Clear();
+                    }
+                }
+                foreach (var client in clients) client.Close();
+                listener.Stop();
+                stop.Dispose();
+                changed();
+            }
+        }
+
+        internal static void Stop(CameraInstance camera)
+        {
+            TcpListener listener;
+            TcpClient[] clients;
+            lock (camera.ClientsGate)
+            {
+                camera.ServerRunning = false;
+                camera.CancellationTokenSource?.Cancel();
+                camera.CancellationTokenSource = null;
+                listener = camera.TcpListener;
+                camera.TcpListener = null;
+                clients = camera.ConnectedClients.ToArray();
+                camera.ConnectedClients.Clear();
+            }
+            listener?.Stop();
+            foreach (var client in clients) client.Close();
+        }
+
+        internal static Task<int> BroadcastAsync(CameraInstance camera, string message, Action<TcpClient, byte[]> writer = null)
+        {
+            TcpListener listener;
+            lock (camera.ClientsGate) listener = camera.TcpListener;
+            return Task.Run(() => Broadcast(camera, message, writer, listener));
+        }
+
+        internal static int Broadcast(CameraInstance camera, string message, Action<TcpClient, byte[]> writer = null)
+        {
+            TcpListener listener;
+            lock (camera.ClientsGate) listener = camera.TcpListener;
+            return Broadcast(camera, message, writer, listener);
+        }
+
+        private static int Broadcast(CameraInstance camera, string message, Action<TcpClient, byte[]> writer, TcpListener listener)
+        {
+            // Serialize sends without holding the client-list gate over network I/O.
+            lock (camera.SendGate)
+            {
+                TcpClient[] clients;
+                lock (camera.ClientsGate)
+                {
+                    if (!ReferenceEquals(camera.TcpListener, listener)) return 0;
+                    clients = camera.ConnectedClients.ToArray();
+                }
+                byte[] data = Encoding.UTF8.GetBytes(message);
+                int sent = 0;
+                foreach (var client in clients)
+                {
+                    try
+                    {
+                        if (writer != null) writer(client, data);
+                        else
+                        {
+                            client.SendTimeout = 1000;
+                            client.GetStream().Write(data, 0, data.Length);
+                        }
+                        sent++;
+                    }
+                    catch
+                    {
+                        lock (camera.ClientsGate) camera.ConnectedClients.Remove(client);
+                        client.Close();
+                    }
+                }
+                return sent;
+            }
+        }
+
+        internal static string[] ReadCsvFirstColumn(string path, bool hasHeader)
+        {
+            var lines = new List<string>();
+            using (var parser = new Microsoft.VisualBasic.FileIO.TextFieldParser(path, Encoding.UTF8, true))
+            {
+                parser.SetDelimiters(",");
+                parser.HasFieldsEnclosedInQuotes = true;
+                parser.TrimWhiteSpace = false;
+                if (hasHeader && !parser.EndOfData) parser.ReadFields();
+                while (!parser.EndOfData)
+                {
+                    var fields = parser.ReadFields();
+                    if (fields != null && fields.Length > 0 && !string.IsNullOrWhiteSpace(fields[0]))
+                        lines.Add(fields[0].Trim());
+                }
+            }
+            return lines.ToArray();
+        }
+    }
+
     public partial class CameraSimulatorForm : UIPage
     {
         private Dictionary<int, CameraInstance> cameras;
         private int selectedCameraId;
         private const int MAX_CAMERAS = 3;
         private string currentDatabasePath;
+
+        private void PostUI(Action action)
+        {
+            if (IsDisposed || Disposing) return;
+            try
+            {
+                if (InvokeRequired) BeginInvoke(new Action(() => { if (!IsDisposed && !Disposing) action(); }));
+                else action();
+            }
+            catch (InvalidOperationException) { }
+        }
+
+        private void StartServer(CameraInstance camera, int port)
+        {
+            CameraSimulatorCore.Start(camera, port,
+                message => PostUI(() => uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} {message}\n")),
+                () => PostUI(() => { if (camera.Id == selectedCameraId) UpdateCameraSelection(); }));
+        }
 
         public CameraSimulatorForm()
         {
@@ -161,7 +340,7 @@ namespace TestApp
         {
             var camera = cameras[selectedCameraId];
             uiTextBox_Port.Text = camera.Port.ToString();
-            uiLabel_ClientCount.Text = $"Camera {camera.Id} - Clients: {camera.ConnectedClients.Count}";
+            uiLabel_ClientCount.Text = $"Camera {camera.Id} - Clients: {CameraSimulatorCore.ClientCount(camera)}";
             
             uiButton_StartServer.Enabled = !camera.ServerRunning;
             uiButton_StopServer.Enabled = camera.ServerRunning;
@@ -187,82 +366,19 @@ namespace TestApp
             }
         }
 
-        private async void BtnStartServer_Click(object sender, EventArgs e)
+        private void BtnStartServer_Click(object sender, EventArgs e)
         {
             var camera = cameras[selectedCameraId];
             try
             {
                 int port = int.Parse(uiTextBox_Port.Text);
-                camera.Port = port;
-                camera.TcpListener = new TcpListener(IPAddress.Any, port);
-                camera.TcpListener.Start();
-                camera.ServerRunning = true;
-                camera.CancellationTokenSource = new CancellationTokenSource();
-                
+                StartServer(camera, port);
                 UpdateCameraSelection();
-                
-                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Server đã khởi động trên cổng {port}\n");
-                
-                await AcceptClientsAsync(camera, camera.CancellationTokenSource.Token);
+                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Server đã khởi động trên cổng {camera.Port}\n");
             }
             catch (Exception ex)
             {
                 uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Lỗi khởi động Camera {camera.Id} server: {ex.Message}\n");
-            }
-        }
-
-        private async Task AcceptClientsAsync(CameraInstance camera, CancellationToken cancellationToken)
-        {
-            while (!cancellationToken.IsCancellationRequested && camera.ServerRunning)
-            {
-                try
-                {
-                    var client = await AcceptTcpClientAsync(camera.TcpListener, cancellationToken);
-                    if (client != null)
-                    {
-                        camera.ConnectedClients.Add(client);
-                        uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Client kết nối: {client.Client.RemoteEndPoint}");
-                        
-                        if (camera.Id == selectedCameraId)
-                        {
-                            UpdateCameraSelection();
-                        }
-                    }
-                }
-                catch (ObjectDisposedException)
-                {
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    if (!cancellationToken.IsCancellationRequested)
-                    {
-                        uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Lỗi chấp nhận client: {ex.Message}\n");
-                    }
-                }
-            }
-        }
-
-        private async Task<TcpClient> AcceptTcpClientAsync(TcpListener listener, CancellationToken cancellationToken)
-        {
-            try
-            {
-                return await Task.Run(() =>
-                {
-                    while (!cancellationToken.IsCancellationRequested)
-                    {
-                        if (listener.Pending())
-                        {
-                            return listener.AcceptTcpClient();
-                        }
-                        Thread.Sleep(100);
-                    }
-                    return null;
-                }, cancellationToken);
-            }
-            catch
-            {
-                return null;
             }
         }
 
@@ -274,42 +390,17 @@ namespace TestApp
 
         private void StopServer(CameraInstance camera)
         {
-            try
-            {
-                camera.ServerRunning = false;
-                camera.CancellationTokenSource?.Cancel();
-                
-                foreach (var client in camera.ConnectedClients.ToList())
-                {
-                    client?.Close();
-                }
-                camera.ConnectedClients.Clear();
-                
-                camera.TcpListener?.Stop();
-                
-                StopContinuousSending(camera);
-                
-                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Server đã dừng\n");
-                
-                if (camera.Id == selectedCameraId)
-                {
-                    UpdateCameraSelection();
-                }
-            }
-            catch (Exception ex)
-            {
-                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Lỗi dừng Camera {camera.Id} server: {ex.Message}\n");
-            }
+            CameraSimulatorCore.Stop(camera);
+            StopContinuousSending(camera);
+            uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Server đã dừng\n");
+            if (camera.Id == selectedCameraId) UpdateCameraSelection();
         }
 
-        private void BtnSendSingle_Click(object sender, EventArgs e)
+        private async void BtnSendSingle_Click(object sender, EventArgs e)
         {
             var camera = cameras[selectedCameraId];
             string code = uiTextBox_SingleCode.Text.Trim();
-            if (!string.IsNullOrEmpty(code))
-            {
-                SendToAllClients(camera, code);
-            }
+            if (!string.IsNullOrEmpty(code)) await SendToAllClientsAsync(camera, code);
         }
 
         private void BtnLoadFile_Click(object sender, EventArgs e)
@@ -352,6 +443,8 @@ namespace TestApp
             if (camera.SendWorker.IsBusy)
                 return;
                 
+            if (count <= 0 || delayMs < 0 || camera.FileLines == null || camera.FileLines.Length == 0) return;
+            camera.SendingLines = (string[])camera.FileLines.Clone();
             camera.MaxCount = count;
             camera.DelayMs = delayMs;
             camera.SendCount = 0;
@@ -487,77 +580,40 @@ namespace TestApp
             }
         }
 
-        private void SendToAllClients(CameraInstance camera, string message)
+        private async Task SendToAllClientsAsync(CameraInstance camera, string message)
         {
-            var clientsToRemove = new List<TcpClient>();
-            
-            foreach (var client in camera.ConnectedClients.ToList())
+            int sent = await CameraSimulatorCore.BroadcastAsync(camera, message).ConfigureAwait(false);
+            PostUI(() =>
             {
-                try
-                {
-                    if (client.Connected)
-                    {
-                        byte[] data = Encoding.UTF8.GetBytes(message);
-                        client.GetStream().Write(data, 0, data.Length);
-                    }
-                    else
-                    {
-                        clientsToRemove.Add(client);
-                    }
-                }
-                catch
-                {
-                    clientsToRemove.Add(client);
-                }
-            }
-            
-            foreach (var client in clientsToRemove)
-            {
-                camera.ConnectedClients.Remove(client);
-                client?.Close();
-            }
-            
-            uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Gửi tới {camera.ConnectedClients.Count} client: {message}\n");
-            
-            if (camera.Id == selectedCameraId)
-            {
-                uiLabel_ClientCount.Text = $"Camera {camera.Id} - Clients: {camera.ConnectedClients.Count}";
-            }
+                uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Gửi tới {sent} client: {message}\n");
+                if (camera.Id == selectedCameraId)
+                    uiLabel_ClientCount.Text = $"Camera {camera.Id} - Clients: {CameraSimulatorCore.ClientCount(camera)}";
+            });
         }
 
         private void SendWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             var camera = (CameraInstance)e.Argument;
-            var worker = sender as BackgroundWorker;
-            
-            while (camera.SendCount < camera.MaxCount && camera.CurrentLineIndex < camera.FileLines.Length)
+            var worker = (BackgroundWorker)sender;
+            var lines = camera.SendingLines;
+            int index = 0;
+            while (camera.SendCount < camera.MaxCount && index < lines.Length)
             {
-                if (worker.CancellationPending)
-                {
-                    e.Cancel = true;
-                    break;
-                }
-                
-                string line = camera.FileLines[camera.CurrentLineIndex];
-                
-                // Send message on UI thread
-                this.Invoke(new Action(() =>
-                {
-                    SendToAllClients(camera, line);
-                }));
-                
-                camera.CurrentLineIndex++;
+                if (worker.CancellationPending) { e.Cancel = true; break; }
+                SendToAllClientsAsync(camera, lines[index++]).GetAwaiter().GetResult();
+                camera.CurrentLineIndex = index;
                 camera.SendCount++;
-                
-                // Report progress
-                int progressPercentage = (int)((double)camera.SendCount / camera.MaxCount * 100);
-                worker.ReportProgress(progressPercentage, camera);
-                
-                // Wait for the specified delay
-                Thread.Sleep(camera.DelayMs);
+                worker.ReportProgress((int)((double)camera.SendCount / camera.MaxCount * 100), camera);
+                for (int remaining = camera.DelayMs; remaining > 0 && !worker.CancellationPending;)
+                {
+                    int pause = Math.Min(remaining, 50);
+                    Thread.Sleep(pause);
+                    remaining -= pause;
+                }
             }
+            if (worker.CancellationPending) e.Cancel = true;
         }
-        
+
         private void SendWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             var camera = (CameraInstance)e.UserState;
@@ -580,7 +636,11 @@ namespace TestApp
                 if (camera.Id == selectedCameraId)
                 {
                     UpdateCameraSelection();
-                    if (e.Cancelled)
+                    if (e.Error != null)
+                    {
+                        uiLabel_SendStatus.Text = $"Camera {camera.Id} Lỗi gửi: {e.Error.Message}";
+                    }
+                    else if (e.Cancelled)
                     {
                         uiLabel_SendStatus.Text = $"Camera {camera.Id} Đã hủy";
                     }
@@ -598,35 +658,24 @@ namespace TestApp
             UpdateCameraSelection();
         }
         
-        private async void BtnStartAllCameras_Click(object sender, EventArgs e)
+        private void BtnStartAllCameras_Click(object sender, EventArgs e)
         {
             foreach (var camera in cameras.Values)
             {
-                if (!camera.ServerRunning)
+                if (camera.ServerRunning) continue;
+                try
                 {
-                    try
-                    {
-                        camera.TcpListener = new TcpListener(IPAddress.Any, camera.Port);
-                        camera.TcpListener.Start();
-                        camera.ServerRunning = true;
-                        camera.CancellationTokenSource = new CancellationTokenSource();
-                        
-                        uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Server đã khởi động trên cổng {camera.Port}\n");
-                        
-                        // Start accepting clients in background
-                        _ = Task.Run(() => AcceptClientsAsync(camera, camera.CancellationTokenSource.Token));
-                    }
-                    catch (Exception ex)
-                    {
-                        uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Lỗi khởi động Camera {camera.Id} server: {ex.Message}\n");
-                    }
+                    StartServer(camera, camera.Port);
+                    uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Camera {camera.Id} Server đã khởi động trên cổng {camera.Port}\n");
+                }
+                catch (Exception ex)
+                {
+                    uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Lỗi khởi động Camera {camera.Id} server: {ex.Message}\n");
                 }
             }
-            
             UpdateCameraSelection();
-            uiRichTextBox_Log.AppendText($"[{DateTime.Now}] Đã khởi động tất cả cameras\n");
         }
-        
+
         private void BtnStopAllCameras_Click(object sender, EventArgs e)
         {
             foreach (var camera in cameras.Values)
@@ -713,23 +762,10 @@ namespace TestApp
                 {
                     try
                     {
-                        var lines = File.ReadAllLines(ofd.FileName);
-                        var dataLines = new List<string>();
-                        
-                        // Skip header if exists and process CSV
-                        bool hasHeader = lines.Length > 0 && !lines[0].All(char.IsDigit);
-                        int startIndex = hasHeader ? 1 : 0;
-                        
-                        for (int i = startIndex; i < lines.Length; i++)
-                        {
-                            var columns = lines[i].Split(',');
-                            if (columns.Length > 0)
-                            {
-                                dataLines.Add(columns[0].Trim()); // Take first column by default
-                            }
-                        }
-                        
-                        camera.FileLines = dataLines.ToArray();
+                        var header = MessageBox.Show(this, "Dòng đầu tiên có phải là tiêu đề CSV?", "Nạp CSV",
+                            MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+                        if (header == DialogResult.Cancel) return;
+                        camera.FileLines = CameraSimulatorCore.ReadCsvFirstColumn(ofd.FileName, header == DialogResult.Yes);
                         camera.CurrentLineIndex = 0;
                         uiLabel_FileStatus.Text = $"Camera {camera.Id} CSV đã tải: {camera.FileLines.Length} dòng";
                         UpdateCameraSelection();

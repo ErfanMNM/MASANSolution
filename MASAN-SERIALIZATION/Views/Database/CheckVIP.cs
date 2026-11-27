@@ -10,6 +10,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ZXing.QrCode.Internal;
@@ -61,89 +62,64 @@ namespace MASAN_SERIALIZATION.Views.Database
         
         public void ProcessScannedCode(string Code)
         {
-            this.InvokeIfRequired(new Action(() => {
-             ipCode.Text = Code;
-             opCodeInfo.Text = "Đang tìm mã...";
-            }));
-            Task.Run(() =>
+            if (Interlocked.CompareExchange(ref scan, 1, 0) != 0) return;
+            try
             {
-                scan = 1;
-                TResult resultCode = Globals.ProductionData.getDataPO.getCodeInfo(ipCode.Text.Trim(), Globals.ProductionData.orderNo);
-                uiDataGridView1.ClearAll();
-                if (resultCode.issuccess)
+                string capturedCode;
+                string capturedOrderNo;
+                lock (Globals.PoTransitionLock)
                 {
-                    TResult resultVIP = Globals.ProductionData.getDataPO.getCodeInfoWithCartonCode(Globals.ProductionData.orderNo, resultCode.data.Rows[0]["cartonCode"].ToString());
-
-                    Invoke(new Action(() =>
+                    capturedCode = (Code ?? string.Empty).Trim();
+                    capturedOrderNo = Globals.ProductionData.orderNo;
+                }
+                this.InvokeIfRequired(new Action(() => {
+                    ipCode.Text = capturedCode;
+                    opCodeInfo.Text = "Đang tìm mã...";
+                }));
+                Task.Run(() =>
+                {
+                    try
                     {
-                        if (resultVIP.issuccess)
+                        TResult resultCode = Globals.ProductionData.getDataPO.getCodeInfo(capturedCode, capturedOrderNo);
+                        this.InvokeIfRequired(new Action(() => uiDataGridView1.ClearAll()));
+                        if (resultCode.issuccess)
                         {
-
-                                uiDataGridView1.DataSource = resultVIP.data;
+                            TResult resultVIP = Globals.ProductionData.getDataPO.getCodeInfoWithCartonCode(capturedOrderNo, resultCode.data.Rows[0]["cartonCode"].ToString());
+                            Invoke(new Action(() =>
+                            {
+                                if (resultVIP.issuccess)
+                                {
+                                    uiDataGridView1.DataSource = resultVIP.data;
+                                }
+                                opCodeInfo.Text = $"MÃ: {resultCode.data.Rows[0]["Code"].ToString()} | Trạng thái :{resultCode.data.Rows[0]["Status"].ToString()} | Thời gian kích hoạt : {resultCode.data.Rows[0]["ActivateDate"].ToString()}";
+                                opCaseCode.Text = $"MÃ THÙNG: {resultCode.data.Rows[0]["cartonCode"].ToString()}";
+                            }));
                         }
-                        opCodeInfo.Text = $"MÃ: {resultCode.data.Rows[0]["Code"].ToString()} | Trạng thái :{resultCode.data.Rows[0]["Status"].ToString()} | Thời gian kích hoạt : {resultCode.data.Rows[0]["ActivateDate"].ToString()}";
-                        opCaseCode.Text = $"MÃ THÙNG: {resultCode.data.Rows[0]["cartonCode"].ToString()}";
-                    }));
-
-
-                }
-                else
-                {
-                    Invoke(new Action(() =>
+                        else
+                        {
+                            Invoke(new Action(() =>
+                            {
+                                opCodeInfo.Text = $"Không tìm thấy code {capturedCode} trong PO {capturedOrderNo}";
+                                opCaseCode.Text = $"";
+                            }));
+                        }
+                    }
+                    finally
                     {
-                        opCodeInfo.Text = $"Không tìm thấy code {ipCode.Text.Trim()} trong PO {Globals.ProductionData.orderNo}";
-                        opCaseCode.Text = $"";
-                    }));
-                }
-
-
-                scan = 0;
-            });
+                        Interlocked.Exchange(ref scan, 0);
+                    }
+                });
+            }
+            catch
+            {
+                Interlocked.Exchange(ref scan, 0);
+                throw;
+            }
         }
 
         private void btnfind_Click(object sender, EventArgs e)
         {
-            if(scan == 1)
-            {
-                return;
-            }
-            this.InvokeIfRequired(new Action(() => {
-                //ipCode.Text = Code;
-                opCodeInfo.Text = "Đang tìm mã...";
-            }));
-            Task.Run(() =>
-            {
-                scan = 1;
-               TResult resultCode = Globals.ProductionData.getDataPO.getCodeInfo(ipCode.Text.Trim(), Globals.ProductionData.orderNo);
-                uiDataGridView1.ClearAll();
-                if (resultCode.issuccess)
-                {
-                    TResult resultVIP = Globals.ProductionData.getDataPO.getCodeInfoWithCartonCode(Globals.ProductionData.orderNo, resultCode.data.Rows[0]["cartonCode"].ToString());
-                     
-                    Invoke(new Action(() =>
-                    {
-                        if (resultVIP.issuccess)
-                        {
-                            uiDataGridView1.DataSource = resultVIP.data;
-                        }
-                        opCodeInfo.Text = $"MÃ: {resultCode.data.Rows[0]["Code"].ToString()} | Trạng thái :{resultCode.data.Rows[0]["Status"].ToString()} | Thời gian kích hoạt : {resultCode.data.Rows[0]["ActivateDate"].ToString()}";
-                        opCaseCode.Text = $"MÃ THÙNG: {resultCode.data.Rows[0]["cartonCode"].ToString()}";
-                    }));
-
-                    
-                }
-                else
-                {
-                    Invoke(new Action(() =>
-                    {
-                        opCodeInfo.Text = $"Không tìm thấy code {ipCode.Text.Trim()} trong PO {Globals.ProductionData.orderNo}";
-                        opCaseCode.Text = $"";
-                    }));
-                }
-
-scan = 0;
-
-            });
+            ProcessScannedCode(ipCode.Text.Trim());
         }
 
         private void btnDeleteCarton_Click(object sender, EventArgs e)

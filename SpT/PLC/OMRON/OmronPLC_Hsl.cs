@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -23,6 +23,8 @@ namespace SpT
         public int Time_Update { get; set; } = 300;
         public OmronFinsUdp plc = new OmronFinsUdp();
         public event EventHandler<PLCStatusEventArgs> PLCStatus_OnChange;
+        private readonly object updateSync = new object();
+        private volatile bool updateDisposed;
 
         public OmronPLC_Hsl()
         {
@@ -38,30 +40,53 @@ namespace SpT
 
         public void InitPLC()
         {
-            plc.CommunicationPipe = new HslCommunication.Core.Pipe.PipeUdpNet(PLC_IP, PLC_PORT)
+            lock (updateSync)
             {
-                ReceiveTimeOut = 1000,
-                SleepTime = 0,
-                SocketKeepAliveTime = -1,
-                IsPersistentConnection = true,
-            };
-            plc.PlcType = OmronPlcType.CSCJ;
-            plc.SA1 = 1;
-            plc.GCT = 2;
-            plc.DA1 = 0;
-            plc.SID = 0;
-            plc.ByteTransform.DataFormat = HslCommunication.Core.DataFormat.CDAB;
-            plc.ByteTransform.IsStringReverseByteWord = true;
+                if (updateDisposed) throw new ObjectDisposedException(nameof(OmronPLC_Hsl));
+                if (WK_Update.IsBusy) return;
+                plc.CommunicationPipe = new HslCommunication.Core.Pipe.PipeUdpNet(PLC_IP, PLC_PORT)
+                {
+                    ReceiveTimeOut = 1000,
+                    SleepTime = 0,
+                    SocketKeepAliveTime = -1,
+                    IsPersistentConnection = true,
+                };
+                plc.PlcType = OmronPlcType.CSCJ;
+                plc.SA1 = 1;
+                plc.GCT = 2;
+                plc.DA1 = 0;
+                plc.SID = 0;
+                plc.ByteTransform.DataFormat = HslCommunication.Core.DataFormat.CDAB;
+                plc.ByteTransform.IsStringReverseByteWord = true;
 
-            WK_Update.RunWorkerAsync();
+                WK_Update.RunWorkerAsync();
+            }
+        }
+
+        private void StopUpdate()
+        {
+            lock (updateSync)
+            {
+                updateDisposed = true;
+                WK_Update.CancelAsync();
+                Monitor.PulseAll(updateSync);
+            }
         }
 
         private void WK_Update_DoWork(object sender, DoWorkEventArgs e)
         {
-            while (!WK_Update.CancellationPending)
+            while (true)
             {
-                Thread.Sleep(Time_Update);
-                OperateResult write = plc.Write(PLC_Ready_DM, short.Parse(Ready.ToString()));
+                OperateResult write;
+                lock (updateSync)
+                {
+                    if (updateDisposed || WK_Update.CancellationPending) return;
+                    Monitor.Wait(updateSync, Time_Update);
+                    if (updateDisposed || WK_Update.CancellationPending) return;
+                    // Dispose can wait for an in-flight SDK write, never a UI callback.
+                    write = plc.Write(PLC_Ready_DM, short.Parse(Ready.ToString()));
+                }
+                if (updateDisposed || WK_Update.CancellationPending) return;
 
                 if (write.IsSuccess)
                 {

@@ -26,7 +26,6 @@ namespace SpT.Logs
         private readonly string _dbPath;
         private readonly string _connectionString;
         private readonly BlockingCollection<LogEntry<TAction>> _logQueue = new BlockingCollection<LogEntry<TAction>>();
-        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private readonly Task _logWorker;
 
         public LogHelper(string dbPath)
@@ -45,7 +44,7 @@ namespace SpT.Logs
         private void InitDatabase()
         {
             var directory = Path.GetDirectoryName(_dbPath);
-            if (!Directory.Exists(directory))
+            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
             }
@@ -109,19 +108,19 @@ namespace SpT.Logs
             {
                 conn.Open();
 
-                while (!_cts.IsCancellationRequested || !_logQueue.IsCompleted)
+                while (!_logQueue.IsCompleted)
                 {
                     LogEntry<TAction> entry = null;
                     try
                     {
-                        if (!_logQueue.TryTake(out entry, Timeout.Infinite, _cts.Token))
+                        if (!_logQueue.TryTake(out entry, Timeout.Infinite))
                             continue;
 
                         using (var cmd = conn.CreateCommand())
                         {
                             cmd.CommandText = @"
-                                INSERT INTO Logs (TimeISO, TimestampMs, User, Action, Description, JsonParams)
-                                VALUES (@TimeISO, @TimestampMs, @User, @Action, @Description, @JsonParams);";
+                                INSERT INTO Logs (TimeISO, TimestampMs, User, Code, Action, Description, JsonParams)
+                                VALUES (@TimeISO, @TimestampMs, @User, @Code, @Action, @Description, @JsonParams);";
                             cmd.Parameters.AddWithValue("@TimeISO", entry.TimeISO);
                             cmd.Parameters.AddWithValue("@TimestampMs", entry.TimestampMs);
                             cmd.Parameters.AddWithValue("@User", entry.User);
@@ -276,6 +275,7 @@ namespace SpT.Logs
                 TimeISO = reader["TimeISO"].ToString(),
                 TimestampMs = Convert.ToInt64(reader["TimestampMs"]),
                 User = reader["User"].ToString(),
+                Code = reader["Code"].ToString(),
                 Action = action,
                 Description = reader["Description"].ToString(),
                 JsonParams = reader["JsonParams"].ToString()
@@ -284,7 +284,6 @@ namespace SpT.Logs
 
         public void Dispose()
         {
-            _cts.Cancel();
             _logQueue.CompleteAdding();
             _logWorker.Wait();
         }

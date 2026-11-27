@@ -1,4 +1,4 @@
-using MASAN_SERIALIZATION.Configs;
+﻿using MASAN_SERIALIZATION.Configs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sunny.UI;
@@ -651,10 +651,9 @@ namespace MASAN_SERIALIZATION.Production
                                 }
                             }
                         }
-                        catch
+                        catch (Exception ex)
                         {
-                            // Bỏ qua lỗi với database cụ thể, tiếp tục kiểm tra các database khác
-                            continue;
+                            return new TResult(false, $"Lỗi PH05403: Không thể xác minh mã ở PO khác: {ex.Message}");
                         }
                     }
 
@@ -730,9 +729,7 @@ namespace MASAN_SERIALIZATION.Production
                         }
                         catch (Exception ex)
                         {
-                            // Log lỗi nhưng tiếp tục với các database khác
-                            Console.WriteLine($"Lỗi khi đọc database {dbFile}: {ex.Message}");
-                            continue;
+                            return (false, $"Không thể xác minh mã đã dùng ở PO khác: {ex.Message}", activatedCodes);
                         }
                     }
 
@@ -1514,13 +1511,23 @@ namespace MASAN_SERIALIZATION.Production
 
                     // Nếu thiếu, lấy danh sách mã từ MES (theo GTIN)
                     var mesCodesResult = getfromMES.Get_Unique_Codes_MES(orderNo);
-                    if (!mesCodesResult.issuccess)
+                    if (!mesCodesResult.issuccess || mesCodesResult.data == null)
                     {
                         return new TResult(false, $"Không thể lấy danh sách mã từ MES: {mesCodesResult.message}");
                     }
 
+                    var activatedCodesResult = GetAllActivatedCodesFromOtherPOs(orderNo);
+                    if (!activatedCodesResult.success)
+                    {
+                        return new TResult(false, $"Không thể xác minh mã đã dùng ở PO khác: {activatedCodesResult.message}");
+                    }
+
                     // Lấy danh sách mã đã có trong dictionary
                     var existingCodesResult = Get_Existing_Codes_In_Dictionary(orderNo);
+                    if (!existingCodesResult.issuccess || existingCodesResult.data == null)
+                    {
+                        return new TResult(false, $"Không thể lấy mã hiện có trong dictionary: {existingCodesResult.message}");
+                    }
                     HashSet<string> existingCodes = new HashSet<string>();
                     if (existingCodesResult.issuccess && existingCodesResult.data != null)
                     {
@@ -1543,12 +1550,13 @@ namespace MASAN_SERIALIZATION.Production
                                 string code = row["Code"].ToString();
 
                                 // Chỉ thêm nếu chưa tồn tại
-                                if (!existingCodes.Contains(code))
+                                if (!activatedCodesResult.activatedCodes.Contains(code) && !existingCodes.Contains(code))
                                 {
                                     string insertQuery = "INSERT INTO UniqueCodes (Code) VALUES (@Code)";
                                     var command = new SQLiteCommand(insertQuery, conn, transaction);
                                     command.Parameters.AddWithValue("@Code", code);
                                     command.ExecuteNonQuery();
+                                    existingCodes.Add(code);
                                     addedCount++;
                                 }
                             }
@@ -1658,12 +1666,12 @@ namespace MASAN_SERIALIZATION.Production
                     {
                         connection.Open();
                         string query = "UPDATE `UniqueCodes` SET " +
-                                       "`Status` = '1', " +
-                                       "`cartonCode` = @cartonCode, " +
+                                       "`Status` = @status, " +
+                                       "`cartonCode` = CASE WHEN @cartonCode = 'pending' AND `cartonCode` NOT IN ('0', 'pending', '') THEN `cartonCode` ELSE @cartonCode END, " +
                                        "`ActivateDate` = @activateDate, " +
                                        "`ProductionDate` = @productionDate,  " +
                                        "`ActivateUser` = @UserName,  " +
-                                       "`SubCamera_ActivateDate` = @subCamera_ActivateDate" +
+                                       "`SubCamera_ActivateDate` = CASE WHEN @subCamera_ActivateDate IS NULL OR @subCamera_ActivateDate IN ('0', '') THEN `SubCamera_ActivateDate` ELSE @subCamera_ActivateDate END" +
                                        " WHERE `ID` = @RowId ;";
 
                         using (SQLiteCommand command = new SQLiteCommand(query, connection))
@@ -1672,15 +1680,19 @@ namespace MASAN_SERIALIZATION.Production
                             command.Parameters.AddWithValue("@cartonCode", productionCodeData.cartonCode);
                             command.Parameters.AddWithValue("@activateDate", productionCodeData.Activate_Datetime);
                             command.Parameters.AddWithValue("@productionDate", productionCodeData.Production_Datetime);
+                            command.Parameters.AddWithValue("@status", productionCodeData.Main_Camera_Status);
                             command.Parameters.AddWithValue("@UserName", productionCodeData.Activate_User);
                             command.Parameters.AddWithValue("@subCamera_ActivateDate", productionCodeData.Sub_Camera_Activate_Datetime);
                             int rowsAffected = command.ExecuteNonQuery();
+                            if (rowsAffected != 1)
+                                throw new InvalidOperationException("Không thể cập nhật đúng một mã trong dictionary.");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Lỗi P07 khi cập nhật trạng thái kích hoạt: {ex.Message}");
+                    throw;
                 }
 
             }
@@ -1769,6 +1781,7 @@ namespace MASAN_SERIALIZATION.Production
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Lỗi P08 khi cập nhật thông tin thùng carton: {ex.Message}");
+                    throw;
                 }
 
             }
@@ -1940,6 +1953,36 @@ namespace MASAN_SERIALIZATION.Production
                     return (false, $"PH001: Không tìm thấy file JSON PO: {jsonPath}");
                 }
 
+                int parsedOrderQty;
+                if (!int.TryParse(orderQty, out parsedOrderQty) || parsedOrderQty <= 0)
+                {
+                    // Khi UI đang chuyển PO, opOrderQty có thể còn là giá trị cũ/0.
+                    // JSON của PO là nguồn dữ liệu ổn định để khôi phục số lượng.
+                    try
+                    {
+                        string jsonContent = File.ReadAllText(jsonPath);
+                        var jsonObj = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonContent);
+                        object jsonOrderQty;
+                        if (jsonObj == null || !jsonObj.TryGetValue("orderQty", out jsonOrderQty) ||
+                            !int.TryParse(jsonOrderQty == null ? null : jsonOrderQty.ToString(), out parsedOrderQty) ||
+                            parsedOrderQty <= 0)
+                        {
+                            return (false, $"PH006: Số lượng PO không hợp lệ: {orderQty}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        return (false, $"PH006: Không đọc được số lượng PO: {ex.Message}");
+                    }
+                }
+
+                int cartonPack = AppConfigs.Current.cartonPack;
+                if (cartonPack <= 0)
+                {
+                    return (false, $"PH007: Cấu hình số sản phẩm mỗi thùng không hợp lệ: {cartonPack}");
+                }
+
+
                 //// Bước 2: Kiểm tra file codes JSON tồn tại
                 //string codesJsonPath = Path.Combine(poMesJsonCodesPath, orderNo + ".json");
                 //if (!File.Exists(codesJsonPath))
@@ -1970,13 +2013,50 @@ namespace MASAN_SERIALIZATION.Production
                     }
                 }
 
-                // Bước 6: Tạo file database chính nếu chưa tồn tại
-                if (!File.Exists(czRunPath))
+                // A file alone is not evidence that a PO was initialized. Inspect
+                // existing rows without deleting any production data.
+                long existingCodeCount = 0;
+                if (File.Exists(czRunPath))
                 {
+                    using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;FailIfMissing=True;"))
+                    {
+                        conn.Open();
+                        using (var hasTable = new SQLiteCommand("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='UniqueCodes';", conn))
+                        {
+                            if (Convert.ToInt64(hasTable.ExecuteScalar()) > 0)
+                                using (var count = new SQLiteCommand("SELECT COUNT(*) FROM UniqueCodes;", conn))
+                                    existingCodeCount = Convert.ToInt64(count.ExecuteScalar());
+                        }
+                    }
+                }
+                if (existingCodeCount > 0 && existingCodeCount < parsedOrderQty)
+                    return (false, $"PH006: Kho mã PO chưa đầy đủ. Cần: {parsedOrderQty} | Có: {existingCodeCount}. Dữ liệu hiện có được giữ nguyên.");
+
+                if (existingCodeCount == 0)
+                {
+                    // Validate all source data BEFORE creating/populating the main DB.
+                    // A failed cross-PO/MES check therefore remains safely retryable.
+                    var getActivatedCodes = getDataPO.GetAllActivatedCodesFromOtherPOs(orderNo);
+                    if (!getActivatedCodes.success)
+                        return (false, $"PH005: {getActivatedCodes.message}");
+                    var getczCodes = getfromMES.Get_Unique_Codes_MES(orderNo);
+                    if (!getczCodes.issuccess || getczCodes.data == null)
+                        return (false, getczCodes.message);
+                    var availableCodes = getczCodes.data.Rows.Cast<DataRow>()
+                        .Select(row => row["Code"].ToString())
+                        .Where(code => !getActivatedCodes.activatedCodes.Contains(code))
+                        .Distinct(StringComparer.Ordinal).ToList();
+                    if (availableCodes.Count < parsedOrderQty)
+                        return (false, $"PH006: Không đủ mã! Cần: {parsedOrderQty} | Còn lại: {availableCodes.Count}");
+
                     using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
                     {
                         conn.Open();
-                        string createTableQuery = @"CREATE TABLE ""UniqueCodes"" (
+                        using (var pragmas = new SQLiteCommand("PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;", conn))
+                            pragmas.ExecuteNonQuery();
+                        using (var transaction = conn.BeginTransaction())
+                        {
+                            string createTableQuery = @"CREATE TABLE IF NOT EXISTS ""UniqueCodes"" (
 	                                        ""ID""	INTEGER NOT NULL UNIQUE,
 	                                        ""Code""	TEXT NOT NULL UNIQUE,
                                             ""cartonCode""	TEXT NOT NULL DEFAULT 0,
@@ -1990,90 +2070,25 @@ namespace MASAN_SERIALIZATION.Production
 	                                        ""Send_Recive_Logs""	JSON,
 	                                        ""Duplicate""	JSON,
 	                                        PRIMARY KEY(""ID"" AUTOINCREMENT)
-                                        );
-                                        PRAGMA journal_mode = WAL;
-                                        PRAGMA synchronous = NORMAL;
-                                        PRAGMA cache_size = 1000000;
-                                        PRAGMA temp_store = memory;
-                                        ";
-                        var command = new SQLiteCommand(createTableQuery, conn);
-                        command.ExecuteNonQuery();
-                    }
-
-                    //insert từ bảng CZ nhận từ MES vào bảng CZ run này
-                    // CHÚ Ý: Lấy codes theo GTIN thay vì orderNo
-                    // Các PO có cùng GTIN sẽ dùng chung 1 bộ mã
-
-                    // Bước 6.1: Lấy danh sách mã đã được Active từ các PO khác cùng GTIN
-                    var getActivatedCodes = getDataPO.GetAllActivatedCodesFromOtherPOs(orderNo);
-                    if (!getActivatedCodes.success)
-                    {
-                        // Nếu có lỗi khi lấy danh sách mã đã Active, return lỗi
-                        return (false, $"PH005: {getActivatedCodes.message}");
-                    }
-                    var activatedCodes = getActivatedCodes.activatedCodes;
-
-                    // Bước 6.2: Lấy tất cả mã từ MES (theo GTIN)
-                    var getczCodes = getfromMES.Get_Unique_Codes_MES(orderNo);
-                    if (!getczCodes.issuccess)
-                    {
-                        return (false, getczCodes.message);
-                    }
-                    DataTable czCodes = getczCodes.data;
-
-                    // Bước 6.3: Lọc ra các mã chưa được Active
-                    List<string> availableCodes = new List<string>();
-                    foreach (DataRow row in czCodes.Rows)
-                    {
-                        string code = row["Code"].ToString();
-                        if (!activatedCodes.Contains(code))
-                        {
-                            availableCodes.Add(code);
-                        }
-                    }
-
-                    // Bước 6.4: Kiểm tra số lượng mã còn lại có đủ không
-                    int requiredQty = orderQty.ToInt32();
-                    if (availableCodes.Count < requiredQty)
-                    {
-                        return (false,
-                            $"PH006: Không đủ mã! Cần: {requiredQty} | Còn lại: {availableCodes.Count} | " +
-                            $"Đã dùng từ PO khác: {activatedCodes.Count} | Tổng: {czCodes.Rows.Count}\n" +
-                            $"Thông tin: {getActivatedCodes.message}");
-                    }
-
-                    // Bước 6.5: Insert các mã còn lại vào database
-                    if (availableCodes.Count > 0)
-                    {
-                        using (var conn = new SQLiteConnection($"Data Source={czRunPath};Version=3;"))
-                        {
-                            conn.Open();
-
-                            // Sử dụng transaction để tăng tốc độ insert
-                            using (var transaction = conn.BeginTransaction())
+                                        );";
+                            using (var create = new SQLiteCommand(createTableQuery, conn, transaction))
+                                create.ExecuteNonQuery();
+                            using (var insertCode = new SQLiteCommand("INSERT OR IGNORE INTO UniqueCodes (Code) VALUES (@Code);", conn, transaction))
                             {
-                                string insertQuery = "INSERT OR IGNORE INTO UniqueCodes (Code) VALUES (@Code)";
-                                var command = new SQLiteCommand(insertQuery, conn, transaction);
-
+                                insertCode.Parameters.Add("@Code", DbType.String);
                                 foreach (string code in availableCodes)
                                 {
-                                    command.Parameters.Clear();
-                                    command.Parameters.AddWithValue("@Code", code);
-                                    command.ExecuteNonQuery();
+                                    insertCode.Parameters["@Code"].Value = code;
+                                    insertCode.ExecuteNonQuery();
                                 }
-
-                                transaction.Commit();
                             }
+                            using (var count = new SQLiteCommand("SELECT COUNT(*) FROM UniqueCodes;", conn, transaction))
+                            {
+                                if (Convert.ToInt64(count.ExecuteScalar()) < parsedOrderQty)
+                                    return (false, "PH006: Khởi tạo kho mã chưa đầy đủ; giao dịch đã hủy.");
+                            }
+                            transaction.Commit();
                         }
-
-                        // Log thông tin
-                        Console.WriteLine($"=== Thống kê tạo DB cho PO {orderNo} ===");
-                        Console.WriteLine($"Tổng mã từ MES (GTIN): {czCodes.Rows.Count}");
-                        Console.WriteLine($"Đã Active từ PO khác: {activatedCodes.Count}");
-                        Console.WriteLine($"Còn lại khả dụng: {availableCodes.Count}");
-                        Console.WriteLine($"Yêu cầu orderQty: {requiredQty}");
-                        Console.WriteLine($"Trạng thái: ✓ ĐỦ MÃ");
-                        Console.WriteLine($"{getActivatedCodes.message}");
                     }
                 }
 
@@ -2131,35 +2146,6 @@ namespace MASAN_SERIALIZATION.Production
                 }
 
                 string cartonPath = Path.Combine(basePath, $"carton_{orderNo}.db");
-                int parsedOrderQty;
-                if (!int.TryParse(orderQty, out parsedOrderQty) || parsedOrderQty <= 0)
-                {
-                    // Khi UI đang chuyển PO, opOrderQty có thể còn là giá trị cũ/0.
-                    // JSON của PO là nguồn dữ liệu ổn định để khôi phục số lượng.
-                    try
-                    {
-                        string jsonContent = File.ReadAllText(jsonPath);
-                        var jsonObj = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonContent);
-                        object jsonOrderQty;
-                        if (jsonObj == null || !jsonObj.TryGetValue("orderQty", out jsonOrderQty) ||
-                            !int.TryParse(jsonOrderQty == null ? null : jsonOrderQty.ToString(), out parsedOrderQty) ||
-                            parsedOrderQty <= 0)
-                        {
-                            return (false, $"PH006: Số lượng PO không hợp lệ: {orderQty}");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        return (false, $"PH006: Không đọc được số lượng PO: {ex.Message}");
-                    }
-                }
-
-                int cartonPack = AppConfigs.Current.cartonPack;
-                if (cartonPack <= 0)
-                {
-                    return (false, $"PH007: Cấu hình số sản phẩm mỗi thùng không hợp lệ: {cartonPack}");
-                }
-
                 // SQLite có thể đã tạo file trước khi ứng dụng bị ngắt. Luôn kiểm tra
                 // schema và bù các dòng còn thiếu để việc khởi tạo có thể chạy lại an toàn.
                 int expectedCartonCount = Math.Max(1, parsedOrderQty / cartonPack);

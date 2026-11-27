@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
@@ -46,15 +47,20 @@ namespace QR_MASAN_01
         }
 
         //thêm vào hàng chờ chờ thêm vào sqlite
-        public static Queue<SystemLogs> LogQueue { get; set; } = new Queue<SystemLogs>();
+        public static ConcurrentQueue<SystemLogs> LogQueue { get; set; } = new ConcurrentQueue<SystemLogs>();
         // Thêm một bản ghi vào hàng đợi
 
         //hàm Insert vào sqlite (sqlite helper)
 
         public static void InsertToSQLite(SystemLogs systemLogs_Data)
         {
+            InsertToSQLite(systemLogs_Data, "C:/.ABC/TanTienHiTech.dbmmccmsacc");
+        }
+
+        public static void InsertToSQLite(SystemLogs systemLogs_Data, string dbFilePath)
+        {
             //kiểm tra xem file log đã tồn tại chưa, nếu chưa thì tạo mới
-            string dbFilePath = "C:/.ABC/TanTienHiTech.dbmmccmsacc"; // Đường dẫn đến file SQLite
+             // Đường dẫn đến file SQLite
             if (!System.IO.File.Exists(dbFilePath))
             {
                 SQLiteConnection.CreateFile(dbFilePath);
@@ -93,8 +99,8 @@ namespace QR_MASAN_01
                     command.Parameters.AddWithValue("@TimeUnix", systemLogs_Data.TimeUnix);
                     command.Parameters.AddWithValue("@LogType", systemLogs_Data.LogType.ToString());
                     command.Parameters.AddWithValue("@Message", systemLogs_Data.Message);
-                    command.Parameters.AddWithValue("@User", systemLogs_Data.User ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@Details", systemLogs_Data.Details ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@User", systemLogs_Data.User ?? string.Empty);
+                    command.Parameters.AddWithValue("@Details", systemLogs_Data.Details ?? string.Empty);
                     command.ExecuteNonQuery();
                 }
             }
@@ -241,6 +247,7 @@ namespace QR_MASAN_01
         public ActiveLogs(string timeStamp, long timeUnix, e_ActiveLogType logType, string message, string user = null, string details = null)
         {
             TimeStamp = timeStamp;
+            TimeUnix = timeUnix;
             LogType = logType;
             Message = message;
             User = user;
@@ -248,7 +255,7 @@ namespace QR_MASAN_01
         }
 
         //thêm vào hàng chờ chờ thêm vào sqlite
-        public static Queue<ActiveLogs> ActiveLogQueue { get; set; } = new Queue<ActiveLogs>();
+        public static ConcurrentQueue<ActiveLogs> ActiveLogQueue { get; set; } = new ConcurrentQueue<ActiveLogs>();
 
         // Thêm một bản ghi vào hàng đợi
 
@@ -256,8 +263,13 @@ namespace QR_MASAN_01
 
         public static void ActiveInsertToSQLite(ActiveLogs systemLogs_Data)
         {
+            ActiveInsertToSQLite(systemLogs_Data, "C:/.ABC/TanTienHiTechA.dbmmccmsacc");
+        }
+
+        public static void ActiveInsertToSQLite(ActiveLogs systemLogs_Data, string dbFilePath)
+        {
             //kiểm tra xem file log đã tồn tại chưa, nếu chưa thì tạo mới
-            string dbFilePath = "C:/.ABC/TanTienHiTechA.dbmmccmsacc"; // Đường dẫn đến file SQLite
+             // Đường dẫn đến file SQLite
             if (!System.IO.File.Exists(dbFilePath))
             {
                 SQLiteConnection.CreateFile(dbFilePath);
@@ -296,8 +308,8 @@ namespace QR_MASAN_01
                     command.Parameters.AddWithValue("@TimeUnix", systemLogs_Data.TimeUnix);
                     command.Parameters.AddWithValue("@LogType", systemLogs_Data.LogType.ToString());
                     command.Parameters.AddWithValue("@Message", systemLogs_Data.Message);
-                    command.Parameters.AddWithValue("@User", systemLogs_Data.User ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@Details", systemLogs_Data.Details ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@User", systemLogs_Data.User ?? string.Empty);
+                    command.Parameters.AddWithValue("@Details", systemLogs_Data.Details ?? string.Empty);
                     command.ExecuteNonQuery();
                 }
             }
@@ -417,6 +429,7 @@ namespace QR_MASAN_01
         public AWSLogs(string timeStamp, long timeUnix, e_AWSLogType logType, string message, string user = null, string details = null)
         {
             TimeStamp = timeStamp;
+            TimeUnix = timeUnix;
             LogType = logType;
             Message = message;
             User = user;
@@ -424,7 +437,7 @@ namespace QR_MASAN_01
         }
 
         //thêm vào hàng chờ chờ thêm vào sqlite
-        public static Queue<AWSLogs> AWSLogsQueue { get; set; } = new Queue<AWSLogs>();
+        public static ConcurrentQueue<AWSLogs> AWSLogsQueue { get; set; } = new ConcurrentQueue<AWSLogs>();
 
         // Thêm một bản ghi vào hàng đợi
 
@@ -432,8 +445,13 @@ namespace QR_MASAN_01
 
         public static void AWSInsertToSQLite(AWSLogs systemLogs_Data)
         {
+            AWSInsertToSQLite(systemLogs_Data, "C:/.ABC/TanTienHiTechAWS.dbmmccmsacc");
+        }
+
+        public static void AWSInsertToSQLite(AWSLogs systemLogs_Data, string dbFilePath)
+        {
             //kiểm tra xem file log đã tồn tại chưa, nếu chưa thì tạo mới
-            string dbFilePath = "C:/.ABC/TanTienHiTechAWS.dbmmccmsacc"; // Đường dẫn đến file SQLite
+             // Đường dẫn đến file SQLite
             if (!System.IO.File.Exists(dbFilePath))
             {
                 SQLiteConnection.CreateFile(dbFilePath);
@@ -472,8 +490,8 @@ namespace QR_MASAN_01
                     command.Parameters.AddWithValue("@TimeUnix", systemLogs_Data.TimeUnix);
                     command.Parameters.AddWithValue("@LogType", systemLogs_Data.LogType.ToString());
                     command.Parameters.AddWithValue("@Message", systemLogs_Data.Message);
-                    command.Parameters.AddWithValue("@User", systemLogs_Data.User ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@Details", systemLogs_Data.Details ?? (object)DBNull.Value);
+                    command.Parameters.AddWithValue("@User", systemLogs_Data.User ?? string.Empty);
+                    command.Parameters.AddWithValue("@Details", systemLogs_Data.Details ?? string.Empty);
                     command.ExecuteNonQuery();
                 }
             }
@@ -601,8 +619,9 @@ namespace QR_MASAN_01
             int productionOutput,
             int expectedOutput,
             string user = null,
-            string details = null)
+            string details = null, string shift = "")
         {
+            this.shift = shift ?? string.Empty;
             TimeStampSelected = timeStampSelected;
             TimeUnixSelected = timeUnixSelected;
             this.orderNO = orderNO;
@@ -618,14 +637,18 @@ namespace QR_MASAN_01
         }
 
         //thêm vào hàng chờ chờ thêm vào sqlite
-        public static Queue<ProductionLogs> PO_LogQueue { get; set; } = new Queue<ProductionLogs>();
+        public static ConcurrentQueue<ProductionLogs> PO_LogQueue { get; set; } = new ConcurrentQueue<ProductionLogs>();
         // Thêm một bản ghi vào hàng đợi
 
         //hàm Insert vào sqlite (sqlite helper)
 
         public static void InsertToSQLite(ProductionLogs log)
         {
-            string dbFilePath = "C:/.ABC/TanTienHiTechPL.dbmmccmsacc";
+            InsertToSQLite(log, "C:/.ABC/TanTienHiTechPL.dbmmccmsacc");
+        }
+
+        public static void InsertToSQLite(ProductionLogs log, string dbFilePath)
+        {
             if (!File.Exists(dbFilePath))
             {
                 SQLiteConnection.CreateFile(dbFilePath);
@@ -679,7 +702,7 @@ namespace QR_MASAN_01
                     command.Parameters.AddWithValue("@factory", log.factory);
                     command.Parameters.AddWithValue("@productionLine", log.productionLine);
                     command.Parameters.AddWithValue("@productionDate", log.productionDate);
-                    command.Parameters.AddWithValue("@shift", log.shift);
+                    command.Parameters.AddWithValue("@shift", log.shift ?? string.Empty);
                     command.Parameters.AddWithValue("@productionOutput", log.productionOutput);
                     command.Parameters.AddWithValue("@expectedOutput", log.orderQty);
                     command.Parameters.AddWithValue("@User", log.User ?? (object)DBNull.Value);
@@ -703,6 +726,7 @@ namespace QR_MASAN_01
             dt.Columns.Add("STT", typeof(int));
             dt.Columns.Add("Thời gian", typeof(string));
             dt.Columns.Add("OrderNO", typeof(string));
+            dt.Columns.Add("Người dùng", typeof(string));
 
             using (SQLiteConnection connection = new SQLiteConnection($"Data Source={dbFilePath};Version=3;"))
             {
@@ -743,8 +767,7 @@ namespace QR_MASAN_01
             {
                 connection.Open();
                 string query = @"
-                    SELECT COUNT(*) FROM ProductionLogs 
-                    WHERE LogType = @LogType";
+                    SELECT COUNT(*) FROM ProductionLogs";
 
                 using (var command = new SQLiteCommand(query, connection))
                 {

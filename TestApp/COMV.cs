@@ -1,4 +1,4 @@
-﻿using Sunny.UI;
+using Sunny.UI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +12,7 @@ namespace TestApp
 {
     public partial class COMV : UIPage
     {
+        private MemoryCOMBridge memoryBridge;
         private RealCOMBridge comBridge;
         private bool isConnected = false;
 
@@ -210,17 +211,8 @@ namespace TestApp
                 }
                 else
                 {
-                    // Virtual COM bridge - close virtual ports
-                    string port1 = ExtractCOMPort(cmbVirtualPort.SelectedItem?.ToString() ?? "");
-                    string port2 = ExtractCOMPort(cmbRealPort.SelectedItem?.ToString() ?? "");
-                    
-                    var vPort1 = VirtualCOMManager.MemoryBasedCOM.GetPort(port1);
-                    var vPort2 = VirtualCOMManager.MemoryBasedCOM.GetPort(port2);
-                    
-                    vPort1?.Close();
-                    vPort2?.Close();
-                    
-                    LogData($"[{DateTime.Now:HH:mm:ss}] 🔌 Virtual ports {port1}, {port2} closed");
+                    memoryBridge?.Dispose();
+                    memoryBridge = null;
                 }
                 
                 UpdateStatus("Đã ngắt kết nối", Color.Red);
@@ -428,54 +420,15 @@ namespace TestApp
 
         private bool CreateVirtualBridge(string port1, string port2)
         {
+            memoryBridge?.Dispose();
+            memoryBridge = null;
             try
             {
-                // Get virtual ports
-                var vPort1 = VirtualCOMManager.MemoryBasedCOM.GetPort(port1);
-                var vPort2 = VirtualCOMManager.MemoryBasedCOM.GetPort(port2);
-
-                if (vPort1 == null || vPort2 == null)
-                {
-                    LogData($"[{DateTime.Now:HH:mm:ss}] ❌ Virtual ports not found: {port1}, {port2}");
-                    return false;
-                }
-
-                // Open virtual ports
-                if (!vPort1.Open() || !vPort2.Open())
-                {
-                    LogData($"[{DateTime.Now:HH:mm:ss}] ❌ Failed to open virtual ports");
-                    return false;
-                }
-
-                // Set up data forwarding events
-                vPort1.DataReceived += (sender, data) =>
-                {
-                    if (vPort2.IsOpen)
-                    {
-                        vPort2.Write(data);
-                        string text = System.Text.Encoding.UTF8.GetString(data);
-                        LogData($"[{DateTime.Now:HH:mm:ss}] {port1} → {port2}: {text.Trim()}");
-                    }
-                };
-
-                vPort2.DataReceived += (sender, data) =>
-                {
-                    if (vPort1.IsOpen)
-                    {
-                        vPort1.Write(data);
-                        string text = System.Text.Encoding.UTF8.GetString(data);
-                        LogData($"[{DateTime.Now:HH:mm:ss}] {port2} → {port1}: {text.Trim()}");
-                    }
-                };
-
-                LogData($"[{DateTime.Now:HH:mm:ss}] ✅ Virtual bridge events configured");
+                memoryBridge = new MemoryCOMBridge(VirtualCOMManager.MemoryBasedCOM.GetPort(port1),
+                    VirtualCOMManager.MemoryBasedCOM.GetPort(port2), message => LogData(message));
                 return true;
             }
-            catch (Exception ex)
-            {
-                LogData($"[{DateTime.Now:HH:mm:ss}] ❌ Error creating virtual bridge: {ex.Message}");
-                return false;
-            }
+            catch (Exception ex) { LogData("Virtual bridge: " + ex.Message); return false; }
         }
 
         private void COMBridge_StatusChanged(object sender, string status)

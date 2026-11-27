@@ -25,11 +25,6 @@ namespace QR_MASAN_01.Views.Scada
         public override void Init()
         {
             base.Init();
-            if (!WK_AutoLog.IsBusy)
-            {
-                WK_AutoLog.RunWorkerAsync();
-            }
-
             ipLoginType.DataSource = Enum.GetValues(typeof(SystemLogs.e_LogType)).Cast<SystemLogs.e_LogType>().ToList();
             uiPagination1.ActivePage = 1;
             size = Convert.ToInt32(ipSize.Text);
@@ -48,10 +43,7 @@ namespace QR_MASAN_01.Views.Scada
 
         private void WK_AutoLog_DoWork(object sender, DoWorkEventArgs e)
         {
-            while(!WK_AutoLog.CancellationPending)
-            {
-                //
-            }
+            // No automatic log work is scheduled. Do not spin an idle worker.
         }
 
         e_LogType LogType = e_LogType.SYSTEM_EVENT;

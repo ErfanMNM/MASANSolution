@@ -531,6 +531,7 @@ namespace QR_MASAN_01.Views.MFI_Service
         public void Push_Data_To_Dic()
         {
             DataTable dataTable = new DataTable();
+            var loadedCodes = new Dictionary<string, CodeData>();
             //Đẩy vào dic chính
             string connectionString = $@"Data Source=C:/.ABC/{GV.Selected_PO.orderNo}.db;Version=3;";
 
@@ -558,7 +559,7 @@ namespace QR_MASAN_01.Views.MFI_Service
 
 
                     // Thêm dữ liệu vào Dictionary với CaseQR làm key
-                    GV.C2_CodeData_Dictionary[Code] = new CodeData
+                    loadedCodes[Code] = new CodeData
                     {
                         ID = ID,
                         Status = Status,
@@ -572,6 +573,8 @@ namespace QR_MASAN_01.Views.MFI_Service
 
                 connection.Close();
             }
+            // Publish the complete selected PO only after every row has loaded.
+            GV.C2_CodeData_Dictionary = loadedCodes;
         }
         private void FPI_Service_Initialize(object sender, EventArgs e)
         {

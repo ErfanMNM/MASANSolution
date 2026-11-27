@@ -232,161 +232,74 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
 
         private void HandScan02_Process(string s)
         {
+            string capturedOrderNo;
+            lock (Globals.PoTransitionLock)
+            {
+                if (Globals.Production_State == e_Production_State.Saving ||
+                    Globals.Production_State == e_Production_State.Editing ||
+                    Globals.Production_State == e_Production_State.Loading) return;
+                capturedOrderNo = Globals.ProductionData.orderNo;
+            }
+
             //lưu log scan
             PCLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.DataChange, "Scan 02" + s.Trim(), s.Trim());
-            //kiểm tra xem thùng đang chạy chẵn hay lẻ
-            if (Globals.ProductionData.counter.cartonID % 2 != 0)
+            if (!TryAssignCartonCode(s.Trim(), capturedOrderNo, false, out bool duplicate) && duplicate)
             {
-                //thùng lẻ
-                //kiểm tra xem thùng tiếp theo có mã chưa
-                if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out ProductionCartonData cartonData))
+                this.InvokeIfRequired(() =>
                 {
-                    //nếu thùng tiếp theo đã có mã thì cập nhật mã thùng mới
-                    if (cartonData.cartonCode != "0")
-                    {
-                        //Đã có mã thùng thì không làm gì cả
-                    }
-                    else
-                    {
-                        //kiểm tra mã đã từng tồn tại chưa
-                        if (Globals_Database.Dictionary_ProductionCarton_Data.Values.Any(x => x.cartonCode == s.Trim()))
-                        {
-                            this.InvokeIfRequired(() =>
-                            {
-                                this.ShowErrorNotifier("Mã thùng đã tồn tại. Vui lòng kiểm tra lại!", false, 5000);
-                            });
-                            return;
-                        }
-                        else
-                        {
-                            //nếu chưa tồn tại thì cập nhật mã thùng mới
-                            cartonData.cartonCode = s.Trim();
-                            cartonData.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
-                            //thêm vào hàng chờ cập nhật
-                            Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData);
-                            //Globals_Database.Activate_Carton.Enqueue(s.Trim());
-                        }
-                    }
-                }
-
-            }
-            else
-            {
-
-                //thùng chẵn tức là thùng đang chạy
-                //kiểm tra xem thùng chẵn có mã chưa
-                if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonDataL))
-                {
-                    //nếu thùng đã có mã thì không làm gì cả
-                    if (cartonDataL.cartonCode != "0")
-                    {
-                        //Đã có mã thùng thì không làm gì cả
-                    }
-                    else
-                    {
-                        //kiểm tra mã đã từng tồn tại chưa
-                        if (Globals_Database.Dictionary_ProductionCarton_Data.Values.Any(x => x.cartonCode == s.Trim()))
-                        {
-                            this.InvokeIfRequired(() =>
-                            {
-                                this.ShowErrorNotifier("Mã thùng đã tồn tại. Vui lòng kiểm tra lại!", false, 5000);
-                            });
-                            return;
-                        }
-                        else
-                        {
-                            //nếu chưa tồn tại thì cập nhật mã thùng mới
-                            cartonDataL.cartonCode = s.Trim();
-                            cartonDataL.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
-                            //thêm vào hàng chờ cập nhật
-                            Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonDataL);
-                        }
-                    }
-                }
+                    this.ShowErrorNotifier("Mã thùng đã tồn tại. Vui lòng kiểm tra lại!", false, 5000);
+                });
             }
         }
 
         private void HandScan01_Process(string s)
         {
+            string capturedOrderNo;
+            lock (Globals.PoTransitionLock)
+            {
+                if (Globals.Production_State == e_Production_State.Saving ||
+                    Globals.Production_State == e_Production_State.Editing ||
+                    Globals.Production_State == e_Production_State.Loading) return;
+                capturedOrderNo = Globals.ProductionData.orderNo;
+            }
+
             PCLog.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.DataChange, "Scan 01" + s.Trim(), s.Trim());
 
             this.InvokeIfRequired(() =>
             {
                 opLane01.Items.Insert(0, s.Trim());
             });
-            //kiểm tra xem thùng đang chạy chẵn hay lẻ
-            if (Globals.ProductionData.counter.cartonID % 2 == 0)
+            if (!TryAssignCartonCode(s.Trim(), capturedOrderNo, true, out bool duplicate) && duplicate)
             {
-                //thùng chẵn
-                //kiểm tra xem thùng tiếp theo có mã chưa
-                if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID + 1, out ProductionCartonData cartonData))
+                this.InvokeIfRequired(() =>
                 {
-                    //nếu thùng tiếp theo đã có mã thì cập nhật mã thùng mới
-                    if (cartonData.cartonCode != "0")
-                    {
-                        //Đã có mã thùng thì không làm gì cả
-                    }
-                    else
-                    {
-                        //kiểm tra mã đã từng tồn tại chưa
-                        if (Globals_Database.Dictionary_ProductionCarton_Data.Values.Any(x => x.cartonCode == s.Trim()))
-                        {
-                            this.InvokeIfRequired(() =>
-                            {
-                                this.ShowErrorNotifier("Mã thùng đã tồn tại. Vui lòng kiểm tra lại!", false, 5000);
-                            });
-                            return;
-                        }
-                        else
-                        {
-                            //nếu chưa tồn tại thì cập nhật mã thùng mới
-                            cartonData.cartonCode = s.Trim();
-                            cartonData.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
-                            //thêm vào hàng chờ cập nhật
-                            Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData);
-                            //Globals_Database.Activate_Carton.Enqueue(s.Trim());
-                        }
-                    }
-                }
+                    this.ShowErrorNotifier("Mã thùng đã tồn tại. Vui lòng kiểm tra lại!", false, 5000);
+                });
             }
-            else
-            {
-                //thùng lẻ tức là thùng đang chạy
-                //kiểm tra xem thùng lẻ có mã chưa
-                if (Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(Globals.ProductionData.counter.cartonID, out ProductionCartonData cartonDataL))
-                {
-                    //nếu thùng đã có mã thì không làm gì cả
-                    if (cartonDataL.cartonCode != "0")
-                    {
-                        //Đã có mã thùng thì không làm gì cả
-                    }
-                    else
-                    {
-                        //kiểm tra mã đã từng tồn tại chưa
-                        if (Globals_Database.Dictionary_ProductionCarton_Data.Values.Any(x => x.cartonCode == s.Trim()))
-                        {
-                            this.InvokeIfRequired(() =>
-                            {
-                                this.ShowErrorNotifier("Mã thùng đã tồn tại. Vui lòng kiểm tra lại!", false, 5000);
-                            });
-                            return;
-                        }
-                        else
-                        {
-                            //nếu chưa tồn tại thì cập nhật mã thùng mới
-                            cartonDataL.cartonCode = s.Trim();
-                            cartonDataL.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
-                            //thêm vào hàng chờ cập nhật
-                            Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonDataL);
+        }
 
-                            ////kết thúc thùng chẵn cũ
-                            //cartonData.cartonCode = s.Trim();
-                            //cartonData.Activate_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
-                            //Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(cartonData);
-                            //Globals_Database.Activate_Carton.Enqueue(s.Trim());
-                        }
-                    }
-                }
+        private bool TryAssignCartonCode(string code, string capturedOrderNo, bool firstLane, out bool duplicate)
+        {
+            lock (Globals.PoTransitionLock)
+            {
+                duplicate = false;
+                if (Globals.Production_State == e_Production_State.Saving ||
+                    Globals.Production_State == e_Production_State.Editing ||
+                    Globals.Production_State == e_Production_State.Loading ||
+                    Globals.ProductionData.orderNo != capturedOrderNo) return false;
+
+                int cartonID = Globals.ProductionData.counter.cartonID;
+                if ((firstLane && cartonID % 2 == 0) || (!firstLane && cartonID % 2 != 0)) cartonID++;
+                if (!Globals_Database.Dictionary_ProductionCarton_Data.TryGetValue(cartonID, out ProductionCartonData cartonData) ||
+                    cartonData.orderNo != capturedOrderNo || cartonData.cartonCode != "0") return false;
+
+                duplicate = Globals_Database.Dictionary_ProductionCarton_Data.Values.Any(x => x.cartonCode == code);
+                if (duplicate) return false;
+
+                cartonData.cartonCode = code;
+                cartonData.Start_Datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff +0700");
+                Globals_Database.Update_Product_To_Record_Carton_Queue.Enqueue(Globals_Database.SnapshotCarton(cartonData));
+                return true;
             }
         }
 
@@ -512,7 +425,7 @@ namespace MASAN_SERIALIZATION.Views.Dashboards
                         cartonData.Production_Datetime == "0")
                     {
                         // Thêm vào hàng đợi kích hoạt
-                        Globals_Database.Activate_Carton.Enqueue(cartonData.cartonCode);
+                        Globals_Database.EnqueueCartonActivation(cartonData.cartonCode, cartonData.orderNo, null, AppConfigs.Current.cartonPack);
                         Globals.Log.WriteLogAsync("System", e_LogType.Info,
                             $"Tự động kích hoạt thùng ID={cartonData.cartonID}, Code={cartonData.cartonCode}");
                         this.ShowSuccessDialog($"Đã tự động kích hoạt thùng ID={cartonData.cartonID}, Code={cartonData.cartonCode}");

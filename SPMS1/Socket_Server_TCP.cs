@@ -38,6 +38,8 @@ namespace SPMS1
         private AsyncCallback pfnWorkerCallBack;
         private Socket m_socListener;
         private Socket m_socWorker;
+        private readonly object serverSync = new object();
+        private bool serverDisposed;
         public Int32 Port { get; set; }
         string IPNAME = "127.0.0.1";
         public string IP
@@ -50,74 +52,84 @@ namespace SPMS1
         public delegate void SocketServerHandler(Enum_SocketServer e, string s);
 
         public event SocketServerHandler SockServer;
-        private BackgroundWorker worker = new BackgroundWorker();
-        bool statup = true;
-        private void CheckConnection()
-        {
-            worker.DoWork += Worker_DoWork;
-        }
-        bool a = true;
-        private void Worker_DoWork(object sender, DoWorkEventArgs e)
-        {
-
-            while (a)
-            {
-                Thread.Sleep(1000); // kiểm tra 1s/lần
-                if (!m_socWorker.Connected)
-                {
-                    OnClientDisconnect();
-
-                    return;
-                }
-            }
-        }
-
         public void StartServer()
         {
-            try
+            lock (serverSync)
             {
-                m_socListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                IPAddress ipAddress = IPAddress.Parse(IP);
-                IPEndPoint ipLocal = new IPEndPoint(ipAddress, Port);
-                m_socListener.Bind(ipLocal);
-                m_socListener.Listen(4);
-                m_socListener.BeginAccept(new AsyncCallback(OnClientConnect), null);
-                if (SockServer != null)
+                if (serverDisposed) throw new ObjectDisposedException(nameof(Socket_Server_TCP));
+                if (m_socListener != null) return;
+                try
                 {
-                    SockServer.Invoke(Enum_SocketServer.StartServer, Port.ToString());
+                    m_socListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    IPAddress ipAddress = IPAddress.Parse(IP);
+                    IPEndPoint ipLocal = new IPEndPoint(ipAddress, Port);
+                    m_socListener.Bind(ipLocal);
+                    m_socListener.Listen(4);
+                    m_socListener.BeginAccept(new AsyncCallback(OnClientConnect), m_socListener);
+                }
+                catch (SocketException)
+                {
+                    m_socListener?.Close();
+                    m_socListener = null;
+                    return;
+                }
+                catch
+                {
+                    m_socListener?.Close();
+                    m_socListener = null;
+                    throw;
                 }
             }
-            catch (SocketException)
-            {
-            }
+            SockServer?.Invoke(Enum_SocketServer.StartServer, Port.ToString());
         }
 
         public void StopServer()
         {
-            m_socWorker.Close();
-
+            CloseServer();
             if (SockServer != null)
             {
                 SockServer.Invoke(Enum_SocketServer.StopServer, Port.ToString());
             }
         }
 
+        private void CloseServer()
+        {
+            lock (serverSync)
+            {
+                // Finish closing before a concurrent Start can rebind this port.
+                m_socListener?.Close();
+                m_socWorker?.Close();
+                m_socListener = null;
+                m_socWorker = null;
+            }
+        }
+
+        private void DisposeServer()
+        {
+            lock (serverSync) { serverDisposed = true; }
+            CloseServer();
+        }
+
         public void OnClientConnect(IAsyncResult asyn)
         {
-            if (statup)
-            {
-                CheckConnection();
-                statup = false;
-            }
-            if (!worker.IsBusy) { worker.RunWorkerAsync(); }
+            Socket listener = (Socket)asyn.AsyncState;
+            Socket accepted = null;
             try
             {
-                m_socWorker = m_socListener.EndAccept(asyn);
-
-                WaitForData(m_socWorker);
+                accepted = listener.EndAccept(asyn);
+                lock (serverSync)
+                {
+                    if (serverDisposed || !ReferenceEquals(listener, m_socListener))
+                    {
+                        accepted.Close();
+                        return;
+                    }
+                    m_socWorker = accepted;
+                }
+                WaitForData(accepted);
                 if (SockServer != null)
                 {
-                    SockServer.Invoke(Enum_SocketServer.ClientConnect, m_socWorker.RemoteEndPoint.ToString());
+                    SockServer.Invoke(Enum_SocketServer.ClientConnect, accepted.RemoteEndPoint.ToString());
                 }
             }
             catch (ObjectDisposedException)
@@ -128,19 +140,23 @@ namespace SPMS1
             {
             }
         }
-        private void OnClientDisconnect()
+        private void OnClientDisconnect(Socket connection)
         {
-            // đóng socket 
-            m_socWorker.Close();
-            a = false;
+            lock (serverSync)
+            {
+                if (!ReferenceEquals(connection, m_socWorker)) return;
+                m_socWorker = null;
+                connection.Close();
+                // A callback from a stopped lifetime must never re-open accept.
+                if (m_socListener != null)
+                    m_socListener.BeginAccept(OnClientConnect, m_socListener);
+            }
 
             // báo sự kiện client disconnect
             if (SockServer != null)
             {
                 SockServer.Invoke(Enum_SocketServer.ClientDisconnect, "");
             }
-            // bắt đầu nhận kết nối mới
-            m_socListener.BeginAccept(OnClientConnect, null);
         }
         public class CSocketPacket
         {
@@ -163,14 +179,16 @@ namespace SPMS1
             }
             catch (SocketException)
             {
+                OnClientDisconnect(soc);
             }
+            catch (ObjectDisposedException) { }
         }
 
         public void OnDataReceived(IAsyncResult asyn)
         {
+            CSocketPacket theSockId = (CSocketPacket)asyn.AsyncState;
             try
             {
-                CSocketPacket theSockId = (CSocketPacket)asyn.AsyncState;
                 int iRx = 0;
                 iRx = theSockId.thisSocket.EndReceive(asyn);
                 char[] chars = new char[iRx];
@@ -184,28 +202,31 @@ namespace SPMS1
                     {
                         SockServer.Invoke(Enum_SocketServer.ReceiveData, szData);
                     }
-                    WaitForData(m_socWorker);
+                    WaitForData(theSockId.thisSocket);
                 }
                 else
                 {
-                    OnClientDisconnect();
+                    OnClientDisconnect(theSockId.thisSocket);
                 }
             }
             catch
             {
-                // System.Diagnostics.Debugger.Log(0, "1", "\nOnDataReceived: Socket has been closed\n");
+                OnClientDisconnect(theSockId.thisSocket);
             }
 
         }
         public bool Send(string Data)
         {
+            Socket connection;
+            lock (serverSync) { connection = m_socWorker; }
             try
             {
-                if (!String.IsNullOrEmpty(Data) && m_socWorker != null)
+                if (!String.IsNullOrEmpty(Data))
                 {
+                    if (connection == null) return false;
                     Object objData = Data;
                     byte[] byData = System.Text.Encoding.ASCII.GetBytes(objData.ToString());
-                    m_socWorker.Send(byData);
+                    connection.Send(byData);
                 }
                 return true;
             }
@@ -213,6 +234,7 @@ namespace SPMS1
             {
                 return false;
             }
+            catch (ObjectDisposedException) { return false; }
         }
     }
 }

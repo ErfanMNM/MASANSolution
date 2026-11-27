@@ -90,55 +90,87 @@ namespace TestApp
         private const uint FILE_ATTRIBUTE_NORMAL = 0x80;
         private const uint FILE_FLAG_OVERLAPPED = 0x40000000;
 
-        private string _portName;
-        private SafeFileHandle _portHandle;
-        private bool _isOpen = false;
-        private CancellationTokenSource _cancellationTokenSource;
-        private Task _readerTask;
+        internal interface IConnection : IDisposable
+        {
+            int Read(byte[] buffer);
+            void Write(byte[] data);
+        }
+
+        private sealed class NativeConnection : IConnection
+        {
+            private readonly SafeFileHandle handle;
+            private NativeConnection(SafeFileHandle handle) { this.handle = handle; }
+            internal static IConnection Open(string portName)
+            {
+                var handle = CreateFile($"\\\\.\\{portName}", GENERIC_READ | GENERIC_WRITE,
+                    0, IntPtr.Zero, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, IntPtr.Zero);
+                try
+                {
+                    if (handle.IsInvalid) throw new IOException("Cannot open " + portName + ": " + Marshal.GetLastWin32Error());
+                    var timeouts = new COMMTIMEOUTS { ReadIntervalTimeout = 50, ReadTotalTimeoutConstant = 100, WriteTotalTimeoutConstant = 100 };
+                    if (!SetCommTimeouts(handle, ref timeouts)) throw new IOException("SetCommTimeouts failed: " + Marshal.GetLastWin32Error());
+                    var dcb = new DCB(); dcb.DCBlength = (uint)Marshal.SizeOf(dcb);
+                    if (!GetCommState(handle, ref dcb)) throw new IOException("GetCommState failed: " + Marshal.GetLastWin32Error());
+                    dcb.BaudRate = 9600; dcb.ByteSize = 8; dcb.Parity = 0; dcb.StopBits = 0;
+                    if (!SetCommState(handle, ref dcb)) throw new IOException("SetCommState failed: " + Marshal.GetLastWin32Error());
+                    return new NativeConnection(handle);
+                }
+                catch { handle.Dispose(); throw; }
+            }
+            public int Read(byte[] buffer)
+            {
+                uint count;
+                if (!ReadFile(handle, buffer, (uint)buffer.Length, out count, IntPtr.Zero))
+                    throw new IOException("Read failed: " + Marshal.GetLastWin32Error());
+                return checked((int)count);
+            }
+            public void Write(byte[] data)
+            {
+                uint count;
+                if (!WriteFile(handle, data, (uint)data.Length, out count, IntPtr.Zero) || count != data.Length)
+                    throw new IOException("Write failed or incomplete: " + Marshal.GetLastWin32Error());
+            }
+            public void Dispose() { handle.Dispose(); }
+        }
+
+        private sealed class Session
+        {
+            internal readonly IConnection Connection;
+            internal readonly CancellationTokenSource Stop = new CancellationTokenSource();
+            internal Session(IConnection connection) { Connection = connection; }
+        }
+        private readonly object gate = new object();
+        private readonly string _portName;
+        private readonly Func<string, IConnection> openConnection;
+        private Session current;
+        private bool disposed;
 
         public event EventHandler<byte[]> DataReceived;
         public event EventHandler<string> StatusChanged;
 
-        public bool IsOpen => _isOpen;
+        public bool IsOpen { get { lock (gate) return current != null; } }
         public string PortName => _portName;
+        public Task Completion { get; private set; } = Task.CompletedTask;
 
-        public COMPortEmulator(string portName)
+        public COMPortEmulator(string portName) : this(portName, NativeConnection.Open) { }
+        internal COMPortEmulator(string portName, Func<string, IConnection> openConnection)
         {
             _portName = portName;
-            _cancellationTokenSource = new CancellationTokenSource();
+            this.openConnection = openConnection ?? throw new ArgumentNullException(nameof(openConnection));
         }
 
         public bool Open()
         {
             try
             {
-                if (_isOpen) return true;
-
-                // Thử mở COM port với Windows API
-                string comPath = $"\\\\.\\{_portName}";
-                
-                _portHandle = CreateFile(
-                    comPath,
-                    GENERIC_READ | GENERIC_WRITE,
-                    0, // Exclusive access
-                    IntPtr.Zero,
-                    OPEN_EXISTING,
-                    FILE_ATTRIBUTE_NORMAL,
-                    IntPtr.Zero);
-
-                if (_portHandle.IsInvalid)
+                lock (gate)
                 {
-                    int error = Marshal.GetLastWin32Error();
-                    throw new Exception($"Cannot open {_portName}. Error: {error}. Port may not exist or already in use.");
+                    if (disposed) return false;
+                    if (current != null) return true;
+                    var session = new Session(openConnection(_portName));
+                    current = session;
+                    Completion = Task.Run(() => ReadDataAsync(session));
                 }
-
-                // Configure COM port
-                ConfigurePort();
-
-                _isOpen = true;
-                
-                // Start reading thread
-                _readerTask = Task.Run(ReadDataAsync);
 
                 OnStatusChanged($"✅ {_portName} opened successfully!");
                 return true;
@@ -150,45 +182,18 @@ namespace TestApp
             }
         }
 
-        private void ConfigurePort()
-        {
-            // Set timeouts
-            COMMTIMEOUTS timeouts = new COMMTIMEOUTS
-            {
-                ReadIntervalTimeout = 50,
-                ReadTotalTimeoutMultiplier = 0,
-                ReadTotalTimeoutConstant = 100,
-                WriteTotalTimeoutMultiplier = 0,
-                WriteTotalTimeoutConstant = 100
-            };
-            SetCommTimeouts(_portHandle, ref timeouts);
-
-            // Set DCB (Data Control Block)
-            DCB dcb = new DCB();
-            dcb.DCBlength = (uint)Marshal.SizeOf(dcb);
-            
-            if (GetCommState(_portHandle, ref dcb))
-            {
-                dcb.BaudRate = 9600;
-                dcb.ByteSize = 8;
-                dcb.Parity = 0; // None
-                dcb.StopBits = 0; // 1 stop bit
-                SetCommState(_portHandle, ref dcb);
-            }
-        }
-
         public void Close()
         {
             try
             {
-                _isOpen = false;
-                _cancellationTokenSource?.Cancel();
-
-                _readerTask?.Wait(1000);
-
-                _portHandle?.Close();
-                _portHandle?.Dispose();
-                _portHandle = null;
+                Session old;
+                lock (gate)
+                {
+                    old = current; current = null;
+                    old?.Stop.Cancel();
+                    // Closing a native resource never waits on this reader task.
+                    old?.Connection.Dispose();
+                }
 
                 OnStatusChanged($"🔌 {_portName} closed");
             }
@@ -202,15 +207,10 @@ namespace TestApp
         {
             try
             {
-                if (!_isOpen || _portHandle?.IsInvalid != false) return;
-
-                uint bytesWritten;
-                bool success = WriteFile(_portHandle, data, (uint)data.Length, out bytesWritten, IntPtr.Zero);
-                
-                if (!success)
+                if (data == null || data.Length == 0) return;
+                lock (gate)
                 {
-                    int error = Marshal.GetLastWin32Error();
-                    throw new Exception($"Write failed. Error: {error}");
+                    current?.Connection.Write(data);
                 }
             }
             catch (Exception ex)
@@ -227,52 +227,57 @@ namespace TestApp
             }
         }
 
-        private async Task ReadDataAsync()
+        private async Task ReadDataAsync(Session session)
         {
+            var token = session.Stop.Token;
             byte[] buffer = new byte[1024];
-
-            while (!_cancellationTokenSource.Token.IsCancellationRequested && _isOpen)
+            try
             {
-                try
+                while (!token.IsCancellationRequested)
                 {
-                    uint bytesRead;
-                    bool success = ReadFile(_portHandle, buffer, (uint)buffer.Length, out bytesRead, IntPtr.Zero);
-
-                    if (success && bytesRead > 0)
+                    int bytesRead = session.Connection.Read(buffer);
+                    lock (gate)
+                    {
+                        if (!ReferenceEquals(current, session) || token.IsCancellationRequested) break;
+                    }
+                    if (bytesRead > 0)
                     {
                         byte[] receivedData = new byte[bytesRead];
                         Array.Copy(buffer, receivedData, bytesRead);
+                        // An already-dispatched callback may finish after Close; it must not hold
+                        // the lifecycle gate while synchronously invoking a UI subscriber.
                         OnDataReceived(receivedData);
                     }
-
-                    await Task.Delay(1, _cancellationTokenSource.Token);
+                    await Task.Delay(1, token).ConfigureAwait(false);
                 }
-                catch (OperationCanceledException)
-                {
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    OnStatusChanged($"❌ Read error on {_portName}: {ex.Message}");
-                    break;
-                }
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception ex) { if (!token.IsCancellationRequested) OnStatusChanged($"❌ Read error on {_portName}: {ex.Message}"); }
+            finally
+            {
+                lock (gate) { if (ReferenceEquals(current, session)) current = null; }
+                try { session.Connection.Dispose(); } finally { session.Stop.Dispose(); }
             }
         }
 
         protected virtual void OnDataReceived(byte[] data)
         {
-            DataReceived?.Invoke(this, data);
+            var observers = DataReceived;
+            if (observers != null) foreach (EventHandler<byte[]> observer in observers.GetInvocationList())
+                try { observer(this, data); } catch (Exception) { }
         }
 
         protected virtual void OnStatusChanged(string status)
         {
-            StatusChanged?.Invoke(this, status);
+            var observers = StatusChanged;
+            if (observers != null) foreach (EventHandler<string> observer in observers.GetInvocationList())
+                try { observer(this, status); } catch (Exception) { }
         }
 
         public void Dispose()
         {
+            lock (gate) disposed = true;
             Close();
-            _cancellationTokenSource?.Dispose();
         }
 
         // Static method để check COM port có tồn tại không

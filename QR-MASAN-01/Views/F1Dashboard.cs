@@ -1,4 +1,4 @@
-﻿using HslCommunication;
+using HslCommunication;
 using MainClass;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -651,8 +651,8 @@ namespace QR_MASAN_01
                     int active = Convert.ToInt32(row["Active"]); // Active
                     string timeStampA = row["TimestampActive"].ToString(); ; 
                     string timeStampP = row["TimestampPrinted"].ToString(); ;
-                    int timeUnixA = Convert.ToInt32(row["TimeUnixActive"]) ; 
-                    int timeUnixP = Convert.ToInt32(row["TimeUnixPrinted"]); 
+                    long timeUnixA = Convert.ToInt64(row["TimeUnixActive"]);
+                    long timeUnixP = Convert.ToInt64(row["TimeUnixPrinted"]);
 
 
                     // Thêm dữ liệu vào Dictionary với CaseQR làm key
@@ -708,12 +708,12 @@ namespace QR_MASAN_01
                     int active = Convert.ToInt32(row["Active"]); // Active
                     string timeStampA = row["TimestampActive"].ToString(); ;
                     string timeStampP = row["TimestampPrinted"].ToString(); ;
-                    int timeUnixA = Convert.ToInt32(row["TimeUnixActive"]);
-                    int timeUnixP = Convert.ToInt32(row["TimeUnixPrinted"]);
+                    long timeUnixA = Convert.ToInt64(row["TimeUnixActive"]);
+                    long timeUnixP = Convert.ToInt64(row["TimeUnixPrinted"]);
 
 
                     // Thêm dữ liệu vào Dictionary với CaseQR làm key
-                    Globalvariable.Main_Content_Dictionary[ProductQR] = new ProductData
+                    Globalvariable.C1_Content_Dictionary[ProductQR] = new ProductData
                     {
                         ProductID = ProductID,
                         Active = active,
@@ -764,12 +764,12 @@ namespace QR_MASAN_01
                     int active = Convert.ToInt32(row["Active"]); // Active
                     string timeStampA = row["TimestampActive"].ToString(); ;
                     string timeStampP = row["TimestampPrinted"].ToString(); ;
-                    int timeUnixA = Convert.ToInt32(row["TimeUnixActive"]);
-                    int timeUnixP = Convert.ToInt32(row["TimeUnixPrinted"]);
+                    long timeUnixA = Convert.ToInt64(row["TimeUnixActive"]);
+                    long timeUnixP = Convert.ToInt64(row["TimeUnixPrinted"]);
 
 
                     // Thêm dữ liệu vào Dictionary với CaseQR làm key
-                    Globalvariable.Main_Content_Dictionary[ProductQR] = new ProductData
+                    Globalvariable.C2_Content_Dictionary[ProductQR] = new ProductData
                     {
                         ProductID = ProductID,
                         Active = active,
@@ -1604,6 +1604,7 @@ namespace QR_MASAN_01
 
                     //Gửi vào hàng chờ để cập nhật SQLite
                     Globalvariable.C1_Update_Content_To_SQLite_Queue.Enqueue(C1ProductInfo);
+                    Send_Result_Content_C1(e_Content_Result.PASS, _strData);
                 }
                 //nếu đã kích hoạt thì đá ra
                 else
@@ -2107,9 +2108,9 @@ namespace QR_MASAN_01
                 string query = "UPDATE `QRContent` SET " +
                                "`Active` = '1', " +
                                "`TimeStampActive` = @TimeStampActive, " +
-                               "`TimeUnixActive` = @TimeUnixActive  " +
-                               "`TimeStampPrinted` = @TimestampPrinted" +
-                               "`TimeUnixPrinted` = @TimeUnixPrinted" +
+                               "`TimeUnixActive` = @TimeUnixActive, " +
+                               "`TimeStampPrinted` = @TimestampPrinted, " +
+                               "`TimeUnixPrinted` = @TimeUnixPrinted " +
                                "WHERE _rowid_ = @RowId";
 
                 using (SQLiteCommand command = new SQLiteCommand(query, connection))
@@ -2180,9 +2181,9 @@ namespace QR_MASAN_01
                 string query = "UPDATE `QRContent` SET " +
                                "`Active` = '1', " +
                                "`TimeStampActive` = @TimeStampActive, " +
-                               "`TimeUnixActive` = @TimeUnixActive  " +
-                               "`TimeStampPrinted` = @TimestampPrinted" +
-                               "`TimeUnixPrinted` = @TimeUnixPrinted" +
+                               "`TimeUnixActive` = @TimeUnixActive, " +
+                               "`TimeStampPrinted` = @TimestampPrinted, " +
+                               "`TimeUnixPrinted` = @TimeUnixPrinted " +
                                "WHERE _rowid_ = @RowId";
 
                 using (SQLiteCommand command = new SQLiteCommand(query, connection))
@@ -2254,9 +2255,9 @@ namespace QR_MASAN_01
                 string query = "UPDATE `QRContent` SET " +
                                "`Active` = '1', " +
                                "`TimeStampActive` = @TimeStampActive, " +
-                               "`TimeUnixActive` = @TimeUnixActive  " +
-                               "`TimeStampPrinted` = @TimestampPrinted" +
-                               "`TimeUnixPrinted` = @TimeUnixPrinted" +
+                               "`TimeUnixActive` = @TimeUnixActive, " +
+                               "`TimeStampPrinted` = @TimestampPrinted, " +
+                               "`TimeUnixPrinted` = @TimeUnixPrinted " +
                                "WHERE _rowid_ = @RowId";
 
                 using (SQLiteCommand command = new SQLiteCommand(query, connection))

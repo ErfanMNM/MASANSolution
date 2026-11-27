@@ -5,7 +5,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-let tempStorage = {};
+let tempStorage = Object.create(null);
 
 // POST để set một hoặc nhiều key-value
 app.post('/set', (req, res) => {
@@ -17,6 +17,10 @@ app.post('/set', (req, res) => {
     const errors = [];
 
     for (const item of items) {
+        if (!item || typeof item !== 'object') {
+            errors.push({ error: 'Each item must be an object' });
+            continue;
+        }
         const { key, value, ttl } = item;
 
         // Kiểm tra dữ liệu đầu vào
@@ -24,18 +28,19 @@ app.post('/set', (req, res) => {
             errors.push({ key, error: 'Key and value are required' });
             continue;
         }
-        if (ttl !== undefined && (typeof ttl !== 'number' || ttl <= 0)) {
+        if (ttl !== undefined && (typeof ttl !== 'number' || !Number.isFinite(ttl) || ttl <= 0 || ttl > 2147483647)) {
             errors.push({ key, error: 'TTL must be a positive number' });
             continue;
         }
 
         // Lưu giá trị
-        tempStorage[key] = { value, expiresAt: ttl ? Date.now() + ttl : null };
+        const entry = { value, expiresAt: ttl ? Date.now() + ttl : null };
+        tempStorage[key] = entry;
 
         // Nếu có TTL, đặt giá trị về 0 sau thời gian TTL
         if (ttl) {
             setTimeout(() => {
-                if (tempStorage[key] && tempStorage[key].expiresAt <= Date.now()) {
+                if (tempStorage[key] === entry && entry.expiresAt <= Date.now()) {
                     tempStorage[key].value = 0; // Đặt về 0 thay vì xóa
                 }
             }, ttl);
@@ -60,7 +65,7 @@ app.post('/get', (req, res) => {
         return res.status(400).json({ error: 'Keys must be an array' });
     }
 
-    const results = {};
+    const results = Object.create(null);
     for (const key of keys) {
         const data = tempStorage[key];
         results[key] = data && (data.expiresAt === null || data.expiresAt > Date.now()) ? data.value : 0;
@@ -75,9 +80,9 @@ app.get('/get/:key', (req, res) => {
     const data = tempStorage[key];
 
     if (data && (data.expiresAt === null || data.expiresAt > Date.now())) {
-        res.json({ value: data.value });
+        res.json({ value: data.value, expiresAt: data.expiresAt });
     } else {
-        res.json({ value: data ? data.value : 0 });
+        res.json({ value: 0, expiresAt: data ? data.expiresAt : null });
     }
 });
 

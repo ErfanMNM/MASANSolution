@@ -38,6 +38,7 @@ namespace SpT.Auth
             ipOldPassword.Text = string.Empty;
             ipNewPassword.Text = string.Empty;
             ipComfirmNewPassword.Text = string.Empty;
+            opRole.Text = string.Empty;
 
             //tạo đường dẫn đến Appdata Local
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -58,7 +59,7 @@ namespace SpT.Auth
             userData = UserData.GetUserByUsername(CurrentUserName, data_file_path);
 
             //load thông tin user vào các textbox
-            if (userData.Username != null)
+            if (userData != null && !string.IsNullOrWhiteSpace(userData.Username))
             {
                 ipUserName.Text = userData.Username;
                 //ipOldPassword.Text = userData.Password; // Không hiển thị mật khẩu cũ
@@ -95,6 +96,15 @@ namespace SpT.Auth
             btnSave.Text = "Đang lưu..."; //thay đổi chữ trên nút Save
             try
             {
+                if (userData == null || string.IsNullOrWhiteSpace(userData.Username))
+                {
+                    OnUserAction?.Invoke(this, new LoginActionEventArgs
+                    {
+                        Status = false,
+                        Message = "Không tìm thấy thông tin người dùng."
+                    });
+                    return;
+                }
                 if (UserHelper.ValidateCredentials(userData.Username, ipOldPassword.Text, data_file_path))
                 {
                     //kiểm tra có khóa 2FA không

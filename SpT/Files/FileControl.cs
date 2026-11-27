@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -64,6 +64,14 @@ namespace SpT
 
     public static class CsvHelper
     {
+        private static string EscapeCsvField(string value)
+        {
+            value = value ?? string.Empty;
+            return value.IndexOfAny(new[] { ',', '"', '\r', '\n' }) < 0
+                ? value : "\"" + value.Replace("\"", "\"\"") + "\"";
+        }
+
+
         //nhập vào datatable, đường dẫn => xuất csv sau đó trả về IsSucces và Message
         //viết chú giải chi tiết về hàm này
         /// <summary>
@@ -78,12 +86,12 @@ namespace SpT
             {
                 StringBuilder csvContent = new StringBuilder();
                 // Thêm tiêu đề cột
-                var columnNames = dataTable.Columns.Cast<DataColumn>().Select(column => column.ColumnName);
+                var columnNames = dataTable.Columns.Cast<DataColumn>().Select(column => EscapeCsvField(column.ColumnName));
                 csvContent.AppendLine(string.Join(",", columnNames));
                 // Thêm dữ liệu từng hàng
                 foreach (var row in dataTable.AsEnumerable())
                 {
-                    var fields = row.ItemArray.Select(field => field.ToString().Replace(",", " ")); // Thay thế dấu phẩy để tránh lỗi CSV
+                    var fields = row.ItemArray.Select(field => EscapeCsvField(field.ToString())); // Thay thế dấu phẩy để tránh lỗi CSV
                     csvContent.AppendLine(string.Join(",", fields));
                 }
                 File.WriteAllText(filePath, csvContent.ToString());

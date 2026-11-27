@@ -731,7 +731,16 @@
         let currentOffset = 0;
         let currentFilter = '';
         let currentSort = { column: '', order: 'ASC' };
+        let totalItems = 0;
+        let dataRequestVersion = 0;
+        let schemaRequestVersion = 0;
+        let uploadRequestVersion = 0;
+        let queryRequestVersion = 0;
         const ITEMS_PER_PAGE = 50;
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+        }
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
@@ -808,6 +817,7 @@
 
         async function handleFileUpload(file) {
             if (!file) return;
+            const version = ++uploadRequestVersion;
 
             const formData = new FormData();
             formData.append('sqliteFile', file);
@@ -821,9 +831,23 @@
                 });
 
                 const result = await response.json();
+                if (version !== uploadRequestVersion) return;
 
                 if (result.success) {
                     currentFileId = result.fileId;
+                    currentTable = null;
+                    currentOffset = totalItems = 0;
+                    currentFilter = '';
+                    currentSort = { column: '', order: 'ASC' };
+                    ++dataRequestVersion;
+                    ++schemaRequestVersion;
+                    ++queryRequestVersion;
+                    document.getElementById('dataContent').innerHTML = '';
+                    document.getElementById('schemaContent').innerHTML = '';
+                    document.getElementById('queryResult').innerHTML = '';
+                    document.getElementById('tableTitle').textContent = 'Select a table';
+                    document.getElementById('searchInput').value = '';
+                    document.getElementById('paginationContainer').style.display = 'none';
                     showFileInfo(result);
                     displayTables(result.dbInfo.tables);
                     hideWelcomeScreen();
@@ -832,9 +856,9 @@
                     showError(result.error || 'Error uploading file');
                 }
             } catch (error) {
-                showError('Upload error: ' + error.message);
+                if (version === uploadRequestVersion) showError('Upload error: ' + error.message);
             } finally {
-                hideLoading();
+                if (version === uploadRequestVersion) hideLoading();
             }
         }
 
@@ -842,7 +866,7 @@
             const fileInfoDiv = document.getElementById('fileInfo');
             fileInfoDiv.innerHTML = `
                     <h4>📋 File Info</h4>
-                    <p><strong>Name:</strong> ${info.originalName}</p>
+                    <p><strong>Name:</strong> ${escapeHtml(info.originalName)}</p>
                     <p><strong>Size:</strong> ${formatFileSize(info.size)}</p>
                     <p><strong>Tables:</strong> ${info.dbInfo.totalTables}</p>
                     <p><strong>Views:</strong> ${info.dbInfo.totalViews}</p>
@@ -860,21 +884,22 @@
                 tableItem.innerHTML = `
                         <div class="table-name">
                             <span class="table-type-badge ${table.type}">${table.type.toUpperCase()}</span>
-                            ${table.name}
+                             ${escapeHtml(table.name)}
                         </div>
                         <div class="table-meta">${table.rowCount.toLocaleString()} rows</div>
                     `;
-                tableItem.addEventListener('click', () => selectTable(table.name));
+                tableItem.addEventListener('click', () => selectTable(table.name, tableItem));
                 tablesList.appendChild(tableItem);
             });
         }
 
-        async function selectTable(tableName) {
+        async function selectTable(tableName, tableItem) {
             // Update UI
             document.querySelectorAll('.table-item').forEach(item => {
                 item.classList.remove('active');
             });
-            event.target.closest('.table-item').classList.add('active');
+            if (tableItem) tableItem.classList.add('active');
+            ++schemaRequestVersion;
 
             currentTable = tableName;
             currentOffset = 0;
@@ -890,6 +915,7 @@
 
         async function loadTableData() {
             if (!currentFileId || !currentTable) return;
+            const version = ++dataRequestVersion;
 
             showLoading('Loading table data...');
 
@@ -902,15 +928,17 @@
                     sortOrder: currentSort.order
                 });
 
-                const response = await fetch(`/table/${currentFileId}/${currentTable}?${params}`);
+                const response = await fetch(`/table/${encodeURIComponent(currentFileId)}/${encodeURIComponent(currentTable)}?${params}`);
                 const result = await response.json();
+                if (version !== dataRequestVersion) return;
+                if (!response.ok) throw new Error(result.error || 'Unable to load table');
 
                 displayTableData(result);
                 updatePagination(result);
             } catch (error) {
-                showError('Error loading data: ' + error.message);
+                if (version === dataRequestVersion) showError('Error loading data: ' + error.message);
             } finally {
-                hideLoading();
+                if (version === dataRequestVersion) hideLoading();
             }
         }
 
@@ -937,10 +965,10 @@
                             <tr>
                 `;
 
-            columns.forEach(col => {
+            columns.forEach((col, index) => {
                 const isActive = currentSort.column === col;
                 const sortClass = isActive ? `sort-${currentSort.order.toLowerCase()}` : 'sortable';
-                html += `<th class="${sortClass}" onclick="sortTable('${col}')">${col}</th>`;
+                html += `<th class="${sortClass}" data-column-index="${index}">${escapeHtml(col)}</th>`;
             });
 
             html += `
@@ -958,7 +986,7 @@
                     } else if (typeof value === 'string' && value.length > 100) {
                         value = value.substring(0, 100) + '...';
                     }
-                    html += `<td title="${row[col]}">${value}</td>`;
+                    html += `<td title="${escapeHtml(row[col])}">${row[col] === null ? value : escapeHtml(value)}</td>`;
                 });
                 html += '</tr>';
             });
@@ -969,14 +997,18 @@
                 `;
 
             dataContent.innerHTML = html;
+            dataContent.querySelectorAll('th[data-column-index]').forEach(header => {
+                header.addEventListener('click', () => sortTable(columns[Number(header.dataset.columnIndex)]));
+            });
             document.getElementById('paginationContainer').style.display = 'flex';
         }
 
         function updatePagination(result) {
+            totalItems = result.total;
             const paginationInfo = document.getElementById('paginationInfo');
             const paginationControls = document.getElementById('paginationControls');
 
-            const start = currentOffset + 1;
+            const start = result.total === 0 ? 0 : currentOffset + 1;
             const end = Math.min(currentOffset + ITEMS_PER_PAGE, result.total);
             const totalPages = Math.ceil(result.total / ITEMS_PER_PAGE);
             const currentPage = Math.floor(currentOffset / ITEMS_PER_PAGE) + 1;
@@ -988,12 +1020,12 @@
                     <button class="pagination-btn" onclick="changePage('prev')" ${currentOffset === 0 ? 'disabled' : ''}>◀️</button>
                     <span style="padding: 0 15px; color: #6c757d;">Page ${currentPage} of ${totalPages}</span>
                     <button class="pagination-btn" onclick="changePage('next')" ${currentOffset + ITEMS_PER_PAGE >= result.total ? 'disabled' : ''}>▶️</button>
-                    <button class="pagination-btn" onclick="changePage('last')" ${currentOffset + ITEMS_PER_PAGE >= result.total ? 'disabled' : ''}">⏭️</button>
+                    <button class="pagination-btn" onclick="changePage('last')" ${currentOffset + ITEMS_PER_PAGE >= result.total ? 'disabled' : ''}>⏭️</button>
                 `;
         }
 
         function changePage(direction) {
-            const totalItems = parseInt(document.getElementById('paginationInfo').textContent.split(' of ')[1]);
+            const lastOffset = Math.max(0, Math.floor((totalItems - 1) / ITEMS_PER_PAGE) * ITEMS_PER_PAGE);
 
             switch (direction) {
                 case 'first':
@@ -1003,10 +1035,10 @@
                     currentOffset = Math.max(0, currentOffset - ITEMS_PER_PAGE);
                     break;
                 case 'next':
-                    currentOffset = Math.min(totalItems - ITEMS_PER_PAGE, currentOffset + ITEMS_PER_PAGE);
+                    currentOffset = Math.min(lastOffset, currentOffset + ITEMS_PER_PAGE);
                     break;
                 case 'last':
-                    currentOffset = Math.floor((totalItems - 1) / ITEMS_PER_PAGE) * ITEMS_PER_PAGE;
+                    currentOffset = lastOffset;
                     break;
             }
 
@@ -1046,18 +1078,21 @@
 
         async function loadTableSchema() {
             if (!currentFileId || !currentTable) return;
+            const version = ++schemaRequestVersion;
 
             showLoading('Loading schema...');
 
             try {
-                const response = await fetch(`/schema/${currentFileId}/${currentTable}`);
+                const response = await fetch(`/schema/${encodeURIComponent(currentFileId)}/${encodeURIComponent(currentTable)}`);
                 const result = await response.json();
+                if (version !== schemaRequestVersion) return;
+                if (!response.ok) throw new Error(result.error || 'Unable to load schema');
 
                 displayTableSchema(result);
             } catch (error) {
-                showError('Error loading schema: ' + error.message);
+                if (version === schemaRequestVersion) showError('Error loading schema: ' + error.message);
             } finally {
-                hideLoading();
+                if (version === schemaRequestVersion) hideLoading();
             }
         }
 
@@ -1065,7 +1100,7 @@
             const schemaContent = document.getElementById('schemaContent');
 
             let html = `
-                    <h3>📋 Table Structure: ${currentTable}</h3>
+                    <h3>📋 Table Structure: ${escapeHtml(currentTable)}</h3>
                     <table class="schema-table">
                         <thead>
                             <tr>
@@ -1082,10 +1117,10 @@
             schema.columns.forEach(col => {
                 html += `
                         <tr>
-                            <td><strong>${col.name}</strong></td>
-                            <td>${col.type}</td>
+                            <td><strong>${escapeHtml(col.name)}</strong></td>
+                            <td>${escapeHtml(col.type)}</td>
                             <td>${col.notnull ? '✅' : '❌'}</td>
-                            <td>${col.dflt_value || '—'}</td>
+                            <td>${escapeHtml(col.dflt_value ?? '—')}</td>
                             <td>${col.pk ? '🔑' : '—'}</td>
                         </tr>
                     `;
@@ -1099,7 +1134,7 @@
             if (schema.createSql) {
                 html += `
                         <h3>🔧 CREATE Statement</h3>
-                        <div class="schema-sql">${schema.createSql}</div>
+                        <div class="schema-sql">${escapeHtml(schema.createSql)}</div>
                     `;
             }
 
@@ -1117,11 +1152,13 @@
                 showError('Please enter a SQL query');
                 return;
             }
+            const version = ++queryRequestVersion;
+            const fileId = currentFileId;
 
             showLoading('Executing query...');
 
             try {
-                const response = await fetch(`/query/${currentFileId}`, {
+                const response = await fetch(`/query/${encodeURIComponent(fileId)}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1130,6 +1167,7 @@
                 });
 
                 const result = await response.json();
+                if (version !== queryRequestVersion || fileId !== currentFileId) return;
 
                 if (response.ok) {
                     displayQueryResult(result);
@@ -1137,9 +1175,9 @@
                     showError(result.error || 'Query execution failed');
                 }
             } catch (error) {
-                showError('Query error: ' + error.message);
+                if (version === queryRequestVersion && fileId === currentFileId) showError('Query error: ' + error.message);
             } finally {
-                hideLoading();
+                if (version === queryRequestVersion && fileId === currentFileId) hideLoading();
             }
         }
 
@@ -1158,7 +1196,7 @@
                     <div class="data-table-container" style="max-height: 300px;">
                         <table class="data-table">
                             <thead>
-                                <tr>${columns.map(col => `<th>${col}</th>`).join('')}</tr>
+                                <tr>${columns.map(col => `<th>${escapeHtml(col)}</th>`).join('')}</tr>
                             </thead>
                             <tbody>
                 `;
@@ -1168,7 +1206,7 @@
                 columns.forEach(col => {
                     let value = row[col];
                     if (value === null) value = '<span class="null-value">NULL</span>';
-                    html += `<td>${value}</td>`;
+                    html += `<td>${row[col] === null ? value : escapeHtml(value)}</td>`;
                 });
                 html += '</tr>';
             });
@@ -1202,11 +1240,12 @@
                     sortOrder: currentSort.order
                 });
 
-                const url = `/export/${currentFileId}/${currentTable}/${format}?${params}`;
+                const url = `/export/${encodeURIComponent(currentFileId)}/${encodeURIComponent(currentTable)}/${format}?${params}`;
 
                 if (format === 'json') {
                     // For JSON, fetch and trigger download
                     const response = await fetch(url);
+                    if (!response.ok) throw new Error('Export failed');
                     const blob = await response.blob();
                     downloadBlob(blob, `${currentTable}.json`);
                 } else {

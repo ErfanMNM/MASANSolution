@@ -1,4 +1,4 @@
-﻿using Diaglogs;
+using Diaglogs;
 using HslCommunication;
 using Newtonsoft.Json;
 using QR_MASAN_01.Utils;
@@ -530,7 +530,7 @@ namespace QR_MASAN_01.Views.Settings
                     AddLogRecipe(enterText.TextValue, $"{newRecipe.DelayCamera},{newRecipe.DelayReject},{newRecipe.RejectStreng}", "CREATE", Globalvariable.CurrentUser.Username);
                     AddLogRecipe(enterText.TextValue, $"{newRecipe.DelayCamera},{newRecipe.DelayReject},{newRecipe.RejectStreng}", "SELECT", Globalvariable.CurrentUser.Username);
                     //cập nhật danh sách Recipe
-                    ipRecipe.Items.Add(enterText.TextValue);
+                    ipRecipe.Items.Add(enterText.TextValue + ".rplc");
                     //cập nhật Recipe đã chọn
                     SelectRecipeName = enterText.TextValue + ".rplc";
                     ipRecipe.SelectedItem = SelectRecipeName;
@@ -602,8 +602,8 @@ namespace QR_MASAN_01.Views.Settings
             SelectRecipeName_CS = "Default.rplc";
             string RecipeValue = $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}";
             //thêm logs mặc định
-            AddLogRecipe("Default.rplc", RecipeValue, "CREATE", "Operator");
-            AddLogRecipe("Default.rplc", RecipeValue, "SELECT", "Operator");
+            AddLogRecipe_CS("Default.rplc", RecipeValue, "CREATE", "Operator");
+            AddLogRecipe_CS("Default.rplc", RecipeValue, "SELECT", "Operator");
 
             PLC_Parameter_On_PC_CS = defaultConfig_CS;
         }
@@ -631,15 +631,15 @@ namespace QR_MASAN_01.Views.Settings
         {
             //kiểm tra trong danh sách file có Recipe đó hay không, nếu không thì tạo mới
 
-            string[] files = Directory.GetFiles("PLC_RECIPEs", "*.rplc");
+            string[] files = Directory.GetFiles("PLC_RECIPEs_CS", "*.rplc");
 
             if (files.Length == 0)
             {
                 string json = JsonConvert.SerializeObject(defaultConfig_CS, Formatting.Indented);
-                File.WriteAllText($"PLC_RECIPEs/{SelectRecipeName_CS}", json);
+                File.WriteAllText($"PLC_RECIPEs_CS/{SelectRecipeName_CS}", json);
                 //thêm logs mặc định
-                AddLogRecipe(SelectRecipeName_CS, $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}", "CREATE", "Operator");
-                AddLogRecipe(SelectRecipeName_CS, $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}", "SELECT", "Operator");
+                AddLogRecipe_CS(SelectRecipeName_CS, $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}", "CREATE", "Operator");
+                AddLogRecipe_CS(SelectRecipeName_CS, $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}", "SELECT", "Operator");
                 PLC_Parameter_On_PC_CS = defaultConfig_CS;
             }
             else
@@ -649,17 +649,17 @@ namespace QR_MASAN_01.Views.Settings
                 if (!fileExists)
                 {
                     string json = JsonConvert.SerializeObject(defaultConfig_CS, Formatting.Indented);
-                    File.WriteAllText($"PLC_RECIPEs/{SelectRecipeName_CS}", json);
+                    File.WriteAllText($"PLC_RECIPEs_CS/{SelectRecipeName_CS}", json);
                     //thêm logs mặc định
-                    AddLogRecipe(SelectRecipeName_CS, $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}", "CREATE", "Operator");
-                    AddLogRecipe(SelectRecipeName_CS, $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}", "SELECT", "Operator");
+                    AddLogRecipe_CS(SelectRecipeName_CS, $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}", "CREATE", "Operator");
+                    AddLogRecipe_CS(SelectRecipeName_CS, $"{defaultConfig_CS.DelayCamera},{defaultConfig_CS.DelayReject},{defaultConfig_CS.RejectStreng}", "SELECT", "Operator");
 
                     PLC_Parameter_On_PC_CS = defaultConfig_CS;
                 }
                 else
                 {
                     //lấy dữ liệu từ file
-                    string jsonContent = File.ReadAllText($"PLC_RECIPEs/{SelectRecipeName_CS}");
+                    string jsonContent = File.ReadAllText($"PLC_RECIPEs_CS/{SelectRecipeName_CS}");
 
                     // Chuyển đổi JSON thành object
                     PLC_Parameter_On_PC_CS = JsonConvert.DeserializeObject<PLC_Parameter>(jsonContent);
@@ -720,9 +720,9 @@ namespace QR_MASAN_01.Views.Settings
         public void Write_Recipe_To_File_CS(string json)
         {
             //ghi dữ liệu vào file
-            File.WriteAllText($"PLC_RECIPEs/{SelectRecipeName_CS}", json);
+            File.WriteAllText($"PLC_RECIPEs_CS/{SelectRecipeName_CS}", json);
             //ghi log
-            AddLogRecipe(SelectRecipeName, json, "UPDATE", "Operator");
+            AddLogRecipe_CS(SelectRecipeName_CS, json, "UPDATE", "Operator");
         }
         #endregion
 
@@ -792,13 +792,13 @@ namespace QR_MASAN_01.Views.Settings
                     string json = JsonConvert.SerializeObject(newRecipe, Formatting.Indented);
                     File.WriteAllText($"PLC_RECIPEs_CS/{enterText.TextValue}.rplc", json);
                     //thêm logs mặc định
-                    AddLogRecipe(enterText.TextValue, $"{newRecipe.DelayCamera},{newRecipe.DelayReject},{newRecipe.RejectStreng}", "CREATE", Globalvariable.CurrentUser.Username);
-                    AddLogRecipe(enterText.TextValue, $"{newRecipe.DelayCamera},{newRecipe.DelayReject},{newRecipe.RejectStreng}", "SELECT", Globalvariable.CurrentUser.Username);
+                    AddLogRecipe_CS(enterText.TextValue, $"{newRecipe.DelayCamera},{newRecipe.DelayReject},{newRecipe.RejectStreng}", "CREATE", Globalvariable.CurrentUser.Username);
+                    AddLogRecipe_CS(enterText.TextValue, $"{newRecipe.DelayCamera},{newRecipe.DelayReject},{newRecipe.RejectStreng}", "SELECT", Globalvariable.CurrentUser.Username);
                     //cập nhật danh sách Recipe
-                    ipRecipe_CS.Items.Add(enterText.TextValue);
+                    ipRecipe_CS.Items.Add(enterText.TextValue + ".rplc");
                     //cập nhật Recipe đã chọn
                     SelectRecipeName_CS = enterText.TextValue + ".rplc";
-                    ipRecipe_CS.SelectedItem = SelectRecipeName;
+                    ipRecipe_CS.SelectedItem = SelectRecipeName_CS;
                     //gưii thông báo thành công
                     this.ShowSuccessNotifier($"Đã tạo Recipe mới: {enterText.TextValue}");
 

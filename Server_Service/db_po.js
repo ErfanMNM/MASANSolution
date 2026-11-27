@@ -10,68 +10,41 @@ class DatabasePool {
         this.queue = [];
         this.busyConnections = new Set();
         
-        this.initializeDatabase();
+        this.ready = this.initializeDatabase();
+        this.ready.catch(() => {});
     }
 
-    initializeDatabase() {
-        // Tạo database chính và enable WAL mode
-        const mainDb = new sqlite3.Database(this.dbPath);
-        
-        mainDb.serialize(() => {
-            // Enable WAL mode for better concurrent access
-            mainDb.run("PRAGMA journal_mode=WAL");
-            mainDb.run("PRAGMA synchronous=NORMAL");
-            mainDb.run("PRAGMA temp_store=memory");
-            mainDb.run("PRAGMA mmap_size=268435456"); // 256MB
-            mainDb.run("PRAGMA cache_size=10000");
-            
-            // Create tables
-            mainDb.run(`
-                CREATE TABLE IF NOT EXISTS POInfo (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    orderNo TEXT UNIQUE,
-                    site TEXT,
-                    factory TEXT,
-                    productionLine TEXT,
-                    productionDate TEXT,
-                    shift TEXT,
-                    orderQty INTEGER,
-                    lotNumber TEXT,
-                    productCode TEXT,
-                    productName TEXT,
-                    GTIN TEXT,
-                    customerOrderNo TEXT,
-                    uom TEXT,
-                    lastUpdated TEXT
-                )
-            `);
-
-            mainDb.run(`
-                CREATE TABLE IF NOT EXISTS POLogs (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    orderNo TEXT,
-                    action TEXT,
-                    detail TEXT,
-                    createdAt TEXT
-                )
-            `);
+    async initializeDatabase() {
+        const open = () => new Promise((resolve, reject) => {
+            const db = new sqlite3.Database(this.dbPath, err => err ? reject(err) : resolve(db));
         });
-
-        // Add to connection pool
-        this.connections.push(mainDb);
-        
-        // Create additional connections
-        for (let i = 1; i < this.maxConnections; i++) {
-            const db = new sqlite3.Database(this.dbPath);
-            db.run("PRAGMA journal_mode=WAL");
-            db.run("PRAGMA synchronous=NORMAL");
-            db.run("PRAGMA temp_store=memory");
-            db.run("PRAGMA busy_timeout=30000");
-            this.connections.push(db);
+        const execute = (db, sql) => new Promise((resolve, reject) => db.run(sql, err => err ? reject(err) : resolve()));
+        try {
+            for (let i = 0; i < this.maxConnections; i++) {
+                const db = await open();
+                this.connections.push(db);
+                for (const sql of ['PRAGMA busy_timeout=30000', 'PRAGMA journal_mode=WAL', 'PRAGMA synchronous=NORMAL', 'PRAGMA temp_store=memory']) await execute(db, sql);
+                if (i === 0) {
+                    await execute(db, 'PRAGMA mmap_size=268435456');
+                    await execute(db, 'PRAGMA cache_size=10000');
+                    await execute(db, `CREATE TABLE IF NOT EXISTS POInfo (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT, orderNo TEXT UNIQUE, site TEXT, factory TEXT,
+                        productionLine TEXT, productionDate TEXT, shift TEXT, orderQty INTEGER, lotNumber TEXT,
+                        productCode TEXT, productName TEXT, GTIN TEXT, customerOrderNo TEXT, uom TEXT, lastUpdated TEXT
+                    )`);
+                    await execute(db, `CREATE TABLE IF NOT EXISTS POLogs (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT, orderNo TEXT, action TEXT, detail TEXT, createdAt TEXT
+                    )`);
+                }
+            }
+        } catch (error) {
+            for (const db of this.connections.splice(0)) db.close(() => {});
+            throw error;
         }
     }
 
-    getConnection() {
+    async getConnection() {
+        await this.ready;
         return new Promise((resolve, reject) => {
             const availableConnection = this.connections.find(conn => !this.busyConnections.has(conn));
             
@@ -86,6 +59,7 @@ class DatabasePool {
     }
 
     releaseConnection(connection) {
+        if (!this.busyConnections.has(connection)) return;
         this.busyConnections.delete(connection);
         
         // Process queue
@@ -97,61 +71,70 @@ class DatabasePool {
     }
 
     // Wrapper methods for database operations
-    get(sql, params = []) {
-        return new Promise(async (resolve, reject) => {
-            const connection = await this.getConnection();
+    async get(sql, params = []) {
+        const connection = await this.getConnection();
+        return new Promise((resolve, reject) => {
             
             const timeout = setTimeout(() => {
-                this.releaseConnection(connection);
                 reject(new Error('Database operation timeout'));
             }, 30000);
 
-            connection.get(sql, params, (err, row) => {
+            try { connection.get(sql, params, (err, row) => {
                 clearTimeout(timeout);
                 this.releaseConnection(connection);
                 
                 if (err) reject(err);
                 else resolve(row);
-            });
+            }); } catch (error) {
+                clearTimeout(timeout);
+                this.releaseConnection(connection);
+                reject(error);
+            }
         });
     }
 
-    all(sql, params = []) {
-        return new Promise(async (resolve, reject) => {
-            const connection = await this.getConnection();
+    async all(sql, params = []) {
+        const connection = await this.getConnection();
+        return new Promise((resolve, reject) => {
             
             const timeout = setTimeout(() => {
-                this.releaseConnection(connection);
                 reject(new Error('Database operation timeout'));
             }, 30000);
 
-            connection.all(sql, params, (err, rows) => {
+            try { connection.all(sql, params, (err, rows) => {
                 clearTimeout(timeout);
                 this.releaseConnection(connection);
                 
                 if (err) reject(err);
                 else resolve(rows);
-            });
+            }); } catch (error) {
+                clearTimeout(timeout);
+                this.releaseConnection(connection);
+                reject(error);
+            }
         });
     }
 
-    run(sql, params = []) {
-        return new Promise(async (resolve, reject) => {
-            const connection = await this.getConnection();
+    async run(sql, params = []) {
+        const connection = await this.getConnection();
+        return new Promise((resolve, reject) => {
             const self = this;
             
             const timeout = setTimeout(() => {
-                self.releaseConnection(connection);
                 reject(new Error('Database operation timeout'));
             }, 30000);
 
-            connection.run(sql, params, function(err) {
+            try { connection.run(sql, params, function(err) {
                 clearTimeout(timeout);
                 self.releaseConnection(connection);
                 
                 if (err) reject(err);
                 else resolve({ lastID: this.lastID, changes: this.changes });
-            });
+            }); } catch (error) {
+                clearTimeout(timeout);
+                self.releaseConnection(connection);
+                reject(error);
+            }
         });
     }
 }

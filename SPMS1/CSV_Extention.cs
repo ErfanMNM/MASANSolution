@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Data;
 using System.IO;
 using System.Text;
 using System.ComponentModel;
+using System.Linq;
 
 namespace SPMS1
 {
@@ -27,6 +28,13 @@ namespace SPMS1
             InitializeComponent();
         }
 
+        private static string EscapeCsvField(string value)
+        {
+            value = value ?? string.Empty;
+            return value.IndexOfAny(new[] { ',', '"', '\r', '\n' }) < 0
+                ? value : "\"" + value.Replace("\"", "\"\"") + "\"";
+        }
+
         // Phương thức để xuất DataTable thành file CSV
         public void ExportDataTableToCsv(DataTable dataTable, string DirectoryPath, string FileName)
         {
@@ -43,24 +51,9 @@ namespace SPMS1
 
                 StringBuilder csvContent = new StringBuilder();
 
-                // Thêm tiêu đề cột vào CSV
-                foreach (DataColumn column in dataTable.Columns)
-                {
-                    csvContent.Append(column.ColumnName + ",");
-                }
-                csvContent.Remove(csvContent.Length - 1, 1); // Xóa dấu phẩy cuối cùng
-                csvContent.AppendLine();
-
-                // Thêm dữ liệu từ DataTable vào CSV
+                csvContent.AppendLine(string.Join(",", dataTable.Columns.Cast<DataColumn>().Select(c => EscapeCsvField(c.ColumnName))));
                 foreach (DataRow row in dataTable.Rows)
-                {
-                    foreach (DataColumn column in dataTable.Columns)
-                    {
-                        csvContent.Append(row[column].ToString().Replace(",", ";") + ","); // Thay dấu phẩy bằng chấm phẩy
-                    }
-                    csvContent.Remove(csvContent.Length - 1, 1); // Xóa dấu phẩy cuối dòng
-                    csvContent.AppendLine();
-                }
+                    csvContent.AppendLine(string.Join(",", row.ItemArray.Select(value => EscapeCsvField(Convert.ToString(value)))));
 
                 // Lưu nội dung CSV vào file
                 File.WriteAllText(filePath, csvContent.ToString());

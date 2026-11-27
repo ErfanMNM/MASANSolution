@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -81,58 +81,35 @@ namespace SqlLiteClass
 
             return temp;
         }
-       public  void LOAD_CSV()
+        public void LOAD_CSV()
         {
-            // Đường dẫn đến cơ sở dữ liệu SQLite
-            string databasePath = _DBFILEPATH;
-            string connectionString = $"Data Source={databasePath};Version=3;";
-
-            // Hiển thị hộp thoại để chọn file CSV
             string csvFilePath = OpenCsvFileDialog();
+            if (string.IsNullOrEmpty(csvFilePath)) return;
+            try { ImportCsv(csvFilePath); }
+            catch (Exception ex) { Console.WriteLine($"Đã xảy ra lỗi: {ex.Message}"); }
+        }
 
-            if (string.IsNullOrEmpty(csvFilePath))
+        public int ImportCsv(string csvFilePath)
+        {
+            string[] lines = File.ReadAllLines(csvFilePath);
+            using (var connection = new SQLiteConnection($"Data Source={_DBFILEPATH};Version=3;"))
             {
-                Console.WriteLine("Không có file nào được chọn.");
-                return;
-            }
-
-            try
-            {
-                // Đọc file CSV
-                string[] lines = File.ReadAllLines(csvFilePath);
-
-                // Kết nối tới SQLite
-                using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                using (var command = new SQLiteCommand("INSERT INTO CaseQRContent (CaseQR) VALUES (@CaseQR)", connection, transaction))
                 {
-                    connection.Open();
-
-                    // Chuẩn bị câu lệnh SQL để thêm dữ liệu
-                    string insertQuery = "INSERT INTO CaseQRContent (CaseQR) VALUES (@CaseQR)";
-
-                    using (SQLiteCommand command = new SQLiteCommand(insertQuery, connection))
+                    int inserted = 0;
+                    command.Parameters.Add("@CaseQR", DbType.String);
+                    foreach (string line in lines)
                     {
-                        foreach (string line in lines)
-                        {
-                            // Bỏ qua dòng rỗng
-                            if (string.IsNullOrWhiteSpace(line)) continue;
-
-                            // Gán giá trị cho tham số
-                            command.Parameters.Clear();
-                            command.Parameters.AddWithValue("@CaseQR", line.Trim());
-
-                            // Thực thi câu lệnh
-                            command.ExecuteNonQuery();
-                        }
+                        if (string.IsNullOrWhiteSpace(line)) continue;
+                        command.Parameters["@CaseQR"].Value = line.Trim();
+                        command.ExecuteNonQuery();
+                        inserted++;
                     }
-
-                    connection.Close();
+                    transaction.Commit();
+                    return inserted;
                 }
-
-                Console.WriteLine("Dữ liệu từ file CSV đã được thêm vào bảng CaseQRContent.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Đã xảy ra lỗi: {ex.Message}");
             }
         }
 

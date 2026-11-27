@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -107,12 +107,14 @@ public static class EChartsInjector
 
         string html = File.ReadAllText(inputHtmlPath);
 
-        string json = JsonConvert.SerializeObject(optionObject, Formatting.Indented);
+        string json = JsonConvert.SerializeObject(optionObject, Formatting.Indented, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml });
 
-        string pattern = @"option\s*=\s*\{[\s\S]*?\};";
+        string pattern = @"option\s*=\s*\{[\s\S]*?\}\s*;";
         string replacement = $"option = {json};";
 
-        string newHtml = Regex.Replace(html, pattern, replacement);
+        string newHtml = html.Contains("{{ECHARTS_OPTION}}")
+            ? html.Replace("{{ECHARTS_OPTION}}", json)
+            : Regex.Replace(html, pattern, match => replacement);
 
         File.WriteAllText(outputHtmlPath ?? inputHtmlPath, newHtml);
 

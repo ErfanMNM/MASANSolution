@@ -97,9 +97,53 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
         }
 
+        private static bool TryParseAwsMessageId(string messageId, out int rowId, out string orderNo)
+        {
+            rowId = 0;
+            orderNo = null;
+            if (string.IsNullOrEmpty(messageId)) return false;
+            var match = System.Text.RegularExpressions.Regex.Match(messageId,
+                @"^(?<id>[1-9][0-9]*)-(?<po>.+)-(?<stamp>[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}(?:Z|[+-][0-9]{2}:[0-9]{2})?)$");
+            DateTimeOffset timestamp;
+            if (!match.Success || !int.TryParse(match.Groups["id"].Value, out rowId) ||
+                !DateTimeOffset.TryParse(match.Groups["stamp"].Value, System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.None, out timestamp)) return false;
+            orderNo = match.Groups["po"].Value;
+            return orderNo != "." && orderNo != ".." && orderNo.IndexOfAny(Path.GetInvalidFileNameChars()) < 0;
+        }
+
+        private TResult LoadAwsCodes(Func<string, TResult> read)
+        {
+            string orderNo;
+            string gtin;
+            lock (Globals.PoTransitionLock)
+            {
+                orderNo = Globals.ProductionData.orderNo;
+                gtin = Globals.ProductionData.gtin;
+            }
+            var result = read(orderNo);
+            if (result.data != null)
+            {
+                result.data.ExtendedProperties["OrderNo"] = orderNo;
+                result.data.ExtendedProperties["GTIN"] = gtin;
+            }
+            return result;
+        }
+
+        private void AddReceiveNotification(string message)
+        {
+            opRecive.Items.Insert(0, message);
+            while (opRecive.Items.Count > 50)
+            {
+                opRecive.Items.RemoveAt(opRecive.Items.Count - 1);
+            }
+        }
+
         private void AWS_Status_OnReceive(object sender, AwsIotClientHelper.AWSStatusReceiveEventArgs e)
         {
-            JObject jsonObject = JObject.Parse(e.Payload);
+            JObject jsonObject;
+            try { jsonObject = JObject.Parse(e.Payload); }
+            catch (JsonException) { return; }
             // Lấy giá trị của trường "status" từ JSON
             string status = jsonObject["status"]?.ToString();
             //lấy giá trị của trường "message_id" từ JSON
@@ -110,19 +154,26 @@ namespace MASAN_SERIALIZATION.Views.AWS
             this.InvokeIfRequired(() =>
             {
                 //cập nhật giao diện
-                opRecive.Items.Insert(0, $"{DateTime.Now:HH:mm:ss}: Nhận dữ liệu từ AWS IoT Core: {e.Topic} - {e.Payload}");
+                AddReceiveNotification($"{DateTime.Now:HH:mm:ss}: Nhận dữ liệu từ AWS IoT Core: {e.Topic} - {e.Payload}");
             });
 
+            int rowId;
+            string capturedOrderNo;
+            if (!TryParseAwsMessageId(messageId, out rowId, out capturedOrderNo)) return;
+            string capturedBasePath = ProductionOrder.GetOrderBasePath(capturedOrderNo);
+            if (!File.Exists(Path.Combine(capturedBasePath, capturedOrderNo + ".db")) ||
+                !File.Exists(Path.Combine(capturedBasePath, "Recive_AWS_Record_" + capturedOrderNo + ".db"))) return;
             AWS_Recive_Data aWS_R_Data = new AWS_Recive_Data
             {
-                ID = messageId.Split('-')[0].ToInt32(),
+                orderNo = capturedOrderNo,
+                ID = rowId,
                 recive_Status = status,
             };
             //thêm vào hàng chờ xử lý cập nhật trạng thái
             Globals_Database.aWS_Recive_Datas.Enqueue(aWS_R_Data);
             
             // Ghi Receive Record vào database
-            Insert_AWS_Receive_Record(messageId, status, errorMessage);
+            Insert_AWS_Receive_Record(messageId, status, errorMessage, capturedOrderNo);
         }
 
         private void AWS_Status_Onchange(object sender, AWSStatusEventArgs e)
@@ -242,7 +293,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
         private void btnSendFailed_Click(object sender, EventArgs e)
         {
-            TResult getCodeResend = Globals.ProductionData.getDataPO.Get_Codes_Send_Failed(Globals.ProductionData.orderNo);
+            TResult getCodeResend = LoadAwsCodes(po => Globals.ProductionData.getDataPO.Get_Codes_Send_Failed(po));
             if (getCodeResend.issuccess)
             {
                 dtResend = getCodeResend.data;
@@ -256,7 +307,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
         private void btnGetSendPending_Click(object sender, EventArgs e)
         {
-            TResult getCodeSend = Globals.ProductionData.getDataPO.Get_Codes_Send(Globals.ProductionData.orderNo);
+            TResult getCodeSend = LoadAwsCodes(po => Globals.ProductionData.getDataPO.Get_Codes_Send(po));
 
             if (getCodeSend.issuccess)
             {
@@ -281,16 +332,18 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
         private void AWS_Send_Datatable(DataTable SendCodes)
         {
+            string orderNO = SendCodes.ExtendedProperties["OrderNo"] as string;
+            string gtin = SendCodes.ExtendedProperties["GTIN"] as string;
+            if (string.IsNullOrWhiteSpace(orderNO) || string.IsNullOrWhiteSpace(gtin))
+                throw new InvalidOperationException("AWS batch has no captured PO identity.");
             for(int i = 0; i < SendCodes.Rows.Count; i++)
             {
                 Thread.Sleep(300);
-                string orderNO = Globals.ProductionData.orderNo;
                 string ID = SendCodes.Rows[i]["ID"].ToString();
                 string code = SendCodes.Rows[i]["Code"].ToString();
                 string Status = SendCodes.Rows[i]["Status"].ToString();
                 string activateDate = SendCodes.Rows[i]["ActivateDate"].ToString();
                 string productionDate = SendCodes.Rows[i]["ProductionDate"].ToString();
-                string gtin = Globals.ProductionData.gtin;
                 string cartonCode = SendCodes.Rows[i]["cartonCode"].ToString();
 
                 // ===== CƠ CHẾ CHECK ĐẶC BIỆT TRƯỚC KHI GỬI AWS =====
@@ -300,7 +353,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 if (cartonHistoryResult.issuccess && cartonHistoryResult.count > 1)
                 {
                     // Mã đã nằm trong nhiều thùng khác nhau -> nghi ngờ lỗi công nhân/thao tác => không gửi AWS, kích hoạt trạng thái đặc biệt.
-                    Globals.Production_State = e_Production_State.MaBiTrung;
+                    if (Globals.ProductionData.orderNo == orderNO) Globals.Production_State = e_Production_State.MaBiTrung;
 
                     // Ghi log chi tiết lên UI AWS
                     var cartonIds = string.Join(", ",
@@ -336,7 +389,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
                 var dict = new OrderedDictionary
                             {
-                                { "message_id", $"{ID}-{orderNO}-{DateTime.Now:yyyy-MM-ddTHH:mm:ss.fffK}" },
+                                { "message_id", payload.message_id },
                                 { "orderNo", orderNO },
                                 { "uniqueCode", code },
                                 { "gtin", gtin },
@@ -361,6 +414,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 {
                     AWS_Send_Data aWS_Send_Data = new AWS_Send_Data
                     {
+                        orderNo = payload.orderNo,
                         ID = ID.ToInt32(),
                         send_Status = e_AWS_Send_Status.Sent.ToString(),
                     };
@@ -384,6 +438,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 {
                     AWS_Send_Data aWS_Send_Data = new AWS_Send_Data
                     {
+                        orderNo = payload.orderNo,
                         ID = ID.ToInt32(),
                         send_Status = e_AWS_Send_Status.Failed.ToString(),
                     };
@@ -466,20 +521,20 @@ namespace MASAN_SERIALIZATION.Views.AWS
             {
                 try
                 {
-                    TResult getCodeSend = Globals.ProductionData.getDataPO.Get_Codes_Send(Globals.ProductionData.orderNo);
+                    TResult getCodeSend = LoadAwsCodes(po => Globals.ProductionData.getDataPO.Get_Codes_Send(po));
 
                     if (getCodeSend.issuccess)
                     {
                         dtSends = getCodeSend.data;
                     }
 
-                    TResult getCodeResend = Globals.ProductionData.getDataPO.Get_Codes_Send_Failed(Globals.ProductionData.orderNo);
+                    TResult getCodeResend = LoadAwsCodes(po => Globals.ProductionData.getDataPO.Get_Codes_Send_Failed(po));
                     if (getCodeResend.issuccess)
                     {
                         dtResend = getCodeResend.data;
                     }
 
-                    TResult getCodeTimeOut = Globals.ProductionData.getDataPO.Get_Codes_Sent_Timeout(Globals.ProductionData.orderNo);
+                    TResult getCodeTimeOut = LoadAwsCodes(po => Globals.ProductionData.getDataPO.Get_Codes_Sent_Timeout(po));
 
                     if (getCodeTimeOut.issuccess)
                     {
@@ -496,10 +551,10 @@ namespace MASAN_SERIALIZATION.Views.AWS
                             opNotiboardAndSend.Items.RemoveAt(opNotiboardAndSend.Items.Count - 1);
                         }
 
-                        if (opRecive.Items.Count > 50)
+                        while (opRecive.Items.Count > 50)
                         {
-                            // Giới hạn số lượng mục hiển thị trong opNotiboardAndSend
-                            opNotiboardAndSend.Items.RemoveAt(opNotiboardAndSend.Items.Count - 1);
+                            // Giới hạn số lượng mục hiển thị trong opRecive
+                            opRecive.Items.RemoveAt(opRecive.Items.Count - 1);
                         }
 
                     });
@@ -583,11 +638,10 @@ namespace MASAN_SERIALIZATION.Views.AWS
         }
 
         // Thêm Receive Record vào database
-        public void Insert_AWS_Receive_Record(string messageId, string status, string errorMessage)
+        public void Insert_AWS_Receive_Record(string messageId, string status, string errorMessage, string orderNo)
         {
             try
             {
-                string orderNo = Globals.ProductionData.orderNo;
                 string reciveAWSPath = $@"{ProductionOrder.GetOrderBasePath(orderNo)}/Recive_AWS_Record_{orderNo}.db";
                 using (var conn = new SQLiteConnection($"Data Source={reciveAWSPath};Version=3;"))
                 {
@@ -607,14 +661,14 @@ namespace MASAN_SERIALIZATION.Views.AWS
                 
                 this.InvokeIfRequired(() =>
                 {
-                    opRecive.Items.Insert(0, $"📝 [{DateTime.Now}] Đã ghi Receive Record: {messageId} - Status: {status}");
+                    AddReceiveNotification($"📝 [{DateTime.Now}] Đã ghi Receive Record: {messageId} - Status: {status}");
                 });
             }
             catch (Exception ex)
             {
                 this.InvokeIfRequired(() =>
                 {
-                    opRecive.Items.Insert(0, $"❌ [{DateTime.Now}] Lỗi ghi Receive Record: {ex.Message}");
+                    AddReceiveNotification($"❌ [{DateTime.Now}] Lỗi ghi Receive Record: {ex.Message}");
                 });
             }
         }
@@ -626,7 +680,7 @@ namespace MASAN_SERIALIZATION.Views.AWS
 
         private void uiSymbolButton1_Click(object sender, EventArgs e)
         {
-            TResult getCodeSendTimeOut = Globals.ProductionData.getDataPO.Get_Codes_Sent_Timeout(Globals.ProductionData.orderNo);
+            TResult getCodeSendTimeOut = LoadAwsCodes(po => Globals.ProductionData.getDataPO.Get_Codes_Sent_Timeout(po));
 
             if (getCodeSendTimeOut.issuccess)
             {

@@ -5,7 +5,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-let tempStorage = {};
+let tempStorage = Object.create(null);
 
 // API set key bằng GET
 app.get('/set/:key/:value', (req, res) => {
@@ -56,7 +56,8 @@ app.get('/mayin', (req, res) => {
 
 // API đổi trạng thái máy in từ giao diện
 app.get('/printer/toggle', (req, res) => {
-    tempStorage['Printer_Command'] = tempStorage['Printer_Command'] === "PRINTTING" ? "STOPPED" : "PRINTTING";
+    const lastState = tempStorage['Printer_Command'] === '0' ? tempStorage['Printer_Status'] : tempStorage['Printer_Command'];
+    tempStorage['Printer_Command'] = lastState === "PRINTTING" ? "STOPPED" : "PRINTTING";
     tempStorage['Printer_Status'] = "-2"; // Chờ máy in phản hồi
     console.log("Waiting for printer response...");
     res.json({ success: true });
@@ -69,8 +70,8 @@ app.get('/printer/update/:status', (req, res) => {
     const { status } = req.params;
 
     // Nếu đang chờ phản hồi (-2) và có phản hồi, reset cờ tác động
-    if (tempStorage['Printer_Status'] === "-2" && status !== "-2") {
-        tempStorage['Printer_Command'] = 0; // Xóa cờ
+    if (tempStorage['Printer_Command'] !== '0' && status === tempStorage['Printer_Command']) {
+        tempStorage['Printer_Command'] = '0'; // Xóa cờ sau khi xác nhận đúng lệnh
         console.log("Printer responded. Resetting command.");
     }
 

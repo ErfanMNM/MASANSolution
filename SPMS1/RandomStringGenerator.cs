@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -66,6 +66,15 @@ namespace SPMS1
                     chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
                 }
 
+                if (length < 0) throw new ArgumentOutOfRangeException(nameof(length));
+                if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
+                int alphabetSize = chars.Distinct().Count();
+                long capacity = 1;
+                for (int i = 0; i < length && capacity < count && alphabetSize > 1; i++)
+                    capacity = Math.Min((long)count, capacity * alphabetSize);
+                if (capacity < count)
+                    throw new ArgumentException("Requested count exceeds distinct string capacity.", nameof(count));
+
                 // Khởi tạo dữ liệu để gửi qua BackgroundWorker
                 var parameters = new object[] { length, count, chars };
 
@@ -93,13 +102,15 @@ namespace SPMS1
 
             // HashSet để đảm bảo chuỗi không trùng lặp
             HashSet<string> generatedStrings = new HashSet<string>();
-            int progress = 90;
+            int progress = -1;
             // Tạo chuỗi ngẫu nhiên
             for (int i = 0; i < count; i++)
             {
-                if(i >= count/progress)
+                int percent = (int)((i + 1) * 100L / count);
+                if (percent != progress)
                 {
-                    backgroundWorker.ReportProgress(100-progress,count);
+                    progress = percent;
+                    backgroundWorker.ReportProgress(percent, count);
                 }
                 string randomString;
                 do

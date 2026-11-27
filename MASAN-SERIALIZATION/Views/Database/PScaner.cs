@@ -256,7 +256,7 @@ namespace MASAN_SERIALIZATION.Views.Database
             }
             catch (Exception ex)
             {
-                e.Result = new { SearchCode = searchCode, Error = ex.Message };
+                throw new InvalidOperationException("Không thể đọc dữ liệu tìm kiếm.", ex);
             }
         }
 

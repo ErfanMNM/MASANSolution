@@ -16,6 +16,10 @@ public class AwsIotClientHelper : IDisposable
     private X509Certificate caCert;
     private X509Certificate2 clientCert;
     private CancellationTokenSource healthCheckCts;
+    private readonly object lifecycleSync = new object();
+    private readonly SemaphoreSlim connectGate = new SemaphoreSlim(1, 1);
+    private Task healthCheckTask;
+    private bool disposed;
 
     public event EventHandler<AWSStatusEventArgs> AWSStatus_OnChange;
     public event EventHandler<AWSStatusReceiveEventArgs> AWSStatus_OnReceive;
@@ -77,64 +81,107 @@ public class AwsIotClientHelper : IDisposable
 
     public async Task ConnectAsync()
     {
+        CancellationTokenSource lifetime;
+        lock (lifecycleSync)
+        {
+            if (disposed) throw new ObjectDisposedException(nameof(AwsIotClientHelper));
+            if (healthCheckCts == null) healthCheckCts = new CancellationTokenSource();
+            lifetime = healthCheckCts;
+        }
+        await ConnectCoreAsync(lifetime);
+        StartHealthCheck(lifetime);
+    }
+
+    private bool IsCurrent(CancellationTokenSource lifetime, MqttClient candidate)
+    {
+        lock (lifecycleSync)
+        {
+            return !disposed && lifetime != null && ReferenceEquals(healthCheckCts, lifetime)
+                && !lifetime.IsCancellationRequested && ReferenceEquals(client, candidate);
+        }
+    }
+
+    private void CloseClient(MqttClient candidate)
+    {
+        if (candidate == null) return;
+        candidate.MqttMsgPublishReceived -= Client_MqttMsgPublishReceived;
+        candidate.ConnectionClosed -= Client_ConnectionClosed;
+        try { if (candidate.IsConnected) candidate.Disconnect(); }
+        catch { /* Cleanup must not revive a stopped lifetime. */ }
+    }
+
+    private bool IsCurrentClient(MqttClient target)
+    {
+        lock (lifecycleSync) { return !disposed && target != null && ReferenceEquals(client, target); }
+    }
+
+    private async Task ConnectCoreAsync(CancellationTokenSource lifetime)
+    {
+        var token = lifetime.Token;
+        bool entered = false;
+        MqttClient candidate = null;
         try
         {
+            await connectGate.WaitAsync(token);
+            entered = true;
+            MqttClient previous;
+            lock (lifecycleSync)
+            {
+                if (disposed || !ReferenceEquals(healthCheckCts, lifetime) || token.IsCancellationRequested) return;
+                if (client != null && client.IsConnected) return;
+                previous = client;
+                candidate = new MqttClient(host, 8883, true, caCert, clientCert, MqttSslProtocols.TLSv1_2);
+                candidate.MqttMsgPublishReceived += Client_MqttMsgPublishReceived;
+                candidate.ConnectionClosed += Client_ConnectionClosed;
+                client = candidate;
+            }
+            CloseClient(previous);
             AWSStatus_OnChange?.Invoke(this, new AWSStatusEventArgs(e_awsIot_status.Connecting, $"🔄 [{Now()}] Đang kết nối..."));
-
-            client = new MqttClient(
-                host,
-                8883,
-                true,
-                caCert,
-                clientCert,
-                MqttSslProtocols.TLSv1_2
-            );
-
-            client.MqttMsgPublishReceived += Client_MqttMsgPublishReceived;
-            client.ConnectionClosed += Client_ConnectionClosed;
-
             await Task.Run(() =>
             {
-                try
-                {
-                    client.Connect(clientId);
-                }
-                catch (Exception ex)
-                {
-                    AWSStatus_OnChange?.Invoke(this, new AWSStatusEventArgs(e_awsIot_status.Error, $"❌ [{Now()}] Lỗi kết nối: {ex.Message}"));
-                }
+                if (!token.IsCancellationRequested) candidate.Connect(clientId);
             });
 
-            if (client.IsConnected)
+            if (!IsCurrent(lifetime, candidate)) return;
+            if (candidate.IsConnected)
             {
                 AWSStatus_OnChange?.Invoke(this, new AWSStatusEventArgs(e_awsIot_status.Connected, $"✅ [{Now()}] Kết nối thành công."));
                 if (!string.IsNullOrEmpty(topic))
                 {
                     Subscribe(topic);
                 }
-                StartHealthCheck();
             }
             else
             {
                 AWSStatus_OnChange?.Invoke(this, new AWSStatusEventArgs(e_awsIot_status.Error, $"❌ [{Now()}] Kết nối thất bại."));
             }
         }
+        catch (OperationCanceledException) when (token.IsCancellationRequested) { }
         catch (Exception ex)
         {
-            AWSStatus_OnChange?.Invoke(this, new AWSStatusEventArgs(e_awsIot_status.Error, $"❌ [{Now()}] Lỗi: {ex.Message}"));
+            if (IsCurrent(lifetime, candidate))
+                AWSStatus_OnChange?.Invoke(this, new AWSStatusEventArgs(e_awsIot_status.Error, $"❌ [{Now()}] Lỗi: {ex.Message}"));
+        }
+        finally
+        {
+            if (candidate != null && !IsCurrent(lifetime, candidate)) CloseClient(candidate);
+            if (entered) connectGate.Release();
         }
     }
 
     public void Subscribe(string topic, byte qos = MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE)
     {
         this.topic = topic;
-        if (client != null && client.IsConnected)
+        MqttClient target;
+        lock (lifecycleSync) { target = client; }
+        if (target != null && target.IsConnected)
         {
             Task.Run(() =>
             {
                 try
                 {
-                    client.Subscribe(new[] { topic }, new[] { qos });
+                    if (!IsCurrentClient(target)) return;
+                    target.Subscribe(new[] { topic }, new[] { qos });
                     AWSStatus_OnChange?.Invoke(this, new AWSStatusEventArgs(e_awsIot_status.Subscribed, $"✅ [{Now()}] Đã subscribe topic: {topic}"));
                 }
                 catch (Exception ex)
@@ -151,13 +198,22 @@ public class AwsIotClientHelper : IDisposable
 
     public void SubscribeMultiple(string[] topics, byte qos = MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE)
     {
-        if (client != null && client.IsConnected)
+        MqttClient target;
+        lock (lifecycleSync) { target = client; }
+        if (IsCurrentClient(target) && target.IsConnected)
         {
+            try
+            {
             byte[] qosLevels = new byte[topics.Length];
             for (int i = 0; i < qosLevels.Length; i++) qosLevels[i] = qos;
 
-            client.Subscribe(topics, qosLevels);
+            target.Subscribe(topics, qosLevels);
             AWSStatus_OnChange?.Invoke(this, new AWSStatusEventArgs(e_awsIot_status.Subscribed, $"✅ [{Now()}] Đã subscribe các topic: {string.Join(", ", topics)}"));
+            }
+            catch (Exception ex)
+            {
+                AWSStatus_OnChange?.Invoke(this, new AWSStatusEventArgs(e_awsIot_status.Unsubscribed, $"⚠️ [{Now()}] Lỗi subscribe: {ex.Message}"));
+            }
         }
         else
         {
@@ -167,13 +223,16 @@ public class AwsIotClientHelper : IDisposable
 
     public void Publish(string topic, string payload, byte qos = MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, bool retained = false)
     {
-        if (client != null && client.IsConnected)
+        MqttClient target;
+        lock (lifecycleSync) { target = client; }
+        if (target != null && target.IsConnected)
         {
             Task.Run(() =>
             {
                 try
                 {
-                    client.Publish(topic, Encoding.UTF8.GetBytes(payload), qos, retained);
+                    if (!IsCurrentClient(target)) return;
+                    target.Publish(topic, Encoding.UTF8.GetBytes(payload), qos, retained);
                 }
                 catch (Exception ex)
                 {
@@ -190,12 +249,14 @@ public class AwsIotClientHelper : IDisposable
     public (string msg,bool Issuccess) Publish_V2(string topic, string payload, byte qos = MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, bool retained = false)
     {
         var rt = (string.Empty, false);
-        if (client != null && client.IsConnected)
+        MqttClient target;
+        lock (lifecycleSync) { target = client; }
+        if (IsCurrentClient(target) && target.IsConnected)
         {
 
             try
             {
-                client.Publish(topic, Encoding.UTF8.GetBytes(payload), qos, retained);
+                target.Publish(topic, Encoding.UTF8.GetBytes(payload), qos, retained);
                 rt = ($"✅ [{Now()}] Đã publish thành công topic: {topic}", true);
             }
             catch (Exception ex)
@@ -212,6 +273,7 @@ public class AwsIotClientHelper : IDisposable
 
     private void Client_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
     {
+        lock (lifecycleSync) { if (disposed || !ReferenceEquals(sender, client)) return; }
         string payload = Encoding.UTF8.GetString(e.Message);
         string msg = $"📩 [{DateTime.Now.ToString("o")}] Topic: {e.Topic}, Payload: {payload}";
         AWSStatus_OnReceive?.Invoke(this, new AWSStatusReceiveEventArgs(e.Topic, payload, msg));
@@ -219,48 +281,56 @@ public class AwsIotClientHelper : IDisposable
 
     private void Client_ConnectionClosed(object sender, EventArgs e)
     {
+        lock (lifecycleSync) { if (disposed || !ReferenceEquals(sender, client)) return; }
         AWSStatus_OnChange?.Invoke(this, new AWSStatusEventArgs(e_awsIot_status.Disconnected, $"❌ [{Now()}] Mất kết nối, đang thử reconnect..."));
     }
 
-    private void StartHealthCheck()
+    private void StartHealthCheck(CancellationTokenSource lifetime)
     {
-        healthCheckCts = new CancellationTokenSource();
-        var token = healthCheckCts.Token;
-
-        Task.Run(async () =>
+        lock (lifecycleSync)
         {
-            while (!token.IsCancellationRequested)
+            if (disposed || !ReferenceEquals(healthCheckCts, lifetime) || lifetime.IsCancellationRequested
+                || healthCheckTask != null || client == null || !client.IsConnected) return;
+            var token = lifetime.Token;
+            healthCheckTask = Task.Run(async () =>
             {
                 try
                 {
-                    if (client == null || !client.IsConnected)
+                    while (!token.IsCancellationRequested)
                     {
-                        
-                        AWSStatus_OnChange?.Invoke(this, new AWSStatusEventArgs(e_awsIot_status.Disconnected, $"❌ [{Now()}] Mất kết nối, đang reconnect..."));
-                        await ConnectAsync();
+                        await Task.Delay(5000, token).ConfigureAwait(false);
+                        await ConnectCoreAsync(lifetime).ConfigureAwait(false);
                     }
                 }
-                catch (Exception ex)
-                {
-                    AWSStatus_OnChange?.Invoke(this, new AWSStatusEventArgs(e_awsIot_status.Error, $"⚠️ [{Now()}] Lỗi healthcheck: {ex.Message}"));
-                }
-                await Task.Delay(5000, token);
-            }
-        }, token);
+                catch (OperationCanceledException) when (token.IsCancellationRequested) { }
+            });
+        }
     }
 
     public void StopHealthCheck()
     {
-        healthCheckCts?.Cancel();
+        lock (lifecycleSync)
+        {
+            healthCheckCts?.Cancel();
+            healthCheckCts = null;
+            healthCheckTask = null;
+        }
     }
 
     public void Disconnect()
     {
+        MqttClient previous;
+        lock (lifecycleSync)
+        {
+            StopHealthCheck();
+            previous = client;
+            client = null;
+        }
         try
         {
-            if (client != null && client.IsConnected)
+            if (previous != null)
             {
-                client.Disconnect();
+                CloseClient(previous);
                 AWSStatus_OnChange?.Invoke(this, new AWSStatusEventArgs(e_awsIot_status.Disconnected, $"⚠️ [{Now()}] Đã ngắt kết nối AWS IoT Core."));
             }
         }
@@ -268,13 +338,12 @@ public class AwsIotClientHelper : IDisposable
         {
             AWSStatus_OnChange?.Invoke(this, new AWSStatusEventArgs(e_awsIot_status.Error, $"❌ [{Now()}] Lỗi disconnect: {ex.Message}"));
         }
-        StopHealthCheck();
     }
 
     public void Dispose()
     {
+        lock (lifecycleSync) { disposed = true; }
         Disconnect();
-        client = null;
     }
 
     private string Now()

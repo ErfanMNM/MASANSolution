@@ -8,29 +8,54 @@ namespace TestApp
     {
         private VirtualCOMPort _port1;
         private VirtualCOMPort _port2;
+        private readonly object gate = new object();
+        private EventHandler<DataReceivedEventArgs> firstHandler, secondHandler;
         private bool _isConnected = false;
+        private bool disposed;
 
         public event EventHandler<string> StatusChanged;
         public event EventHandler<string> DataTransferred;
 
-        public bool IsConnected => _isConnected;
-        public string Port1Name => _port1?.PortName;
-        public string Port2Name => _port2?.PortName;
+        public bool IsConnected { get { lock (gate) return _isConnected; } }
+        public string Port1Name { get { lock (gate) return _port1?.PortName; } }
+        public string Port2Name { get { lock (gate) return _port2?.PortName; } }
 
         public bool CreateBridge(string port1Name, string port2Name)
         {
-            try
+            string error = null;
+            lock (gate)
             {
+              if (disposed) return false;
+              CloseBridge();
+              try
+              {
                 // Tạo 2 virtual COM ports
-                _port1 = new VirtualCOMPort(port1Name);
-                _port2 = new VirtualCOMPort(port2Name);
+                _port1 = new VirtualCOMPort(port1Name, "VirtualCOM_", false);
+                _port2 = new VirtualCOMPort(port2Name, "VirtualCOM_", false);
 
                 // Đăng ký events
-                _port1.DataReceived += Port1_DataReceived;
-                _port1.StatusChanged += Port_StatusChanged;
+                var first = _port1; var second = _port2;
+                firstHandler = (source, data) =>
+                {
+                    lock (gate)
+                    {
+                        if (!_isConnected || !ReferenceEquals(_port1, first) || !ReferenceEquals(_port2, second)) return;
+                        second.Write(data.Data);
+                    }
+                    if (IsCurrent(first, second)) OnDataTransferred(first.PortName + " → " + second.PortName + ": " + data.Text);
+                };
+                first.DataReceived += firstHandler;
                 
-                _port2.DataReceived += Port2_DataReceived;
-                _port2.StatusChanged += Port_StatusChanged;
+                secondHandler = (source, data) =>
+                {
+                    lock (gate)
+                    {
+                        if (!_isConnected || !ReferenceEquals(_port1, first) || !ReferenceEquals(_port2, second)) return;
+                        first.Write(data.Data);
+                    }
+                    if (IsCurrent(first, second)) OnDataTransferred(second.PortName + " → " + first.PortName + ": " + data.Text);
+                };
+                second.DataReceived += secondHandler;
 
                 // Mở ports
                 bool port1Opened = _port1.Open();
@@ -39,91 +64,85 @@ namespace TestApp
                 if (port1Opened && port2Opened)
                 {
                     _isConnected = true;
-                    OnStatusChanged($"✅ Bridge được tạo: {port1Name} ↔ {port2Name}");
-                    OnStatusChanged($"📱 App 1 có thể kết nối: \\\\.\\pipe\\VirtualCOM_{port1Name}");
-                    OnStatusChanged($"📱 App 2 có thể kết nối: \\\\.\\pipe\\VirtualCOM_{port2Name}");
-                    return true;
+                    _port1.StatusChanged += Port_StatusChanged;
+                    _port2.StatusChanged += Port_StatusChanged;
                 }
                 else
                 {
-                    OnStatusChanged("❌ Không thể tạo bridge");
-                    Dispose();
-                    return false;
+                    error = "❌ Không thể tạo bridge";
+                    CloseBridge();
                 }
+              }
+              catch (Exception ex)
+              {
+                error = $"❌ Lỗi tạo bridge: {ex.Message}";
+                CloseBridge();
+              }
             }
-            catch (Exception ex)
-            {
-                OnStatusChanged($"❌ Lỗi tạo bridge: {ex.Message}");
-                Dispose();
-                return false;
-            }
+            OnStatusChanged(error ?? $"✅ Bridge được tạo: {port1Name} ↔ {port2Name}");
+            return error == null;
         }
 
-        private void Port1_DataReceived(object sender, DataReceivedEventArgs e)
+        private bool IsCurrent(VirtualCOMPort first, VirtualCOMPort second)
         {
-            // Chuyển tiếp dữ liệu từ Port1 sang Port2
-            _port2?.Write(e.Data);
-            OnDataTransferred($"[{DateTime.Now:HH:mm:ss}] {Port1Name} → {Port2Name}: {e.Text.Trim()}");
-        }
-
-        private void Port2_DataReceived(object sender, DataReceivedEventArgs e)
-        {
-            // Chuyển tiếp dữ liệu từ Port2 sang Port1
-            _port1?.Write(e.Data);
-            OnDataTransferred($"[{DateTime.Now:HH:mm:ss}] {Port2Name} → {Port1Name}: {e.Text.Trim()}");
+            lock (gate) return _isConnected && ReferenceEquals(_port1, first) && ReferenceEquals(_port2, second);
         }
 
         private void Port_StatusChanged(object sender, string status)
         {
+            lock (gate) if (!ReferenceEquals(sender, _port1) && !ReferenceEquals(sender, _port2)) return;
             OnStatusChanged(status);
         }
 
         public void SendTestData(string data, bool toPort1 = true)
         {
+            string message = null;
+            lock (gate)
+            {
             if (!_isConnected) return;
 
             if (toPort1 && _port1 != null)
             {
                 _port1.Write(data);
-                OnDataTransferred($"[{DateTime.Now:HH:mm:ss}] Test → {Port1Name}: {data}");
+                message = $"[{DateTime.Now:HH:mm:ss}] Test → {Port1Name}: {data}";
             }
             else if (!toPort1 && _port2 != null)
             {
                 _port2.Write(data);
-                OnDataTransferred($"[{DateTime.Now:HH:mm:ss}] Test → {Port2Name}: {data}");
+                message = $"[{DateTime.Now:HH:mm:ss}] Test → {Port2Name}: {data}";
             }
+            }
+            if (message != null) OnDataTransferred(message);
         }
 
         public void CloseBridge()
         {
+          lock (gate)
+          {
             _isConnected = false;
-            
-            _port1?.Close();
-            _port2?.Close();
-            
-            OnStatusChanged("🔌 Bridge đã ngắt kết nối");
+            var first = _port1; var second = _port2; _port1 = null; _port2 = null;
+            if (first != null) { first.DataReceived -= firstHandler; first.StatusChanged -= Port_StatusChanged; }
+            if (second != null) { second.DataReceived -= secondHandler; second.StatusChanged -= Port_StatusChanged; }
+            firstHandler = null; secondHandler = null;
+            try { first?.Dispose(); } finally { second?.Dispose(); }
+          }
         }
 
         protected virtual void OnStatusChanged(string status)
         {
-            StatusChanged?.Invoke(this, status);
+            var observers = StatusChanged;
+            if (observers != null) foreach (EventHandler<string> observer in observers.GetInvocationList())
+                try { observer(this, status); } catch (Exception) { }
         }
 
         protected virtual void OnDataTransferred(string data)
         {
-            DataTransferred?.Invoke(this, data);
+            var observers = DataTransferred;
+            if (observers != null) foreach (EventHandler<string> observer in observers.GetInvocationList())
+                try { observer(this, data); } catch (Exception) { }
         }
 
-        public void Dispose()
-        {
-            CloseBridge();
-            
-            _port1?.Dispose();
-            _port2?.Dispose();
-            
-            _port1 = null;
-            _port2 = null;
-        }
+        public void Dispose() { lock (gate) { if (disposed) return; disposed = true; CloseBridge(); } }
 
         public static List<string> GetAvailableVirtualPorts()
         {

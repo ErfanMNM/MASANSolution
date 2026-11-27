@@ -4,6 +4,7 @@ using SpT.Auth;
 using SpT.Logs;
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,9 @@ namespace MASAN_SERIALIZATION
 {
     public static class Globals
     {
+        // Includes admitted camera workers that have not yet produced persistence work.
+        public static int PendingCameraRequests;
+        public static readonly object PoTransitionLock = new object();
 
         public static int CurrentPLCID { get; set; } = 1; // Biến toàn cục để lưu trữ phiên bản hiện tại của ứng dụng
         public static int currentPLCStatus { get; set; } = 5; // Biến toàn cục để lưu trữ phiên bản hiện tại của ứng dụng
@@ -75,24 +79,62 @@ namespace MASAN_SERIALIZATION
 
     public static class Globals_Database
     {
+        public static bool HasPendingWork => System.Threading.Volatile.Read(ref Globals.PendingCameraRequests) > 0 ||
+            !Update_Product_To_SQLite_Queue.IsEmpty || !Insert_Product_To_Record_Queue.IsEmpty ||
+            !Insert_Product_To_Record_CS_Queue.IsEmpty || !Update_Product_To_Record_Carton_Queue.IsEmpty ||
+            !Activate_Carton.IsEmpty || !aWS_Recive_Datas.IsEmpty || !aWS_Send_Datas.IsEmpty;
+
+        public static ProductionCartonData SnapshotCarton(ProductionCartonData value)
+        {
+            return new ProductionCartonData
+            {
+                orderNo = value.orderNo, cartonID = value.cartonID, cartonCode = value.cartonCode,
+                Activate_User = value.Activate_User, Start_Datetime = value.Start_Datetime,
+                Activate_Datetime = value.Activate_Datetime, Production_Datetime = value.Production_Datetime
+            };
+        }
+
+        public static void EnqueueCartonActivation(string code, string orderNo, string productionDate, int cartonPack)
+        {
+            lock (Globals.PoTransitionLock)
+            {
+                if (string.IsNullOrEmpty(productionDate) || productionDate == "0")
+                {
+                    if (Globals.ProductionData.orderNo != orderNo)
+                        throw new InvalidOperationException("Missing production date for captured carton PO.");
+                    productionDate = Globals.ProductionData.productionDate;
+                }
+                Activate_Carton.Enqueue(new CartonActivationRequest
+                { cartonCode = code, orderNo = orderNo, productionDate = productionDate, cartonPack = cartonPack });
+            }
+        }
+
         public static Dictionary<string, ProductionCodeData> Dictionary_ProductionCode_Data { get; set; } = new Dictionary<string, ProductionCodeData>(); // Lưu trữ dữ liệu mã sản xuất
 
         public static Dictionary<string, ProductionCodeData> Dictionary_ProductionCode_CameraSub_Data { get; set; } = new Dictionary<string, ProductionCodeData>();
 
         public static Dictionary<int, ProductionCartonData> Dictionary_ProductionCarton_Data { get; set; } = new Dictionary<int, ProductionCartonData>(); // Lưu trữ dữ liệu mã thùng sản xuất
 
-        public static Queue<(string conten, ProductionCodeData data, bool duplicate)> Update_Product_To_SQLite_Queue = new Queue<(string content, ProductionCodeData data, bool duplicate)>();
+        public static ConcurrentQueue<(string conten, ProductionCodeData data, bool duplicate)> Update_Product_To_SQLite_Queue = new ConcurrentQueue<(string content, ProductionCodeData data, bool duplicate)>();
 
-        public static Queue<ProductionCodeData_Record> Insert_Product_To_Record_Queue = new Queue<ProductionCodeData_Record>();
+        public static ConcurrentQueue<ProductionCodeData_Record> Insert_Product_To_Record_Queue = new ConcurrentQueue<ProductionCodeData_Record>();
 
-        public static Queue<ProductionCodeData_Record> Insert_Product_To_Record_CS_Queue = new Queue<ProductionCodeData_Record>();
+        public static ConcurrentQueue<ProductionCodeData_Record> Insert_Product_To_Record_CS_Queue = new ConcurrentQueue<ProductionCodeData_Record>();
 
-        public static Queue<ProductionCartonData> Update_Product_To_Record_Carton_Queue = new Queue<ProductionCartonData>();
+        public static ConcurrentQueue<ProductionCartonData> Update_Product_To_Record_Carton_Queue = new ConcurrentQueue<ProductionCartonData>();
 
-        public static Queue<string> Activate_Carton = new Queue<string>(); // Hàng đợi kích hoạt mã thùng sản xuất
+        public static ConcurrentQueue<CartonActivationRequest> Activate_Carton = new ConcurrentQueue<CartonActivationRequest>(); // Hàng đợi kích hoạt mã thùng sản xuất
 
-        public static Queue<AWS_Recive_Data> aWS_Recive_Datas = new Queue<AWS_Recive_Data>(); // Hàng đợi dữ liệu AWS IoT
-        public static Queue<AWS_Send_Data> aWS_Send_Datas = new Queue<AWS_Send_Data>(); // Hàng đợi dữ liệu AWS IoT
+        public static ConcurrentQueue<AWS_Recive_Data> aWS_Recive_Datas = new ConcurrentQueue<AWS_Recive_Data>(); // Hàng đợi dữ liệu AWS IoT
+        public static ConcurrentQueue<AWS_Send_Data> aWS_Send_Datas = new ConcurrentQueue<AWS_Send_Data>(); // Hàng đợi dữ liệu AWS IoT
+    }
+
+    public sealed class CartonActivationRequest
+    {
+        public string orderNo { get; set; }
+        public string cartonCode { get; set; }
+        public string productionDate { get; set; }
+        public int cartonPack { get; set; }
     }
 
     #region Các lớp dữ liệu liên quan đến sản xuất
@@ -113,6 +155,7 @@ namespace MASAN_SERIALIZATION
 
     public class ProductionCodeData_Record
     {
+        public string orderNo { get; set; }
         public string code { get; set; } // Mã sản xuất
         public string cartonCode { get; set; } // Mã code thùng 
 
@@ -164,12 +207,14 @@ namespace MASAN_SERIALIZATION
 
     public class AWS_Recive_Data
     {
+        public string orderNo { get; set; }
         public int ID { get; set; } // Chủ đề của AWS IoT
         public string recive_Status { get; set; } // Thông báo lỗi nếu có
     }
 
     public class AWS_Send_Data
     {
+        public string orderNo { get; set; }
         public int ID { get; set; } // Chủ đề của AWS IoT
         public string send_Status { get; set; } // Thông báo lỗi nếu có
     }

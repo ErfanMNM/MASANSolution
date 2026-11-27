@@ -1356,11 +1356,11 @@ namespace QR_MASAN_01
 
         public void Update_Active_Status(CodeData _CodeItem)
         {
-            using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/{GV.Selected_PO.orderNo.ToString()}.db;Version=3;"))
+            using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/{_CodeItem.orderNo}.db;Version=3;"))
             {
                 connection.Open();
                 string query = "UPDATE `UniqueCodes` SET " +
-                               "`Status` = '1', " +
+                               "`Status` = @status, " +
                                "`ActivateDate` = @activateDate, " +
                                "`ProductionDate` = @productionDate,  " +
                                "`ActivateUser` = @UserName  " +
@@ -1369,6 +1369,7 @@ namespace QR_MASAN_01
                 using (SQLiteCommand command = new SQLiteCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@RowId", _CodeItem.ID);
+                    command.Parameters.AddWithValue("@status", _CodeItem.Status);
                     command.Parameters.AddWithValue("@activateDate", _CodeItem.Activate_Datetime);
                     command.Parameters.AddWithValue("@productionDate", _CodeItem.Production_Datetime);
                     command.Parameters.AddWithValue("@UserName", Globalvariable.CurrentUser.Username);
@@ -1415,7 +1416,7 @@ namespace QR_MASAN_01
 
         public void Add_Content_To_SQLite( DataResultSave _Queue)
         {
-            using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/Record_{GV.Selected_PO.orderNo.ToString()}.db;Version=3;"))
+            using (SQLiteConnection connection = new SQLiteConnection($"Data Source=C:/.ABC/Record_{_Queue.orderNo}.db;Version=3;"))
             {
                 connection.Open();
                 string query = "INSERT INTO `Records` " +

@@ -954,16 +954,16 @@ namespace MASAN_SERIALIZATION.Views.SCADA
                 // Chốt mốc giờ: tròn giờ hiện tại và lùi 5 giờ
                 var now = DateTime.Now;
                 var endHour = new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0);
-                var startHour = endHour.AddHours(-3);
+                var startHour = endHour.AddHours(-5);
 
             var labels = Enumerable.Range(0, 6)
                         .Select(i => startHour.AddHours(i).ToString("H:00")) // cộng 7 giờ khi hiển thị
                         .ToArray();
 
-                int[] tong = new int[4];
-                int[] tot = new int[4];
-                int[] loi = new int[4];
-                int[] khac = new int[4];
+                int[] tong = new int[6];
+                int[] tot = new int[6];
+                int[] loi = new int[6];
+                int[] khac = new int[6];
 
                 using (var conn = new SQLiteConnection($"Data Source={dbPath};Version=3;"))
                 {

@@ -1,4 +1,4 @@
-﻿namespace SpT.Communications.TCP
+namespace SpT.Communications.TCP
 {
     partial class TCPClient
     {
@@ -13,6 +13,7 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            if (disposing) StopConnection(true);
             if (disposing && (components != null))
             {
                 components.Dispose();

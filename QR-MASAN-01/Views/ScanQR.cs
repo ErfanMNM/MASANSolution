@@ -320,7 +320,7 @@ namespace QR_MASAN_01
             {
                 code = code.Replace(";", "").Replace(" ", "").Replace("\r", "").Replace("\n", "").Replace("\r\n","");
                 string connectionString = $@"Data Source={file};Version=3;";
-                string query = $"SELECT * FROM `QRContent` WHERE `ProductQR` LIKE '%{code}%';";
+                string query = "SELECT * FROM `QRContent` WHERE `ProductQR` LIKE @Code;";
 
                 
 
@@ -329,7 +329,7 @@ namespace QR_MASAN_01
                     conn.Open();
                     using (SQLiteCommand cmd = new SQLiteCommand(query, conn))
                     {
-
+                        cmd.Parameters.AddWithValue("@Code", "%" + code + "%");
                         using (SQLiteDataAdapter da = new SQLiteDataAdapter(cmd))
                         {
                             DataTable dt = new DataTable();

@@ -1,4 +1,4 @@
-﻿using HslCommunication;
+using HslCommunication;
 using HslCommunication.Profinet.Omron;
 using MainClass;
 using QR_MASAN_01.Views.Scada;
@@ -137,7 +137,7 @@ namespace QR_MASAN_01.Views
                         {
                             int offset = (col - 1) * 2;
                             int addr = baseAddr + offset;
-                            int index = addr; // index trong mảng values
+                            int index = addr / 2; // ReadInt32 consumes two D words per value
 
                             if (index >= 0 && index < values.Length)
                             {

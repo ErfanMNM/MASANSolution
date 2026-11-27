@@ -1,0 +1,29 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+    <Platform Condition="'$(Platform)' == ''">x64</Platform>
+    <OutputType>Exe</OutputType><AssemblyName>RuntimeRegression</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion><PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion><OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System"/><Reference Include="System.Core"/><Reference Include="System.Data"/>
+    <Reference Include="System.Windows.Forms"/><Reference Include="System.Drawing"/><Reference Include="System.Design"/>
+    <Reference Include="Newtonsoft.Json"><HintPath>..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath></Reference>
+    <Compile Include="Program.cs"/><Compile Include="FakeBoundaries.cs"/>
+    <Compile Include="obj\AwsMqttHelper.g.cs"/><Compile Include="obj\AuthMethods.g.cs"/>
+    <Compile Include="..\..\SPMS1\GoogleStorage.cs"><Link>Production\GoogleStorage.cs</Link></Compile>
+    <Compile Include="..\..\SPMS1\GoogleStorage.Designer.cs"><Link>Production\GoogleStorage.Designer.cs</Link></Compile>
+    <Compile Include="..\..\SPMS1\Socket_Server_TCP.cs"><Link>Production\Socket_Server_TCP.cs</Link></Compile>
+    <Compile Include="..\..\SPMS1\Socket_Server_TCP.Designer.cs"><Link>Production\Socket_Server_TCP.Designer.cs</Link></Compile>
+    <Compile Include="..\..\SPMS1\OmronPLC_Hsl.cs"><Link>Production\LegacyOmron.cs</Link></Compile>
+    <Compile Include="..\..\SPMS1\OmronPLC_Hsl.Designer.cs"><Link>Production\LegacyOmron.Designer.cs</Link></Compile>
+    <Compile Include="..\..\SpT\PLC\OMRON\OmronPLC_Hsl.cs"><Link>Production\Omron.cs</Link></Compile>
+    <Compile Include="..\..\SpT\PLC\OMRON\OmronPLC_Hsl.Designer.cs"><Link>Production\Omron.Designer.cs</Link></Compile>
+  </ItemGroup>
+  <Target Name="PrepareSources" BeforeTargets="BeforeBuild">
+    <Exec Command="python -X utf8 &quot;$(MSBuildProjectDirectory)\prepare_sources.py&quot;"/>
+  </Target>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+</Project>

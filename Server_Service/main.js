@@ -5,6 +5,8 @@ require('./PO_Service_JSON') //khởi động máy chủ PO
 
 let mainWindow;
 let tray;
+let isQuitting = false;
+app.on('before-quit', () => { isQuitting = true; });
 
 app.whenReady().then(() => {
     mainWindow = new BrowserWindow({
@@ -21,6 +23,7 @@ app.whenReady().then(() => {
 
     // Xử lý khi nhấn nút đóng cửa sổ
     mainWindow.on('close', (event) => {
+        if (isQuitting) return;
         event.preventDefault();
         mainWindow.hide();
     });

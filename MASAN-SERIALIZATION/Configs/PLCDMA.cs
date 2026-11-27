@@ -104,9 +104,10 @@ namespace MASAN_SERIALIZATION.Configs
         private static Dictionary<string, string> LoadFromLocal()
         {
             //tự động tạo file nếu không tồn tại
-            if (!Directory.Exists(Path.GetDirectoryName(LocalCachePath)))
+            string directory = Path.GetDirectoryName(LocalCachePath);
+            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(LocalCachePath));
+                Directory.CreateDirectory(directory);
             }
             //tạo file nếu không tồn tại
 

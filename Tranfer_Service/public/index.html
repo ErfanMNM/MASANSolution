@@ -77,7 +77,7 @@
                 return;
             }
 
-            await fetch(`http://localhost:3000/set/${key}/${value}`);
+            await fetch(`http://localhost:3000/set/${encodeURIComponent(key)}/${encodeURIComponent(value)}`);
 
             loadKeys(); // Cập nhật bảng sau khi lưu dữ liệu
         }
@@ -90,7 +90,7 @@
                 return;
             }
 
-            const res = await fetch(`http://localhost:3000/get/${key}`);
+            const res = await fetch(`http://localhost:3000/get/${encodeURIComponent(key)}`);
             const data = await res.json();
             document.getElementById('result').innerText = data.value || 'No data found';
         }
@@ -102,7 +102,7 @@
                 return;
             }
 
-            await fetch(`http://localhost:3000/delete/${key}`, { method: 'DELETE' });
+            await fetch(`http://localhost:3000/delete/${encodeURIComponent(key)}`, { method: 'DELETE' });
             document.getElementById('result').innerText = 'Deleted';
             loadKeys(); // Cập nhật bảng sau khi xóa
         }
@@ -114,7 +114,7 @@
             const tableBody = document.getElementById('keyTable');
 
             // Lấy danh sách key hiện tại trên giao diện
-            const existingRows = {};
+            const existingRows = Object.create(null);
             tableBody.querySelectorAll("tr").forEach(row => {
                 const key = row.dataset.key;
                 if (key) existingRows[key] = row;
@@ -122,7 +122,7 @@
 
             // Duyệt qua danh sách key mới từ server
             for (const key of data.keys) {
-                const valueRes = await fetch(`http://localhost:3000/get/${key}`);
+                const valueRes = await fetch(`http://localhost:3000/get/${encodeURIComponent(key)}`);
                 const valueData = await valueRes.json();
 
                 if (existingRows[key]) {
@@ -132,11 +132,17 @@
                     // Tạo dòng mới nếu key chưa có trong bảng
                     const row = document.createElement('tr');
                     row.dataset.key = key;
-                    row.innerHTML = `
-                <td>${key}</td>
-                <td class="value">${valueData.value || ''}</td>
-                <td><button onclick="deleteKey('${key}')">Delete</button></td>
-            `;
+                    const keyCell = document.createElement('td');
+                    keyCell.textContent = key;
+                    const valueCell = document.createElement('td');
+                    valueCell.className = 'value';
+                    valueCell.textContent = valueData.value ?? '';
+                    const actionCell = document.createElement('td');
+                    const button = document.createElement('button');
+                    button.textContent = 'Delete';
+                    button.addEventListener('click', () => deleteKey(key));
+                    actionCell.appendChild(button);
+                    row.appendChild(keyCell); row.appendChild(valueCell); row.appendChild(actionCell);
                     tableBody.appendChild(row);
                 }
             }
@@ -151,7 +157,7 @@
 
 
         async function deleteKey(key) {
-            await fetch(`http://localhost:3000/delete/${key}`, { method: 'DELETE' });
+            await fetch(`http://localhost:3000/delete/${encodeURIComponent(key)}`, { method: 'DELETE' });
             loadKeys(); // Cập nhật lại danh sách
         }
 

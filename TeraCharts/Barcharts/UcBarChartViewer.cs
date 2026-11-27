@@ -16,8 +16,9 @@ namespace TeraCharts.Barcharts
         private string _chartTitle = "Bar Chart";
         private List<string> _categories = new List<string> { "Category 1", "Category 2", "Category 3", "Category 4", "Category 5" };
         private List<SeriesData> _seriesData = new List<SeriesData>();
-        private string _templateFile = "bar-chart-offline.html";
+        private string _templateFile = "bar-label-rotation.html";
         private string _tempHtmlFile;
+        private readonly List<string> _generatedHtmlFiles = new List<string>();
 
         public UcBarChartViewer()
         {
@@ -74,7 +75,7 @@ namespace TeraCharts.Barcharts
             get => _templateFile;
             set
             {
-                _templateFile = value ?? "bar-chart-offline.html";
+                _templateFile = value ?? "bar-label-rotation.html";
                 if (webView != null && webView.CoreWebView2 != null)
                     LoadChart();
             }
@@ -110,7 +111,7 @@ namespace TeraCharts.Barcharts
             };
 
             _categories = new List<string> { "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5" };
-            _templateFile = "bar-chart-offline.html"; // Default to new offline template
+            _templateFile = "bar-label-rotation.html"; // Default to new offline template
         }
 
         public void LoadChart()
@@ -123,10 +124,11 @@ namespace TeraCharts.Barcharts
                     string htmlContent = File.ReadAllText(templatePath);
                     string processedHtml = ProcessTemplate(htmlContent);
                     
-                    _tempHtmlFile = Path.GetTempFileName() + ".html";
-                    File.WriteAllText(_tempHtmlFile, processedHtml);
-                    
-                    webView.Source = new Uri(_tempHtmlFile);
+                    string nextHtmlFile = Path.Combine(Path.GetTempPath(), "masan-chart-" + Guid.NewGuid().ToString("N") + ".html");
+                    File.WriteAllText(nextHtmlFile, processedHtml);
+                    _generatedHtmlFiles.Add(nextHtmlFile);
+                    _tempHtmlFile = nextHtmlFile;
+                    webView.Source = new Uri(nextHtmlFile);
                 }
                 else
                 {
@@ -144,24 +146,29 @@ namespace TeraCharts.Barcharts
         private string GetTemplatePath()
         {
             string appPath = Application.StartupPath;
-            return Path.Combine("C:\\Users\\THUC\\source\\repos\\ErfanMNM\\MASANSolution\\TeraCharts", "ChartCS", _templateFile);
+            return Path.Combine(appPath, "ChartCS", _templateFile);
         }
 
         private string ProcessTemplate(string htmlContent)
         {
             var option = CreateChartOption();
-            string optionJson = JsonConvert.SerializeObject(option, Formatting.Indented);
+            string optionJson = JsonConvert.SerializeObject(option, Formatting.Indented, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml });
             
-            string processedHtml = Regex.Replace(htmlContent, 
-                @"option\s*=\s*\{[\s\S]*?\};", 
-                $"option = {optionJson};", 
-                RegexOptions.Multiline);
-            
+            string processedHtml = htmlContent.Contains("{{ECHARTS_OPTION}}")
+                ? htmlContent.Replace("{{ECHARTS_OPTION}}", optionJson)
+                : Regex.Replace(htmlContent, @"option\s*=\s*\{[\s\S]*?\}\s*;", match => "option = " + optionJson + ";", RegexOptions.Multiline);
+            string baseUri = new Uri(Path.GetDirectoryName(GetTemplatePath()) + Path.DirectorySeparatorChar).AbsoluteUri;
+            processedHtml = processedHtml.Replace("</head>", "<base href=\"" + baseUri + "\"></head>");
+
             return processedHtml;
         }
 
         private async void WebView_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e)
         {
+            foreach (string oldFile in _generatedHtmlFiles.Where(path => path != _tempHtmlFile).ToArray())
+            {
+                try { File.Delete(oldFile); _generatedHtmlFiles.Remove(oldFile); } catch (IOException) { }
+            }
             if (e.IsSuccess)
             {
                 await UpdateChart();
@@ -342,18 +349,16 @@ namespace TeraCharts.Barcharts
 
         protected override void Dispose(bool disposing)
         {
+            base.Dispose(disposing);
             if (disposing)
             {
-                if (!string.IsNullOrEmpty(_tempHtmlFile) && File.Exists(_tempHtmlFile))
+                foreach (string generatedFile in _generatedHtmlFiles)
                 {
-                    try
-                    {
-                        File.Delete(_tempHtmlFile);
-                    }
-                    catch { }
+                    try { File.Delete(generatedFile); } catch (IOException) { }
                 }
+                _generatedHtmlFiles.Clear();
+                _tempHtmlFile = null;
             }
-            base.Dispose(disposing);
         }
 
         protected override void OnLoad(EventArgs e)

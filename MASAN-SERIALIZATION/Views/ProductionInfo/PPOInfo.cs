@@ -1,4 +1,4 @@
-using MASAN_SERIALIZATION.Configs;
+﻿using MASAN_SERIALIZATION.Configs;
 using MASAN_SERIALIZATION.Dialogs;
 using MASAN_SERIALIZATION.Enums;
 using MASAN_SERIALIZATION.Helpers;
@@ -496,7 +496,11 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     btnRUN.Enabled = false;
                 }
             });
-            Globals.Production_State = e_Production_State.Completed;
+            lock (Globals.PoTransitionLock)
+            {
+                if (Globals.Production_State == e_Production_State.Ready && !Globals_Database.HasPendingWork)
+                    Globals.Production_State = e_Production_State.Completed;
+            }
         }
 
         private void HandleRunningState()
@@ -582,7 +586,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void HandleCheckingQueueState()
         {
-            if (Globals_Database.Insert_Product_To_Record_Queue.Count > 0 || Globals_Database.Update_Product_To_SQLite_Queue.Count > 0 || Globals_Database.Insert_Product_To_Record_CS_Queue.Count > 0 || Globals_Database.Update_Product_To_Record_Carton_Queue.Count > 0 ||Globals_Database.aWS_Recive_Datas.Count > 0 || Globals_Database.Activate_Carton.Count > 0 || Globals_Database.aWS_Send_Datas.Count > 0)
+            if (System.Threading.Volatile.Read(ref Globals.PendingCameraRequests) > 0 || Globals_Database.Insert_Product_To_Record_Queue.Count > 0 || Globals_Database.Update_Product_To_SQLite_Queue.Count > 0 || Globals_Database.Insert_Product_To_Record_CS_Queue.Count > 0 || Globals_Database.Update_Product_To_Record_Carton_Queue.Count > 0 ||Globals_Database.aWS_Recive_Datas.Count > 0 || Globals_Database.Activate_Carton.Count > 0 || Globals_Database.aWS_Send_Datas.Count > 0)
             {
                 this.InvokeIfRequired(() =>
                 {
@@ -592,7 +596,11 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             }
             else
             {
-                Globals.Production_State = e_Production_State.Ready;
+                lock (Globals.PoTransitionLock)
+                {
+                    if (Globals.Production_State == e_Production_State.Checking_Queue && !Globals_Database.HasPendingWork)
+                        Globals.Production_State = e_Production_State.Ready;
+                }
             }
         }
 
@@ -657,6 +665,11 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
                 // 3. Check how many products are in the current carton
                 var currentProductsResult = Globals.ProductionData.getDataPO.Get_Product_Carton_Records(orderNo, currentCartonID);
+                if (!currentProductsResult.issucess || currentProductsResult.Records == null)
+                {
+                    Globals.Production_State = e_Production_State.ThieuSanPham;
+                    return;
+                }
                 int currentProductCount = currentProductsResult.issucess && currentProductsResult.Records != null
                     ? currentProductsResult.Records.Rows.Count : 0;
 
@@ -677,6 +690,11 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
                 // 5. Check how many products are in the previous carton
                 var previousProductsResult = Globals.ProductionData.getDataPO.Get_Product_Carton_Records(orderNo, previousCartonID);
+                if (!previousProductsResult.issucess || previousProductsResult.Records == null)
+                {
+                    Globals.Production_State = e_Production_State.ThieuSanPham;
+                    return;
+                }
                 int previousProductCount = previousProductsResult.issucess && previousProductsResult.Records != null
                     ? previousProductsResult.Records.Rows.Count : 0;
 
@@ -767,9 +785,23 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                     HandlePOClickInEditingState();
                     break;
                 case e_Production_State.Completed:
+                    if (!TryEnterEditing(e_Production_State.Completed))
+                    {
+                        btnPO.Enabled = true;
+                        return;
+                    }
                     SetEditMode();
-                    Globals.Production_State = e_Production_State.Editing;
                     break;
+            }
+        }
+
+        private bool TryEnterEditing(e_Production_State expectedState)
+        {
+            lock (Globals.PoTransitionLock)
+            {
+                if (Globals.Production_State != expectedState || Globals_Database.HasPendingWork) return false;
+                Globals.Production_State = e_Production_State.Editing;
+                return true;
             }
         }
 
@@ -796,13 +828,21 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             if (ipOrderNO.Items.Count == 0)
             {
                 this.ShowErrorDialog("Lỗi PP042: Không có đơn hàng nào trong hệ thống MES, Vui lòng liên hệ quản trị viên.");
+                if (!TryEnterEditing(e_Production_State.Ready))
+                {
+                    btnPO.Enabled = true;
+                    return;
+                }
                 SetEditMode();
-                Globals.Production_State = e_Production_State.Editing;
                 return;
             }
 
+            if (!TryEnterEditing(e_Production_State.Ready))
+            {
+                btnPO.Enabled = true;
+                return;
+            }
             SetEditMode();
-            Globals.Production_State = e_Production_State.Editing;
         }
 
         private void HandlePOClickInEditingState()
@@ -993,34 +1033,38 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
         public void RenderOrderInfo()
         {
             IsRender = true;
-
-            TResult orderInfoResult = Globals.ProductionData.getfromMES.ProductionOrder_Detail(ipOrderNO.Text);
-            //lấy thông tin productionDate đã chỉnh
-            var POlog = Globals.ProductionData.getDataPO.Get_PO_Run_History_By_OrderNo(ipOrderNO.Text);
-
-            if (POlog.issucess && POlog.logPO.Rows.Count > 0)
+            try
             {
-                this.InvokeIfRequired(() =>
+                TResult orderInfoResult = Globals.ProductionData.getfromMES.ProductionOrder_Detail(ipOrderNO.Text);
+                //lấy thông tin productionDate đã chỉnh
+                var POlog = Globals.ProductionData.getDataPO.Get_PO_Run_History_By_OrderNo(ipOrderNO.Text);
+
+                if (POlog.issucess && POlog.logPO.Rows.Count > 0)
                 {
-                    ipProductionDate.Value = DateTime.Parse(POlog.logPO.Rows[0]["productionDate"].ToString());
-                });
-                
-            }
+                    this.InvokeIfRequired(() =>
+                    {
+                        ipProductionDate.Value = DateTime.Parse(POlog.logPO.Rows[0]["productionDate"].ToString());
+                    });
 
-            if (!orderInfoResult.issuccess)
+                }
+
+                if (!orderInfoResult.issuccess)
+                {
+                    _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error,
+                        $"Lấy thông tin đơn hàng thất bại: {orderInfoResult.message}");
+                    this.ShowErrorDialog($"Lỗi PP06: {orderInfoResult.message}");
+                    return;
+                }
+
+                ValidateDatabaseFile(orderInfoResult.data);
+                TResult codeCountResult = GetCodeCount();
+                UpdateOrderInfoUI(orderInfoResult, codeCountResult);
+                LoadCountersAsync();
+            }
+            finally
             {
-                _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
-                    $"Lấy thông tin đơn hàng thất bại: {orderInfoResult.message}");
-                this.ShowErrorDialog($"Lỗi PP06: {orderInfoResult.message}");
                 IsRender = false;
-                return;
             }
-
-            ValidateDatabaseFile(orderInfoResult.data);
-            TResult codeCountResult = GetCodeCount();
-            UpdateOrderInfoUI(orderInfoResult, codeCountResult);
-            LoadCountersAsync();
-            IsRender = false;
         }
 
         private void ValidateDatabaseFile(DataTable PO)
@@ -1312,7 +1356,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             Task.Delay(1000).Wait();
             try
             {
-                SaveProductionData();
+                if (!SaveProductionData()) return;
 
                 // Clear tất cả dictionaries trước khi load PO mới
                 Globals_Database.Dictionary_ProductionCode_Data.Clear();
@@ -1356,22 +1400,41 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
             }
         }
 
-        private void SaveProductionData()
+        private bool SaveProductionData()
         {
-            Globals.ProductionData.orderNo = ipOrderNO.Text;
-            Globals.ProductionData.productionLine = opProductionLine.Text;
-            Globals.ProductionData.uom = opUOM.Text;
-            Globals.ProductionData.orderQty = opOrderQty.Text;
-            Globals.ProductionData.customerOrderNo = opCustomerOrderNO.Text;
-            Globals.ProductionData.productName = opProductName.Text;
-            Globals.ProductionData.productCode = opProductCode.Text;
-            Globals.ProductionData.lotNumber = opLotNumber.Text;
-            Globals.ProductionData.gtin = opGTIN.Text;
-            Globals.ProductionData.shift = opShift.Text;
-            Globals.ProductionData.factory = opFactory.Text;
-            Globals.ProductionData.site = opSite.Text;
-            Globals.ProductionData.productionDate = ipProductionDate.Text;
-            Globals.ProductionData.totalCZCode = opCZCodeCount.Text;
+            string captured_orderNo = ipOrderNO.Text;
+            string captured_productionLine = opProductionLine.Text;
+            string captured_uom = opUOM.Text;
+            string captured_orderQty = opOrderQty.Text;
+            string captured_customerOrderNo = opCustomerOrderNO.Text;
+            string captured_productName = opProductName.Text;
+            string captured_productCode = opProductCode.Text;
+            string captured_lotNumber = opLotNumber.Text;
+            string captured_gtin = opGTIN.Text;
+            string captured_shift = opShift.Text;
+            string captured_factory = opFactory.Text;
+            string captured_site = opSite.Text;
+            string captured_productionDate = ipProductionDate.Text;
+            string captured_totalCZCode = opCZCodeCount.Text;
+            lock (Globals.PoTransitionLock)
+            {
+                if (Globals.Production_State != e_Production_State.Saving || Globals_Database.HasPendingWork) return false;
+                Globals.ProductionData.orderNo = captured_orderNo;
+                Globals.ProductionData.productionLine = captured_productionLine;
+                Globals.ProductionData.uom = captured_uom;
+                Globals.ProductionData.orderQty = captured_orderQty;
+                Globals.ProductionData.customerOrderNo = captured_customerOrderNo;
+                Globals.ProductionData.productName = captured_productName;
+                Globals.ProductionData.productCode = captured_productCode;
+                Globals.ProductionData.lotNumber = captured_lotNumber;
+                Globals.ProductionData.gtin = captured_gtin;
+                Globals.ProductionData.shift = captured_shift;
+                Globals.ProductionData.factory = captured_factory;
+                Globals.ProductionData.site = captured_site;
+                Globals.ProductionData.productionDate = captured_productionDate;
+                Globals.ProductionData.totalCZCode = captured_totalCZCode;
+                return true;
+            }
         }
 
         private TResult LoadProductionRecords()
@@ -1411,6 +1474,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 if (saveResult.issucces)
                 {
                     HandleSaveSuccess();
+                    Globals.Production_State = e_Production_State.Ready;
                 }
                 else
                 {
@@ -1422,7 +1486,6 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
                 HandleSaveException(ex);
             }
 
-            Globals.Production_State = e_Production_State.Ready;
         }
 
         private void HandleSaveSuccess()
@@ -1452,6 +1515,7 @@ namespace MASAN_SERIALIZATION.Views.ProductionInfo
 
         private void HandleSaveException(Exception ex)
         {
+            Globals.Production_State = e_Production_State.NoSelectedPO;
             _pageLogger.WriteLogAsync(Globals.CurrentUser.Username, e_LogType.Error, 
                 $"Lỗi khi lưu đơn hàng: {ex.Message}");
             this.ShowErrorDialog($"Lỗi PP088: {ex.Message}");

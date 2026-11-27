@@ -35,39 +35,37 @@ class CodeDBManager {
             queue: []
         };
 
-        // Create connections
-        for (let i = 0; i < this.maxConnectionsPerDB; i++) {
-            const db = new sqlite3.Database(dbPath);
-            
-            db.serialize(() => {
-                // Enable WAL mode and optimize for concurrent access
-                db.run("PRAGMA journal_mode=WAL");
-                db.run("PRAGMA synchronous=NORMAL");
-                db.run("PRAGMA temp_store=memory");
-                db.run("PRAGMA busy_timeout=30000");
-                db.run("PRAGMA cache_size=5000");
-                
-                // Create table if not exists
-                db.run(`
-                    CREATE TABLE IF NOT EXISTS UniqueCodes (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        code TEXT UNIQUE,
-                        createdAt TEXT,
-                        blockNo TEXT
-                    )
-                `);
-            });
-            
-            pool.connections.push(db);
-        }
-
         this.dbPools.set(safeOrderNo, pool);
         this.operationQueue.set(safeOrderNo, []);
+        pool.ready = (async () => {
+            try {
+                for (let i = 0; i < this.maxConnectionsPerDB; i++) {
+                    const db = await new Promise((resolve, reject) => {
+                        const opened = new sqlite3.Database(dbPath, err => err ? reject(err) : resolve(opened));
+                    });
+                    pool.connections.push(db);
+                    for (const sql of ['PRAGMA busy_timeout=30000', 'PRAGMA journal_mode=WAL', 'PRAGMA synchronous=NORMAL', 'PRAGMA temp_store=memory', 'PRAGMA cache_size=5000',
+                        `CREATE TABLE IF NOT EXISTS UniqueCodes (id INTEGER PRIMARY KEY AUTOINCREMENT, code TEXT UNIQUE, createdAt TEXT, blockNo TEXT)`]) {
+                        await new Promise((resolve, reject) => db.run(sql, err => err ? reject(err) : resolve()));
+                    }
+                }
+                pool.initialized = true;
+            } catch (error) {
+                for (const db of pool.connections.splice(0)) db.close(() => {});
+                if (this.dbPools.get(safeOrderNo) === pool) {
+                    this.dbPools.delete(safeOrderNo);
+                    this.operationQueue.delete(safeOrderNo);
+                }
+                throw error;
+            }
+        })();
+        pool.ready.catch(() => {});
     }
 
     async getConnection(orderNo) {
         const safeOrderNo = orderNo.replace(/[^a-zA-Z0-9_\-]/g, '_');
         const pool = this.getDBPool(safeOrderNo);
+        await pool.ready;
         
         return new Promise((resolve, reject) => {
             const availableConnection = pool.connections.find(conn => !pool.busyConnections.has(conn));
@@ -101,7 +99,7 @@ class CodeDBManager {
         const safeOrderNo = orderNo.replace(/[^a-zA-Z0-9_\-]/g, '_');
         const pool = this.dbPools.get(safeOrderNo);
         
-        if (!pool) return;
+        if (!pool || !pool.connections.includes(connection) || !pool.busyConnections.has(connection)) return;
         
         pool.busyConnections.delete(connection);
         
@@ -114,85 +112,71 @@ class CodeDBManager {
         }
     }
 
-    // Optimized batch insert with transaction
+    // The lease remains busy until the native operation and transaction cleanup finish.
     async batchInsertCodes(orderNo, codes, blockNo, createdAt) {
         const connection = await this.getConnection(orderNo);
-        const self = this;
-        
+        let timedOut = false;
+        const run = sql => new Promise((resolve, reject) => connection.run(sql, err => err ? reject(err) : resolve()));
         return new Promise((resolve, reject) => {
             const timeout = setTimeout(() => {
-                self.releaseConnection(orderNo, connection);
+                timedOut = true;
                 reject(new Error('Batch insert timeout'));
             }, 60000);
-
-            connection.serialize(() => {
-                connection.run("BEGIN TRANSACTION", (err) => {
-                    if (err) {
-                        clearTimeout(timeout);
-                        self.releaseConnection(orderNo, connection);
-                        return reject(err);
-                    }
-
-                    const stmt = connection.prepare(`
-                        INSERT OR IGNORE INTO UniqueCodes (code, createdAt, blockNo) 
-                        VALUES (?, ?, ?)
-                    `);
-                    
-                    let insertCount = 0;
-                    let completed = 0;
-                    let errorOccurred = false;
-
-                    if (codes.length === 0) {
-                        stmt.finalize();
-                        connection.run("COMMIT");
-                        clearTimeout(timeout);
-                        self.releaseConnection(orderNo, connection);
-                        return resolve({ insertedCount: 0 });
-                    }
-
-                    codes.forEach((code, index) => {
-                        stmt.run([code, createdAt, blockNo], function(err) {
-                            if (errorOccurred) return;
-                            
-                            if (err) {
-                                errorOccurred = true;
-                                stmt.finalize();
-                                connection.run("ROLLBACK");
-                                clearTimeout(timeout);
-                                self.releaseConnection(orderNo, connection);
-                                return reject(err);
-                            }
-                            
-                            if (this.changes > 0) {
-                                insertCount++;
-                            }
-                            
-                            completed++;
-                            
-                            if (completed === codes.length) {
-                                stmt.finalize((err) => {
-                                    if (err) {
-                                        connection.run("ROLLBACK");
-                                        clearTimeout(timeout);
-                                        self.releaseConnection(orderNo, connection);
-                                        return reject(err);
-                                    }
-
-                                    connection.run("COMMIT", (err) => {
-                                        clearTimeout(timeout);
-                                        self.releaseConnection(orderNo, connection);
-                                        
-                                        if (err) {
-                                            reject(err);
-                                        } else {
-                                            resolve({ insertedCount: insertCount });
-                                        }
-                                    });
-                                });
-                            }
+            const operation = async () => {
+                let inTransaction = false;
+                let stmt;
+                try {
+                    await run('BEGIN TRANSACTION');
+                    inTransaction = true;
+                    if (timedOut) throw new Error('Batch insert timeout');
+                    if (codes.length > 0) {
+                        stmt = await new Promise((resolveStatement, rejectStatement) => {
+                            const prepared = connection.prepare(
+                                'INSERT OR IGNORE INTO UniqueCodes (code, createdAt, blockNo) VALUES (?, ?, ?)',
+                                err => err ? rejectStatement(err) : resolveStatement(prepared));
                         });
-                    });
-                });
+                    }
+                    let insertCount = 0;
+                    try {
+                        await Promise.all(codes.map(code => new Promise((resolveRow, rejectRow) => {
+                            stmt.run([code, createdAt, blockNo], function(err) {
+                                if (err) rejectRow(err);
+                                else { insertCount += this.changes > 0 ? 1 : 0; resolveRow(); }
+                            });
+                        })));
+                    } finally {
+                        // finalize waits for already queued statement runs, even after a row error.
+                        if (stmt) await new Promise((resolveStatement, rejectStatement) => stmt.finalize(err => err ? rejectStatement(err) : resolveStatement()));
+                    }
+                    if (timedOut) throw new Error('Batch insert timeout');
+                    await run('COMMIT');
+                    inTransaction = false;
+                    return { insertedCount: insertCount };
+                } catch (error) {
+                    if (inTransaction) {
+                        try { await run('ROLLBACK'); }
+                        catch (rollbackError) {
+                            // Never return a connection with unknown transaction state to the pool.
+                            const safeOrderNo = orderNo.replace(/[^a-zA-Z0-9_\-]/g, '_');
+                            const pool = this.dbPools.get(safeOrderNo);
+                            if (pool) {
+                                pool.connections = pool.connections.filter(conn => conn !== connection);
+                                pool.busyConnections.delete(connection);
+                                if (pool.connections.length === 0) {
+                                    for (const pending of pool.queue.splice(0)) { clearTimeout(pending.timeoutId); pending.reject(rollbackError); }
+                                    this.dbPools.delete(safeOrderNo);
+                                    this.operationQueue.delete(safeOrderNo);
+                                }
+                            }
+                            connection.close(() => {});
+                        }
+                    }
+                    throw error;
+                }
+            };
+            operation().then(resolve, reject).finally(() => {
+                clearTimeout(timeout);
+                this.releaseConnection(orderNo, connection);
             });
         });
     }
@@ -203,7 +187,6 @@ class CodeDBManager {
         
         return new Promise((resolve, reject) => {
             const timeout = setTimeout(() => {
-                this.releaseConnection(orderNo, connection);
                 reject(new Error('Get count timeout'));
             }, 15000);
 
@@ -232,7 +215,6 @@ class CodeDBManager {
         
         return new Promise((resolve, reject) => {
             const timeout = setTimeout(() => {
-                this.releaseConnection(orderNo, connection);
                 reject(new Error('Get all codes timeout'));
             }, 30000);
 
@@ -261,11 +243,11 @@ class CodeDBManager {
         const now = Date.now();
         
         this.dbPools.forEach((pool, orderNo) => {
-            if (pool.busyConnections.size === 0 && pool.queue.length === 0) {
+            if (pool.initialized && pool.connections.length > 0 && pool.busyConnections.size === 0 && pool.queue.length === 0) {
                 // Close all connections for this orderNo
                 pool.connections.forEach(conn => {
                     try {
-                        conn.close();
+                        conn.close(() => {});
                     } catch (e) {
                         console.error('Error closing connection:', e);
                     }

@@ -159,11 +159,16 @@
             if (isWaiting) return;
             isWaiting = true;
             document.getElementById('toggleBtn').disabled = true;
-            await fetch('/printer/toggle');
-            updateStatus();
-            setTimeout(() => {
-                isWaiting = false;
-            }, 2000);
+            try {
+                const response = await fetch('/printer/toggle');
+                if (!response.ok) throw new Error('Printer command failed');
+                await updateStatus();
+            } catch (error) {
+                document.getElementById('toggleBtn').disabled = false;
+                console.error(error);
+            } finally {
+                setTimeout(() => { isWaiting = false; }, 2000);
+            }
         }
 
         setInterval(updateStatus, 2000);
